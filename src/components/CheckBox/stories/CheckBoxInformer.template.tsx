@@ -2,37 +2,38 @@ import { ServiceInfoSolid } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
 import {
-  RadioButton,
+  CheckBox,
   SelectionControlInformer,
   SelectionControlLayout,
-  type RadioButtonProps,
+  type CheckBoxProps,
 } from '@admiral-ds/admiral3-primitives';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
-import { RADIO_BUTTON_DIMENSIONS } from '../constants';
-
-const RadioButtonList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
+import { CHECK_BOX_DIMENSIONS } from '../constants';
 
 const INFORMER_TEXT = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.';
 
-export const RadioButtonInformerTemplate = (args: RadioButtonProps) => (
+const CheckBoxList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+`;
+
+export const CheckBoxInformerTemplate = (args: CheckBoxProps) => (
   <StoryDemoContainer>
-    <RadioButtonList>
-      {RADIO_BUTTON_DIMENSIONS.map((dimension) => (
+    <CheckBoxList>
+      {CHECK_BOX_DIMENSIONS.map((dimension) => (
         <SelectionControlLayout key={dimension}>
-          <RadioButton {...args} name={`radio-informer-${dimension}`} dimension={dimension} extraText="Add text">
-            Dimension — {dimension}
-          </RadioButton>
+          <CheckBox {...args} dimension={dimension} extraText="Дополнительный текст">
+            Размер {dimension.toUpperCase()}
+          </CheckBox>
           {/* TODO: в дальнейшем заменить title на Hint. */}
           <SelectionControlInformer $dimension={dimension} title={INFORMER_TEXT} aria-label={INFORMER_TEXT}>
             <ServiceInfoSolid />
           </SelectionControlInformer>
         </SelectionControlLayout>
       ))}
-    </RadioButtonList>
+    </CheckBoxList>
   </StoryDemoContainer>
 );

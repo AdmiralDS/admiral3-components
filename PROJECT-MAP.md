@@ -36,8 +36,10 @@ Template-файлы для Storybook и playground в этом документ�
 ├── scripts/                  # Node scripts для проектной автоматизации
 ├── src/                      # Исходный код публичного API, компонентов и тестовых настроек
 │   ├── components/           # Компоненты библиотеки
+│   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
 │   ├── test/                 # Vitest setup
-│   └── theme/                # Helpers для CSS token fallback
+│   ├── theme/                # Helpers для CSS token fallback
+│   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
 ├── tests/                    # E2E-тесты Playwright и документация по тестам
 ├── package.json              # npm package manifest, exports, scripts, dependencies
 ├── vite.config.ts            # Vite library build
@@ -173,6 +175,8 @@ Storybook и playground импортируют пакет через alias `@adm
 
 - `src/index.ts` - root public API. Реэкспортирует публичные component barrels; наружу попадают компоненты, props и публичные типы, но не внутренние constants, style helpers и styled props.
 - `src/theme/cssToken.ts` - helper для CSS custom property с fallback на значение из `styled-components` theme.
+- `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.
+- `src/utils/refSetter.test.ts` - unit-тесты синхронизации и очистки refs.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.
 
@@ -180,8 +184,17 @@ Storybook и playground импортируют пакет через alias `@adm
 
 - `src/components/<ComponentName>/` - папка отдельного primitive-компонента. Обычно содержит implementation, публичный barrel, типы, constants, styles, unit tests и Storybook templates/stories.
 - `src/components/<ComponentName>/index.ts` - локальный публичный barrel компонента. Через него экспортируются сам компонент, props и публичные типы.
+- Реализации компонентов задают дефолтные DOM- и accessibility-атрибуты до spread пользовательских props; после spread
+  остаются только обязательные внутренние props, защищающие контракт компонента.
+- Disabled-состояния интерактивных компонентов используют `cursor: not-allowed` на всей интерактивной области.
+- Boolean `data-*`-состояния представлены маркерами: атрибут присутствует только в активном состоянии, а CSS использует
+  селектор по наличию.
 - `src/components/<ComponentName>/stories/` - Storybook CSF и render templates компонента. Templates могут переиспользоваться в playground, но их внутренняя демонстрационная разметка здесь не разбирается.
 - `src/components/stories/` - shared helpers для story templates и playground-сценариев. Не является публичным API библиотеки.
+- `src/components/HelperComponents/` - публичные вспомогательные компоненты для внешней композиции, включая
+  `SelectionControlInformer` и `SelectionControlLayout`.
+- `src/components/_internal/InputAtoms/` - внутренняя layout-композиция и общие размерные параметры полей выбора. Не
+  экспортируется из публичного API библиотеки.
 
 ## Test setup
 

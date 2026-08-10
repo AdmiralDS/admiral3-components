@@ -143,15 +143,24 @@ const stripTemplateTsNoCheck = (filePath) => {
 stripTemplateTsNoCheck(storyTargetPath);
 stripTemplateTsNoCheck(playgroundTemplateTargetPath);
 
-/**
- * Добавляет строку в конец файла только если такой строки ещё нет.
- */
-const ensureLine = (content, line) => {
-  if (content.includes(line)) {
-    return content;
+/** Добавляет root export и сохраняет component exports в алфавитном порядке. */
+const addSortedComponentExport = (content, exportLine) => {
+  const lines = content.trimEnd().split('\n');
+
+  if (!lines.includes(exportLine)) {
+    lines.push(exportLine);
   }
 
-  return content.endsWith('\n') ? `${content}${line}\n` : `${content}\n${line}\n`;
+  const exportIndexes = lines
+    .map((line, index) => (/^export \* from '\.\/components\/[A-Z][A-Za-z0-9]*';$/.test(line) ? index : -1))
+    .filter((index) => index >= 0);
+  const sortedExports = exportIndexes.map((index) => lines[index]).sort((first, second) => first.localeCompare(second));
+
+  exportIndexes.forEach((lineIndex, index) => {
+    lines[lineIndex] = sortedExports[index];
+  });
+
+  return `${lines.join('\n')}\n`;
 };
 
 /**
@@ -195,6 +204,14 @@ const addComponentPackageExport = () => {
     types: `./dist/components/${componentName}/index.d.ts`,
     import: `./dist/components/${componentName}/index.js`,
   };
+
+  packageJson.exports = Object.fromEntries([
+    ['.', packageJson.exports['.']],
+    ['./package.json', packageJson.exports['./package.json']],
+    ...Object.entries(packageJson.exports)
+      .filter(([exportKey]) => exportKey !== '.' && exportKey !== './package.json')
+      .sort(([firstKey], [secondKey]) => firstKey.localeCompare(secondKey)),
+  ]);
 
   writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8');
 };
@@ -248,7 +265,7 @@ test.describe('${componentName} playground', () => {
 
 writeProjectFile(
   'src/index.ts',
-  ensureLine(readProjectFile('src/index.ts'), `export * from './components/${componentName}';`),
+  addSortedComponentExport(readProjectFile('src/index.ts'), `export * from './components/${componentName}';`),
 );
 addComponentPackageExport();
 

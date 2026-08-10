@@ -5,11 +5,11 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
-    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./package.json": "./package.json",
     "./badge": {
       "types": "./dist/components/Badge/index.d.ts",
       "import": "./dist/components/Badge/index.js"
@@ -22,9 +22,21 @@
       "types": "./dist/components/Button/index.d.ts",
       "import": "./dist/components/Button/index.js"
     },
+    "./check-box": {
+      "types": "./dist/components/CheckBox/index.d.ts",
+      "import": "./dist/components/CheckBox/index.js"
+    },
+    "./helper-components": {
+      "types": "./dist/components/HelperComponents/index.d.ts",
+      "import": "./dist/components/HelperComponents/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
+    },
+    "./radio-button": {
+      "types": "./dist/components/RadioButton/index.d.ts",
+      "import": "./dist/components/RadioButton/index.js"
     },
     "./skeleton": {
       "types": "./dist/components/Skeleton/index.d.ts",
@@ -33,10 +45,6 @@
     "./spinner": {
       "types": "./dist/components/Spinner/index.d.ts",
       "import": "./dist/components/Spinner/index.js"
-    },
-    "./radio-button": {
-      "types": "./dist/components/RadioButton/index.d.ts",
-      "import": "./dist/components/RadioButton/index.js"
     }
   },
   "keywords": [

@@ -164,6 +164,19 @@ const getPublicExports = (sourcePath) => {
   return { typeExports, valueExports };
 };
 
+const publicEntries = componentEntries.map((entry) => {
+  // Имя папки обычно совпадает с основным runtime-экспортом, но публичные группирующие
+  // entrypoints могут называться иначе. Например, HelperComponents экспортирует
+  // SelectionControlInformer, поэтому имя для consumer fixture берётся из barrel.
+  const publicExportName = getPublicExports(entry.sourcePath).valueExports.at(0);
+
+  if (!publicExportName) {
+    throw new Error(`${relative(rootDir, entry.sourcePath)} must export at least one runtime value.`);
+  }
+
+  return { ...entry, publicExportName };
+});
+
 /**
  * Создаёт одну TypeScript-фикстуру, импортирующую каждый публичный контракт из
  * соответствующего component subpath.
@@ -314,11 +327,11 @@ try {
   const bundleSizeRegressions = [];
   const componentModuleGraphs = [];
   let hasTreeShakingErrors = false;
-  for (const { componentName, subpath } of componentEntries) {
+  for (const { componentName, publicExportName, subpath } of publicEntries) {
     // Для одного и того же компонента создаются два эквивалентных consumer imports:
     // из корня пакета и из его публичного component subpath.
-    const rootFixturePath = createFixture(`root-${subpath}`, packageName, componentName);
-    const componentFixturePath = createFixture(`component-${subpath}`, `${packageName}/${subpath}`, componentName);
+    const rootFixturePath = createFixture(`root-${subpath}`, packageName, publicExportName);
+    const componentFixturePath = createFixture(`component-${subpath}`, `${packageName}/${subpath}`, publicExportName);
     const rootResult = await buildConsumer(`root-${subpath}`, rootFixturePath);
     const componentResult = await buildConsumer(`component-${subpath}`, componentFixturePath);
 

@@ -1,9 +1,10 @@
-import { animation, textStyles } from '@admiral-ds/admiral3-tokens';
+import { animation } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
 import { RADIO_BUTTON_DIMENSION_PARAMETERS } from './constants';
-import type { RadioButtonDimension, StyledRadioButtonProps } from './types';
+import type { StyledRadioButtonProps } from './types';
 import { cssToken } from '../../theme/cssToken';
+import { NativeInput } from '../_internal/InputAtoms';
 
 const backgroundRest = cssToken('--admiral-color-neutral-base-1-rest', (theme) => theme.color.neutral.base._1.rest);
 const backgroundHover = cssToken('--admiral-color-neutral-base-1-hover', (theme) => theme.color.neutral.base._1.hover);
@@ -22,9 +23,8 @@ const selectedDisabled = cssToken(
   (theme) => theme.color.primary.base._1.disable,
 );
 const errorColor = cssToken('--admiral-color-error-stroke-1-rest', (theme) => theme.color.error.stroke._1.rest);
-const focusColor = cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest);
+const focusColor = cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest);
 const textColor = cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest);
-const hintColor = cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest);
 const textDisabled = cssToken(
   '--admiral-color-neutral-text-disable-rest',
   (theme) => theme.color.neutral.text.disable.rest,
@@ -59,20 +59,6 @@ export const StyledRadioButton = styled.label<StyledRadioButtonProps>`
     color: ${textDisabled};
     cursor: not-allowed;
   }
-`;
-
-export const NativeInput = styled.input<{ $dimension: RadioButtonDimension }>`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  cursor: inherit;
 `;
 
 export const Control = styled.span<{ $error: boolean }>`
@@ -146,26 +132,5 @@ export const Control = styled.span<{ $error: boolean }>`
   ${NativeInput}:focus-visible + & {
     outline: 2px solid ${focusColor};
     outline-offset: 2px;
-  }
-`;
-
-export const LabelContent = styled.span`
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-`;
-
-export const Hint = styled.span<{ $disabled: boolean }>`
-  color: ${({ $disabled }) => ($disabled ? textDisabled : hintColor)};
-  margin-top: 4px;
-  ${textStyles.body.body2Long}
-
-  ${StyledRadioButton}:is([data-dimension='s'], [data-dimension='xs']) &,
-  fieldset:is([data-dimension='s'], [data-dimension='xs']) & {
-    ${textStyles.caption.caption1}
-  }
-
-  fieldset:disabled & {
-    color: ${textDisabled};
   }
 `;
