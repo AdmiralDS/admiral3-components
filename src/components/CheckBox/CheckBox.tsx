@@ -92,7 +92,7 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
           {...props}
         />
         <Control $error={error} aria-hidden="true">
-          <StateIcon data-icon={indeterminate ? 'minus' : 'success'} focusable="false" />
+          <StateIcon data-icon={indeterminate ? 'minus' : 'success'} />
         </Control>
         {children != null && (
           <SelectionControlLabelContent $hasExtraText={extraText != null} data-dimension={dimension}>
