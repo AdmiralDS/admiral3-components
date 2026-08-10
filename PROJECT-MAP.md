@@ -99,8 +99,8 @@ Storybook и playground импортируют пакет через alias `@adm
 - `CONTRIBUTING.md` - краткий стартовый чек-лист и обязательные правила внесения изменений: commit style, проверки перед PR, release flow, accessibility, порядок добавления новых компонентов, Storybook/playground/e2e правила.
 - `generate-react-cli.json` - конфигурация `generate-react-cli` для scaffolding primitive-компонентов по локальным templates.
 - `LICENSE` - лицензионный файл пакета.
-- `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw/gzip размеров публичных component
-  subpaths; существенным считается одновременный рост gzip более чем на 10% и более чем на 1 KiB.
+- `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw-размеров публичных component
+  subpaths; существенным считается одновременный рост raw-размера более чем на 10% и более чем на 1 KiB.
 - `PROJECT-MAP.md` - текущая карта структуры проекта и назначений файлов.
 - `README.md` - пользовательская документация пакета: установка, peer dependencies, выбор между root import и публичным component subpath import и ссылки на contributor/test docs. README не перечисляет все компоненты пакета.
 - `eslint.config.js` - flat config ESLint. Подключает TypeScript, import rules, React hooks, React Refresh, Storybook, Prettier и задает правила сортировки импортов, запрет `any`, циклов и дублей импортов.
@@ -114,7 +114,7 @@ Storybook и playground импортируют пакет через alias `@adm
   root/component imports; TypeScript parser читает публичные component barrels, после чего один consumer fixture проверяет
   все найденные value/type exports, перед итоговой таблицей печатается общий список модулей совпавших сборок или оба списка
   при расхождении, выводится standalone raw/gzip размер каждого публичного component subpath без peer dependencies,
-  обновляется `bundle-size-baseline.json`, проверяется существенная регрессия gzip и напоминается вручную проверить состав
+  обновляется `bundle-size-baseline.json`, проверяется существенная регрессия raw-размера и напоминается вручную проверить состав
   графов.
 - `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels и полного соответствия явных component subpaths реальным component directories.
 - `scripts/validate-package.mjs` - проверка состава npm tarball, существования всех публичных export targets и их
