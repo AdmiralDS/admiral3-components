@@ -13,8 +13,8 @@ import { build } from 'vite';
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const distIndexPath = join(rootDir, 'dist', 'index.js');
 const bundleSizeBaselinePath = join(rootDir, 'bundle-size-baseline.json');
-const maxGzipGrowthRatio = 0.1;
-const maxGzipGrowthBytes = 1024;
+const maxRawGrowthRatio = 0.1;
+const maxRawGrowthBytes = 1024;
 
 // Consumer создаётся внутри корневого node_modules: установленный tarball остаётся
 // изолированным, а его peer dependencies разрешаются из родительского проекта.
@@ -348,18 +348,17 @@ try {
 
     if (!hasMatchingModuleGraphs) hasTreeShakingErrors = true;
     const previousSize = previousBundleSizeBaseline.components?.[subpath];
-    const gzipGrowthBytes = componentResult.gzipSizeBytes - (previousSize?.gzipBytes ?? componentResult.gzipSizeBytes);
-    const gzipGrowthRatio = previousSize?.gzipBytes ? gzipGrowthBytes / previousSize.gzipBytes : 0;
+    const rawGrowthBytes = componentResult.sizeBytes - (previousSize?.rawBytes ?? componentResult.sizeBytes);
+    const rawGrowthRatio = previousSize?.rawBytes ? rawGrowthBytes / previousSize.rawBytes : 0;
     const hasSizeRegression =
-      previousSize !== undefined && gzipGrowthBytes > maxGzipGrowthBytes && gzipGrowthRatio > maxGzipGrowthRatio;
+      previousSize !== undefined && rawGrowthBytes > maxRawGrowthBytes && rawGrowthRatio > maxRawGrowthRatio;
 
     currentBundleSizeBaseline.components[subpath] = {
-      gzipBytes: componentResult.gzipSizeBytes,
       rawBytes: componentResult.sizeBytes,
     };
     if (hasSizeRegression) {
       bundleSizeRegressions.push(
-        `${componentName}: gzip grew by ${formatKiB(gzipGrowthBytes)} (${(gzipGrowthRatio * 100).toFixed(1)}%).`,
+        `${componentName}: raw size grew by ${formatKiB(rawGrowthBytes)} (${(rawGrowthRatio * 100).toFixed(1)}%).`,
       );
     }
     componentModuleGraphs.push({
@@ -378,8 +377,8 @@ try {
       // Размер component subpath bundle используется как стабильный standalone
       // показатель. Изменение сравнивается с committed baseline.
       raw: formatKiB(componentResult.sizeBytes),
+      rawChange: formatSizeChange(previousSize?.rawBytes, componentResult.sizeBytes),
       gzip: formatKiB(componentResult.gzipSizeBytes),
-      gzipChange: formatSizeChange(previousSize?.gzipBytes, componentResult.gzipSizeBytes),
     });
   }
 
