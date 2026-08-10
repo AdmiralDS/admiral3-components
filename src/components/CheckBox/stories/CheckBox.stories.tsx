@@ -39,6 +39,18 @@ const defaultArgs: CheckBoxProps = {
   children: 'Подпись CheckBox',
 };
 
+export const Playground: StoryObj<CheckBoxProps> = {
+  args: defaultArgs,
+  render: CheckBoxPlaygroundTemplate,
+  parameters: {
+    docs: {
+      source: {
+        code: checkBoxPlaygroundTemplateRaw,
+      },
+    },
+  },
+};
+
 export const Sizes: StoryObj<CheckBoxProps> = {
   args: defaultArgs,
   render: CheckBoxSizesTemplate,
@@ -80,17 +92,5 @@ export const TableSelection: StoryObj<CheckBoxProps> = {
   parameters: {
     controls: { disable: true },
     docs: { source: { code: checkBoxTableSelectionTemplateRaw } },
-  },
-};
-
-export const Playground: StoryObj<CheckBoxProps> = {
-  args: defaultArgs,
-  render: CheckBoxPlaygroundTemplate,
-  parameters: {
-    docs: {
-      source: {
-        code: checkBoxPlaygroundTemplateRaw,
-      },
-    },
   },
 };
