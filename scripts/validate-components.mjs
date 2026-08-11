@@ -10,6 +10,7 @@ const rootIndexPath = join(rootDir, 'src', 'index.ts');
 const packageJsonPath = join(rootDir, 'package.json');
 const playgroundScenariosDir = join(rootDir, 'playground', 'scenarios');
 const visualScenariosIndexPath = join(playgroundScenariosDir, 'visual', 'index.tsx');
+const visualScenariosManifestPath = join(playgroundScenariosDir, 'visual', 'manifest.ts');
 const e2eDir = join(rootDir, 'tests', 'e2e');
 const packageImport = '@admiral-ds/admiral3-primitives';
 const internalExportSources = new Set(['./constants', './style']);
@@ -25,6 +26,8 @@ const toKebabCase = (value) =>
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .toLowerCase();
+
+const toCamelCase = (value) => value.charAt(0).toLowerCase() + value.slice(1);
 
 /**
  * Возвращает путь относительно корня проекта, чтобы сообщения об ошибках были короткими.
@@ -206,9 +209,21 @@ const componentNames = publicDirectoryNames.filter((name) => existsSync(join(com
 const componentGroupNames = publicDirectoryNames.filter((name) => !componentNames.includes(name));
 const rootIndexContent = readProjectFile(rootIndexPath);
 const visualScenariosIndexContent = readProjectFile(visualScenariosIndexPath);
+const visualScenariosManifestContent = readProjectFile(visualScenariosManifestPath);
 const packageJson = readProjectJson(packageJsonPath);
 const packageExportKeys = Object.keys(packageJson.exports ?? {});
 const rootExportSources = getExportSources(rootIndexContent);
+
+const visualScenarioManifestKeys = [...visualScenariosManifestContent.matchAll(/^ {2}([A-Za-z][A-Za-z0-9]*):/gm)].map(
+  (match) => match[1],
+);
+const sortedVisualScenarioManifestKeys = [...visualScenarioManifestKeys].sort((first, second) =>
+  first.localeCompare(second),
+);
+
+if (JSON.stringify(visualScenarioManifestKeys) !== JSON.stringify(sortedVisualScenarioManifestKeys)) {
+  errors.push(`${formatPath(visualScenariosManifestPath)} scenario ids must be sorted alphabetically.`);
+}
 
 const sortedRootExportSources = [...rootExportSources].sort((first, second) => first.localeCompare(second));
 if (JSON.stringify(rootExportSources) !== JSON.stringify(sortedRootExportSources)) {
@@ -298,7 +313,12 @@ for (const componentName of componentNames) {
     }
   }
 
-  if (!visualScenariosIndexContent.includes(`id: 'visual/${componentKebabName}'`)) {
+  const componentCamelName = toCamelCase(componentName);
+
+  if (
+    !visualScenariosIndexContent.includes(`VISUAL_SCENARIO_IDS.${componentCamelName}`) ||
+    !visualScenariosManifestContent.includes(`${componentCamelName}: 'visual/${componentKebabName}'`)
+  ) {
     errors.push(
       `${componentName}: missing visual scenario "visual/${componentKebabName}" in ${formatPath(visualScenariosIndexPath)}`,
     );

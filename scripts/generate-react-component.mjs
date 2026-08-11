@@ -165,6 +165,33 @@ const addSortedComponentExport = (content, exportLine) => {
   return `${lines.join('\n')}\n`;
 };
 
+/** Добавляет visual scenario id и сортирует manifest по имени ключа. */
+const addSortedVisualScenarioId = (content, propertyLine) => {
+  const lines = content.trimEnd().split('\n');
+  const closingIndex = lines.findIndex((line) => line === '} as const;');
+
+  if (closingIndex < 0) {
+    throw new Error('Cannot find VISUAL_SCENARIO_IDS closing line');
+  }
+
+  if (!lines.includes(propertyLine)) {
+    lines.splice(closingIndex, 0, propertyLine);
+  }
+
+  const propertyIndexes = lines
+    .map((line, index) => (/^ {2}[A-Za-z][A-Za-z0-9]*: 'visual\/[a-z0-9-]+',$/.test(line) ? index : -1))
+    .filter((index) => index >= 0);
+  const sortedProperties = propertyIndexes
+    .map((index) => lines[index])
+    .sort((first, second) => first.localeCompare(second));
+
+  propertyIndexes.forEach((lineIndex, index) => {
+    lines[lineIndex] = sortedProperties[index];
+  });
+
+  return `${lines.join('\n')}\n`;
+};
+
 /**
  * Подключает новый playground-сценарий к общему списку сценариев.
  *
@@ -199,12 +226,13 @@ const addPlaygroundScenarioToIndex = () => {
 /** Подключает visual template компонента к списку Chromium snapshot-сценариев. */
 const addVisualScenarioToIndex = () => {
   const indexPath = 'playground/scenarios/visual/index.tsx';
+  const manifestPath = 'playground/scenarios/visual/manifest.ts';
   const templateIdentifier = `${componentName}VisualTemplate`;
   const importLine = `import { ${templateIdentifier} } from './${componentName}Visual.template';`;
-  const scenarioLine = `  { id: 'visual/${componentKebabName}', title: 'Visual / ${componentName}', visual: true, render: () => <${templateIdentifier} /> },`;
+  const scenarioLine = `  { id: VISUAL_SCENARIO_IDS.${componentCamelName}, title: 'Visual / ${componentName}', visual: true, render: () => <${templateIdentifier} /> },`;
   const content = readProjectFile(indexPath);
 
-  if (content.includes(importLine) || content.includes(`id: 'visual/${componentKebabName}'`)) {
+  if (content.includes(importLine) || content.includes(`VISUAL_SCENARIO_IDS.${componentCamelName}`)) {
     return;
   }
 
@@ -221,6 +249,11 @@ const addVisualScenarioToIndex = () => {
 
   lines.splice(visualScenariosEnd, 0, scenarioLine);
   writeProjectFile(indexPath, lines.join('\n'));
+
+  const manifestContent = readProjectFile(manifestPath);
+  const manifestLine = `  ${componentCamelName}: 'visual/${componentKebabName}',`;
+
+  writeProjectFile(manifestPath, addSortedVisualScenarioId(manifestContent, manifestLine));
 };
 
 /** Добавляет явный публичный subpath компонента в package exports. */
