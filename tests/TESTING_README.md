@@ -2,7 +2,7 @@
 
 ## Общая информация
 
-В проекте используются два контура тестирования:
+В проекте используются три контура тестирования:
 
 1. `Vitest`
 
@@ -13,6 +13,12 @@
 
 - используется для e2e и smoke-проверок через internal playground;
 - e2e-тесты должны лежать в папке `tests/e2e`.
+
+3. `Playwright visual snapshots`
+
+- отслеживает изменения внешнего вида всех зарегистрированных playground-сценариев;
+- запускается только в Chromium в Docker;
+- visual-тесты и эталонные изображения хранятся в `tests/visual`.
 
 ## Обязательная структура тестов
 
@@ -36,6 +42,11 @@ tests/e2e/BadgeDot/badge-dot.spec.ts
 ```
 
 Для новых компонентов используйте эталонную структуру выше.
+
+`npm run generate:component -- ComponentName` также создаёт
+`playground/scenarios/visual/ComponentNameVisual.template.tsx` и регистрирует сценарий `visual/component-name`.
+Сгенерированный default-вариант является только стартовой точкой: перед завершением компонента visual template нужно
+расширить до матрицы всех поддерживаемых размеров, appearance и значимых состояний.
 
 ## Обязательная структура Storybook stories
 
@@ -103,6 +114,46 @@ npm run test:e2e
 ```shell
 npm run test:e2e-ui
 ```
+
+### Visual snapshots
+
+Проверка текущего визуала по committed baseline:
+
+```shell
+npm run test:visual
+```
+
+Обновление baseline после подтвержденного изменения дизайна:
+
+```shell
+npm run test:visual:update
+```
+
+После прогона подробный список проверенных секций выводится в терминал, а HTML-report сохраняется в
+`playwright-visual-report`. Открыть его локально можно командой:
+
+```shell
+npm run test:visual:report
+```
+
+Visual-тест снимает только playground-сценарии с явным флагом `visual`. Для каждого компонента такой сценарий использует
+отдельный `*Visual.template.tsx` с матрицей размеров, appearance и значимых состояний. Обычные Storybook/playground
+templates в snapshot-контур автоматически не попадают.
+
+Локальные команды напрямую запускают Docker с `mcr.microsoft.com/playwright:v1.60.0-noble`; отдельный CI job использует
+тот же закрепленный image. `node_modules` монтируется отдельным анонимным volume и не меняет локальные зависимости.
+Поэтому committed baseline создается в Linux Chromium независимо от ОС разработчика. Перед обновлением baseline нужно
+вручную просмотреть изменившиеся изображения. В CI тот же HTML-report загружается как artifact
+`playwright-visual-report`.
+
+Visual template должен напрямую рендерить компонент и строить собственную матрицу всех конечных размеров, preset
+appearance/colorMode и значимых состояний. Нельзя собирать visual template из существующих Storybook templates. Для
+произвольных CSS-значений достаточно отдельного representative custom-варианта.
+
+Для воспроизводимости зафиксированы viewport `1440x900` и reduced motion. В каждом visual-сценарии Playwright снимает
+отдельно каждый ряд `VisualSamples` во всех theme modes, доступных в playground (`light`, `dark`, `lightNeutral`,
+`darkNeutral`); небольшая custom-секция без ряда снимается целиком. Снимки сравниваются пиксель в пиксель без допуска.
+На время снимка Playwright также отключает CSS-анимации и скрывает caret.
 
 ### Vitest
 

@@ -107,8 +107,9 @@ Storybook и playground импортируют пакет через alias `@adm
 - `package-lock.json` - lockfile npm. Фиксирует точные версии зависимостей и должен меняться только вместе с изменениями зависимостей или npm metadata.
 - `package.json` - manifest npm-пакета. Описывает root/component `exports`, публикуемые файлы, side effects, scripts, peer/dev dependencies, repository metadata и publish config.
 - `playwright.config.ts` - конфигурация e2e тестов Playwright. Указывает `tests/e2e`, базовый URL playground, браузерные проекты, timeout, reporter и webServer `npm run playground:serve`.
+- `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с точным сравнением пикселей; тест снимает ряды `VisualSamples` во всех theme modes playground.
 - `scripts/check-full.mjs` - последовательно запускает все проверки из `check:full`, останавливается на первой ошибке и выводит общую длительность прогона.
-- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создает component/story/playground/e2e scaffolding и обновляет root export, component subpath и playground aggregator.
+- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding и обновляет root export, component subpath, playground и visual aggregators.
 - `scripts/test-tree-shaking.mjs` - consumer integration check, который создаёт и устанавливает npm tarball в изолированный
   consumer project, проверяет TypeScript resolution всех component subpaths и сравнивает Rollup module graphs
   root/component imports; TypeScript parser читает публичные component barrels, после чего один consumer fixture проверяет
@@ -163,8 +164,8 @@ Storybook и playground импортируют пакет через alias `@adm
 ## npm scripts
 
 - `check:fix` - автоисправление форматирования и ESLint.
-- `check:full` - полный обязательный локальный прогон: format, lint, structure, types, unit/e2e, consumer bundle и package checks; в конце выводит общую длительность.
-- `generate:component` - scaffolding нового компонента: `npm run generate:component -- ComponentName`; при запуске без аргумента в интерактивном терминале спрашивает имя компонента.
+- `check:full` - полный обязательный локальный прогон: format, lint, structure, types, unit/e2e, consumer bundle и package checks; в конце выводит общую длительность. Visual regression запускается отдельно в Docker.
+- `generate:component` - scaffolding нового компонента: `npm run generate:component -- ComponentName`; при запуске без аргумента в интерактивном терминале спрашивает имя компонента, создаёт стартовый visual template и регистрирует его в Chromium snapshot-контуре.
 - `validate:components` - проверка структуры всех компонентов в `src/components` и публичного root API.
 - `storybook` - запуск Storybook из исходников.
 - `playground` - запуск Vite playground с hot reload.
@@ -206,3 +207,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `tests/e2e/constants.ts` - общие константы e2e: таймауты, задержки и платформенно-зависимый undo shortcut.
 - `tests/e2e/utils.ts` - общие helper-функции e2e: генерация playground scenario path, resolve CSS color token в текущей playground theme и click helper с паузой.
 - `tests/e2e/<ComponentName>/*.spec.ts` - component-level Playwright e2e проверки playground-сценариев. Конкретные сценарии компонентов здесь не расписываются.
+- `tests/visual/playground.spec.ts` - Chromium-only visual regression тест, который выбирает только помеченные visual-сценарии и сравнивает каждый ряд вариантов с committed Linux baseline.
+- `tests/visual/playground.spec.ts-snapshots/` - эталонные Linux-изображения специальных visual-сценариев для Chromium.
+- `playwright-visual-report/` - локальный HTML-report последнего visual-прогона; открывается через `npm run test:visual:report` и не хранится в git.
+- `playground/scenarios/visual/*Visual.template.tsx` - самостоятельные visual-матрицы, которые напрямую рендерят все конечные размеры, preset appearance и значимые состояния компонентов, не собирая Storybook templates.

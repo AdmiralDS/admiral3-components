@@ -45,6 +45,7 @@ bun.lockb
 # Playwright
 /test-results/
 /playwright-report/
+/playwright-visual-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/

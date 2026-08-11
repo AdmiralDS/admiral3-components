@@ -92,6 +92,7 @@ export const PlaygroundApp = () => {
                       key={item.id}
                       aria-current={isActive ? 'page' : undefined}
                       className={`playground-nav-link${isActive ? ' playground-nav-link_active' : ''}`}
+                      data-visual={item.visual ? '' : undefined}
                       href={`/?scenario=${encodeURIComponent(item.id)}`}
                       title={item.title}
                     >

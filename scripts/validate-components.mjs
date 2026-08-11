@@ -9,6 +9,7 @@ const componentsDir = join(rootDir, 'src', 'components');
 const rootIndexPath = join(rootDir, 'src', 'index.ts');
 const packageJsonPath = join(rootDir, 'package.json');
 const playgroundScenariosDir = join(rootDir, 'playground', 'scenarios');
+const visualScenariosIndexPath = join(playgroundScenariosDir, 'visual', 'index.tsx');
 const e2eDir = join(rootDir, 'tests', 'e2e');
 const packageImport = '@admiral-ds/admiral3-primitives';
 const internalExportSources = new Set(['./constants', './style']);
@@ -204,6 +205,7 @@ const publicDirectoryNames = getPublicDirectoryNames();
 const componentNames = publicDirectoryNames.filter((name) => existsSync(join(componentsDir, name, `${name}.tsx`)));
 const componentGroupNames = publicDirectoryNames.filter((name) => !componentNames.includes(name));
 const rootIndexContent = readProjectFile(rootIndexPath);
+const visualScenariosIndexContent = readProjectFile(visualScenariosIndexPath);
 const packageJson = readProjectJson(packageJsonPath);
 const packageExportKeys = Object.keys(packageJson.exports ?? {});
 const rootExportSources = getExportSources(rootIndexContent);
@@ -282,6 +284,25 @@ for (const componentName of componentNames) {
   }
 
   const playgroundScenarioPath = join(playgroundScenariosDir, `${componentKebabName}.tsx`);
+  const visualTemplatePath = join(playgroundScenariosDir, 'visual', `${componentName}Visual.template.tsx`);
+
+  if (!existsSync(visualTemplatePath)) {
+    errors.push(`${componentName}: missing ${formatPath(visualTemplatePath)}`);
+  } else {
+    const visualTemplateImports = getImports(readProjectFile(visualTemplatePath));
+
+    if (visualTemplateImports.some((item) => item.source.includes('/stories/'))) {
+      errors.push(
+        `${componentName}: ${formatPath(visualTemplatePath)} must render the component directly and must not compose Storybook templates.`,
+      );
+    }
+  }
+
+  if (!visualScenariosIndexContent.includes(`id: 'visual/${componentKebabName}'`)) {
+    errors.push(
+      `${componentName}: missing visual scenario "visual/${componentKebabName}" in ${formatPath(visualScenariosIndexPath)}`,
+    );
+  }
 
   // Если есть playground-сценарий, рядом должен быть e2e smoke-тест для этого сценария.
   if (existsSync(playgroundScenarioPath)) {
