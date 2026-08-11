@@ -140,10 +140,11 @@ Visual-тест снимает только playground-сценарии с яв�
 отдельный `*Visual.template.tsx` с матрицей размеров, appearance и значимых состояний. Обычные Storybook/playground
 templates в snapshot-контур автоматически не попадают.
 
-Локальные команды напрямую запускают Docker с `mcr.microsoft.com/playwright:v1.60.0-noble`; отдельный CI job использует
-тот же закрепленный image. `node_modules` монтируется отдельным анонимным volume и не меняет локальные зависимости.
-Поэтому committed baseline создается в Linux Chromium независимо от ОС разработчика. Перед обновлением baseline нужно
-вручную просмотреть изменившиеся изображения. В CI тот же HTML-report загружается как artifact
+Локальные команды напрямую запускают Docker с `mcr.microsoft.com/playwright:v1.60.0-noble` и явно фиксируют платформу
+`linux/amd64`; отдельный CI job использует тот же image и архитектуру. `node_modules` монтируется отдельным анонимным
+volume и не меняет локальные зависимости. Поэтому committed baseline создается в одинаковом Linux Chromium независимо
+от ОС и архитектуры компьютера разработчика. Перед обновлением baseline нужно вручную просмотреть изменившиеся
+изображения. В CI тот же HTML-report загружается как artifact
 `playwright-visual-report`.
 
 Visual template должен напрямую рендерить компонент и строить собственную матрицу всех конечных размеров, preset
