@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+const playgroundThemeStorageKey = 'admiral-playground-theme';
+
 const getScenarioId = (scenarioPath: string) => {
   const scenarioId = new URL(scenarioPath, 'http://localhost').searchParams.get('scenario');
 
@@ -30,8 +32,11 @@ test('playground scenarios match visual snapshots', async ({ page }) => {
   for (const scenarioPath of scenarioPaths) {
     for (const themeMode of themeModes) {
       await test.step(`${getScenarioId(scenarioPath)} / ${themeMode}`, async () => {
+        await page.evaluate(({ key, value }) => window.localStorage.setItem(key, value), {
+          key: playgroundThemeStorageKey,
+          value: themeMode,
+        });
         await page.goto(scenarioPath);
-        await page.locator('#playground-theme').selectOption(themeMode);
         await page.evaluate(() => document.fonts.ready);
 
         const sections = page.locator('.playground-preview section');

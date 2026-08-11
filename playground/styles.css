@@ -17,21 +17,26 @@ body {
 .playground-shell {
   display: flex;
   flex-direction: column;
+  width: 100%;
   min-height: 100dvh;
-  padding: 12px;
+  padding: 0 12px 12px;
   align-items: start;
   color: var(--admiral-color-neutral-text-1-rest);
   background: var(--admiral-color-neutral-base-1-rest);
 }
 
 .playground-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   width: 100%;
-  padding-bottom: 8px;
+  padding: 12px 0 8px;
   height: fit-content;
+  background: var(--admiral-color-neutral-base-1-rest);
   border-bottom: 1px solid var(--admiral-color-neutral-stroke-subtle-rest);
 }
 
@@ -85,15 +90,18 @@ body {
 }
 
 .playground-sidebar {
+  position: sticky;
+  top: 53px;
   align-self: start;
-  height: 100%;
+  max-height: calc(100dvh - 53px);
+  overflow-y: auto;
   padding: 4px;
   border-right: 1px solid var(--admiral-color-neutral-stroke-subtle-rest);
 }
 
 .playground-content {
-  padding: 8px;
   min-width: 0;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -155,6 +163,9 @@ body {
   }
 
   .playground-sidebar {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
     padding-right: 0;
     padding-bottom: 20px;
     border-right: 0;

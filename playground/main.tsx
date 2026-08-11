@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react';
+import { memo, StrictMode, useState } from 'react';
 
 import { themes, themeModes, type ThemeMode } from '@admiral-ds/admiral3-tokens';
 import { FontsSourceCodePro, FontsVTBGroup } from '@admiral-ds/admiral3-tokens/fonts';
@@ -19,6 +19,7 @@ const scenarioId = new URLSearchParams(window.location.search).get('scenario') ?
 const scenario = playgroundScenarios.find((item) => item.id === scenarioId);
 const cssThemeMode = (mode: ThemeMode) => mode.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 const playgroundThemeStorageKey = 'admiral-playground-theme';
+const playgroundSidebarStorageKey = 'admiral-playground-sidebar';
 const isThemeMode = (value: string | null): value is ThemeMode => themeModes.includes(value as ThemeMode);
 
 const getStoredThemeMode = (): ThemeMode => {
@@ -39,23 +40,51 @@ const storeThemeMode = (mode: ThemeMode) => {
   }
 };
 
+const getStoredSidebarOpen = () => {
+  try {
+    return window.localStorage.getItem(playgroundSidebarStorageKey) !== 'hidden';
+  } catch {
+    return true;
+  }
+};
+
+const storeSidebarOpen = (isOpen: boolean) => {
+  try {
+    window.localStorage.setItem(playgroundSidebarStorageKey, isOpen ? 'visible' : 'hidden');
+  } catch {
+    // Ошибки хранилища не должны мешать работе playground в ограниченном окружении браузера.
+  }
+};
+
 if (!scenario) {
   throw new Error(`Unknown playground scenario: ${scenarioId}`);
 }
 
 document.title = `${scenario.title} | Admiral Internal Playground`;
 
+const ScenarioPreview = memo(() => <div className="playground-preview">{scenario.render()}</div>);
+
 export const PlaygroundApp = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(getStoredSidebarOpen);
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredThemeMode);
+  const [fallbackTheme] = useState(() => themes[themeMode]);
 
   const handleThemeModeChange = (mode: ThemeMode) => {
     setThemeMode(mode);
     storeThemeMode(mode);
   };
 
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen((isOpen) => {
+      const nextIsOpen = !isOpen;
+
+      storeSidebarOpen(nextIsOpen);
+      return nextIsOpen;
+    });
+  };
+
   return (
-    <ThemeProvider theme={themes[themeMode]}>
+    <ThemeProvider theme={fallbackTheme}>
       <main className="playground-shell" data-admiral-theme={cssThemeMode(themeMode)}>
         <header className="playground-header">
           <h1 className="playground-page-title">Internal E2E Playground</h1>
@@ -75,7 +104,12 @@ export const PlaygroundApp = () => {
                 </option>
               ))}
             </select>
-            <button className="playground-toggle" onClick={() => setIsSidebarOpen((value) => !value)} type="button">
+            <button
+              aria-expanded={isSidebarOpen}
+              className="playground-toggle"
+              onClick={handleSidebarToggle}
+              type="button"
+            >
               {isSidebarOpen ? 'Hide menu' : 'Show menu'}
             </button>
           </div>
@@ -107,7 +141,7 @@ export const PlaygroundApp = () => {
             <div>
               {scenario.title} ({scenario.id})
             </div>
-            <div className="playground-preview">{scenario.render()}</div>
+            <ScenarioPreview />
           </section>
         </section>
       </main>
