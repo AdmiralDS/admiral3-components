@@ -29,6 +29,7 @@ const meta = {
     error: { control: { type: 'boolean' } },
     disabled: { control: { type: 'boolean' } },
     readOnly: { control: { type: 'boolean' } },
+    extraText: { control: { type: 'text' } },
   },
 } satisfies Meta<typeof CheckBox>;
 

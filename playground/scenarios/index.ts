@@ -8,10 +8,12 @@ import { linkScenarios } from './link';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { visualScenarios } from './visual';
 
 export type PlaygroundScenario = {
   id: string;
   title: string;
+  visual?: boolean;
   render: () => ReactElement;
 };
 
@@ -24,4 +26,5 @@ export const playgroundScenarios = [
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
+  ...visualScenarios,
 ];

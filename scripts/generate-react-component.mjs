@@ -85,6 +85,7 @@ const playgroundTemplateSourcePath = join(componentDir, `${componentName}Playgro
 const storyTargetPath = join(storiesDir, `${componentName}.stories.tsx`);
 const playgroundTemplateTargetPath = join(storiesDir, `${componentName}Playground.template.tsx`);
 const playgroundScenarioPath = join(rootDir, 'playground', 'scenarios', `${componentKebabName}.tsx`);
+const visualTemplatePath = join(rootDir, 'playground', 'scenarios', 'visual', `${componentName}Visual.template.tsx`);
 const e2eDir = join(rootDir, 'tests', 'e2e', componentName);
 const e2eSpecPath = join(e2eDir, `${componentKebabName}.spec.ts`);
 
@@ -94,6 +95,7 @@ const filesToProtect = [
   e2eSpecPath,
   storyTargetPath,
   playgroundTemplateTargetPath,
+  visualTemplatePath,
 ];
 
 // До запуска генератора проверяем все пути, которые могут быть перезаписаны.
@@ -163,6 +165,33 @@ const addSortedComponentExport = (content, exportLine) => {
   return `${lines.join('\n')}\n`;
 };
 
+/** Добавляет visual scenario id и сортирует manifest по имени ключа. */
+const addSortedVisualScenarioId = (content, propertyLine) => {
+  const lines = content.trimEnd().split('\n');
+  const closingIndex = lines.findIndex((line) => line === '} as const;');
+
+  if (closingIndex < 0) {
+    throw new Error('Cannot find VISUAL_SCENARIO_IDS closing line');
+  }
+
+  if (!lines.includes(propertyLine)) {
+    lines.splice(closingIndex, 0, propertyLine);
+  }
+
+  const propertyIndexes = lines
+    .map((line, index) => (/^ {2}[A-Za-z][A-Za-z0-9]*: 'visual\/[a-z0-9-]+',$/.test(line) ? index : -1))
+    .filter((index) => index >= 0);
+  const sortedProperties = propertyIndexes
+    .map((index) => lines[index])
+    .sort((first, second) => first.localeCompare(second));
+
+  propertyIndexes.forEach((lineIndex, index) => {
+    lines[lineIndex] = sortedProperties[index];
+  });
+
+  return `${lines.join('\n')}\n`;
+};
+
 /**
  * Подключает новый playground-сценарий к общему списку сценариев.
  *
@@ -192,6 +221,39 @@ const addPlaygroundScenarioToIndex = () => {
     );
 
   writeProjectFile(indexPath, nextContent);
+};
+
+/** Подключает visual template компонента к списку Chromium snapshot-сценариев. */
+const addVisualScenarioToIndex = () => {
+  const indexPath = 'playground/scenarios/visual/index.tsx';
+  const manifestPath = 'playground/scenarios/visual/manifest.ts';
+  const templateIdentifier = `${componentName}VisualTemplate`;
+  const importLine = `import { ${templateIdentifier} } from './${componentName}Visual.template';`;
+  const scenarioLine = `  { id: VISUAL_SCENARIO_IDS.${componentCamelName}, title: 'Visual / ${componentName}', visual: true, render: () => <${templateIdentifier} /> },`;
+  const content = readProjectFile(indexPath);
+
+  if (content.includes(importLine) || content.includes(`VISUAL_SCENARIO_IDS.${componentCamelName}`)) {
+    return;
+  }
+
+  const lines = content.split('\n');
+  const lastImportIndex = lines.findLastIndex((line) => line.startsWith('import '));
+  lines.splice(lastImportIndex + 1, 0, importLine);
+
+  const visualScenariosStart = lines.findIndex((line) => line.startsWith('export const visualScenarios'));
+  const visualScenariosEnd = lines.findIndex((line, index) => index > visualScenariosStart && line === '];');
+
+  if (visualScenariosStart < 0 || visualScenariosEnd < 0) {
+    throw new Error(`Cannot find visualScenarios in ${indexPath}`);
+  }
+
+  lines.splice(visualScenariosEnd, 0, scenarioLine);
+  writeProjectFile(indexPath, lines.join('\n'));
+
+  const manifestContent = readProjectFile(manifestPath);
+  const manifestLine = `  ${componentCamelName}: 'visual/${componentKebabName}',`;
+
+  writeProjectFile(manifestPath, addSortedVisualScenarioId(manifestContent, manifestLine));
 };
 
 /** Добавляет явный публичный subpath компонента в package exports. */
@@ -239,6 +301,26 @@ export const ${componentCamelName}Scenarios: PlaygroundScenario[] = [
   'utf8',
 );
 
+// Создаём отдельный template для visual regression. После уточнения API компонента его нужно расширить до матрицы
+// всех размеров, appearance и значимых состояний.
+writeFileSync(
+  visualTemplatePath,
+  `import { ${componentName} } from '@admiral-ds/admiral3-primitives';
+
+import { VisualLayout, VisualSection, VisualTitle } from './VisualLayout';
+
+export const ${componentName}VisualTemplate = () => (
+  <VisualLayout>
+    <VisualSection>
+      <VisualTitle>Default</VisualTitle>
+      <${componentName}>${componentName}</${componentName}>
+    </VisualSection>
+  </VisualLayout>
+);
+`,
+  'utf8',
+);
+
 // Создаём минимальный smoke e2e-тест для сценария, который был добавлен выше.
 mkdirSync(e2eDir, { recursive: true });
 writeFileSync(
@@ -271,5 +353,6 @@ addComponentPackageExport();
 
 // После создания файлов подключаем компонент к публичному API и playground aggregator.
 addPlaygroundScenarioToIndex();
+addVisualScenarioToIndex();
 
 console.log(`Generated ${componentName}.`);

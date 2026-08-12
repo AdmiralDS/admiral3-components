@@ -57,7 +57,8 @@ npm run generate:component -- ComponentName
 2. Заменить placeholder-реализацию на реальный API компонента.
 3. Проверить локальный export в `src/components/ComponentName/index.ts`, root export в `src/index.ts` и kebab-case
    component entrypoint в `package.json#exports`.
-4. Добавить или уточнить unit-тесты, Storybook stories, playground scenario и e2e-проверку.
+4. Добавить или уточнить unit-тесты, Storybook stories, playground scenario, e2e-проверку и visual-матрицу всех
+   поддерживаемых размеров, appearance и значимых состояний.
 5. Запустить `npm run check:full`.
 
 ### Самые важные правила
@@ -198,6 +199,18 @@ npm run check:full
 8. `npm run test:bundle`
 
 После завершения команда выводит общее время полного прогона, в том числе если одна из проверок завершилась ошибкой.
+
+Visual regression запускается отдельным Docker-контуром, чтобы локально и в CI использовать одинаковый Chromium image:
+
+```shell
+npm run test:visual
+```
+
+Локальный Docker-запуск фиксирует `linux/amd64`, соответствующий архитектуре GitHub Actions runner, чтобы растеризация
+текста в baseline не зависела от архитектуры компьютера разработчика.
+
+При подтвержденном изменении внешнего вида baseline обновляется через `npm run test:visual:update` и просматривается
+вручную перед добавлением в PR. Visual-контур не входит в `check:full`, но является отдельной обязательной CI-проверкой.
 
 `test:bundle` создаёт настоящий tarball через `npm pack`, устанавливает его в изолированный consumer project, собирает
 fixtures для root и component imports и автоматически проверяет совпадение их Rollup module graphs. Поэтому TypeScript и
@@ -433,11 +446,14 @@ npm run generate:component -- ComponentName
 3. Storybook-файлы `ComponentName.stories.tsx` и `ComponentNamePlayground.template.tsx`;
 4. playground-сценарий `playground/scenarios/component-name.tsx`;
 5. e2e smoke-тест `tests/e2e/ComponentName/component-name.spec.ts`;
-6. экспорт компонента в `src/index.ts`;
-7. подключение сценария в `playground/scenarios/index.ts`.
+6. visual template `playground/scenarios/visual/ComponentNameVisual.template.tsx`;
+7. экспорт компонента в `src/index.ts`;
+8. подключение обычного и visual-сценариев к соответствующим aggregators.
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
-Сгенерированный код является стартовым шаблоном. После генерации нужно заменить placeholder-реализацию на фактический API компонента, расширить stories/tests/e2e под реальные состояния и запустить обязательные проверки.
+Сгенерированный код является стартовым шаблоном. После генерации нужно заменить placeholder-реализацию на фактический
+API компонента, расширить stories/tests/e2e и заменить default visual-пример матрицей всех поддерживаемых размеров,
+appearance и значимых состояний, затем запустить обязательные проверки.
 
 Структурные правила компонента проверяются командой:
 
