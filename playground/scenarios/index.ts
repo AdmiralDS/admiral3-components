@@ -6,6 +6,7 @@ import { buttonScenarios } from './button';
 import { linkScenarios } from './link';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { listScenarios } from './list';
 
 export type PlaygroundScenario = {
   id: string;
@@ -19,5 +20,4 @@ export const playgroundScenarios = [
   ...buttonScenarios,
   ...linkScenarios,
   ...skeletonScenarios,
-  ...spinnerScenarios,
-];
+  ...spinnerScenarios,, ...listScenarios];
