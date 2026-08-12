@@ -57,7 +57,8 @@ npm run generate:component -- ComponentName
 2. Заменить placeholder-реализацию на реальный API компонента.
 3. Проверить локальный export в `src/components/ComponentName/index.ts`, root export в `src/index.ts` и kebab-case
    component entrypoint в `package.json#exports`.
-4. Добавить или уточнить unit-тесты, Storybook stories, playground scenario и e2e-проверку.
+4. Добавить или уточнить unit-тесты, Storybook stories, playground scenario, e2e-проверку и visual-матрицу всех
+   поддерживаемых размеров, appearance и значимых состояний.
 5. Запустить `npm run check:full`.
 
 ### Самые важные правила
@@ -69,6 +70,17 @@ npm run generate:component -- ComponentName
 5. Импортируйте компоненты в stories/templates как потребитель: из `@admiral-ds/admiral3-primitives`.
 6. Добавляйте только явные component subpaths; внутренние файлы компонента не должны появляться в `package.json#exports`.
 7. Не коммитьте изменения, если обязательные проверки не проходили или падали.
+
+Общие внутренние TypeScript-утилиты размещаются в `src/utils` и не добавляются в публичный root API без отдельного
+решения о поддержке их внешнего контракта.
+
+Общие внутренние styled-примитивы компонентов размещаются в `src/components/_internal`. Они импортируются только
+реализациями компонентов и не добавляются в component barrels, root API или `package.json#exports`.
+
+Публичные вспомогательные компоненты размещаются в `src/components/HelperComponents`. `SelectionControlInformer`
+используется во внешней композиции sibling-элементом относительно `label`: его hover-зона не должна входить в область
+переключения поля. Для этой внешней композиции рядом с ним экспортируется `SelectionControlLayout`. До появления `Hint`
+текст подсказки выводится нативным `title`.
 
 ### Где искать детали
 
@@ -188,11 +200,23 @@ npm run check:full
 
 После завершения команда выводит общее время полного прогона, в том числе если одна из проверок завершилась ошибкой.
 
+Visual regression запускается отдельным Docker-контуром, чтобы локально и в CI использовать одинаковый Chromium image:
+
+```shell
+npm run test:visual
+```
+
+Локальный Docker-запуск фиксирует `linux/amd64`, соответствующий архитектуре GitHub Actions runner, чтобы растеризация
+текста в baseline не зависела от архитектуры компьютера разработчика.
+
+При подтвержденном изменении внешнего вида baseline обновляется через `npm run test:visual:update` и просматривается
+вручную перед добавлением в PR. Visual-контур не входит в `check:full`, но является отдельной обязательной CI-проверкой.
+
 `test:bundle` создаёт настоящий tarball через `npm pack`, устанавливает его в изолированный consumer project, собирает
 fixtures для root и component imports и автоматически проверяет совпадение их Rollup module graphs. Поэтому TypeScript и
 Vite проверяют именно публикуемый пакет, включая транзитивные JS chunks и declaration-файлы, а не локальный package
 self-reference. Эта же команда выводит raw и gzip размеры standalone bundle каждого публичного component subpath без peer
-dependencies. Перед итоговой таблицей команда печатает списки Rollup modules для root и component subpath imports каждого
+dependencies, но в baseline сохраняет только стабильный raw-размер. Перед итоговой таблицей команда печатает списки Rollup modules для root и component subpath imports каждого
 компонента. Если списки совпадают, они печатаются один раз; оба варианта выводятся только при расхождении. После успешной
 автоматической проверки состав каждого графа нужно просмотреть вручную и убедиться, что в component bundle не попали
 лишние модули.
@@ -256,6 +280,17 @@ npm run test:bundle
 
 Интерактивный primitive должен использовать подходящий нативный HTML-элемент. Если у элемента нет нативного disabled-состояния, компонент обязан явно выставлять доступное состояние (`aria-disabled`), исключать его из tab order и блокировать действие.
 
+Для disabled-состояния интерактивного компонента используйте `cursor: not-allowed` на всей интерактивной области.
+
+Дефолтные DOM- и accessibility-атрибуты задавайте до spread пользовательских props, чтобы потребитель мог их
+переопределить. После `{...props}` оставляйте только внутренние props, изменение которых нарушит контракт или поведение
+компонента.
+
+Обязательный паттерн для boolean `data-*`-маркеров: добавляйте атрибут только для активного состояния,
+например `data-disabled={disabled ? '' : undefined}`. В стилях проверяйте его по наличию — `[data-disabled]`.
+Не передавайте boolean напрямую и не рендерите строковое значение `"false"`, поскольку селектор по наличию атрибута
+сработает и для `data-disabled="false"`.
+
 Типографика всегда применяется через готовый объект стиля из токенов, например `textStyles.body.body2Long`. Нельзя вручную разбивать типографику на отдельные свойства `font-family`, `font-weight`, `font-size`, `line-height`, если в токенах уже есть соответствующий объект стиля.
 
 ### Обязательный порядок перед PR
@@ -304,8 +339,9 @@ manifest; ручное добавление entry в build config не треб�
 ## Контроль размера consumer bundles
 
 `bundle-size-baseline.json` — committed снимок размеров публичных component subpaths. Он нужен, чтобы рост кода компонента
-не терялся в общем размере библиотеки и был виден в diff конкретного PR. Для каждого subpath файл хранит raw- и
-gzip-размер consumer bundle в байтах.
+не терялся в общем размере библиотеки и был виден в diff конкретного PR. Для каждого subpath файл хранит raw-размер
+consumer bundle в байтах. Gzip-размер выводится только для справки: он зависит от версии и настроек инструмента сжатия,
+поэтому не используется как committed baseline.
 
 Размер измеряется командой `test:bundle` по фактическому npm tarball: пакет устанавливается во временный consumer project,
 а peer dependencies исключаются из bundle. Поэтому baseline отражает собственный опубликованный код компонента и его
@@ -317,7 +353,7 @@ gzip-размер consumer bundle в байтах.
 - новый component subpath автоматически добавляется;
 - удалённый subpath автоматически удаляется;
 - уменьшение и незначительный рост размера обновляют baseline без ошибки;
-- значительным ростом считается одновременное увеличение gzip более чем на 10% и более чем на 1 KiB.
+- значительным ростом считается одновременное увеличение raw-размера более чем на 10% и более чем на 1 KiB.
 
 При значительном росте baseline также обновляется, но `test:bundle` завершается с ошибкой. Изучите изменение
 `bundle-size-baseline.json` и состав module graph в выводе команды. Если рост вызван ошибкой, отмените измения baseline, исправьте реализацию и снова
@@ -410,11 +446,14 @@ npm run generate:component -- ComponentName
 3. Storybook-файлы `ComponentName.stories.tsx` и `ComponentNamePlayground.template.tsx`;
 4. playground-сценарий `playground/scenarios/component-name.tsx`;
 5. e2e smoke-тест `tests/e2e/ComponentName/component-name.spec.ts`;
-6. экспорт компонента в `src/index.ts`;
-7. подключение сценария в `playground/scenarios/index.ts`.
+6. visual template `playground/scenarios/visual/ComponentNameVisual.template.tsx`;
+7. экспорт компонента в `src/index.ts`;
+8. подключение обычного и visual-сценариев к соответствующим aggregators.
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
-Сгенерированный код является стартовым шаблоном. После генерации нужно заменить placeholder-реализацию на фактический API компонента, расширить stories/tests/e2e под реальные состояния и запустить обязательные проверки.
+Сгенерированный код является стартовым шаблоном. После генерации нужно заменить placeholder-реализацию на фактический
+API компонента, расширить stories/tests/e2e и заменить default visual-пример матрицей всех поддерживаемых размеров,
+appearance и значимых состояний, затем запустить обязательные проверки.
 
 Структурные правила компонента проверяются командой:
 

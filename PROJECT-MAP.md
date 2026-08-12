@@ -36,8 +36,10 @@ Template-файлы для Storybook и playground в этом документ�
 ├── scripts/                  # Node scripts для проектной автоматизации
 ├── src/                      # Исходный код публичного API, компонентов и тестовых настроек
 │   ├── components/           # Компоненты библиотеки
+│   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
 │   ├── test/                 # Vitest setup
-│   └── theme/                # Helpers для CSS token fallback
+│   ├── theme/                # Helpers для CSS token fallback
+│   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
 ├── tests/                    # E2E-тесты Playwright и документация по тестам
 ├── package.json              # npm package manifest, exports, scripts, dependencies
 ├── vite.config.ts            # Vite library build
@@ -97,22 +99,23 @@ Storybook и playground импортируют пакет через alias `@adm
 - `CONTRIBUTING.md` - краткий стартовый чек-лист и обязательные правила внесения изменений: commit style, проверки перед PR, release flow, accessibility, порядок добавления новых компонентов, Storybook/playground/e2e правила.
 - `generate-react-cli.json` - конфигурация `generate-react-cli` для scaffolding primitive-компонентов по локальным templates.
 - `LICENSE` - лицензионный файл пакета.
-- `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw/gzip размеров публичных component
-  subpaths; существенным считается одновременный рост gzip более чем на 10% и более чем на 1 KiB.
+- `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw-размеров публичных component
+  subpaths; существенным считается одновременный рост raw-размера более чем на 10% и более чем на 1 KiB.
 - `PROJECT-MAP.md` - текущая карта структуры проекта и назначений файлов.
 - `README.md` - пользовательская документация пакета: установка, peer dependencies, выбор между root import и публичным component subpath import и ссылки на contributor/test docs. README не перечисляет все компоненты пакета.
 - `eslint.config.js` - flat config ESLint. Подключает TypeScript, import rules, React hooks, React Refresh, Storybook, Prettier и задает правила сортировки импортов, запрет `any`, циклов и дублей импортов.
 - `package-lock.json` - lockfile npm. Фиксирует точные версии зависимостей и должен меняться только вместе с изменениями зависимостей или npm metadata.
 - `package.json` - manifest npm-пакета. Описывает root/component `exports`, публикуемые файлы, side effects, scripts, peer/dev dependencies, repository metadata и publish config.
 - `playwright.config.ts` - конфигурация e2e тестов Playwright. Указывает `tests/e2e`, базовый URL playground, браузерные проекты, timeout, reporter и webServer `npm run playground:serve`.
+- `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с точным сравнением пикселей; тест снимает ряды `VisualSamples` во всех theme modes playground.
 - `scripts/check-full.mjs` - последовательно запускает все проверки из `check:full`, останавливается на первой ошибке и выводит общую длительность прогона.
-- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создает component/story/playground/e2e scaffolding и обновляет root export, component subpath и playground aggregator.
+- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding и обновляет root export, component subpath, playground и visual aggregators.
 - `scripts/test-tree-shaking.mjs` - consumer integration check, который создаёт и устанавливает npm tarball в изолированный
   consumer project, проверяет TypeScript resolution всех component subpaths и сравнивает Rollup module graphs
   root/component imports; TypeScript parser читает публичные component barrels, после чего один consumer fixture проверяет
   все найденные value/type exports, перед итоговой таблицей печатается общий список модулей совпавших сборок или оба списка
   при расхождении, выводится standalone raw/gzip размер каждого публичного component subpath без peer dependencies,
-  обновляется `bundle-size-baseline.json`, проверяется существенная регрессия gzip и напоминается вручную проверить состав
+  обновляется `bundle-size-baseline.json`, проверяется существенная регрессия raw-размера и напоминается вручную проверить состав
   графов.
 - `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels и полного соответствия явных component subpaths реальным component directories.
 - `scripts/validate-package.mjs` - проверка состава npm tarball, существования всех публичных export targets и их
@@ -161,8 +164,8 @@ Storybook и playground импортируют пакет через alias `@adm
 ## npm scripts
 
 - `check:fix` - автоисправление форматирования и ESLint.
-- `check:full` - полный обязательный локальный прогон: format, lint, structure, types, unit/e2e, consumer bundle и package checks; в конце выводит общую длительность.
-- `generate:component` - scaffolding нового компонента: `npm run generate:component -- ComponentName`; при запуске без аргумента в интерактивном терминале спрашивает имя компонента.
+- `check:full` - полный обязательный локальный прогон: format, lint, structure, types, unit/e2e, consumer bundle и package checks; в конце выводит общую длительность. Visual regression запускается отдельно в Docker.
+- `generate:component` - scaffolding нового компонента: `npm run generate:component -- ComponentName`; при запуске без аргумента в интерактивном терминале спрашивает имя компонента, создаёт стартовый visual template и регистрирует его в Chromium snapshot-контуре.
 - `validate:components` - проверка структуры всех компонентов в `src/components` и публичного root API.
 - `storybook` - запуск Storybook из исходников.
 - `playground` - запуск Vite playground с hot reload.
@@ -173,6 +176,8 @@ Storybook и playground импортируют пакет через alias `@adm
 
 - `src/index.ts` - root public API. Реэкспортирует публичные component barrels; наружу попадают компоненты, props и публичные типы, но не внутренние constants, style helpers и styled props.
 - `src/theme/cssToken.ts` - helper для CSS custom property с fallback на значение из `styled-components` theme.
+- `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.
+- `src/utils/refSetter.test.ts` - unit-тесты синхронизации и очистки refs.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.
 
@@ -180,8 +185,17 @@ Storybook и playground импортируют пакет через alias `@adm
 
 - `src/components/<ComponentName>/` - папка отдельного primitive-компонента. Обычно содержит implementation, публичный barrel, типы, constants, styles, unit tests и Storybook templates/stories.
 - `src/components/<ComponentName>/index.ts` - локальный публичный barrel компонента. Через него экспортируются сам компонент, props и публичные типы.
+- Реализации компонентов задают дефолтные DOM- и accessibility-атрибуты до spread пользовательских props; после spread
+  остаются только обязательные внутренние props, защищающие контракт компонента.
+- Disabled-состояния интерактивных компонентов используют `cursor: not-allowed` на всей интерактивной области.
+- Boolean `data-*`-состояния представлены маркерами: атрибут присутствует только в активном состоянии, а CSS использует
+  селектор по наличию.
 - `src/components/<ComponentName>/stories/` - Storybook CSF и render templates компонента. Templates могут переиспользоваться в playground, но их внутренняя демонстрационная разметка здесь не разбирается.
 - `src/components/stories/` - shared helpers для story templates и playground-сценариев. Не является публичным API библиотеки.
+- `src/components/HelperComponents/` - публичные вспомогательные компоненты для внешней композиции, включая
+  `SelectionControlInformer` и `SelectionControlLayout`.
+- `src/components/_internal/InputAtoms/` - внутренняя layout-композиция и общие размерные параметры полей выбора. Не
+  экспортируется из публичного API библиотеки.
 
 ## Test setup
 
@@ -193,3 +207,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `tests/e2e/constants.ts` - общие константы e2e: таймауты, задержки и платформенно-зависимый undo shortcut.
 - `tests/e2e/utils.ts` - общие helper-функции e2e: генерация playground scenario path, resolve CSS color token в текущей playground theme и click helper с паузой.
 - `tests/e2e/<ComponentName>/*.spec.ts` - component-level Playwright e2e проверки playground-сценариев. Конкретные сценарии компонентов здесь не расписываются.
+- `tests/visual/playground.spec.ts` - Chromium-only visual regression тест, который выбирает только помеченные visual-сценарии и сравнивает каждый ряд вариантов с committed Linux baseline.
+- `tests/visual/playground.spec.ts-snapshots/` - эталонные Linux-изображения специальных visual-сценариев для Chromium.
+- `playwright-visual-report/` - локальный HTML-report последнего visual-прогона; открывается через `npm run test:visual:report` и не хранится в git.
+- `playground/scenarios/visual/*Visual.template.tsx` - самостоятельные visual-матрицы, которые напрямую рендерят все конечные размеры, preset appearance и значимые состояния компонентов, не собирая Storybook templates.

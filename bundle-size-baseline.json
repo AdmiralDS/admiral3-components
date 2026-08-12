@@ -1,27 +1,30 @@
 {
   "components": {
     "badge": {
-      "gzipBytes": 934,
       "rawBytes": 3394
     },
     "badge-dot": {
-      "gzipBytes": 673,
       "rawBytes": 1422
     },
     "button": {
-      "gzipBytes": 5513,
       "rawBytes": 22241
     },
+    "check-box": {
+      "rawBytes": 9430
+    },
+    "helper-components": {
+      "rawBytes": 537
+    },
     "link": {
-      "gzipBytes": 960,
       "rawBytes": 2147
     },
+    "radio-button": {
+      "rawBytes": 6217
+    },
     "skeleton": {
-      "gzipBytes": 550,
       "rawBytes": 1298
     },
     "spinner": {
-      "gzipBytes": 2962,
       "rawBytes": 6068
     }
   },

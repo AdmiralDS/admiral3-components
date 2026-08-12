@@ -5,11 +5,11 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
-    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./package.json": "./package.json",
     "./badge": {
       "types": "./dist/components/Badge/index.d.ts",
       "import": "./dist/components/Badge/index.js"
@@ -22,9 +22,21 @@
       "types": "./dist/components/Button/index.d.ts",
       "import": "./dist/components/Button/index.js"
     },
+    "./check-box": {
+      "types": "./dist/components/CheckBox/index.d.ts",
+      "import": "./dist/components/CheckBox/index.js"
+    },
+    "./helper-components": {
+      "types": "./dist/components/HelperComponents/index.d.ts",
+      "import": "./dist/components/HelperComponents/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
+    },
+    "./radio-button": {
+      "types": "./dist/components/RadioButton/index.d.ts",
+      "import": "./dist/components/RadioButton/index.js"
     },
     "./skeleton": {
       "types": "./dist/components/Skeleton/index.d.ts",
@@ -56,6 +68,9 @@
   "scripts": {
     "check:fix": "npm run format && npm run lint:fix",
     "check:full": "node scripts/check-full.mjs",
+    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=changed'",
+    "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run'",
+    "test:visual:report": "playwright show-report playwright-visual-report",
     "storybook": "storybook dev -p 6006",
     "playground": "vite --config vite.playground.config.ts",
     "generate:component": "node scripts/generate-react-component.mjs",
@@ -69,6 +84,7 @@
     "test:bundle": "node scripts/test-tree-shaking.mjs",
     "test:e2e": "npm run build && npm run playground:build && playwright test",
     "test:e2e-ui": "npm run build && npm run playground:build && playwright test --ui",
+    "test:visual:run": "playwright test --config=playwright.visual.config.ts",
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
     "format": "prettier . --write",
