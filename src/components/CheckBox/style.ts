@@ -1,8 +1,8 @@
-import { animation } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
 import { CHECK_BOX_DIMENSION_PARAMETERS } from './constants';
 import type { StyledCheckBoxProps } from './types';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 import { NativeInput } from '../_internal/InputAtoms';
 
@@ -34,8 +34,6 @@ const iconColor = cssToken(
   (theme) => theme.color.neutral.text.staticWhite._1,
 );
 const borderRadius = cssToken('--admiral-radius-by-base-4-small', (theme) => theme.radius.byBase['4'].small);
-const transitionDuration = `var(--admiral-animation-motion-duration-short-2, ${animation.motion.duration.short_2}ms)`;
-const transitionEasing = `var(--admiral-animation-motion-easing-linear, ${animation.motion.easing.linear})`;
 
 // TODO При разработке CheckBoxGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
 
@@ -86,8 +84,8 @@ export const Control = styled.span<{ $error: boolean }>`
   background: ${backgroundRest};
   color: ${iconColor};
   transition:
-    background-color ${transitionDuration} ${transitionEasing},
-    border-color ${transitionDuration} ${transitionEasing};
+    background-color ${hoverPressLeaveTransition},
+    border-color ${hoverPressLeaveTransition};
   pointer-events: none;
   width: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlSize}px;
   height: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlSize}px;

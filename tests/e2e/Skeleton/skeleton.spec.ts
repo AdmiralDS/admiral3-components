@@ -5,7 +5,7 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 const defaultScenarioId = 'skeleton/default';
 const skeletonRestBackgroundColorToken = '--admiral-color-neutral-base-opacity-rest';
 const skeletonHoverBackgroundColorToken = '--admiral-color-neutral-base-opacity-hover';
-const skeletonAnimationDuration = '2s';
+const skeletonAnimationDuration = '4s';
 const skeletonAnimationTimingFunction = 'ease';
 const skeletonAnimationIterationCount = 'infinite';
 
@@ -85,8 +85,8 @@ test.describe('Skeleton playground', () => {
     // Проверка альфа-канала с допуском на микроокругление браузеров
     expect(Math.abs(actualA - expectedA)).toBeLessThan(0.01);
 
-    // Перематываем анимацию на середину (50% / 1 секунда для анимации в 2s)
-    await setAnimationTime(skeleton, 1000);
+    // Перематываем анимацию на середину (50% / 2 секунды для анимации в 4s)
+    await setAnimationTime(skeleton, 2000);
     const actualBackgroundColor2 = await skeleton.evaluate((el) => getComputedStyle(el).backgroundColor);
     const expectedBackgroundColor2 = await resolveCssColorToken(page, skeletonHoverBackgroundColorToken);
     const [actualR2, actualG2, actualB2, actualA2] = parseRgba(actualBackgroundColor2);
@@ -117,8 +117,8 @@ test.describe('Skeleton playground', () => {
     // Проверка альфа-канала с допуском на микроокругление браузеров
     expect(Math.abs(actualA - expectedA)).toBeLessThan(0.01);
 
-    // Перематываем анимацию на середину (50% / 1 секунда для анимации в 2s)
-    await setAnimationTime(skeleton, 1000);
+    // Перематываем анимацию на середину (50% / 2 секунды для анимации в 4s)
+    await setAnimationTime(skeleton, 2000);
     const actualBackgroundColor2 = await skeleton.evaluate((el) => getComputedStyle(el).backgroundColor);
     const expectedBackgroundColor2 = await resolveCssColorToken(page, skeletonHoverBackgroundColorToken);
     const [actualR2, actualG2, actualB2, actualA2] = parseRgba(actualBackgroundColor2);

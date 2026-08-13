@@ -24,7 +24,7 @@ const skeletonAnimation = (p: ExecutionContext & object) => keyframes`
 `;
 /** Skeleton-анимация для встраивания в стили отдельных компонентов */
 export const skeletonAnimationMixin = css`
-  animation: ${(p) => skeletonAnimation(p)} 2s ease infinite;
+  animation: ${(p) => skeletonAnimation(p)} 4s ease infinite;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     &&& {

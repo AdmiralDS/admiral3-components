@@ -38,7 +38,7 @@ Template-файлы для Storybook и playground в этом документ�
 │   ├── components/           # Компоненты библиотеки
 │   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
 │   ├── test/                 # Vitest setup
-│   ├── theme/                # Helpers для CSS token fallback
+│   ├── theme/                # Helpers для CSS token fallback и системных transition
 │   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
 ├── tests/                    # E2E-тесты Playwright и документация по тестам
 ├── package.json              # npm package manifest, exports, scripts, dependencies
@@ -176,6 +176,7 @@ Storybook и playground импортируют пакет через alias `@adm
 
 - `src/index.ts` - root public API. Реэкспортирует публичные component barrels; наружу попадают компоненты, props и публичные типы, но не внутренние constants, style helpers и styled props.
 - `src/theme/cssToken.ts` - helper для CSS custom property с fallback на значение из `styled-components` theme.
+- `src/theme/animation.ts` - CSS-variable wrappers всех animation-токенов и внутренняя база transition для Hover, Press и Leave.
 - `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.
 - `src/utils/refSetter.test.ts` - unit-тесты синхронизации и очистки refs.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.

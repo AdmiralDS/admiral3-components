@@ -1,8 +1,8 @@
-import { animation } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
 import { RADIO_BUTTON_DIMENSION_PARAMETERS } from './constants';
 import type { StyledRadioButtonProps } from './types';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 import { NativeInput } from '../_internal/InputAtoms';
 
@@ -29,8 +29,6 @@ const textDisabled = cssToken(
   '--admiral-color-neutral-text-disable-rest',
   (theme) => theme.color.neutral.text.disable.rest,
 );
-const transitionDuration = `var(--admiral-animation-motion-duration-short-2, ${animation.motion.duration.short_2}ms)`;
-const transitionEasing = `var(--admiral-animation-motion-easing-linear, ${animation.motion.easing.linear})`;
 
 // TODO При разработке RadioGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
 
@@ -68,8 +66,8 @@ export const Control = styled.span<{ $error: boolean }>`
   flex: 0 0 auto;
   border-radius: 50%;
   transition:
-    background-color ${transitionDuration} ${transitionEasing},
-    box-shadow ${transitionDuration} ${transitionEasing};
+    background-color ${hoverPressLeaveTransition},
+    box-shadow ${hoverPressLeaveTransition};
   pointer-events: none;
   width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.controlSize}px;
   height: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.controlSize}px;
