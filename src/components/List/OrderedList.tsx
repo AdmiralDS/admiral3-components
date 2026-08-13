@@ -14,6 +14,7 @@ export const OrderedList = forwardRef<HTMLOListElement, OrderedListProps>(
     return (
       <OrderedListComponent
         ref={ref}
+        role="list"
         data-dimension={dimension}
         $dimension={dimension}
         $styleType={styleType}

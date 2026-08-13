@@ -14,6 +14,7 @@ export const UnorderedList = forwardRef<HTMLUListElement, UnorderedListProps>(
     return (
       <UnorderedListComponent
         ref={ref}
+        role="list"
         data-dimension={dimension}
         $dimension={dimension}
         $styleType={styleType}

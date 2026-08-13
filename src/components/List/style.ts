@@ -1,8 +1,21 @@
 import styled, { css } from 'styled-components';
 
 import { LIST_DIMENSION_PARAMETERS } from './constants';
-import type { StyledListProps, StyledListIconProps } from './types';
+import type { OrderedListType, StyledListProps, StyledListIconProps, UnorderedListType } from './types';
 import { cssToken } from '../../theme/cssToken';
+
+export const listItemColor = cssToken(
+  '--admiral-color-neutral-text-1-rest',
+  (theme) => theme.color.neutral.text._1.rest,
+);
+export const listIconColor = cssToken(
+  '--admiral-color-neutral-text-2-rest',
+  (theme) => theme.color.neutral.text._2.rest,
+);
+export const listBulletMarkerColor = cssToken(
+  '--admiral-color-neutral-base-4-rest',
+  (theme) => theme.color.neutral.base._4.rest,
+);
 
 const cyrillicStyle = css`
   @counter-style lower-cyrillic {
@@ -15,38 +28,39 @@ const cyrillicStyle = css`
   }
 `;
 
-function getContent($styleType: StyledListProps['$styleType']) {
-  switch ($styleType) {
-    case 'lower-letters':
-      return css`
-        ${cyrillicStyle}
-        content: counter(admiral-list-counter, lower-cyrillic) ')';
-      `;
-    case 'upper-letters':
-      return css`
-        ${cyrillicStyle}
-        content: counter(admiral-list-counter, upper-cyrillic) ')';
-      `;
-    case 'virgule':
-      return css`
-        content: '—';
-      `;
-    case 'numbers':
-      return css`
-        content: counters(admiral-list-counter, '.') '.';
-      `;
-    case 'bullet':
-      return css`
-        content: '•';
-        /** Размер шрифта, при котором достигается необходимый размер точки */
-        font-size: 18px;
-        color: ${cssToken('--admiral-color-neutral-base-4-rest', (theme) => theme.color.neutral.base._4.rest)};
-      `;
-    case 'icon':
-    default:
-      return 'content: none;';
-  }
-}
+const orderedMarkerStyles = {
+  numbers: css`
+    content: counters(admiral-list-counter, '.') '.';
+  `,
+  'lower-letters': css`
+    ${cyrillicStyle}
+    content: counter(admiral-list-counter, lower-cyrillic) ')';
+  `,
+  'upper-letters': css`
+    ${cyrillicStyle}
+    content: counter(admiral-list-counter, upper-cyrillic) ')';
+  `,
+} satisfies Record<OrderedListType, ReturnType<typeof css>>;
+
+const unorderedMarkerStyles = {
+  bullet: css`
+    content: '•';
+    /** Размер шрифта, при котором достигается необходимый размер точки */
+    font-size: 18px;
+    color: ${listBulletMarkerColor};
+  `,
+  virgule: css`
+    content: '—';
+  `,
+  icon: css`
+    content: none;
+  `,
+} satisfies Record<UnorderedListType, ReturnType<typeof css>>;
+
+const markerStyles: Record<StyledListProps['$styleType'], ReturnType<typeof css>> = {
+  ...orderedMarkerStyles,
+  ...unorderedMarkerStyles,
+};
 
 const listMixin = css<StyledListProps>`
   display: flex;
@@ -67,7 +81,7 @@ const listMarkerMixin = css<StyledListProps>`
   display: inline-flex;
   flex-shrink: 0;
   margin-inline-end: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].gap}px;
-  ${(p) => getContent(p.$styleType)}
+  ${(p) => markerStyles[p.$styleType]}
   height: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px;
 `;
 
@@ -93,7 +107,7 @@ export const UnorderedListComponent = styled.ul<StyledListProps>`
 `;
 
 export const ListItemComponent = styled.li`
-  color: ${cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest)};
+  color: ${listItemColor};
   counter-increment: admiral-list-counter 1;
   display: inline-flex;
 
@@ -132,11 +146,5 @@ export const Icon = styled.svg<StyledListIconProps>`
     margin-inline-end: ${LIST_DIMENSION_PARAMETERS['xs'].gap}px;
   }
   vertical-align: bottom;
-  *[fill^='#'],
-  *[fill='currentColor'] {
-    fill: ${(p) =>
-      p.$color
-        ? p.$color
-        : cssToken('--admiral-color-neutral-test-2-rest', (theme) => theme.color.neutral.text._2.rest)};
-  }
+  color: ${(p) => (p.$color ? p.$color : listIconColor)};
 `;

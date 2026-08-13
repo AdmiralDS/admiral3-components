@@ -13,7 +13,7 @@ import type { ListItemProps } from './types';
  **/
 export const ListItem = forwardRef<HTMLLIElement, ListItemProps>(({ children, ...props }, ref) => {
   return (
-    <ListItemComponent ref={ref} {...props}>
+    <ListItemComponent ref={ref} role="listitem" {...props}>
       <ListItemContent>{children}</ListItemContent>
     </ListItemComponent>
   );

@@ -1,4 +1,12 @@
-import type { HTMLAttributes, SVGAttributes, ReactNode, CSSProperties } from 'react';
+import type {
+  ComponentType,
+  CSSProperties,
+  HTMLAttributes,
+  LiHTMLAttributes,
+  OlHTMLAttributes,
+  ReactNode,
+  SVGProps,
+} from 'react';
 
 import type { css } from 'styled-components';
 
@@ -8,7 +16,7 @@ export type ListDimension = (typeof LIST_DIMENSIONS)[number];
 export type OrderedListType = (typeof ORDERED_LIST_TYPE)[number];
 export type UnorderedListType = (typeof UNORDERED_LIST_TYPE)[number];
 
-export interface OrderedListProps extends HTMLAttributes<HTMLOListElement> {
+export interface OrderedListProps extends OlHTMLAttributes<HTMLOListElement> {
   /** Размер компонента */
   dimension?: ListDimension;
   /** Стиль маркеров в списке */
@@ -37,14 +45,18 @@ export interface StyledListProps {
   $markerCssMixin?: ReturnType<typeof css>;
 }
 
-export interface ListItemProps extends HTMLAttributes<HTMLLIElement> {
+export interface ListItemProps extends LiHTMLAttributes<HTMLLIElement> {
   /** Содержимое компонента. */
   children?: ReactNode;
 }
 
-export interface ListIconProps extends SVGAttributes<SVGSVGElement> {
+/**
+ * ListIcon является декоративным и скрыт от accessibility tree.
+ * Accessibility-атрибуты использовать не следует.
+ */
+export interface ListIconProps extends SVGProps<SVGSVGElement> {
   /** Элемент, который будет отрисован в качестве иконки */
-  as: React.ElementType;
+  as: ComponentType<SVGProps<SVGSVGElement>>;
   /** Цвет иконки */
   color?: string;
 }
