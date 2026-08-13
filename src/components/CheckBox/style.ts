@@ -35,9 +35,7 @@ const iconColor = cssToken(
 );
 const borderRadius = cssToken('--admiral-radius-by-base-4-small', (theme) => theme.radius.byBase['4'].small);
 const transitionDuration = `var(--admiral-animation-motion-duration-short-2, ${animation.motion.duration.short_2}ms)`;
-const transitionEasing = `var(--admiral-animation-motion-easing-linear, cubic-bezier(${animation.motion.easing.linear.join(
-  ', ',
-)}))`;
+const transitionEasing = `var(--admiral-animation-motion-easing-linear, ${animation.motion.easing.linear})`;
 
 // TODO При разработке CheckBoxGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
 
