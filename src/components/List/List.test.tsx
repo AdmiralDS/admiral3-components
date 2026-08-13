@@ -75,6 +75,17 @@ describe('List components', () => {
 
       expect(screen.getByTestId('ordered-list')).toHaveStyle({ gap: '1.5rem' });
     });
+
+    it('starts numbering from the start attribute', () => {
+      render(
+        <OrderedList data-testid="ordered-list" start={5}>
+          <ListItem>Item</ListItem>
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('ordered-list')).toHaveAttribute('start', '5');
+      expect(screen.getByTestId('ordered-list')).toHaveStyle({ counterReset: 'admiral-list-counter 4' });
+    });
   });
 
   describe('UnorderedList', () => {
@@ -166,6 +177,19 @@ describe('List components', () => {
       );
 
       expect(screen.getByTestId('item')).toHaveStyle({ color: resolveToken(listItemColor) });
+    });
+
+    it('forwards value for ordered list numbering', () => {
+      render(
+        <OrderedList>
+          <ListItem data-testid="item" value={10}>
+            Item
+          </ListItem>
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('item')).toHaveAttribute('value', '10');
+      expect(screen.getByTestId('item')).toHaveStyle({ counterSet: 'admiral-list-counter 10' });
     });
   });
 

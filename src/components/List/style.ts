@@ -1,7 +1,14 @@
 import styled, { css } from 'styled-components';
 
 import { LIST_DIMENSION_PARAMETERS } from './constants';
-import type { OrderedListType, StyledListProps, StyledListIconProps, UnorderedListType } from './types';
+import type {
+  ListItemProps,
+  OrderedListType,
+  StyledListIconProps,
+  StyledListProps,
+  StyledOrderedListProps,
+  UnorderedListType,
+} from './types';
 import { cssToken } from '../../theme/cssToken';
 
 export const listItemColor = cssToken(
@@ -85,8 +92,10 @@ const listMarkerMixin = css<StyledListProps>`
   height: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px;
 `;
 
-export const OrderedListComponent = styled.ol<StyledListProps>`
+export const OrderedListComponent = styled.ol<StyledOrderedListProps>`
   ${listMixin}
+  counter-reset: admiral-list-counter ${(p) => (p.start ?? 1) - 1};
+
   & > li::before {
     ${listMarkerMixin}
     justify-content: flex-start;
@@ -106,10 +115,18 @@ export const UnorderedListComponent = styled.ul<StyledListProps>`
   }
 `;
 
-export const ListItemComponent = styled.li`
+export const ListItemComponent = styled.li<ListItemProps>`
   color: ${listItemColor};
   counter-increment: admiral-list-counter 1;
   display: inline-flex;
+
+  ${(p) =>
+    p.value !== undefined &&
+    css`
+      ol > & {
+        counter-set: admiral-list-counter ${p.value};
+      }
+    `}
 
   ol[data-dimension='m'] &,
   ul[data-dimension='m'] & {
