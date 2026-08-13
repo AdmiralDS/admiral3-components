@@ -107,12 +107,14 @@ test.describe('List playground', () => {
     await expect(filledPaths.first()).toHaveCSS('fill', 'rgb(255, 0, 0)');
   });
 
-  test('supports list start and item value in native and CSS counters', async ({ page }) => {
+  test('supports reversed, list start and item value in native and CSS counters', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('list/item-value'));
 
-    await expect(page.getByTestId('ordered-value-list')).toHaveAttribute('start', '3');
-    await expect(page.getByTestId('ordered-value-list')).toHaveCSS('counter-reset', 'admiral-list-counter 2');
+    await expect(page.getByTestId('ordered-value-list')).toHaveAttribute('start', '6');
+    await expect(page.getByTestId('ordered-value-list')).toHaveAttribute('reversed', '');
+    await expect(page.getByTestId('ordered-value-list')).toHaveCSS('counter-reset', 'admiral-list-counter 7');
     await expect(page.getByTestId('ordered-value')).toHaveAttribute('value', '5');
-    await expect(page.getByTestId('ordered-value')).toHaveCSS('counter-set', 'admiral-list-counter 4');
+    await expect(page.getByTestId('ordered-value')).toHaveCSS('counter-increment', 'admiral-list-counter -1');
+    await expect(page.getByTestId('ordered-value')).toHaveCSS('counter-set', 'admiral-list-counter 5');
   });
 });

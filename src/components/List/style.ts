@@ -87,21 +87,21 @@ const listMixin = css<StyledListProps>`
 const listMarkerMixin = css<StyledListProps>`
   display: inline-flex;
   flex-shrink: 0;
+  height: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px;
   margin-inline-end: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].gap}px;
   ${(p) => markerStyles[p.$styleType]}
-  height: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px;
+  ${(p) => p.$markerCssMixin}
 `;
 
 export const OrderedListComponent = styled.ol<StyledOrderedListProps>`
   ${listMixin}
-  counter-reset: admiral-list-counter ${(p) => (p.start ?? 1) - 1};
+  counter-reset: admiral-list-counter ${(p) => p.$counterReset};
 
   & > li::before {
     ${listMarkerMixin}
     justify-content: flex-start;
     min-width: ${(p) =>
       p.$styleType == 'numbers' ? 'auto' : `${LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px`};
-    ${(p) => p.$markerCssMixin}
   }
 `;
 
@@ -111,20 +111,22 @@ export const UnorderedListComponent = styled.ul<StyledListProps>`
     ${listMarkerMixin}
     justify-content: center;
     width: ${(p) => LIST_DIMENSION_PARAMETERS[p.$dimension].markerSize}px;
-    ${(p) => p.$markerCssMixin}
   }
 `;
 
 export const ListItemComponent = styled.li<ListItemProps>`
+  display: inline-flex;
   color: ${listItemColor};
   counter-increment: admiral-list-counter 1;
-  display: inline-flex;
+  ol[reversed] > & {
+    counter-increment: admiral-list-counter -1;
+  }
 
   ${(p) =>
     p.value !== undefined &&
     css`
       ol > & {
-        counter-set: admiral-list-counter ${p.value};
+        counter-set: admiral-list-counter ${String(p.value)};
       }
     `}
 

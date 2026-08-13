@@ -86,6 +86,46 @@ describe('List components', () => {
       expect(screen.getByTestId('ordered-list')).toHaveAttribute('start', '5');
       expect(screen.getByTestId('ordered-list')).toHaveStyle({ counterReset: 'admiral-list-counter 4' });
     });
+
+    it('supports reversed numbering', () => {
+      render(
+        <OrderedList data-testid="ordered-list" reversed>
+          <ListItem>Item</ListItem>
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('ordered-list')).toHaveAttribute('reversed');
+      expect(screen.getByTestId('ordered-list')).toHaveStyle({ counterReset: 'admiral-list-counter 2' });
+    });
+
+    it('starts reversed numbering from the start attribute', () => {
+      render(
+        <OrderedList data-testid="ordered-list" reversed start={5}>
+          <ListItem>Item</ListItem>
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('ordered-list')).toHaveStyle({ counterReset: 'admiral-list-counter 6' });
+    });
+
+    it('counts rendered list item elements for reversed numbering', () => {
+      render(
+        <OrderedList data-testid="ordered-list" reversed>
+          ignored text
+          <>
+            <ListItem>First item</ListItem>
+            {null}
+            <ListItem>Second item</ListItem>
+          </>
+          <ListItem>Third item</ListItem>
+          <button type="button">Not a list item</button>
+          <li>Native list item</li>
+          {false}
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('ordered-list')).toHaveStyle({ counterReset: 'admiral-list-counter 5' });
+    });
   });
 
   describe('UnorderedList', () => {
@@ -183,6 +223,19 @@ describe('List components', () => {
       render(
         <OrderedList>
           <ListItem data-testid="item" value={10}>
+            Item
+          </ListItem>
+        </OrderedList>,
+      );
+
+      expect(screen.getByTestId('item')).toHaveAttribute('value', '10');
+      expect(screen.getByTestId('item')).toHaveStyle({ counterSet: 'admiral-list-counter 10' });
+    });
+
+    it('supports a string value inherited from LiHTMLAttributes', () => {
+      render(
+        <OrderedList>
+          <ListItem data-testid="item" value="10">
             Item
           </ListItem>
         </OrderedList>,

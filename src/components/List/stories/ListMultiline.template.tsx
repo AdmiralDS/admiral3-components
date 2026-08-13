@@ -6,8 +6,8 @@ export const ListMultiLineTemplate = () => {
   return (
     <StoryDemoContainer $direction="column" $gap="24px">
       <StoryDemoDescription>
-        Пользователь может настроить необходимую ширину компонента самостоятельно, например, через атрибут style. По
-        умолчанию компонент подстраивается под размеры родительского элемента.
+        Пользователь может настроить необходимую ширину компонента самостоятельно, например, через атрибут{' '}
+        <code>style</code>. По умолчанию компонент подстраивается под размеры родительского элемента.
       </StoryDemoDescription>
       <UnorderedList style={{ maxWidth: '500px' }}>
         <ListItem>First, let's set up your Segment Unify space. We'll take you to Segment to do this.</ListItem>

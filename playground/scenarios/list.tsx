@@ -92,12 +92,12 @@ export const listScenarios: PlaygroundScenario[] = [
     id: 'list/item-value',
     title: 'List Item Value',
     render: () => (
-      <OrderedList data-testid="ordered-value-list" start={3}>
-        <ListItem>Третий пункт</ListItem>
+      <OrderedList data-testid="ordered-value-list" start={6} reversed>
+        <ListItem>Шестой пункт</ListItem>
         <ListItem value={5} data-testid="ordered-value">
           Пятый пункт
         </ListItem>
-        <ListItem>Шестой пункт</ListItem>
+        <ListItem>Четвертый пункт</ListItem>
       </OrderedList>
     ),
   },

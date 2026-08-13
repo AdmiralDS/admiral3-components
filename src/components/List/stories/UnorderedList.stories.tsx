@@ -27,7 +27,7 @@ const defaultArgs: UnorderedListProps = {
   gap: LIST_GAP,
 };
 
-export const OrderedPlaygroundStory: StoryObj<UnorderedListProps> = {
+export const UnorderedPlaygroundStory: StoryObj<UnorderedListProps> = {
   args: defaultArgs,
   render: UnorderedListPlaygroundTemplate,
   parameters: {
@@ -40,10 +40,13 @@ export const OrderedPlaygroundStory: StoryObj<UnorderedListProps> = {
   name: 'Playground',
 };
 
-export const OrderedListVariantsStory: StoryObj<UnorderedListProps> = {
+export const UnorderedListVariantsStory: StoryObj<UnorderedListProps> = {
   args: defaultArgs,
   render: UnorderedListVariantsTemplate,
   parameters: {
+    controls: {
+      exclude: ['dimension', 'styleType'],
+    },
     docs: {
       source: {
         code: unorderedListVariantsTemplateRaw,

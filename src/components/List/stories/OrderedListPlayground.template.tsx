@@ -2,10 +2,10 @@ import { OrderedList, ListItem, type OrderedListProps } from '@admiral-ds/admira
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 
-export const OrderedListPlaygroundTemplate = ({ styleType = 'numbers', ...props }: OrderedListProps) => {
+export const OrderedListPlaygroundTemplate = (props: OrderedListProps) => {
   return (
     <StoryDemoContainer>
-      <OrderedList {...props} styleType={styleType}>
+      <OrderedList {...props}>
         <ListItem>Текст строки</ListItem>
         <ListItem>Текст строки</ListItem>
         <ListItem>Текст строки</ListItem>

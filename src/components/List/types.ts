@@ -16,7 +16,7 @@ export type ListDimension = (typeof LIST_DIMENSIONS)[number];
 export type OrderedListType = (typeof ORDERED_LIST_TYPE)[number];
 export type UnorderedListType = (typeof UNORDERED_LIST_TYPE)[number];
 
-export interface OrderedListProps extends Omit<OlHTMLAttributes<HTMLOListElement>, 'reversed'> {
+export interface OrderedListProps extends OlHTMLAttributes<HTMLOListElement> {
   /** Размер компонента */
   dimension?: ListDimension;
   /** Стиль маркеров в списке */
@@ -46,14 +46,12 @@ export interface StyledListProps {
 }
 
 export interface StyledOrderedListProps extends StyledListProps {
-  start?: number;
+  $counterReset: number;
 }
 
 export interface ListItemProps extends LiHTMLAttributes<HTMLLIElement> {
   /** Содержимое компонента. */
   children?: ReactNode;
-  /** Номер пункта упорядоченного списка. */
-  value?: number;
 }
 
 /**

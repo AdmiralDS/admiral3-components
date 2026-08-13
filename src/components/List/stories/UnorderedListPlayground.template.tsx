@@ -4,7 +4,7 @@ import { UnorderedList, ListItem, ListIcon, type UnorderedListProps } from '@adm
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 
-export const UnorderedListPlaygroundTemplate = ({ styleType = 'bullet', ...props }: UnorderedListProps) => {
+export const UnorderedListPlaygroundTemplate = ({ styleType, ...props }: UnorderedListProps) => {
   const withIcon = styleType === 'icon';
   return (
     <StoryDemoContainer>

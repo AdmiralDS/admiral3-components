@@ -6,7 +6,7 @@ import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryCon
 
 /**
  * Контент маркера может зависить от значения счетчика.
- * В компонентах OrderedList и UnorderedList используется счетчик с именем admiral-list-counter
+ * В компонентах OrderedList и UnorderedList используется счетчик с именем admiral-list-counter.
  **/
 const latinLettersMarker = css`
   content: counter(admiral-list-counter, lower-latin) ')';
@@ -25,13 +25,13 @@ export const ListMarkerCustomTemplate = () => {
   return (
     <StoryDemoContainer $direction="column" $gap="24px">
       <StoryDemoDescription>
-        Пользователь может кастомизировать внешний вид и контент маркеров в списках с помощью параметра markerCssMixin,
-        задаваемого для компонентов OrderedList и UnorderedList.
+        Пользователь может кастомизировать внешний вид и контент маркеров в списках с помощью параметра{' '}
+        <code>markerCssMixin</code>, задаваемого для компонентов <code>OrderedList</code> и <code>UnorderedList</code>.
       </StoryDemoDescription>
       <StoryDemoDescription>
-        В компонентах OrderedList и UnorderedList также специально введен css счётчик с именем admiral-list-counter.
-        Пользователи могут опираться на значение данного счетчика для задания контента маркеров с использованием css
-        функций counter() и counters().
+        В компонентах <code>OrderedList</code> и <code>UnorderedList</code> также специально введен CSS-счётчик с именем{' '}
+        <code>admiral-list-counter</code>. Пользователи могут опираться на его значение для задания контента маркеров с
+        использованием CSS-функций <code>counter()</code> и <code>counters()</code>.
       </StoryDemoDescription>
       <OrderedList styleType="lower-letters" markerCssMixin={latinLettersMarker}>
         <ListItem>Уборка</ListItem>

@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { OrderedList, type OrderedListProps } from '@admiral-ds/admiral3-primitives';
 
+import { OrderedListNumberingTemplate } from './OrderedListNumbering.template';
+import orderedListNumberingTemplateRaw from './OrderedListNumbering.template?raw';
 import { OrderedListPlaygroundTemplate } from './OrderedListPlayground.template';
 import orderedListPlaygroundTemplateRaw from './OrderedListPlayground.template?raw';
 import { OrderedListVariantsTemplate } from './OrderedListVariants.template';
@@ -44,6 +46,9 @@ export const OrderedListVariantsStory: StoryObj<OrderedListProps> = {
   args: defaultArgs,
   render: OrderedListVariantsTemplate,
   parameters: {
+    controls: {
+      exclude: ['dimension', 'styleType'],
+    },
     docs: {
       source: {
         code: orderedListVariantsTemplateRaw,
@@ -51,4 +56,17 @@ export const OrderedListVariantsStory: StoryObj<OrderedListProps> = {
     },
   },
   name: 'OrderedList. Виды и размеры',
+};
+
+export const OrderedListNumberingStory: StoryObj<OrderedListProps> = {
+  args: defaultArgs,
+  render: OrderedListNumberingTemplate,
+  parameters: {
+    docs: {
+      source: {
+        code: orderedListNumberingTemplateRaw,
+      },
+    },
+  },
+  name: 'OrderedList. Начало, направление и значение нумерации',
 };
