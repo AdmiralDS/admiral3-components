@@ -459,9 +459,10 @@ npm run generate:component -- ComponentName
 8. подключение обычного и visual-сценариев к соответствующим aggregators.
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
-Сгенерированный код является стартовым шаблоном. После генерации нужно заменить placeholder-реализацию на фактический
-API компонента, расширить stories/tests/e2e и заменить default visual-пример матрицей всех поддерживаемых размеров,
-appearance и значимых состояний, затем запустить обязательные проверки.
+Сгенерированный код является стартовым шаблоном. Visual template сразу создаётся с отдельными матричными секциями
+`Sizes and appearances` и `States`, разбитыми на snapshot-ряды через `VisualSamples`. После генерации нужно заменить
+placeholder-реализацию на фактический API компонента, заполнить обе visual-матрицы всеми поддерживаемыми размерами,
+appearance и значимыми состояниями, расширить stories/tests/e2e и затем запустить обязательные проверки.
 
 Структурные правила компонента проверяются командой:
 
@@ -469,7 +470,7 @@ appearance и значимых состояний, затем запустить
 npm run validate:components
 ```
 
-Эта команда входит в `npm run check:full` и проверяет наличие обязательных файлов, root export, отсутствие deep exports в публичном API, экспорт компонента и публичных props/types из локального `index.ts`, связь playground-сценария с e2e-спекой и отсутствие импортов публичных props/types из внутренних файлов в `*.stories.tsx` и `*.template.tsx`.
+Эта команда входит в `npm run check:full` и проверяет наличие обязательных файлов, root export, отсутствие deep exports в публичном API, экспорт компонента и публичных props/types из локального `index.ts`, связь playground-сценария с e2e-спекой, матричную разбивку visual template через `VisualSamples` и отсутствие импортов публичных props/types из внутренних файлов в `*.stories.tsx` и `*.template.tsx`.
 
 ### Обязательная структура
 
