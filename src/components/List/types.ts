@@ -1,12 +1,4 @@
-import type {
-  ComponentType,
-  CSSProperties,
-  HTMLAttributes,
-  LiHTMLAttributes,
-  OlHTMLAttributes,
-  ReactNode,
-  SVGProps,
-} from 'react';
+import type { ComponentType, CSSProperties, HTMLAttributes, LiHTMLAttributes, ReactNode, SVGProps } from 'react';
 
 import type { css } from 'styled-components';
 
@@ -16,7 +8,14 @@ export type ListDimension = (typeof LIST_DIMENSIONS)[number];
 export type OrderedListType = (typeof ORDERED_LIST_TYPE)[number];
 export type UnorderedListType = (typeof UNORDERED_LIST_TYPE)[number];
 
-export interface OrderedListProps extends OlHTMLAttributes<HTMLOListElement> {
+// Внутреннее архитектурное решение: для точного контроля размеров и выравнивания маркера, расстояния до текста,
+// многострочной вёрстки и пользовательских иконок пункты используют display: inline-flex вместо нативного
+// display: list-item. Браузерный маркер отключён, а маркеры и нумерация создаются псевдоэлементом и CSS-счётчиком.
+// Поэтому OrderedList принимает общие HTML-атрибуты и не поддерживает специфичные атрибуты type, start и reversed:
+// они управляют нативным маркером и не влияют на кастомный счётчик. Для reversed дополнительно потребовалось бы
+// заранее знать число отрисованных пунктов; его нельзя надёжно определить по React-дереву с Fragment и обёртками,
+// а подсчёт через DOM создаёт дополнительный рендер и риск расхождения при SSR-гидратации.
+export interface OrderedListProps extends HTMLAttributes<HTMLOListElement> {
   /** Размер компонента */
   dimension?: ListDimension;
   /** Стиль маркеров в списке */
@@ -45,13 +44,11 @@ export interface StyledListProps {
   $markerCssMixin?: ReturnType<typeof css>;
 }
 
-export interface StyledOrderedListProps extends StyledListProps {
-  $counterReset: number;
-}
-
-export interface ListItemProps extends LiHTMLAttributes<HTMLLIElement> {
+export interface ListItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'value'> {
   /** Содержимое компонента. */
   children?: ReactNode;
+  /** Значение пункта упорядоченного списка. */
+  value?: number;
 }
 
 /**

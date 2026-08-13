@@ -1,14 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import { LIST_DIMENSION_PARAMETERS } from './constants';
-import type {
-  ListItemProps,
-  OrderedListType,
-  StyledListIconProps,
-  StyledListProps,
-  StyledOrderedListProps,
-  UnorderedListType,
-} from './types';
+import type { ListItemProps, OrderedListType, StyledListIconProps, StyledListProps, UnorderedListType } from './types';
 import { cssToken } from '../../theme/cssToken';
 
 export const listItemColor = cssToken(
@@ -93,9 +86,8 @@ const listMarkerMixin = css<StyledListProps>`
   ${(p) => p.$markerCssMixin}
 `;
 
-export const OrderedListComponent = styled.ol<StyledOrderedListProps>`
+export const OrderedListComponent = styled.ol<StyledListProps>`
   ${listMixin}
-  counter-reset: admiral-list-counter ${(p) => p.$counterReset};
 
   & > li::before {
     ${listMarkerMixin}
@@ -118,9 +110,6 @@ export const ListItemComponent = styled.li<ListItemProps>`
   display: inline-flex;
   color: ${listItemColor};
   counter-increment: admiral-list-counter 1;
-  ol[reversed] > & {
-    counter-increment: admiral-list-counter -1;
-  }
 
   ${(p) =>
     p.value !== undefined &&

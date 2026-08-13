@@ -68,5 +68,5 @@ export const OrderedListNumberingStory: StoryObj<OrderedListProps> = {
       },
     },
   },
-  name: 'OrderedList. Начало, направление и значение нумерации',
+  name: 'OrderedList. Нумерация пунктов',
 };
