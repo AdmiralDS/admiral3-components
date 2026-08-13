@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 
-import { OrderedList, UnorderedList, ListItem } from '@admiral-ds/admiral3-primitives';
+import {
+  OrderedList,
+  UnorderedList,
+  ListItem,
+  type OrderedListProps,
+  type UnorderedListProps,
+} from '@admiral-ds/admiral3-primitives';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 
@@ -10,6 +16,34 @@ const Layout = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(4, auto);
 `;
+
+export const NestedOrderedListExample = (props: OrderedListProps) => (
+  <OrderedList {...props}>
+    <ListItem>Текст строки</ListItem>
+    <ListItem>
+      Текст строки
+      <OrderedList dimension={props.dimension}>
+        <ListItem>Текст строки</ListItem>
+        <ListItem>Текст строки</ListItem>
+      </OrderedList>
+    </ListItem>
+    <ListItem>Текст строки</ListItem>
+  </OrderedList>
+);
+
+export const NestedUnorderedListExample = (props: UnorderedListProps) => (
+  <UnorderedList {...props}>
+    <ListItem>Текст строки</ListItem>
+    <ListItem>
+      Текст строки
+      <UnorderedList dimension={props.dimension} styleType="virgule">
+        <ListItem>Текст строки</ListItem>
+        <ListItem>Текст строки</ListItem>
+      </UnorderedList>
+    </ListItem>
+    <ListItem>Текст строки</ListItem>
+  </UnorderedList>
+);
 
 export const ListNestedTemplate = () => {
   return (
@@ -22,50 +56,10 @@ export const ListNestedTemplate = () => {
         по краю текста вышестоящего уровня.
       </StoryDemoDescription>
       <Layout>
-        <OrderedList>
-          <ListItem>Текст строки</ListItem>
-          <ListItem>
-            Текст строки
-            <OrderedList>
-              <ListItem>Текст строки</ListItem>
-              <ListItem>Текст строки</ListItem>
-            </OrderedList>
-          </ListItem>
-          <ListItem>Текст строки</ListItem>
-        </OrderedList>
-        <OrderedList dimension="s">
-          <ListItem>Текст строки</ListItem>
-          <ListItem>
-            Текст строки
-            <OrderedList dimension="s">
-              <ListItem>Текст строки</ListItem>
-              <ListItem>Текст строки</ListItem>
-            </OrderedList>
-          </ListItem>
-          <ListItem>Текст строки</ListItem>
-        </OrderedList>
-        <UnorderedList>
-          <ListItem>Текст строки</ListItem>
-          <ListItem>
-            Текст строки
-            <UnorderedList styleType="virgule">
-              <ListItem>Текст строки</ListItem>
-              <ListItem>Текст строки</ListItem>
-            </UnorderedList>
-          </ListItem>
-          <ListItem>Текст строки</ListItem>
-        </UnorderedList>
-        <UnorderedList dimension="s">
-          <ListItem>Текст строки</ListItem>
-          <ListItem>
-            Текст строки
-            <UnorderedList dimension="s" styleType="virgule">
-              <ListItem>Текст строки</ListItem>
-              <ListItem>Текст строки</ListItem>
-            </UnorderedList>
-          </ListItem>
-          <ListItem>Текст строки</ListItem>
-        </UnorderedList>
+        <NestedOrderedListExample />
+        <NestedOrderedListExample dimension="s" />
+        <NestedUnorderedListExample />
+        <NestedUnorderedListExample dimension="s" />
       </Layout>
     </StoryDemoContainer>
   );

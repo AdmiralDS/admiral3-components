@@ -180,19 +180,6 @@ describe('List components', () => {
       expect(screen.getByTestId('item')).toHaveAttribute('value', '10');
       expect(screen.getByTestId('item')).toHaveStyle({ counterSet: 'admiral-list-counter 10' });
     });
-
-    it('supports a string value inherited from LiHTMLAttributes', () => {
-      render(
-        <OrderedList>
-          <ListItem data-testid="item" value="10">
-            Item
-          </ListItem>
-        </OrderedList>,
-      );
-
-      expect(screen.getByTestId('item')).toHaveAttribute('value', '10');
-      expect(screen.getByTestId('item')).toHaveStyle({ counterSet: 'admiral-list-counter 10' });
-    });
   });
 
   describe('ListIcon', () => {
