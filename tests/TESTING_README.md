@@ -151,6 +151,10 @@ Visual template должен напрямую рендерить компоне�
 appearance/colorMode и значимых состояний. Нельзя собирать visual template из существующих Storybook templates. Для
 произвольных CSS-значений достаточно отдельного representative custom-варианта.
 
+`generate:component` создаёт матричный каркас с секциями вариантов и состояний. Его стартовые массивы обязательны к
+заполнению после определения API компонента; `validate:components` дополнительно требует разбивку снимков через
+`VisualSamples` и не принимает одиночный default-пример без snapshot-рядов.
+
 Для воспроизводимости зафиксированы viewport `1440x900` и reduced motion. В каждом visual-сценарии Playwright снимает
 отдельно каждый ряд `VisualSamples` во всех theme modes, доступных в playground (`light`, `dark`, `lightNeutral`,
 `darkNeutral`); небольшая custom-секция без ряда снимается целиком. Снимки сравниваются пиксель в пиксель без допуска.

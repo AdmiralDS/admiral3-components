@@ -4,6 +4,7 @@ import { buttonAppearanceMixin } from './appearanceMixin/index';
 import { BUTTON_GAP } from './constants';
 import { buttonDimensionMixin } from './dimensionMixin';
 import type { ButtonDimension, StyledButtonProps } from './types';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 import { skeletonAnimationMixin } from '../Skeleton';
 
@@ -57,6 +58,7 @@ export const StyledButton = styled.button.attrs<
   appearance: none;
   border: none;
   overflow: hidden;
+  transition: background-color ${hoverPressLeaveTransition};
   border-radius: ${(p) =>
     p.$skeleton ? 0 : cssToken('--admiral-radius-by-base-4-medium', (theme) => theme.radius.byBase['4'].medium)};
 

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { SELECTION_CONTROL_INFORMER_SIZES } from './constants';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 
 const informerColor = cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest);
@@ -13,6 +14,8 @@ export const SelectionControlInformer = styled.span<{ $dimension: keyof typeof S
   width: ${({ $dimension }) => SELECTION_CONTROL_INFORMER_SIZES[$dimension]}px;
 
   color: ${informerColor};
+  transition: color ${hoverPressLeaveTransition};
+
   &:hover {
     color: ${informerHoverColor};
   }

@@ -7,25 +7,25 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 22241
+      "rawBytes": 22791
     },
     "check-box": {
-      "rawBytes": 9430
+      "rawBytes": 9721
     },
     "helper-components": {
-      "rawBytes": 537
+      "rawBytes": 1067
     },
     "link": {
-      "rawBytes": 2147
+      "rawBytes": 2676
     },
     "radio-button": {
-      "rawBytes": 6217
+      "rawBytes": 6551
     },
     "skeleton": {
       "rawBytes": 1298
     },
     "spinner": {
-      "rawBytes": 6068
+      "rawBytes": 6566
     }
   },
   "version": 1

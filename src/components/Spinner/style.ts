@@ -3,6 +3,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { SPINNER_DIMENSION_PARAMETERS } from './constants';
 import SpinnerIcon from './SpinnerIcon.svg?react';
 import type { SpinnerAppearance, StyledSpinnerProps } from './types';
+import { easingLinear } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 import type { CssToken } from '../../theme/cssToken';
 
@@ -31,7 +32,7 @@ export const StyledSpinnerIcon = styled(SpinnerIcon)<StyledSpinnerProps>`
   height: ${({ $dimension }) => SPINNER_DIMENSION_PARAMETERS[$dimension]}px;
   width: ${({ $dimension }) => SPINNER_DIMENSION_PARAMETERS[$dimension]}px;
   color: ${(props) => props.$colorConfig?.color ?? spinnerColors[props.$appearance](props)};
-  animation: ${spin} 1s linear infinite;
+  animation: ${spin} 1s ${easingLinear} infinite;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }

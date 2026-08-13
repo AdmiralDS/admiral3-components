@@ -301,19 +301,62 @@ export const ${componentCamelName}Scenarios: PlaygroundScenario[] = [
   'utf8',
 );
 
-// Создаём отдельный template для visual regression. После уточнения API компонента его нужно расширить до матрицы
-// всех размеров, appearance и значимых состояний.
+// Создаём отдельный template для visual regression сразу в матричной структуре. После уточнения API компонента
+// списки вариантов и состояний нужно расширить всеми размерами, appearance и значимыми состояниями.
 writeFileSync(
   visualTemplatePath,
-  `import { ${componentName} } from '@admiral-ds/admiral3-primitives';
+  `import type { ComponentProps } from 'react';
 
-import { VisualLayout, VisualSection, VisualTitle } from './VisualLayout';
+import { ${componentName} } from '@admiral-ds/admiral3-primitives';
+
+import {
+  VisualGroup,
+  VisualGroups,
+  VisualGroupTitle,
+  VisualLabel,
+  VisualLayout,
+  VisualSample,
+  VisualSamples,
+  VisualSection,
+  VisualTitle,
+} from './VisualLayout';
+
+type VisualVariant = {
+  label: string;
+  props: ComponentProps<typeof ${componentName}>;
+};
+
+// Replace the starter entries with every supported size and appearance.
+const VARIANTS: VisualVariant[] = [{ label: 'default', props: {} }];
+
+// Add every visually distinct interactive and disabled state.
+const STATES: VisualVariant[] = [{ label: 'default', props: {} }];
+
+const renderMatrix = (items: VisualVariant[]) => (
+  <VisualGroups>
+    {items.map(({ label, props }) => (
+      <VisualGroup key={label}>
+        <VisualGroupTitle>{label}</VisualGroupTitle>
+        <VisualSamples>
+          <VisualSample>
+            <VisualLabel>{label}</VisualLabel>
+            <${componentName} {...props}>${componentName}</${componentName}>
+          </VisualSample>
+        </VisualSamples>
+      </VisualGroup>
+    ))}
+  </VisualGroups>
+);
 
 export const ${componentName}VisualTemplate = () => (
   <VisualLayout>
     <VisualSection>
-      <VisualTitle>Default</VisualTitle>
-      <${componentName}>${componentName}</${componentName}>
+      <VisualTitle>Sizes and appearances</VisualTitle>
+      {renderMatrix(VARIANTS)}
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>States</VisualTitle>
+      {renderMatrix(STATES)}
     </VisualSection>
   </VisualLayout>
 );
