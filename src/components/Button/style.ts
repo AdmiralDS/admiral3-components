@@ -1,3 +1,4 @@
+import { animation } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
 import { buttonAppearanceMixin } from './appearanceMixin/index';
@@ -6,6 +7,9 @@ import { buttonDimensionMixin } from './dimensionMixin';
 import type { ButtonDimension, StyledButtonProps } from './types';
 import { cssToken } from '../../theme/cssToken';
 import { skeletonAnimationMixin } from '../Skeleton';
+
+const transitionDuration = `var(--admiral-animation-motion-duration-short-2, ${animation.motion.duration.short_2}ms)`;
+const transitionEasing = `var(--admiral-animation-motion-easing-linear, ${animation.motion.easing.linear})`;
 
 export const SpinnerContainer = styled.div`
   position: absolute;
@@ -57,6 +61,7 @@ export const StyledButton = styled.button.attrs<
   appearance: none;
   border: none;
   overflow: hidden;
+  transition: background-color ${transitionDuration} ${transitionEasing};
   border-radius: ${(p) =>
     p.$skeleton ? 0 : cssToken('--admiral-radius-by-base-4-medium', (theme) => theme.radius.byBase['4'].medium)};
 

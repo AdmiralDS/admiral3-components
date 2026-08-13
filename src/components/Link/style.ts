@@ -1,3 +1,4 @@
+import { animation } from '@admiral-ds/admiral3-tokens';
 import styled, { css } from 'styled-components';
 
 import { LINK_DIMENSION_PARAMETERS } from './constants';
@@ -19,6 +20,8 @@ const disabledColor = cssToken(
   (theme) => theme.color.neutral.text.disable.rest,
 );
 const focusColor = cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest);
+const transitionDuration = `var(--admiral-animation-motion-duration-short-2, ${animation.motion.duration.short_2}ms)`;
+const transitionEasing = `var(--admiral-animation-motion-easing-linear, ${animation.motion.easing.linear})`;
 
 export const StyledLink = styled.a<StyledLinkProps>`
   box-sizing: border-box;
@@ -28,6 +31,7 @@ export const StyledLink = styled.a<StyledLinkProps>`
   gap: ${({ $dimension }) => LINK_DIMENSION_PARAMETERS[$dimension].gap}px;
   color: ${({ $appearance }) => ($appearance === 'colored' ? coloredRest : neutralRest)};
   text-decoration: none;
+  transition: color ${transitionDuration} ${transitionEasing};
   cursor: pointer;
   ${({ $dimension }) => LINK_DIMENSION_PARAMETERS[$dimension].typography}
 
