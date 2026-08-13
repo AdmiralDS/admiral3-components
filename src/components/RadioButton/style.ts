@@ -1,8 +1,8 @@
-import { animation } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
 import { RADIO_BUTTON_DIMENSION_PARAMETERS } from './constants';
 import type { StyledRadioButtonProps } from './types';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 import { NativeInput } from '../_internal/InputAtoms';
 
@@ -66,8 +66,8 @@ export const Control = styled.span<{ $error: boolean }>`
   flex: 0 0 auto;
   border-radius: 50%;
   transition:
-    background-color ${animation.motion.duration.short_2}ms cubic-bezier(${animation.motion.easing.linear.join(', ')}),
-    box-shadow ${animation.motion.duration.short_2}ms cubic-bezier(${animation.motion.easing.linear.join(', ')});
+    background-color ${hoverPressLeaveTransition},
+    box-shadow ${hoverPressLeaveTransition};
   pointer-events: none;
   width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.controlSize}px;
   height: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.controlSize}px;
