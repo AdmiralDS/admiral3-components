@@ -304,11 +304,18 @@ for (const componentName of componentNames) {
   if (!existsSync(visualTemplatePath)) {
     errors.push(`${componentName}: missing ${formatPath(visualTemplatePath)}`);
   } else {
-    const visualTemplateImports = getImports(readProjectFile(visualTemplatePath));
+    const visualTemplateContent = readProjectFile(visualTemplatePath);
+    const visualTemplateImports = getImports(visualTemplateContent);
 
     if (visualTemplateImports.some((item) => item.source.includes('/stories/'))) {
       errors.push(
         `${componentName}: ${formatPath(visualTemplatePath)} must render the component directly and must not compose Storybook templates.`,
+      );
+    }
+
+    if (!visualTemplateContent.includes('<VisualSamples>')) {
+      errors.push(
+        `${componentName}: ${formatPath(visualTemplatePath)} must use VisualSamples to split the visual matrix into snapshot rows.`,
       );
     }
   }
