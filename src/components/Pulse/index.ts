@@ -1,2 +1,2 @@
 export { Pulse } from './Pulse';
-export type { PulseDimension, PulseProps, PulseStatus } from './types';
+export type { PulseColorConfig, PulseDimension, PulseProps, PulseStatus } from './types';

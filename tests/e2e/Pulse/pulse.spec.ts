@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 const defaultScenarioId = 'pulse/default';
-const dismissedScenarioId = 'pulse/dismissed';
 const infoBackgroundColorToken = '--admiral-color-primary-base-1-rest';
 
 test.describe('Pulse playground', () => {
@@ -26,8 +25,9 @@ test.describe('Pulse playground', () => {
     await expect(pulse).toHaveCSS('background-color', expectedDarkBackgroundColor);
   });
 
-  test('disables wave animation in dismissed state', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath(dismissedScenarioId));
+  test('disables wave animation when reduced motion is preferred', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(getPlaygroundScenarioPath(defaultScenarioId));
 
     const animationName = await page.getByTestId('pulse').evaluate((element) => {
       return getComputedStyle(element, '::before').animationName;

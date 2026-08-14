@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Pulse, type PulseProps } from '@admiral-ds/admiral3-primitives';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
+import { PULSE_STATUSES } from '../constants';
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,22 +13,17 @@ const Wrapper = styled.div`
 
 export const PulseStatusTemplate = (props: PulseProps) => {
   return (
-    <>
-      <StoryDemoContainer $gap="16px" $direction="column">
-        <StoryDemoDescription>
-          Компонент выполнен в одном цвете (и основание и волна) и имеет четыре цвета-статуса: info (по умолчанию),
-          danger, success, warning. Пользователь может задать свой кастомный цвет из палитры библиотеки. Для того, чтобы
-          задать кастомный статус в параметр status нужно передать объект со свойством background и значением кастомного
-          цвета.
-        </StoryDemoDescription>
-        <Wrapper>
-          <Pulse {...props} status="info" />
-          <Pulse {...props} status="danger" />
-          <Pulse {...props} status="success" />
-          <Pulse {...props} status="warning" />
-          <Pulse {...props} status={{ background: '#8A3FFC' }} />
-        </Wrapper>
-      </StoryDemoContainer>
-    </>
+    <StoryDemoContainer $gap="16px" $direction="column">
+      <StoryDemoDescription>
+        Доступны четыре статуса: info (по умолчанию), danger, success и warning. Пользовательский цвет задаётся через
+        объект со свойством <code>backgroundColor</code>.
+      </StoryDemoDescription>
+      <Wrapper>
+        {PULSE_STATUSES.map((status) => (
+          <Pulse {...props} status={status} key={status} />
+        ))}
+        <Pulse {...props} status={{ backgroundColor: '#8A3FFC' }} />
+      </Wrapper>
+    </StoryDemoContainer>
   );
 };

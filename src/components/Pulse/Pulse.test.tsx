@@ -2,39 +2,39 @@ import { createRef } from 'react';
 
 import { themes } from '@admiral-ds/admiral3-tokens';
 import { cleanup, render, screen } from '@testing-library/react';
-import { css, ThemeProvider } from 'styled-components';
+import type { ExecutionContext } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { PULSE_DIMENSIONS, PULSE_DIMENSION_PARAMETERS, PULSE_STATUSES } from './constants';
 import { Pulse } from './Pulse';
-import type { PulseDimension, PulseStatus } from './types';
+import { pulseBackgroundColors } from './style';
 
-const PULSE_DIMENSION_PARAMETERS: Record<PulseDimension, number> = {
-  s: 8,
-  m: 12,
-  l: 16,
-};
-
-const PULSE_STATUS_TOKENS: Record<PulseStatus, string> = {
-  info: '--admiral-color-primary-base-1-rest',
-  danger: '--admiral-color-error-base-1-rest',
-  success: '--admiral-color-success-base-1-rest',
-  warning: '--admiral-color-warning-base-1-rest',
-};
-
-const getStatusColor = (status: PulseStatus, theme = themes.light) => {
-  const fallback = {
-    info: theme.color.primary.base._1.rest,
-    danger: theme.color.error.base._1.rest,
-    success: theme.color.success.base._1.rest,
-    warning: theme.color.warning.base._1.rest,
-  }[status];
-
-  return `var(${PULSE_STATUS_TOKENS[status]},${fallback})`;
+const resolveToken = (token: (context: ExecutionContext) => string, theme = themes.light) => {
+  return token({ theme } as ExecutionContext).replace(', ', ',');
 };
 
 describe('Pulse', () => {
   afterEach(() => {
     cleanup();
+  });
+
+  it('renders decorative Pulse by default', () => {
+    render(<Pulse data-testid="pulse" />);
+
+    expect(screen.getByTestId('pulse')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('does not hide Pulse when accessible name is provided', () => {
+    render(<Pulse aria-label="Connection is active" data-testid="pulse" />);
+
+    expect(screen.getByTestId('pulse')).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('keeps explicit aria-hidden value from user props', () => {
+    render(<Pulse aria-hidden={false} data-testid="pulse" />);
+
+    expect(screen.getByTestId('pulse')).toHaveAttribute('aria-hidden', 'false');
   });
 
   it('forwards div attributes to the root element', () => {
@@ -54,32 +54,35 @@ describe('Pulse', () => {
   it('uses default info status and M dimension', () => {
     render(<Pulse data-testid="pulse" />);
 
+    expect(screen.getByTestId('pulse')).toHaveAttribute('data-status', 'info');
+    expect(screen.getByTestId('pulse')).toHaveAttribute('data-dimension', 'm');
     expect(screen.getByTestId('pulse')).toHaveStyle({
       blockSize: '12px',
       inlineSize: '12px',
       borderRadius: '50%',
-      '--pulse-color': getStatusColor('info'),
+      '--pulse-color': resolveToken(pulseBackgroundColors.info),
       backgroundColor: 'var(--pulse-color)',
     });
   });
 
-  it.each(Object.entries(PULSE_DIMENSION_PARAMETERS) as [PulseDimension, number][])(
-    'applies %s dimension',
-    (dimension, size) => {
-      render(<Pulse data-testid="pulse" dimension={dimension} />);
+  it.each(PULSE_DIMENSIONS)('applies %s dimension', (dimension) => {
+    render(<Pulse data-testid="pulse" dimension={dimension} />);
 
-      expect(screen.getByTestId('pulse')).toHaveStyle({
-        blockSize: `${size}px`,
-        inlineSize: `${size}px`,
-      });
-    },
-  );
+    const { size } = PULSE_DIMENSION_PARAMETERS[dimension];
 
-  it.each(Object.keys(PULSE_STATUS_TOKENS) as PulseStatus[])('uses Admiral CSS token for %s status', (status) => {
+    expect(screen.getByTestId('pulse')).toHaveAttribute('data-dimension', dimension);
+    expect(screen.getByTestId('pulse')).toHaveStyle({
+      blockSize: `${size}px`,
+      inlineSize: `${size}px`,
+    });
+  });
+
+  it.each(PULSE_STATUSES)('uses Admiral CSS token for %s status', (status) => {
     render(<Pulse data-testid="pulse" status={status} />);
 
+    expect(screen.getByTestId('pulse')).toHaveAttribute('data-status', status);
     expect(screen.getByTestId('pulse')).toHaveStyle({
-      '--pulse-color': getStatusColor(status),
+      '--pulse-color': resolveToken(pulseBackgroundColors[status]),
     });
   });
 
@@ -91,28 +94,16 @@ describe('Pulse', () => {
     );
 
     expect(screen.getByTestId('pulse')).toHaveStyle({
-      '--pulse-color': getStatusColor('info', themes.dark),
+      '--pulse-color': resolveToken(pulseBackgroundColors.info, themes.dark),
     });
   });
 
-  it('uses custom status color', () => {
-    render(<Pulse data-testid="pulse" status={{ background: 'var(--custom-pulse-color)' }} />);
+  it('uses custom color config', () => {
+    render(<Pulse data-testid="pulse" status={{ backgroundColor: 'var(--custom-pulse-color)' }} />);
 
+    expect(screen.getByTestId('pulse')).toHaveAttribute('data-status', 'custom');
     expect(screen.getByTestId('pulse')).toHaveStyle({
       '--pulse-color': 'var(--custom-pulse-color)',
     });
-  });
-
-  it('applies custom CSS mixin', () => {
-    render(
-      <Pulse
-        data-testid="pulse"
-        cssMixin={css`
-          margin: 4px;
-        `}
-      />,
-    );
-
-    expect(screen.getByTestId('pulse')).toHaveStyle({ margin: '4px' });
   });
 });

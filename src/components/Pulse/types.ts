@@ -1,16 +1,28 @@
-import type { css } from 'styled-components';
+import type { HTMLAttributes } from 'react';
 
-export type PulseDimension = 'l' | 'm' | 's';
-export type PulseStatus = 'info' | 'danger' | 'success' | 'warning';
+import type { PULSE_DIMENSIONS, PULSE_STATUSES } from './constants';
 
-export interface PulseProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Размер компонента */
+/** Размер Pulse. */
+export type PulseDimension = (typeof PULSE_DIMENSIONS)[number];
+
+/** Статус Pulse, определяющий цвет компонента. */
+export type PulseStatus = (typeof PULSE_STATUSES)[number];
+
+/** Пользовательский цвет Pulse. */
+export interface PulseColorConfig {
+  /** Цвет основания и анимированной волны. */
+  backgroundColor: string;
+}
+
+export interface PulseProps extends HTMLAttributes<HTMLDivElement> {
+  /** Размер компонента. */
   dimension?: PulseDimension;
-  /** Статус компонента (цветовое окрашивание).
-   * Можно задать кастомный цвет через объект со свойством background */
-  status?: PulseStatus | { background?: string };
-  /** Позволяет добавлять  миксин созданный с помощью styled css  */
-  cssMixin?: ReturnType<typeof css>;
-  /** Позволяет отключить мигание компонента*/
-  dismiss?: boolean;
+  /** Статус компонента или пользовательский цвет. */
+  status?: PulseStatus | PulseColorConfig;
+}
+
+export interface StyledPulseProps {
+  $colorConfig?: PulseColorConfig;
+  $dimension: PulseDimension;
+  $status: PulseStatus;
 }

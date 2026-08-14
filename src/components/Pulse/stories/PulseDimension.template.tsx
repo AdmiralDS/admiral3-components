@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Pulse, type PulseProps } from '@admiral-ds/admiral3-primitives';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
+import { PULSE_DIMENSIONS } from '../constants';
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,9 +16,9 @@ export const PulseDimensionTemplate = (props: PulseProps) => {
     <StoryDemoContainer $gap="16px" $direction="column">
       <StoryDemoDescription>Компонент представлен в трёх размерах: L, M (по умолчанию) и S.</StoryDemoDescription>
       <Wrapper>
-        <Pulse {...props} dimension="l" />
-        <Pulse {...props} dimension="m" />
-        <Pulse {...props} dimension="s" />
+        {PULSE_DIMENSIONS.map((dimension) => (
+          <Pulse {...props} dimension={dimension} key={dimension} />
+        ))}
       </Wrapper>
     </StoryDemoContainer>
   );

@@ -1,86 +1,71 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { cssToken } from '#src/theme/cssToken';
+import type { CssToken } from '#src/theme/cssToken';
 
-import type { PulseDimension, PulseStatus } from './types';
+import { PULSE_DIMENSION_PARAMETERS } from './constants';
+import type { PulseStatus, StyledPulseProps } from './types';
 
-const getPulseColor = css<{ $status: PulseStatus | { background?: string } }>`
-  ${({ $status }) => {
-    switch ($status) {
-      case 'danger':
-        return cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest);
-      case 'success':
-        return cssToken('--admiral-color-success-base-1-rest', (theme) => theme.color.success.base._1.rest);
-      case 'warning':
-        return cssToken('--admiral-color-warning-base-1-rest', (theme) => theme.color.warning.base._1.rest);
-      case 'info':
-        return cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest);
-      default:
-        return (
-          $status?.background ||
-          cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest)
-        );
-    }
-  }}
-`;
+export const pulseBackgroundColors: Record<PulseStatus, CssToken> = {
+  info: cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest),
+  danger: cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest),
+  success: cssToken('--admiral-color-success-base-1-rest', (theme) => theme.color.success.base._1.rest),
+  warning: cssToken('--admiral-color-warning-base-1-rest', (theme) => theme.color.warning.base._1.rest),
+};
 
-const getSize = css<{ $dimension: PulseDimension }>`
-  ${({ $dimension }) => {
-    switch ($dimension) {
-      case 's':
-        return '6px';
-      case 'l':
-        return '14px';
-      case 'm':
-      default:
-        return '10px';
-    }
-  }}
-`;
-
-export const PulseElement = styled.div<{
-  $dimension: PulseDimension;
-  $status: PulseStatus | { background?: string };
-  $cssMixin?: ReturnType<typeof css>;
-  $dismiss?: boolean;
-}>`
+export const PulseElement = styled.div.attrs<
+  StyledPulseProps & {
+    'data-dimension': string;
+    'data-status': string;
+  }
+>((props) => ({
+  'data-dimension': props.$dimension,
+  'data-status': props.$colorConfig ? 'custom' : props.$status,
+}))<StyledPulseProps>`
   position: relative;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-  block-size: ${(p) => (p.$dimension == 'l' ? 16 : p.$dimension == 'm' ? 12 : 8)}px;
-  inline-size: ${(p) => (p.$dimension == 'l' ? 16 : p.$dimension == 'm' ? 12 : 8)}px;
+  block-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].size}px;
+  inline-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].size}px;
   border-radius: 50%;
-  --pulse-color: ${getPulseColor};
-  background-color: var(--pulse-color);
+  --admiral-pulse-color: ${({ $colorConfig, $status, theme }) =>
+    $colorConfig?.backgroundColor ?? pulseBackgroundColors[$status]({ theme })};
+  background-color: var(--admiral-pulse-color);
 
-  &:before {
+  &::before {
     content: '';
-    border: none;
     position: absolute;
-    background-color: transparent;
-    border-radius: 50%;
-    width: ${getSize};
-    height: ${getSize};
     box-sizing: border-box;
-    animation-name: ${(p) =>
-      p.$dismiss ? 'none' : p.$dimension == 'l' ? 'animation-l' : p.$dimension == 'm' ? 'animation-m' : 'animation-s'};
+    inline-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].waveSize}px;
+    block-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].waveSize}px;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    animation-name: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].animationName};
     animation-duration: 2500ms;
     animation-timing-function: cubic-bezier(0, 0, 0.58, 1);
     animation-iteration-count: infinite;
   }
 
-  @keyframes animation-s {
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      animation-name: none;
+    }
+  }
+
+  @keyframes pulse-animation-s {
     0% {
       opacity: 100%;
       filter: blur(0.2px);
-      box-shadow: inset 0 0 0 1px var(--pulse-color);
+      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
     }
 
     80% {
       transform: scale(3.3);
       opacity: 0%;
-      box-shadow: inset 0 0 0 0.4px var(--pulse-color);
+      box-shadow: inset 0 0 0 0.4px var(--admiral-pulse-color);
       filter: blur(0.2px);
     }
 
@@ -89,39 +74,41 @@ export const PulseElement = styled.div<{
     }
   }
 
-  @keyframes animation-m {
+  @keyframes pulse-animation-m {
     0% {
       opacity: 100%;
-      box-shadow: inset 0 0 0 1px var(--pulse-color);
+      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
       filter: blur(0.33px);
     }
+
     80% {
       transform: scale(2.8);
       opacity: 0%;
-      box-shadow: inset 0 0 0 0.7px var(--pulse-color);
+      box-shadow: inset 0 0 0 0.7px var(--admiral-pulse-color);
       filter: blur(0.33px);
     }
+
     100% {
       opacity: 0%;
     }
   }
 
-  @keyframes animation-l {
+  @keyframes pulse-animation-l {
     0% {
       opacity: 100%;
       filter: blur(0.33px);
-      box-shadow: inset 0 0 0 1px var(--pulse-color);
+      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
     }
+
     80% {
       transform: scale(2.5);
       opacity: 0%;
       filter: blur(0.33px);
-      box-shadow: inset 0 0 0 1.2px var(--pulse-color);
+      box-shadow: inset 0 0 0 1.2px var(--admiral-pulse-color);
     }
+
     100% {
       opacity: 0%;
     }
   }
-
-  ${(p) => p.$cssMixin}
 `;

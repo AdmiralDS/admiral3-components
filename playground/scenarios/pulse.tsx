@@ -14,9 +14,4 @@ export const pulseScenarios: PlaygroundScenario[] = [
     title: 'Pulse Default',
     render: () => <PulsePlaygroundTemplate {...defaultArgs} data-testid="pulse" />,
   },
-  {
-    id: 'pulse/dismissed',
-    title: 'Pulse Dismissed',
-    render: () => <PulsePlaygroundTemplate {...defaultArgs} data-testid="pulse" dismiss />,
-  },
 ];
