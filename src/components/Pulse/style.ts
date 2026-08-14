@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { cssToken } from '#src/theme/cssToken';
 import type { CssToken } from '#src/theme/cssToken';
@@ -11,6 +11,31 @@ export const pulseBackgroundColors: Record<PulseStatus, CssToken> = {
   danger: cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest),
   success: cssToken('--admiral-color-success-base-1-rest', (theme) => theme.color.success.base._1.rest),
   warning: cssToken('--admiral-color-warning-base-1-rest', (theme) => theme.color.warning.base._1.rest),
+};
+
+const createPulseAnimation = (scale: number, blur: number, waveBorderWidth: number) => keyframes`
+  0% {
+    opacity: 100%;
+    filter: blur(${blur}px);
+    box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
+  }
+
+  80% {
+    transform: scale(${scale});
+    opacity: 0%;
+    filter: blur(${blur}px);
+    box-shadow: inset 0 0 0 ${waveBorderWidth}px var(--admiral-pulse-color);
+  }
+
+  100% {
+    opacity: 0%;
+  }
+`;
+
+const pulseAnimations = {
+  s: createPulseAnimation(3.3, 0.2, 0.4),
+  m: createPulseAnimation(2.8, 0.33, 0.7),
+  l: createPulseAnimation(2.5, 0.33, 1.2),
 };
 
 export const PulseElement = styled.div.attrs<
@@ -43,72 +68,12 @@ export const PulseElement = styled.div.attrs<
     border: none;
     border-radius: 50%;
     background-color: transparent;
-    animation-name: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].animationName};
-    animation-duration: 2500ms;
-    animation-timing-function: cubic-bezier(0, 0, 0.58, 1);
-    animation-iteration-count: infinite;
+    animation: ${({ $dimension }) => pulseAnimations[$dimension]} 2500ms cubic-bezier(0, 0, 0.58, 1) infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
     &::before {
-      animation-name: none;
-    }
-  }
-
-  @keyframes pulse-animation-s {
-    0% {
-      opacity: 100%;
-      filter: blur(0.2px);
-      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
-    }
-
-    80% {
-      transform: scale(3.3);
-      opacity: 0%;
-      box-shadow: inset 0 0 0 0.4px var(--admiral-pulse-color);
-      filter: blur(0.2px);
-    }
-
-    100% {
-      opacity: 0%;
-    }
-  }
-
-  @keyframes pulse-animation-m {
-    0% {
-      opacity: 100%;
-      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
-      filter: blur(0.33px);
-    }
-
-    80% {
-      transform: scale(2.8);
-      opacity: 0%;
-      box-shadow: inset 0 0 0 0.7px var(--admiral-pulse-color);
-      filter: blur(0.33px);
-    }
-
-    100% {
-      opacity: 0%;
-    }
-  }
-
-  @keyframes pulse-animation-l {
-    0% {
-      opacity: 100%;
-      filter: blur(0.33px);
-      box-shadow: inset 0 0 0 1px var(--admiral-pulse-color);
-    }
-
-    80% {
-      transform: scale(2.5);
-      opacity: 0%;
-      filter: blur(0.33px);
-      box-shadow: inset 0 0 0 1.2px var(--admiral-pulse-color);
-    }
-
-    100% {
-      opacity: 0%;
+      animation: none;
     }
   }
 `;

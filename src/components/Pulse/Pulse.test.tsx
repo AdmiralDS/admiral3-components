@@ -60,8 +60,8 @@ describe('Pulse', () => {
       blockSize: '12px',
       inlineSize: '12px',
       borderRadius: '50%',
-      '--pulse-color': resolveToken(pulseBackgroundColors.info),
-      backgroundColor: 'var(--pulse-color)',
+      '--admiral-pulse-color': resolveToken(pulseBackgroundColors.info),
+      backgroundColor: 'var(--admiral-pulse-color)',
     });
   });
 
@@ -82,7 +82,7 @@ describe('Pulse', () => {
 
     expect(screen.getByTestId('pulse')).toHaveAttribute('data-status', status);
     expect(screen.getByTestId('pulse')).toHaveStyle({
-      '--pulse-color': resolveToken(pulseBackgroundColors[status]),
+      '--admiral-pulse-color': resolveToken(pulseBackgroundColors[status]),
     });
   });
 
@@ -94,7 +94,7 @@ describe('Pulse', () => {
     );
 
     expect(screen.getByTestId('pulse')).toHaveStyle({
-      '--pulse-color': resolveToken(pulseBackgroundColors.info, themes.dark),
+      '--admiral-pulse-color': resolveToken(pulseBackgroundColors.info, themes.dark),
     });
   });
 
@@ -103,7 +103,7 @@ describe('Pulse', () => {
 
     expect(screen.getByTestId('pulse')).toHaveAttribute('data-status', 'custom');
     expect(screen.getByTestId('pulse')).toHaveStyle({
-      '--pulse-color': 'var(--custom-pulse-color)',
+      '--admiral-pulse-color': 'var(--custom-pulse-color)',
     });
   });
 });

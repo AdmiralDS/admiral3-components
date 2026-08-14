@@ -5,6 +5,7 @@ export const VISUAL_SCENARIO_IDS = {
   checkBox: 'visual/check-box',
   link: 'visual/link',
   list: 'visual/list',
+  pulse: 'visual/pulse',
   radioButton: 'visual/radio-button',
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
