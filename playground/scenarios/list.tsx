@@ -1,9 +1,7 @@
-import { SystemStarSolid } from '@admiral-ds/admiral3-icons';
 import { css } from 'styled-components';
 
-import { ListIcon, ListItem, UnorderedList } from '@admiral-ds/admiral3-primitives';
-
 import type { PlaygroundScenario } from './index';
+import { ListIconDirtyTemplate } from '../../src/components/List/stories/ListIconDirty.template';
 import { ListMultiLineTemplate } from '../../src/components/List/stories/ListMultiline.template';
 import { NestedOrderedListExample } from '../../src/components/List/stories/ListNested.template';
 import { OrderedListNumberingTemplate } from '../../src/components/List/stories/OrderedListNumbering.template';
@@ -30,17 +28,17 @@ export const listScenarios: PlaygroundScenario[] = [
     id: 'list/variants',
     title: 'List Variants',
     render: () => (
-      <>
+      <div>
         <OrderedListPlaygroundTemplate data-testid="ordered-variant" dimension="s" gap={12} />
         <UnorderedListPlaygroundTemplate data-testid="unordered-custom" dimension="xs" markerCssMixin={customMarker} />
-      </>
+      </div>
     ),
   },
   {
     id: 'list/markers',
     title: 'List Markers',
     render: () => (
-      <>
+      <div>
         <OrderedListPlaygroundTemplate data-testid="ordered-numbers" styleType="numbers" />
         <OrderedListPlaygroundTemplate data-testid="ordered-lower-letters" styleType="lower-letters" />
         <OrderedListPlaygroundTemplate data-testid="ordered-upper-letters" styleType="upper-letters" />
@@ -48,24 +46,13 @@ export const listScenarios: PlaygroundScenario[] = [
         <UnorderedListPlaygroundTemplate data-testid="unordered-bullet" styleType="bullet" />
         <UnorderedListPlaygroundTemplate data-testid="unordered-virgule" styleType="virgule" />
         <UnorderedListPlaygroundTemplate data-testid="unordered-icon" styleType="icon" />
-      </>
+      </div>
     ),
   },
   {
     id: 'list/icon',
     title: 'List Icon',
-    render: () => (
-      <UnorderedList data-testid="icon-list" dimension="s" styleType="icon">
-        <ListItem>
-          <ListIcon as={SystemStarSolid} color="rgb(255, 0, 0)" data-testid="list-icon" />
-          Пункт с иконкой
-        </ListItem>
-        <ListItem>
-          <ListIcon as={SystemStarSolid} data-testid="default-list-icon" />
-          Пункт с иконкой цвета по умолчанию
-        </ListItem>
-      </UnorderedList>
-    ),
+    render: () => <ListIconDirtyTemplate />,
   },
   {
     id: 'list/item-value',
