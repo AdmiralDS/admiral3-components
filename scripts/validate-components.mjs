@@ -9,6 +9,8 @@ const componentsDir = join(rootDir, 'src', 'components');
 const rootIndexPath = join(rootDir, 'src', 'index.ts');
 const packageJsonPath = join(rootDir, 'package.json');
 const playgroundScenariosDir = join(rootDir, 'playground', 'scenarios');
+const visualScenariosIndexPath = join(playgroundScenariosDir, 'visual', 'index.tsx');
+const visualScenariosManifestPath = join(playgroundScenariosDir, 'visual', 'manifest.ts');
 const e2eDir = join(rootDir, 'tests', 'e2e');
 const packageImport = '@admiral-ds/admiral3-primitives';
 const internalExportSources = new Set(['./constants', './style']);
@@ -24,6 +26,8 @@ const toKebabCase = (value) =>
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .toLowerCase();
+
+const toCamelCase = (value) => value.charAt(0).toLowerCase() + value.slice(1);
 
 /**
  * Возвращает путь относительно корня проекта, чтобы сообщения об ошибках были короткими.
@@ -53,11 +57,12 @@ const directoryHasFiles = (directoryPath) =>
   });
 
 /**
- * Находит имена компонентных директорий в `src/components`.
+ * Находит непустые публичные директории с PascalCase-именем в `src/components`.
  *
- * Компонентом считается непустая директория с PascalCase-именем.
+ * Обычный компонент ниже определяется по наличию одноимённого файла реализации.
+ * Папки без такого файла считаются группирующими публичными entrypoints.
  */
-const getComponentNames = () =>
+const getPublicDirectoryNames = () =>
   readdirSync(componentsDir, { withFileTypes: true })
     .filter((entry) => {
       const componentDir = join(componentsDir, entry.name);
@@ -199,10 +204,44 @@ const importMentionsType = (importText, typeName) => {
 };
 
 const errors = [];
-const componentNames = getComponentNames();
+const publicDirectoryNames = getPublicDirectoryNames();
+const componentNames = publicDirectoryNames.filter((name) => existsSync(join(componentsDir, name, `${name}.tsx`)));
+const componentGroupNames = publicDirectoryNames.filter((name) => !componentNames.includes(name));
 const rootIndexContent = readProjectFile(rootIndexPath);
+const visualScenariosIndexContent = readProjectFile(visualScenariosIndexPath);
+const visualScenariosManifestContent = readProjectFile(visualScenariosManifestPath);
 const packageJson = readProjectJson(packageJsonPath);
 const packageExportKeys = Object.keys(packageJson.exports ?? {});
+const rootExportSources = getExportSources(rootIndexContent);
+
+const visualScenarioManifestKeys = [...visualScenariosManifestContent.matchAll(/^ {2}([A-Za-z][A-Za-z0-9]*):/gm)].map(
+  (match) => match[1],
+);
+const sortedVisualScenarioManifestKeys = [...visualScenarioManifestKeys].sort((first, second) =>
+  first.localeCompare(second),
+);
+
+if (JSON.stringify(visualScenarioManifestKeys) !== JSON.stringify(sortedVisualScenarioManifestKeys)) {
+  errors.push(`${formatPath(visualScenariosManifestPath)} scenario ids must be sorted alphabetically.`);
+}
+
+const sortedRootExportSources = [...rootExportSources].sort((first, second) => first.localeCompare(second));
+if (JSON.stringify(rootExportSources) !== JSON.stringify(sortedRootExportSources)) {
+  errors.push(`${formatPath(rootIndexPath)} component exports must be sorted alphabetically.`);
+}
+
+const expectedPackageExportOrder = [
+  '.',
+  './package.json',
+  ...packageExportKeys
+    .filter((exportKey) => exportKey !== '.' && exportKey !== './package.json')
+    .sort((first, second) => first.localeCompare(second)),
+];
+if (JSON.stringify(packageExportKeys) !== JSON.stringify(expectedPackageExportOrder)) {
+  errors.push(
+    `${formatPath(packageJsonPath)} exports must keep root and package.json first, then sort subpaths alphabetically.`,
+  );
+}
 
 for (const exportKey of packageExportKeys) {
   if (exportKey !== '.' && exportKey !== './package.json' && !componentExportPattern.test(exportKey)) {
@@ -212,7 +251,7 @@ for (const exportKey of packageExportKeys) {
   }
 }
 
-for (const exportSource of getExportSources(rootIndexContent)) {
+for (const exportSource of rootExportSources) {
   if (!publicComponentExportPattern.test(exportSource)) {
     errors.push(
       `${formatPath(rootIndexPath)} exports "${exportSource}". Root API must re-export only component barrels from src/components/ComponentName.`,
@@ -260,6 +299,37 @@ for (const componentName of componentNames) {
   }
 
   const playgroundScenarioPath = join(playgroundScenariosDir, `${componentKebabName}.tsx`);
+  const visualTemplatePath = join(playgroundScenariosDir, 'visual', `${componentName}Visual.template.tsx`);
+
+  if (!existsSync(visualTemplatePath)) {
+    errors.push(`${componentName}: missing ${formatPath(visualTemplatePath)}`);
+  } else {
+    const visualTemplateContent = readProjectFile(visualTemplatePath);
+    const visualTemplateImports = getImports(visualTemplateContent);
+
+    if (visualTemplateImports.some((item) => item.source.includes('/stories/'))) {
+      errors.push(
+        `${componentName}: ${formatPath(visualTemplatePath)} must render the component directly and must not compose Storybook templates.`,
+      );
+    }
+
+    if (!visualTemplateContent.includes('<VisualSamples>')) {
+      errors.push(
+        `${componentName}: ${formatPath(visualTemplatePath)} must use VisualSamples to split the visual matrix into snapshot rows.`,
+      );
+    }
+  }
+
+  const componentCamelName = toCamelCase(componentName);
+
+  if (
+    !visualScenariosIndexContent.includes(`VISUAL_SCENARIO_IDS.${componentCamelName}`) ||
+    !visualScenariosManifestContent.includes(`${componentCamelName}: 'visual/${componentKebabName}'`)
+  ) {
+    errors.push(
+      `${componentName}: missing visual scenario "visual/${componentKebabName}" in ${formatPath(visualScenariosIndexPath)}`,
+    );
+  }
 
   // Если есть playground-сценарий, рядом должен быть e2e smoke-тест для этого сценария.
   if (existsSync(playgroundScenarioPath)) {
@@ -348,6 +418,7 @@ for (const componentName of componentNames) {
 const expectedPackageExportKeys = new Set([
   '.',
   './package.json',
+  ...componentGroupNames.map((name) => `./${toKebabCase(name)}`),
   ...componentNames.map((name) => `./${toKebabCase(name)}`),
 ]);
 

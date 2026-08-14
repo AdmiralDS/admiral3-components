@@ -1,39 +1,27 @@
-import { textStyles } from '@admiral-ds/admiral3-tokens';
-import type { CSSObject } from 'styled-components';
+import { INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from '../_internal/InputAtoms/constants';
 
-export const RADIO_BUTTON_DIMENSIONS = ['m', 's', 'xs'] as const;
+export const RADIO_BUTTON_DIMENSIONS = INPUT_DIMENSIONS;
 
-interface RadioButtonDimensionParameters {
-  controlSize: number;
-  controlMarginBlock: number;
-  gap: number;
+type InputDimensionParameters = (typeof INPUT_DIMENSION_PARAMETERS)[(typeof INPUT_DIMENSIONS)[number]];
+
+type RadioButtonDimensionParameters = InputDimensionParameters & {
   checkedBorderWidth: number;
-  typography: CSSObject;
-}
+};
 
 export const RADIO_BUTTON_DIMENSION_PARAMETERS: Record<
   (typeof RADIO_BUTTON_DIMENSIONS)[number],
   RadioButtonDimensionParameters
 > = {
   m: {
-    controlSize: 20,
-    controlMarginBlock: 2,
-    gap: 10,
+    ...INPUT_DIMENSION_PARAMETERS.m,
     checkedBorderWidth: 5,
-    typography: textStyles.body.body1Long,
   },
   s: {
-    controlSize: 16,
-    controlMarginBlock: 2,
-    gap: 8,
+    ...INPUT_DIMENSION_PARAMETERS.s,
     checkedBorderWidth: 4,
-    typography: textStyles.body.body2Long,
   },
   xs: {
-    controlSize: 14,
-    controlMarginBlock: 1,
-    gap: 8,
+    ...INPUT_DIMENSION_PARAMETERS.xs,
     checkedBorderWidth: 3,
-    typography: textStyles.caption.caption1,
   },
 };

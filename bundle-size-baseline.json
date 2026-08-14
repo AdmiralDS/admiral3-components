@@ -1,36 +1,38 @@
 {
   "components": {
     "badge": {
-      "gzipBytes": 932,
       "rawBytes": 3394
     },
     "badge-dot": {
-      "gzipBytes": 672,
       "rawBytes": 1422
     },
     "button": {
-      "gzipBytes": 5522,
-      "rawBytes": 22241
+      "rawBytes": 22791
+    },
+    "check-box": {
+      "rawBytes": 9721
+    },
+    "helper-components": {
+      "rawBytes": 1067
     },
     "link": {
-      "gzipBytes": 957,
-      "rawBytes": 2147
+      "rawBytes": 2676
+    },
+    "list": {
+      "rawBytes": 4030
     },
     "pulse": {
       "gzipBytes": 1062,
       "rawBytes": 3098
     },
     "radio-button": {
-      "gzipBytes": 1606,
-      "rawBytes": 5513
+      "rawBytes": 6551
     },
     "skeleton": {
-      "gzipBytes": 548,
       "rawBytes": 1298
     },
     "spinner": {
-      "gzipBytes": 2925,
-      "rawBytes": 6068
+      "rawBytes": 6566
     }
   },
   "version": 1

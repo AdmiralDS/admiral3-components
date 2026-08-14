@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { LINK_DIMENSION_PARAMETERS } from './constants';
 import type { StyledLinkProps } from './types';
+import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
 
 const coloredRest = cssToken('--admiral-color-primary-text-link-rest', (theme) => theme.color.primary.text.link.rest);
@@ -28,6 +29,7 @@ export const StyledLink = styled.a<StyledLinkProps>`
   gap: ${({ $dimension }) => LINK_DIMENSION_PARAMETERS[$dimension].gap}px;
   color: ${({ $appearance }) => ($appearance === 'colored' ? coloredRest : neutralRest)};
   text-decoration: none;
+  transition: color ${hoverPressLeaveTransition};
   cursor: pointer;
   ${({ $dimension }) => LINK_DIMENSION_PARAMETERS[$dimension].typography}
 
