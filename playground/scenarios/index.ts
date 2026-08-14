@@ -5,6 +5,7 @@ import { badgeDotScenarios } from './badge-dot';
 import { buttonScenarios } from './button';
 import { checkBoxScenarios } from './check-box';
 import { linkScenarios } from './link';
+import { listScenarios } from './list';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
@@ -23,6 +24,7 @@ export const playgroundScenarios = [
   ...buttonScenarios,
   ...checkBoxScenarios,
   ...linkScenarios,
+  ...listScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
