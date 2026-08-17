@@ -20,15 +20,15 @@ export type PlaygroundScenario = {
 };
 
 export const playgroundScenarios = [
-  ...badgeDotScenarios,
   ...badgeScenarios,
+  ...badgeDotScenarios,
   ...buttonScenarios,
   ...checkBoxScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
   ...visualScenarios,
-  ...pulseScenarios,
 ];
