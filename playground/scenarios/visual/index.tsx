@@ -6,6 +6,7 @@ import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
+import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
@@ -28,6 +29,7 @@ export const visualScenarios: PlaygroundScenario[] = [
   },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.pulse, title: 'Visual / Pulse', visual: true, render: () => <PulseVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.radioButton,
     title: 'Visual / RadioButton',

@@ -6,6 +6,7 @@ import { buttonScenarios } from './button';
 import { checkBoxScenarios } from './check-box';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
+import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
@@ -20,12 +21,13 @@ export type PlaygroundScenario = {
 };
 
 export const playgroundScenarios = [
-  ...badgeDotScenarios,
   ...badgeScenarios,
+  ...badgeDotScenarios,
   ...buttonScenarios,
   ...checkBoxScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,

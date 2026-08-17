@@ -212,13 +212,34 @@ const addPlaygroundScenarioToIndex = () => {
   const lastImportIndex = lines.findLastIndex((line) => line.startsWith('import '));
   lines.splice(lastImportIndex + 1, 0, importLine);
 
-  // Добавляем spread нового набора сценариев в существующий export без перестройки файла.
+  // Обычные component-сценарии сортируем по имени, а visual regression сценарии оставляем отдельной последней группой.
   const nextContent = lines
     .join('\n')
-    .replace(
-      /export const playgroundScenarios = \[(?<items>[\s\S]*?)\];/,
-      (_match, items) => `export const playgroundScenarios = [${items.trimEnd()}, ...${scenarioIdentifier}];`,
-    );
+    .replace(/export const playgroundScenarios = \[(?<items>[\s\S]*?)\];/, (_match, items) => {
+      const scenarioLines = items
+        .trim()
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+      const visualScenarioLine = scenarioLines.find((line) => line === '...visualScenarios,');
+      const componentScenarioLines = [
+        ...scenarioLines.filter((line) => line !== visualScenarioLine),
+        `...${scenarioIdentifier},`,
+      ]
+        .sort((first, second) => {
+          const firstComponentName = first.slice(3, -'Scenarios,'.length);
+          const secondComponentName = second.slice(3, -'Scenarios,'.length);
+
+          return firstComponentName.localeCompare(secondComponentName);
+        })
+        .map((line) => `  ${line}`);
+
+      if (visualScenarioLine) {
+        componentScenarioLines.push(`  ${visualScenarioLine}`);
+      }
+
+      return `export const playgroundScenarios = [\n${componentScenarioLines.join('\n')}\n];`;
+    });
 
   writeProjectFile(indexPath, nextContent);
 };

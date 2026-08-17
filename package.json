@@ -38,6 +38,10 @@
       "types": "./dist/components/List/index.d.ts",
       "import": "./dist/components/List/index.js"
     },
+    "./pulse": {
+      "types": "./dist/components/Pulse/index.d.ts",
+      "import": "./dist/components/Pulse/index.js"
+    },
     "./radio-button": {
       "types": "./dist/components/RadioButton/index.d.ts",
       "import": "./dist/components/RadioButton/index.js"

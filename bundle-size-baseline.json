@@ -21,6 +21,9 @@
     "list": {
       "rawBytes": 4030
     },
+    "pulse": {
+      "rawBytes": 2252
+    },
     "radio-button": {
       "rawBytes": 6551
     },
