@@ -15,7 +15,7 @@ export const PulseStatusTemplate = (props: PulseProps) => {
   return (
     <StoryDemoContainer $gap="16px" $direction="column">
       <StoryDemoDescription>
-        Доступны четыре статуса: info (по умолчанию), danger, success и warning. Пользовательский цвет задаётся через
+        Доступны четыре статуса: info (по умолчанию), error, success и warning. Пользовательский цвет задаётся через
         объект со свойством <code>backgroundColor</code>.
       </StoryDemoDescription>
       <Wrapper>

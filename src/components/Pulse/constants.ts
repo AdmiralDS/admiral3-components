@@ -1,6 +1,6 @@
 export const PULSE_DIMENSIONS = ['s', 'm', 'l'] as const;
 
-export const PULSE_STATUSES = ['info', 'danger', 'success', 'warning'] as const;
+export const PULSE_STATUSES = ['info', 'error', 'success', 'warning'] as const;
 
 export const PULSE_DIMENSION_PARAMETERS: Record<(typeof PULSE_DIMENSIONS)[number], { size: number; waveSize: number }> =
   {

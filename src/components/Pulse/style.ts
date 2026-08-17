@@ -8,7 +8,7 @@ import type { PulseStatus, StyledPulseProps } from './types';
 
 export const pulseBackgroundColors: Record<PulseStatus, CssToken> = {
   info: cssToken('--admiral-color-primary-base-1-rest', (theme) => theme.color.primary.base._1.rest),
-  danger: cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest),
+  error: cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest),
   success: cssToken('--admiral-color-success-base-1-rest', (theme) => theme.color.success.base._1.rest),
   warning: cssToken('--admiral-color-warning-base-1-rest', (theme) => theme.color.warning.base._1.rest),
 };
@@ -37,6 +37,8 @@ const pulseAnimations = {
   m: createPulseAnimation(2.8, 0.33, 0.7),
   l: createPulseAnimation(2.5, 0.33, 1.2),
 };
+
+//В процессе тестирования было определено, что тайминг 2500 мс обеспечивает более корректную работу с макетами Pixso по сравнению с 1600 мс.
 
 export const PulseElement = styled.div.attrs<
   StyledPulseProps & {
