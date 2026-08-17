@@ -109,7 +109,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `playwright.config.ts` - конфигурация e2e тестов Playwright. Указывает `tests/e2e`, базовый URL playground, браузерные проекты, timeout, reporter и webServer `npm run playground:serve`.
 - `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с точным сравнением пикселей; тест снимает ряды `VisualSamples` во всех theme modes playground.
 - `scripts/check-full.mjs` - последовательно запускает все проверки из `check:full`, останавливается на первой ошибке и выводит общую длительность прогона.
-- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding и обновляет root export, component subpath, playground и visual aggregators.
+- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding, обновляет root export и component subpath, а также сохраняет component playground-сценарии в алфавитном порядке перед visual-группой.
 - `scripts/test-tree-shaking.mjs` - consumer integration check, который создаёт и устанавливает npm tarball в изолированный
   consumer project, проверяет TypeScript resolution всех component subpaths и сравнивает Rollup module graphs
   root/component imports; TypeScript parser читает публичные component barrels, после чего один consumer fixture проверяет
