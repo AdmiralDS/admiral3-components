@@ -47,19 +47,26 @@ test.describe('Toggle playground', () => {
     await page.goto(getPlaygroundScenarioPath(statesScenarioId));
 
     const disabled = page.getByRole('switch', { name: 'Disabled', exact: true });
+    const readOnlyInactive = page.getByRole('switch', { name: 'Read only', exact: true });
     const readOnly = page.getByRole('switch', { name: 'Read only active', exact: true });
     const disabledControl = disabled.locator('xpath=following-sibling::span[1]');
+    const readOnlyInactiveThumb = readOnlyInactive.locator('xpath=following-sibling::span[1]/span');
     const readOnlyControl = readOnly.locator('xpath=following-sibling::span[1]');
+    const readOnlyThumb = readOnlyControl.locator('span');
     const disabledBackground = await resolveCssColorToken(page, '--admiral-color-neutral-base-opacity-rest');
+    const disabledThumb = await resolveCssColorToken(page, '--admiral-color-neutral-text-disable-rest');
     const selectedDisabled = await resolveCssColorToken(page, '--admiral-color-primary-base-1-disable');
+    const disabledActiveThumb = await resolveCssColorToken(page, '--admiral-color-neutral-base-1-rest');
 
     await expect(disabled).toBeDisabled();
     await expect(disabled.locator('xpath=..')).toHaveCSS('cursor', 'not-allowed');
     await expect(disabledControl).toHaveCSS('background-color', disabledBackground);
 
+    await expect(readOnlyInactiveThumb).toHaveCSS('background-color', disabledThumb);
     await expect(readOnly).toBeChecked();
     await expect(readOnly).toHaveAttribute('aria-readonly', 'true');
     await expect(readOnlyControl).toHaveCSS('background-color', selectedDisabled);
+    await expect(readOnlyThumb).toHaveCSS('background-color', disabledActiveThumb);
 
     await readOnly.locator('xpath=..').click();
     await expect(readOnly).toBeChecked();

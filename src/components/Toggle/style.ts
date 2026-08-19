@@ -40,6 +40,10 @@ const thumbDisabled = cssToken(
   '--admiral-color-neutral-text-disable-rest',
   (theme) => theme.color.neutral.text.disable.rest,
 );
+const thumbDisabledActive = cssToken(
+  '--admiral-color-neutral-base-1-rest',
+  (theme) => theme.color.neutral.base._1.rest,
+);
 const focusColor = cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest);
 const textColor = cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest);
 const textDisabled = cssToken(
@@ -159,12 +163,12 @@ export const Thumb = styled.span`
     transform: translate(12px, -50%);
   }
 
-  ${NativeInput}:disabled + ${Control} & {
+  ${NativeInput}:is(:disabled, [readonly]) + ${Control} & {
     background: ${thumbDisabled};
   }
 
-  ${NativeInput}:disabled:checked + ${Control} & {
-    background: ${thumbActive};
+  ${NativeInput}:is(:disabled, [readonly]):checked + ${Control} & {
+    background: ${thumbDisabledActive};
   }
 `;
 
