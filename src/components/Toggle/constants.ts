@@ -11,7 +11,7 @@ export const TOGGLE_DIMENSION_PARAMETERS = {
     width: 36,
     height: 20,
     thumbSize: 14,
-    thumbOffsetInline: 3,
+    thumbOffsetInline: 2,
   },
   s: {
     ...INPUT_DIMENSION_PARAMETERS.s,
@@ -19,7 +19,7 @@ export const TOGGLE_DIMENSION_PARAMETERS = {
     width: 28,
     height: 16,
     thumbSize: 10,
-    thumbOffsetInline: 3,
+    thumbOffsetInline: 2,
   },
   xs: {
     ...INPUT_DIMENSION_PARAMETERS.xs,
@@ -27,6 +27,6 @@ export const TOGGLE_DIMENSION_PARAMETERS = {
     width: 28,
     height: 16,
     thumbSize: 10,
-    thumbOffsetInline: 3,
+    thumbOffsetInline: 2,
   },
 } as const;

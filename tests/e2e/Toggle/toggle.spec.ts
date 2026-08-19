@@ -4,6 +4,7 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 const defaultScenarioId = 'toggle/default';
 const statesScenarioId = 'toggle/states';
+const visualScenarioId = 'visual/toggle';
 
 test.describe('Toggle playground', () => {
   test('supports mouse and keyboard interaction and resolves theme styles', async ({ page }) => {
@@ -74,5 +75,28 @@ test.describe('Toggle playground', () => {
     await readOnly.focus();
     await page.keyboard.press('Space');
     await expect(readOnly).toBeChecked();
+  });
+
+  test('keeps a 3px outer inset for the thumb in every dimension', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(visualScenarioId));
+
+    for (const dimension of ['m', 's', 'xs']) {
+      for (const state of ['default', 'active']) {
+        const input = page.getByRole('switch', { name: `${state} ${dimension}`, exact: true });
+        const control = input.locator('xpath=following-sibling::span[1]');
+        const thumb = control.locator('span');
+        const [controlBox, thumbBox] = await Promise.all([control.boundingBox(), thumb.boundingBox()]);
+
+        expect(controlBox).not.toBeNull();
+        expect(thumbBox).not.toBeNull();
+
+        const inset =
+          state === 'active'
+            ? controlBox!.x + controlBox!.width - thumbBox!.x - thumbBox!.width
+            : thumbBox!.x - controlBox!.x;
+
+        expect(inset).toBeCloseTo(3, 1);
+      }
+    }
   });
 });
