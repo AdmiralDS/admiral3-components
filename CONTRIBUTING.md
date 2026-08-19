@@ -216,6 +216,7 @@ npm run test:visual
 
 При подтвержденном изменении внешнего вида baseline обновляется через `npm run test:visual:update` и просматривается
 вручную перед добавлением в PR. Visual-контур не входит в `check:full`, но является отдельной обязательной CI-проверкой.
+Сравнение выполняется без допуска (`threshold: 0`, `maxDiffPixels: 0`) и ловит любое изменение пикселя или его цвета.
 
 `test:bundle` создаёт настоящий tarball через `npm pack`, устанавливает его в изолированный consumer project, собирает
 fixtures для root и component imports и автоматически проверяет совпадение их Rollup module graphs. Поэтому TypeScript и

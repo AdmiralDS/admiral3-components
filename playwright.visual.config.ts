@@ -23,6 +23,8 @@ export default defineConfig({
     toHaveScreenshot: {
       animations: 'disabled',
       caret: 'hide',
+      maxDiffPixels: 0,
+      threshold: 0,
     },
   },
   projects: [
