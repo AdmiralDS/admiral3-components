@@ -3,6 +3,7 @@ import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
+import { DividerVisualTemplate } from './DividerVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
@@ -42,4 +43,5 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SkeletonVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
 ];

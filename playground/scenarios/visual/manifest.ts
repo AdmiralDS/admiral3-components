@@ -3,6 +3,7 @@ export const VISUAL_SCENARIO_IDS = {
   badgeDot: 'visual/badge-dot',
   button: 'visual/button',
   checkBox: 'visual/check-box',
+  divider: 'visual/divider',
   link: 'visual/link',
   list: 'visual/list',
   pulse: 'visual/pulse',
