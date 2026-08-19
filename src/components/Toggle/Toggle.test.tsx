@@ -3,7 +3,7 @@ import { createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { TOGGLE_ROOT_DATA_ATTRIBUTE } from './constants';
+import { TOGGLE_DIMENSIONS, TOGGLE_ROOT_DATA_ATTRIBUTE } from './constants';
 import { Toggle } from './Toggle';
 
 describe('Toggle', () => {
@@ -25,14 +25,14 @@ describe('Toggle', () => {
     expect(ref.current).toBeChecked();
   });
 
-  it('supports all dimensions, left label and extra text', () => {
+  it.each(TOGGLE_DIMENSIONS)('supports %s dimension, left label and extra text', (dimension) => {
     render(
-      <Toggle dimension="xs" labelPosition="left" extraText="Used for important updates">
+      <Toggle dimension={dimension} labelPosition="left" extraText="Used for important updates">
         Notifications
       </Toggle>,
     );
 
-    expect(screen.getByText('Notifications').closest('label')).toHaveAttribute('data-dimension', 'xs');
+    expect(screen.getByText('Notifications').closest('label')).toHaveAttribute('data-dimension', dimension);
     expect(screen.getByText('Used for important updates')).toBeVisible();
   });
 
