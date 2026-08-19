@@ -76,7 +76,7 @@
   "scripts": {
     "check:fix": "npm run format && npm run lint:fix",
     "check:full": "node scripts/check-full.mjs",
-    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=changed'",
+    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all'",
     "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run'",
     "test:visual:report": "playwright show-report playwright-visual-report",
     "storybook": "storybook dev -p 6006",
