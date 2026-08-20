@@ -244,7 +244,7 @@ const addPlaygroundScenarioToIndex = () => {
   writeProjectFile(indexPath, nextContent);
 };
 
-/** Подключает visual template компонента к списку Chromium snapshot-сценариев. */
+/** Подключает visual template компонента к списку Chromium snapshot-сценариев в алфавитном порядке. */
 const addVisualScenarioToIndex = () => {
   const indexPath = 'playground/scenarios/visual/index.tsx';
   const manifestPath = 'playground/scenarios/visual/manifest.ts';
@@ -268,7 +268,18 @@ const addVisualScenarioToIndex = () => {
     throw new Error(`Cannot find visualScenarios in ${indexPath}`);
   }
 
-  lines.splice(visualScenariosEnd, 0, scenarioLine);
+  const visualScenarioEntries = lines
+    .slice(visualScenariosStart + 1, visualScenariosEnd)
+    .map((line, index) => {
+      const match = line.match(/^ {2}\{ id: VISUAL_SCENARIO_IDS\.([A-Za-z][A-Za-z0-9]*),/);
+
+      return match ? { index: visualScenariosStart + 1 + index, key: match[1] } : undefined;
+    })
+    .filter(Boolean);
+  const insertionIndex =
+    visualScenarioEntries.find(({ key }) => componentCamelName.localeCompare(key) < 0)?.index ?? visualScenariosEnd;
+
+  lines.splice(insertionIndex, 0, scenarioLine);
   writeProjectFile(indexPath, lines.join('\n'));
 
   const manifestContent = readProjectFile(manifestPath);
