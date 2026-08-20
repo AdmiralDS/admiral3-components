@@ -27,6 +27,7 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <CheckBoxVisualTemplate />,
   },
+  { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.pulse, title: 'Visual / Pulse', visual: true, render: () => <PulseVisualTemplate /> },
@@ -43,5 +44,4 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SkeletonVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
-  { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
 ];

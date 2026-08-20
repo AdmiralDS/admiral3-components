@@ -459,7 +459,7 @@ npm run generate:component -- ComponentName
 8. подключение обычного и visual-сценариев к соответствующим aggregators.
 
 Обычные playground-сценарии генератор сохраняет в алфавитном порядке, перед завершающей группой visual regression
-сценариев.
+сценариев. Сценарии внутри visual-группы также сохраняются в алфавитном порядке.
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
 Сгенерированный код является стартовым шаблоном. Visual template сразу создаётся с отдельными матричными секциями

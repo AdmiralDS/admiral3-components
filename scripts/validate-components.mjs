@@ -225,6 +225,18 @@ if (JSON.stringify(visualScenarioManifestKeys) !== JSON.stringify(sortedVisualSc
   errors.push(`${formatPath(visualScenariosManifestPath)} scenario ids must be sorted alphabetically.`);
 }
 
+const visualScenariosArrayContent = visualScenariosIndexContent.match(
+  /export const visualScenarios: PlaygroundScenario\[\] = \[(?<items>[\s\S]*?)\n\];/,
+)?.groups?.items;
+const visualScenarioKeys = [
+  ...(visualScenariosArrayContent?.matchAll(/VISUAL_SCENARIO_IDS\.([A-Za-z][A-Za-z0-9]*)/g) ?? []),
+].map((match) => match[1]);
+const sortedVisualScenarioKeys = [...visualScenarioKeys].sort((first, second) => first.localeCompare(second));
+
+if (JSON.stringify(visualScenarioKeys) !== JSON.stringify(sortedVisualScenarioKeys)) {
+  errors.push(`${formatPath(visualScenariosIndexPath)} visual scenarios must be sorted alphabetically.`);
+}
+
 const sortedRootExportSources = [...rootExportSources].sort((first, second) => first.localeCompare(second));
 if (JSON.stringify(rootExportSources) !== JSON.stringify(sortedRootExportSources)) {
   errors.push(`${formatPath(rootIndexPath)} component exports must be sorted alphabetically.`);
