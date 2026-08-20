@@ -109,7 +109,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `playwright.config.ts` - конфигурация e2e тестов Playwright. Указывает `tests/e2e`, базовый URL playground, браузерные проекты, timeout, reporter и webServer `npm run playground:serve`.
 - `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с явными `threshold: 0` и `maxDiffPixels: 0`; тест снимает ряды `VisualSamples` во всех theme modes playground.
 - `scripts/check-full.mjs` - последовательно запускает все проверки из `check:full`, останавливается на первой ошибке и выводит общую длительность прогона.
-- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding, обновляет root export и component subpath, а также сохраняет component playground-сценарии в алфавитном порядке перед visual-группой.
+- `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding, обновляет root export и component subpath, а также сохраняет component playground-сценарии и элементы visual-группы в алфавитном порядке.
 - `scripts/test-tree-shaking.mjs` - consumer integration check, который создаёт и устанавливает npm tarball в изолированный
   consumer project, проверяет TypeScript resolution всех component subpaths и сравнивает Rollup module graphs
   root/component imports; TypeScript parser читает публичные component barrels, после чего один consumer fixture проверяет
@@ -117,7 +117,7 @@ Storybook и playground импортируют пакет через alias `@adm
   при расхождении, выводится standalone raw/gzip размер каждого публичного component subpath без peer dependencies,
   обновляется `bundle-size-baseline.json`, проверяется существенная регрессия raw-размера и напоминается вручную проверить состав
   графов.
-- `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels и полного соответствия явных component subpaths реальным component directories.
+- `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels, полного соответствия явных component subpaths реальным component directories и запрета произвольного `string` в публичных props с закрытым набором вариантов.
 - `scripts/validate-package.mjs` - проверка состава npm tarball, существования всех публичных export targets и их
   присутствия в tarball без абсолютных size limits.
 - `scripts/templates/generate-react-component/*` - templates для `generate-react-cli`, из которых создаются source-файлы компонента, локальный barrel, constants/types/style, unit test и Storybook playground template.
