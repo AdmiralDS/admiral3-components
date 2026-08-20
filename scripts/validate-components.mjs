@@ -3,6 +3,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const componentsDir = join(rootDir, 'src', 'components');
@@ -12,8 +13,10 @@ const playgroundScenariosDir = join(rootDir, 'playground', 'scenarios');
 const visualScenariosIndexPath = join(playgroundScenariosDir, 'visual', 'index.tsx');
 const visualScenariosManifestPath = join(playgroundScenariosDir, 'visual', 'manifest.ts');
 const e2eDir = join(rootDir, 'tests', 'e2e');
+const tsconfigLibPath = join(rootDir, 'tsconfig.lib.json');
 const packageImport = '@admiral-ds/admiral3-primitives';
 const internalExportSources = new Set(['./constants', './style']);
+const closedStringPropNames = new Set(['appearance', 'colorMode', 'dimension', 'orientation', 'status', 'styleType']);
 const publicComponentExportPattern = /^\.\/components\/[A-Z][A-Za-z0-9]*$/;
 const styledPropsPattern = /^Styled[A-Za-z0-9]*Props$/;
 const componentExportPattern = /^\.\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -203,6 +206,77 @@ const importMentionsType = (importText, typeName) => {
   return typePattern.test(importText);
 };
 
+const tsconfigFile = ts.readConfigFile(tsconfigLibPath, ts.sys.readFile);
+const parsedTsconfig = ts.parseJsonConfigFileContent(
+  tsconfigFile.config,
+  ts.sys,
+  dirname(tsconfigLibPath),
+  undefined,
+  tsconfigLibPath,
+);
+const typeProgram = ts.createProgram({ rootNames: parsedTsconfig.fileNames, options: parsedTsconfig.options });
+const typeChecker = typeProgram.getTypeChecker();
+
+/**
+ * Проверяет закрытые строковые props публичных типов компонента.
+ *
+ * Обычный `string` не должен подменять union поддерживаемых вариантов: пользовательские значения
+ * оформляются отдельным config-объектом. Унаследованные DOM/SVG props не проверяются.
+ */
+const validateClosedStringProps = (componentName, publicTypeNames, errors) => {
+  const typesPath = join(componentsDir, componentName, 'types.ts');
+  const sourceFile = typeProgram.getSourceFile(typesPath);
+
+  if (!sourceFile) {
+    return;
+  }
+
+  const moduleSymbol = typeChecker.getSymbolAtLocation(sourceFile);
+
+  if (!moduleSymbol) {
+    return;
+  }
+
+  const exportedSymbols = new Map(typeChecker.getExportsOfModule(moduleSymbol).map((symbol) => [symbol.name, symbol]));
+
+  for (const typeName of publicTypeNames.filter((name) => name.endsWith('Props'))) {
+    const typeSymbol = exportedSymbols.get(typeName);
+
+    if (!typeSymbol) {
+      continue;
+    }
+
+    const propsType = typeChecker.getDeclaredTypeOfSymbol(typeSymbol);
+
+    for (const property of typeChecker.getPropertiesOfType(propsType)) {
+      if (!closedStringPropNames.has(property.name)) {
+        continue;
+      }
+
+      const localDeclaration = property.declarations?.find((declaration) => declaration.getSourceFile() === sourceFile);
+
+      if (!localDeclaration) {
+        continue;
+      }
+
+      const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, localDeclaration);
+      const nonNullablePropertyType = typeChecker.getNonNullableType(propertyType);
+
+      if (!typeChecker.isTypeAssignableTo(typeChecker.getStringType(), nonNullablePropertyType)) {
+        continue;
+      }
+
+      const { line } = sourceFile.getLineAndCharacterOfPosition(localDeclaration.getStart());
+
+      errors.push(
+        `${formatPath(typesPath)}:${line + 1} ${typeName}.${property.name} accepts arbitrary string (${typeChecker.typeToString(
+          propertyType,
+        )}). Use a literal union or a literal union with a config object.`,
+      );
+    }
+  }
+};
+
 const errors = [];
 const publicDirectoryNames = getPublicDirectoryNames();
 const componentNames = publicDirectoryNames.filter((name) => existsSync(join(componentsDir, name, `${name}.tsx`)));
@@ -363,6 +437,8 @@ for (const componentName of componentNames) {
   const publicTypeNames = getPublicTypeNames(readProjectFile(componentIndexPath));
   const componentIndexContent = readProjectFile(componentIndexPath);
   const componentExportSources = getExportSources(componentIndexContent);
+
+  validateClosedStringProps(componentName, publicTypeNames, errors);
 
   if (!exportsComponent(componentIndexContent, componentName)) {
     errors.push(`${componentName}: ${formatPath(componentIndexPath)} must export the ${componentName} component.`);

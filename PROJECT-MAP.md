@@ -117,7 +117,7 @@ Storybook и playground импортируют пакет через alias `@adm
   при расхождении, выводится standalone raw/gzip размер каждого публичного component subpath без peer dependencies,
   обновляется `bundle-size-baseline.json`, проверяется существенная регрессия raw-размера и напоминается вручную проверить состав
   графов.
-- `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels и полного соответствия явных component subpaths реальным component directories.
+- `scripts/validate-components.mjs` - проверка структуры компонентов, root barrels, полного соответствия явных component subpaths реальным component directories и запрета произвольного `string` в публичных props с закрытым набором вариантов.
 - `scripts/validate-package.mjs` - проверка состава npm tarball, существования всех публичных export targets и их
   присутствия в tarball без абсолютных size limits.
 - `scripts/templates/generate-react-component/*` - templates для `generate-react-cli`, из которых создаются source-файлы компонента, локальный barrel, constants/types/style, unit test и Storybook playground template.
