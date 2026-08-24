@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { DIVIDER_DIMENSION_PARAMETERS, DIVIDER_ROOT_DATA_ATTRIBUTE } from './constants';
+import { DIVIDER_DIMENSION_PARAMETERS } from './constants';
 import type { DividerAppearance, StyledDividerProps } from './types';
 import { cssToken } from '../../theme/cssToken';
 import type { CssToken } from '../../theme/cssToken';
@@ -25,14 +25,13 @@ export const StyledDivider = styled.div.attrs<
     'data-orientation': string;
   }
 >((props) => ({
-  [DIVIDER_ROOT_DATA_ATTRIBUTE]: 'true',
-  'data-appearance': props.$appearance,
+  'data-appearance': props.$colorConfig ? 'custom' : props.$appearance,
   'data-dimension': props.$dimension,
   'data-orientation': props.$orientation,
 }))<StyledDividerProps>`
   box-sizing: border-box;
   background-color: ${(props) =>
-    dividerBackgroundColors[props.$appearance as DividerAppearance]?.(props) ?? props.$appearance};
+    props.$colorConfig?.backgroundColor ?? dividerBackgroundColors[props.$appearance](props)};
   width: ${({ $dimension, $length, $orientation }) =>
     $orientation === 'horizontal' ? toCssSize($length) : `${DIVIDER_DIMENSION_PARAMETERS[$dimension]}px`};
   height: ${({ $dimension, $length, $orientation }) =>

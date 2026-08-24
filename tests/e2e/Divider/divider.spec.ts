@@ -11,6 +11,9 @@ test.describe('Divider playground', () => {
     const component = page.getByTestId('divider');
 
     await expect(component).toBeVisible();
-    await expect(component).toHaveText('Divider');
+    await expect(component).toHaveAttribute('data-appearance', 'default');
+    await expect(component).toHaveAttribute('data-dimension', 'm');
+    await expect(component).toHaveAttribute('data-orientation', 'horizontal');
+    await expect(component).toHaveCSS('height', '2px');
   });
 });

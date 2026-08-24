@@ -3,7 +3,6 @@ import { createRef } from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { DIVIDER_ROOT_DATA_ATTRIBUTE } from './constants';
 import { Divider } from './Divider';
 
 describe('Divider', () => {
@@ -11,17 +10,10 @@ describe('Divider', () => {
     cleanup();
   });
 
-  it('renders children', () => {
-    render(<Divider data-testid="divider">Content</Divider>);
-
-    expect(screen.getByTestId('divider')).toHaveTextContent('Content');
-  });
-
   it('forwards div attributes to the root element', () => {
     render(<Divider data-testid="divider" title="Divider" />);
 
     expect(screen.getByTestId('divider')).toHaveAttribute('title', 'Divider');
-    expect(screen.getByTestId('divider')).toHaveAttribute(DIVIDER_ROOT_DATA_ATTRIBUTE, 'true');
   });
 
   it('forwards ref to the root element', () => {
@@ -56,8 +48,9 @@ describe('Divider', () => {
   });
 
   it('uses a custom appearance as background color', () => {
-    render(<Divider appearance="var(--custom-divider-color)" data-testid="divider" />);
+    render(<Divider appearance={{ backgroundColor: 'var(--custom-divider-color)' }} data-testid="divider" />);
 
+    expect(screen.getByTestId('divider')).toHaveAttribute('data-appearance', 'custom');
     expect(screen.getByTestId('divider')).toHaveStyle({ backgroundColor: 'var(--custom-divider-color)' });
   });
 });

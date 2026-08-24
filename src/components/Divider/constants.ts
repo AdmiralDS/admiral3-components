@@ -1,5 +1,3 @@
-export const DIVIDER_ROOT_DATA_ATTRIBUTE = 'data-admiral-divider' as const;
-
 export const DIVIDER_DIMENSIONS = ['m', 's'] as const;
 
 export const DIVIDER_APPEARANCES = ['default', 'subtle', 'strong', 'primary', 'staticWhite'] as const;

@@ -46,8 +46,8 @@ export const DividerVariantsTemplate = () => {
           <Divider length="80%" appearance="primary" />
           <Divider length="80%" dimension="s" appearance="staticWhite" />
           <Divider length="80%" appearance="staticWhite" />
-          <Divider length="80%" dimension="s" appearance="#84106e" />
-          <Divider length="80%" appearance="#84106e" />
+          <Divider length="80%" dimension="s" appearance={{ backgroundColor: '#84106e' }} />
+          <Divider length="80%" appearance={{ backgroundColor: '#84106e' }} />
         </HorizontalWrapper>
         <VerticalWrapper>
           <Divider orientation="vertical" />
@@ -60,8 +60,8 @@ export const DividerVariantsTemplate = () => {
           <Divider orientation="vertical" appearance="primary" />
           <Divider orientation="vertical" dimension="s" appearance="staticWhite" />
           <Divider orientation="vertical" appearance="staticWhite" />
-          <Divider orientation="vertical" dimension="s" appearance="#84106e" />
-          <Divider orientation="vertical" appearance="#84106e" />
+          <Divider orientation="vertical" dimension="s" appearance={{ backgroundColor: '#84106e' }} />
+          <Divider orientation="vertical" appearance={{ backgroundColor: '#84106e' }} />
         </VerticalWrapper>
       </StoryDemoContainer>
     </>
