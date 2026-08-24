@@ -41,6 +41,7 @@ Template-файлы для Storybook и playground в этом документ�
 │   ├── theme/                # Helpers для CSS token fallback и системных transition
 │   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
 ├── tests/                    # E2E-тесты Playwright и документация по тестам
+├── PATTERNS.md               # Причины проектных паттернов и отличия от react-ui
 ├── package.json              # npm package manifest, exports, scripts, dependencies
 ├── vite.config.ts            # Vite library build
 ├── vite.playground.config.ts # Vite build/dev config для playground
@@ -99,6 +100,8 @@ Storybook и playground импортируют пакет через alias `@adm
 - `CONTRIBUTING.md` - краткий стартовый чек-лист и обязательные правила внесения изменений: commit style, проверки перед PR, release flow, accessibility, порядок добавления новых компонентов, Storybook/playground/e2e правила.
 - `generate-react-cli.json` - конфигурация `generate-react-cli` для scaffolding primitive-компонентов по локальным templates.
 - `LICENSE` - лицензионный файл пакета.
+- `PATTERNS.md` - onboarding-документ с объяснением архитектурных и API-паттернов Admiral 3 primitives, включая
+  `ColorConfig`, закрытые варианты props, token mappings, границы публичного API и отличия от `@admiral-ds/react-ui`.
 - `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw-размеров публичных component
   subpaths; существенным считается одновременный рост raw-размера более чем на 10% и более чем на 1 KiB.
 - `PROJECT-MAP.md` - текущая карта структуры проекта и назначений файлов.
