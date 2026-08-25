@@ -9,6 +9,13 @@
     "declarationMap": false,
     "emitDeclarationOnly": false
   },
-  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test/**/*.ts", "tests/**/*.ts", "src/vite-env.d.ts"],
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test/**/*.ts",
+    "tests/**/*.ts",
+    "scripts/templates/generate-react-component/TemplateName.test.tsx",
+    "src/vite-env.d.ts"
+  ],
   "exclude": []
 }

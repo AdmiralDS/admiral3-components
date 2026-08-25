@@ -470,9 +470,13 @@ npm run generate:component -- ComponentName
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
 Сгенерированный код является стартовым шаблоном. Visual template сразу создаётся с отдельными матричными секциями
-`Sizes and appearances` и `States`, разбитыми на snapshot-ряды через `VisualSamples`. После генерации нужно заменить
-placeholder-реализацию на фактический API компонента, заполнить обе visual-матрицы всеми поддерживаемыми размерами,
-appearance и значимыми состояниями, расширить stories/tests/e2e и затем запустить обязательные проверки.
+`Sizes and appearances` и `States`, разбитыми на snapshot-ряды через `VisualSamples`; стартовая секция размеров
+перебирает dimension-константу компонента. После генерации нужно заменить placeholder-реализацию на фактический API
+компонента, дополнить visual-матрицы всеми appearance и значимыми состояниями, расширить stories/tests/e2e и затем
+запустить обязательные проверки.
+
+Unit-test template входит в `tsconfig.test.json`: ошибки TypeScript и типы `jest-dom` в нём должны проверяться тем же
+контуром, что и unit-тесты сгенерированных компонентов.
 
 Структурные правила компонента проверяются командой:
 
