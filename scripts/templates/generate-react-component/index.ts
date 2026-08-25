@@ -1,2 +1,2 @@
 export { TemplateName } from './TemplateName';
-export type { TemplateNameProps } from './types';
+export type { TemplateNameDimension, TemplateNameProps } from './types';

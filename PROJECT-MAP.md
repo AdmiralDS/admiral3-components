@@ -129,7 +129,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `tsconfig.node.json` - TypeScript config для Node-side файлов: Vite/Vitest/Playwright configs.
 - `tsconfig.playground.json` - TypeScript config для internal playground.
 - `tsconfig.storybook.json` - TypeScript config для Storybook и story files.
-- `tsconfig.test.json` - TypeScript config для unit/e2e тестового контура.
+- `tsconfig.test.json` - TypeScript config для unit/e2e тестового контура и unit-test template генератора компонентов.
 - `vite.config.ts` - Vite multi-entry library build. Автоматически добавляет component barrels, сохраняет стабильные entry
   filenames, выносит общую реализацию в chunks и оставляет все peer dependencies вместе с их subpaths external на основе
   `package.json`.
