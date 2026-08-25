@@ -155,12 +155,14 @@ export const Thumb = styled.span`
   }
 
   ${NativeInput}:checked + ${Control} & {
-    transform: translate(16px, -50%);
+    transform: translate(${TOGGLE_DIMENSION_PARAMETERS.m.thumbTranslate}px, -50%);
     background: ${thumbActive};
   }
-  ${StyledToggle}[data-dimension='s'] ${NativeInput}:checked + ${Control} &,
+  ${StyledToggle}[data-dimension='s'] ${NativeInput}:checked + ${Control} & {
+    transform: translate(${TOGGLE_DIMENSION_PARAMETERS.s.thumbTranslate}px, -50%);
+  }
   ${StyledToggle}[data-dimension='xs'] ${NativeInput}:checked + ${Control} & {
-    transform: translate(12px, -50%);
+    transform: translate(${TOGGLE_DIMENSION_PARAMETERS.xs.thumbTranslate}px, -50%);
   }
 
   ${NativeInput}:is(:disabled, [readonly]) + ${Control} & {
