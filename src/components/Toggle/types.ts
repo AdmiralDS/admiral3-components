@@ -19,7 +19,6 @@ export interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 }
 
 export interface StyledToggleProps {
-  $dimension: ToggleDimension;
   $disabled: boolean;
   $readOnly: boolean;
   $labelPosition: ToggleLabelPosition;

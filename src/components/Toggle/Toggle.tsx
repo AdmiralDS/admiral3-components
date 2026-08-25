@@ -38,7 +38,6 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         {...{ [TOGGLE_ROOT_DATA_ATTRIBUTE]: 'true' }}
         className={className}
         style={style}
-        $dimension={dimension}
         $disabled={disabled}
         $readOnly={readOnly}
         $labelPosition={labelPosition}
