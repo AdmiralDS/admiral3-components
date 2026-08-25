@@ -1,4 +1,4 @@
-import { UnorderedList, ListItem, type UnorderedListProps } from '@admiral-ds/admiral3-primitives';
+import { UnorderedList, ListItem, type UnorderedListProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

@@ -8,7 +8,7 @@ import {
   type OrderedListType,
   UnorderedList,
   type UnorderedListType,
-} from '@admiral-ds/admiral3-primitives';
+} from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

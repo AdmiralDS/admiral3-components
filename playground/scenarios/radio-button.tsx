@@ -1,4 +1,4 @@
-import type { RadioButtonProps } from '@admiral-ds/admiral3-primitives';
+import type { RadioButtonProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { RadioButtonFieldsetTemplate } from '../../src/components/RadioButton/stories/RadioButtonFieldset.template';

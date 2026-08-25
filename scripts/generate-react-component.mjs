@@ -350,7 +350,7 @@ writeFileSync(
   visualTemplatePath,
   `import type { ComponentProps } from 'react';
 
-import { ${componentName} } from '@admiral-ds/admiral3-primitives';
+import { ${componentName} } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

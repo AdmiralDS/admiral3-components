@@ -1,4 +1,4 @@
-import type { BadgeDotProps } from '@admiral-ds/admiral3-primitives';
+import type { BadgeDotProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { BadgeDotCustomColorsTemplate } from '../../src/components/BadgeDot/stories/BadgeDotCustomColors.template';

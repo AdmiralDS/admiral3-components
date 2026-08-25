@@ -1,4 +1,4 @@
-import { BadgeDot } from '@admiral-ds/admiral3-primitives';
+import { BadgeDot } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

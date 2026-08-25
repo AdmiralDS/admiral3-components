@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import type { CheckBoxProps } from '@admiral-ds/admiral3-primitives';
+import type { CheckBoxProps } from '@admiral-ds/admiral3-components';
 
 import { CheckBoxStatesTemplate } from '../../src/components/CheckBox/stories/CheckBoxStates.template';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@admiral-ds/admiral3-primitives",
+  "name": "@admiral-ds/admiral3-components",
   "version": "0.0.0",
   "description": "React component library for Admiral design system 3.0",
   "type": "module",
@@ -150,9 +150,9 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.1.2"
   },
-  "repository": "https://github.com/AdmiralDS/admiral3-primitives",
+  "repository": "https://github.com/AdmiralDS/admiral3-components",
   "bugs": {
-    "url": "https://github.com/AdmiralDS/admiral3-primitives/issues"
+    "url": "https://github.com/AdmiralDS/admiral3-components/issues"
   },
   "publishConfig": {
     "access": "public"

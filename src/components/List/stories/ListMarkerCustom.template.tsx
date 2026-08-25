@@ -1,6 +1,6 @@
 import { css } from 'styled-components';
 
-import { OrderedList, UnorderedList, ListItem } from '@admiral-ds/admiral3-primitives';
+import { OrderedList, UnorderedList, ListItem } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

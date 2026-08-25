@@ -1,4 +1,4 @@
-import { Badge, type BadgeProps } from '@admiral-ds/admiral3-primitives';
+import { Badge, type BadgeProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDirtyContainer } from '../../stories/StoryContainers';
 import { BADGE_APPEARANCES, BADGE_DIMENSIONS } from '../constants';

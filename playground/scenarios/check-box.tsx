@@ -1,4 +1,4 @@
-import type { CheckBoxProps } from '@admiral-ds/admiral3-primitives';
+import type { CheckBoxProps } from '@admiral-ds/admiral3-components';
 
 import { CheckBoxStatesPlaygroundTemplate } from './CheckBoxStatesPlayground.template';
 import type { PlaygroundScenario } from './index';

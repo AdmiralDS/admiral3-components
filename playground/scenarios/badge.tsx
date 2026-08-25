@@ -1,4 +1,4 @@
-import type { BadgeProps } from '@admiral-ds/admiral3-primitives';
+import type { BadgeProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { BadgeCustomColorsTemplate } from '../../src/components/Badge/stories/BadgeCustomColors.template';

@@ -7,7 +7,7 @@ body {
   min-height: 100dvh;
   color: var(--admiral-color-neutral-text-1-rest);
   background: var(--admiral-color-neutral-base-1-rest);
-  font-family: var(--admiral-typography-primitives-font-family-primary);
+  font-family: var(--admiral-typography-components-font-family-primary);
 }
 
 #root {

@@ -1,6 +1,6 @@
 import { ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 
-import { Link } from '@admiral-ds/admiral3-primitives';
+import { Link } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

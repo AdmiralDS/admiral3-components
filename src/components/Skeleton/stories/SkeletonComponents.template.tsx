@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button } from '@admiral-ds/admiral3-primitives';
+import { Button } from '@admiral-ds/admiral3-components';
 
 import { BUTTON_DIMENSIONS } from '../../Button/constants';
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';

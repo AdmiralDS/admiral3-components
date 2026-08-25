@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { BadgeDot, type BadgeDotProps } from '@admiral-ds/admiral3-primitives';
+import { BadgeDot, type BadgeDotProps } from '@admiral-ds/admiral3-components';
 
 import { BadgeDotAppearancesTemplate } from './BadgeDotAppearances.template';
 import badgeDotAppearancesTemplateRaw from './BadgeDotAppearances.template?raw';

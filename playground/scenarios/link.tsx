@@ -1,6 +1,6 @@
 import { ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 
-import type { LinkProps } from '@admiral-ds/admiral3-primitives';
+import type { LinkProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { Link } from '../../src/components/Link';

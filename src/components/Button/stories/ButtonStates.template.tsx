@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button, type ButtonProps } from '@admiral-ds/admiral3-primitives';
+import { Button, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

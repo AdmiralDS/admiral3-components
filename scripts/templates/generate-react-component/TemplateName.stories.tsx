@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { TemplateName, type TemplateNameProps } from '@admiral-ds/admiral3-primitives';
+import { TemplateName, type TemplateNameProps } from '@admiral-ds/admiral3-components';
 
 import { TemplateNamePlaygroundTemplate } from './TemplateNamePlayground.template';
 import templateNamePlaygroundTemplateRaw from './TemplateNamePlayground.template?raw';

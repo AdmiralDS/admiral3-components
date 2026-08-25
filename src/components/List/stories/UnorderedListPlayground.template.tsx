@@ -1,6 +1,6 @@
 import { SystemStarSolid } from '@admiral-ds/admiral3-icons';
 
-import { UnorderedList, ListItem, ListIcon, type UnorderedListProps } from '@admiral-ds/admiral3-primitives';
+import { UnorderedList, ListItem, ListIcon, type UnorderedListProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 

@@ -67,7 +67,7 @@ export default defineConfig([
               position: 'before',
             },
             {
-              pattern: '@admiral-ds/admiral3-primitives',
+              pattern: '@admiral-ds/admiral3-components',
               group: 'internal',
               position: 'before',
             },
