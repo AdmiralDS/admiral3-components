@@ -1,6 +1,6 @@
 import { SystemStarSolid } from '@admiral-ds/admiral3-icons';
 
-import { ListIcon, ListItem, UnorderedList } from '@admiral-ds/admiral3-primitives';
+import { ListIcon, ListItem, UnorderedList } from '@admiral-ds/admiral3-components';
 
 export const ListIconDirtyTemplate = () => (
   <UnorderedList data-testid="icon-list" dimension="s" styleType="icon">

@@ -1,4 +1,4 @@
-# @admiral-ds/admiral3-primitives
+# @admiral-ds/admiral3-components
 
 React-примитивы для дизайн-системы Admiral 3.0.
 
@@ -7,7 +7,7 @@ React-примитивы для дизайн-системы Admiral 3.0.
 ## Установка
 
 ```shell
-npm install @admiral-ds/admiral3-primitives
+npm install @admiral-ds/admiral3-components
 ```
 
 Peer dependencies:
@@ -31,7 +31,7 @@ npm install @admiral-ds/admiral3-icons @admiral-ds/admiral3-tokens react react-d
 Импортируйте компоненты и типы из корня пакета:
 
 ```tsx
-import { Badge, type BadgeProps } from '@admiral-ds/admiral3-primitives';
+import { Badge, type BadgeProps } from '@admiral-ds/admiral3-components';
 
 export function Demo() {
   return <Badge appearance="info">5</Badge>;
@@ -47,7 +47,7 @@ esbuild и основанных на них фреймворков. Он пре�
 Компонент и его типы также доступны через явный публичный entrypoint:
 
 ```tsx
-import { Badge, type BadgeProps } from '@admiral-ds/admiral3-primitives/badge';
+import { Badge, type BadgeProps } from '@admiral-ds/admiral3-components/badge';
 
 export function Demo() {
   return <Badge appearance="info">5</Badge>;
@@ -59,12 +59,12 @@ export function Demo() {
 root barrel потребительским сборщиком.
 
 Названия component entrypoints записываются в kebab-case: например, `BadgeDot` импортируется из
-`@admiral-ds/admiral3-primitives/badge-dot`.
+`@admiral-ds/admiral3-components/badge-dot`.
 
 Переиспользуемые публичные utilities компонента доступны из того же component entrypoint. Например:
 
 ```tsx
-import { skeletonAnimationMixin } from '@admiral-ds/admiral3-primitives/skeleton';
+import { skeletonAnimationMixin } from '@admiral-ds/admiral3-components/skeleton';
 ```
 
 Тему компонентов можно подключить двумя способами: через CSS custom properties из

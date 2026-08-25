@@ -73,7 +73,7 @@ src/components/BadgeDot/stories/BadgeDotDirty.template.tsx
 
 Правила импортов для `*.template.tsx`:
 
-1. Публичные компоненты, props и публичные типы в `*.stories.tsx` и `*.template.tsx` импортируются из `@admiral-ds/admiral3-primitives`.
+1. Публичные компоненты, props и публичные типы в `*.stories.tsx` и `*.template.tsx` импортируются из `@admiral-ds/admiral3-components`.
 2. Локальные импорты из папки компонента допустимы только для внутренних служебных сущностей, которые не нужны финальному пользователю библиотеки, например компонентных `constants`.
 3. Template не должен импортировать публичные props напрямую из файла реализации компонента.
 

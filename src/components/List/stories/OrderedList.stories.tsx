@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { OrderedList, type OrderedListProps } from '@admiral-ds/admiral3-primitives';
+import { OrderedList, type OrderedListProps } from '@admiral-ds/admiral3-components';
 
 import { OrderedListNumberingTemplate } from './OrderedListNumbering.template';
 import orderedListNumberingTemplateRaw from './OrderedListNumbering.template?raw';

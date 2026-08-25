@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Link, type LinkProps } from '@admiral-ds/admiral3-primitives';
+import { Link, type LinkProps } from '@admiral-ds/admiral3-components';
 
 import { LinkAppearancesTemplate } from './LinkAppearances.template';
 import linkAppearancesTemplateRaw from './LinkAppearances.template?raw';

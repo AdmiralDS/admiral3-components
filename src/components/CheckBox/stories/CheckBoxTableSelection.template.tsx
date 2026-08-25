@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
-import { CheckBox } from '@admiral-ds/admiral3-primitives';
+import { CheckBox } from '@admiral-ds/admiral3-components';
 
 const Table = styled.table`
   width: min(100%, 760px);

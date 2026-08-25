@@ -1,7 +1,7 @@
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
-import { CheckBox, type CheckBoxProps } from '@admiral-ds/admiral3-primitives';
+import { CheckBox, type CheckBoxProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 import { CHECK_BOX_DIMENSIONS } from '../constants';

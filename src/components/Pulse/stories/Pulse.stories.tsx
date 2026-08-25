@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Pulse, type PulseProps } from '@admiral-ds/admiral3-primitives';
+import { Pulse, type PulseProps } from '@admiral-ds/admiral3-components';
 
 import { PulseDimensionTemplate } from './PulseDimension.template';
 import pulseDimensionTemplateRaw from './PulseDimension.template?raw';

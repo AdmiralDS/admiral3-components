@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ListItem } from '@admiral-ds/admiral3-primitives';
+import { ListItem } from '@admiral-ds/admiral3-components';
 
 import { ListMarkerColorTemplate } from './ListMarkerColor.template';
 import listMarkerColorTemplateRaw from './ListMarkerColor.template?raw';

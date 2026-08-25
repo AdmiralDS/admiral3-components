@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Badge, type BadgeProps } from '@admiral-ds/admiral3-primitives';
+import { Badge, type BadgeProps } from '@admiral-ds/admiral3-components';
 
 import { BadgeAppearancesTemplate } from './BadgeAppearances.template';
 import badgeAppearancesTemplateRaw from './BadgeAppearances.template?raw';

@@ -1,6 +1,6 @@
 # PROJECT-MAP.md
 
-Документ описывает структуру репозитория `@admiral-ds/admiral3-primitives` и назначение файлов, которые видит Git.
+Документ описывает структуру репозитория `@admiral-ds/admiral3-components` и назначение файлов, которые видит Git.
 
 Перечень файлов ниже построен по команде:
 
@@ -89,7 +89,7 @@ Storybook использует `src/**/*.stories.tsx`, а playground испол�
 
 Общее правило проекта: Storybook не нужно зеркалить в playground целиком. Playground-сценарии добавляются для тех примеров и edge cases, которые осмысленно покрывать через e2e или проверять как browser/runtime integration.
 
-Storybook и playground импортируют пакет через alias `@admiral-ds/admiral3-primitives`, который указывает на `src/index.ts`. Это сохраняет consumer-like импорт и при этом позволяет работать с исходниками в dev-режиме.
+Storybook и playground импортируют пакет через alias `@admiral-ds/admiral3-components`, который указывает на `src/index.ts`. Это сохраняет consumer-like импорт и при этом позволяет работать с исходниками в dev-режиме.
 
 ## Файлы в корне
 
@@ -100,7 +100,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `CONTRIBUTING.md` - краткий стартовый чек-лист и обязательные правила внесения изменений: commit style, проверки перед PR, release flow, accessibility, порядок добавления новых компонентов, Storybook/playground/e2e правила.
 - `generate-react-cli.json` - конфигурация `generate-react-cli` для scaffolding primitive-компонентов по локальным templates.
 - `LICENSE` - лицензионный файл пакета.
-- `PATTERNS.md` - onboarding-документ с объяснением архитектурных и API-паттернов Admiral 3 primitives, включая
+- `PATTERNS.md` - onboarding-документ с объяснением архитектурных и API-паттернов Admiral 3 components, включая
   `ColorConfig`, закрытые варианты props, token mappings, границы публичного API и отличия от `@admiral-ds/react-ui`.
 - `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw-размеров публичных component
   subpaths; существенным считается одновременный рост raw-размера более чем на 10% и более чем на 1 KiB.

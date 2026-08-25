@@ -34,7 +34,7 @@
     "rootDir": "./src",
     "paths": {
       "#src/*": ["./src/*"],
-      "@admiral-ds/admiral3-primitives": ["./src/index"]
+      "@admiral-ds/admiral3-components": ["./src/index"]
     },
     "plugins": [
       {

@@ -1,4 +1,4 @@
-import type { SpinnerProps } from '@admiral-ds/admiral3-primitives';
+import type { SpinnerProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { SpinnerCustomColorsTemplate } from '../../src/components/Spinner/stories/SpinnerCustomColor.template';

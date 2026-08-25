@@ -1,4 +1,4 @@
-import { Skeleton } from '@admiral-ds/admiral3-primitives';
+import { Skeleton } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

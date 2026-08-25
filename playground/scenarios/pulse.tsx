@@ -1,4 +1,4 @@
-import type { PulseProps } from '@admiral-ds/admiral3-primitives';
+import type { PulseProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { PulsePlaygroundTemplate } from '../../src/components/Pulse/stories/PulsePlayground.template';

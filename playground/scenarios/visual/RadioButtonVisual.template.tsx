@@ -1,4 +1,4 @@
-import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-primitives';
+import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

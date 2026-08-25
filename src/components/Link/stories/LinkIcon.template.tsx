@@ -1,7 +1,7 @@
 import { ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
-import { Link, type LinkProps } from '@admiral-ds/admiral3-primitives';
+import { Link, type LinkProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

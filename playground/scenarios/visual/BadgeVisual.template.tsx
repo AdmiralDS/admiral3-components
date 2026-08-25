@@ -1,4 +1,4 @@
-import { Badge } from '@admiral-ds/admiral3-primitives';
+import { Badge } from '@admiral-ds/admiral3-components';
 
 import {
   VisualContrastSurface,

@@ -27,7 +27,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '#src': srcPath,
-      '@admiral-ds/admiral3-primitives': entryPath,
+      '@admiral-ds/admiral3-components': entryPath,
     },
   },
   build: {

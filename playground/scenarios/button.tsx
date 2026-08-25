@@ -1,6 +1,6 @@
 import { ServiceCheckOutline } from '@admiral-ds/admiral3-icons';
 
-import type { ButtonProps } from '@admiral-ds/admiral3-primitives';
+import type { ButtonProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { ButtonDirtyTemplate } from '../../src/components/Button/stories/ButtonDirty.template';

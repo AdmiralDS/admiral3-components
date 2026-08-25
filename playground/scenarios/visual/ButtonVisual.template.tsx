@@ -5,7 +5,7 @@ import {
   type ButtonAppearance,
   type ButtonColorConfig,
   type ButtonColorMode,
-} from '@admiral-ds/admiral3-primitives';
+} from '@admiral-ds/admiral3-components';
 
 import {
   VisualContrastSurface,

@@ -6,7 +6,7 @@ import {
   SelectionControlInformer,
   SelectionControlLayout,
   type RadioButtonProps,
-} from '@admiral-ds/admiral3-primitives';
+} from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 import { RADIO_BUTTON_DIMENSIONS } from '../constants';

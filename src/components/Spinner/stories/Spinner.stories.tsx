@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Spinner, type SpinnerProps } from '@admiral-ds/admiral3-primitives';
+import { Spinner, type SpinnerProps } from '@admiral-ds/admiral3-components';
 
 import { SpinnerAppearancesTemplate } from './SpinnerAppearances.template';
 import spinnerAppearancesTemplateRaw from './SpinnerAppearances.template?raw';

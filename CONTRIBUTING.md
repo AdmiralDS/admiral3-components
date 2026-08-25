@@ -67,7 +67,7 @@ npm run generate:component -- ComponentName
 2. Не используйте inline-стили `style={{ ... }}` для постоянной разметки компонентов, stories и templates.
 3. Типографику берите готовым объектом из токенов, например `textStyles.body.body2Long`.
 4. Публичные props и типы компонента экспортируйте через локальный `index.ts` и root `src/index.ts`.
-5. Импортируйте компоненты в stories/templates как потребитель: из `@admiral-ds/admiral3-primitives`.
+5. Импортируйте компоненты в stories/templates как потребитель: из `@admiral-ds/admiral3-components`.
 6. Добавляйте только явные component subpaths; внутренние файлы компонента не должны появляться в `package.json#exports`.
 7. Не коммитьте изменения, если обязательные проверки не проходили или падали.
 
@@ -258,7 +258,7 @@ npm run test:bundle
 ```
 
 `npm run storybook` запускает Storybook из исходников и не требует предварительной сборки CSS.
-`npm run playground` запускает Vite playground с hot reload. Playground может импортировать CSS из `@admiral-ds/admiral3-tokens`, но primitives-пакет не генерирует CSS при сборке.
+`npm run playground` запускает Vite playground с hot reload. Playground может импортировать CSS из `@admiral-ds/admiral3-tokens`, но components-пакет не генерирует CSS при сборке.
 
 Подробные правила по организации unit-тестов, e2e и Storybook stories вынесены в [tests/TESTING_README.md](tests/TESTING_README.md).
 
@@ -539,7 +539,7 @@ src/components/ComponentName/stories/ComponentNameDirty.template.tsx
 2. Storybook-специфика (`Meta`, `StoryObj`, `args`, `argTypes`, story exports) должна находиться в `*.stories.tsx`.
 3. `*.template.tsx` должен содержать только React-код и не должен зависеть от типов или объектов Storybook.
 4. Stories должны использовать публичный импорт пакета, то есть так, как компонент будет использоваться потребителем.
-5. `*.stories.tsx` и `*.template.tsx` должны импортировать публичные компоненты, props и публичные типы из `@admiral-ds/admiral3-primitives`. Локальные импорты из папки компонента допустимы только для внутренних служебных сущностей, которые не нужны финальному пользователю библиотеки, например компонентных `constants`.
+5. `*.stories.tsx` и `*.template.tsx` должны импортировать публичные компоненты, props и публичные типы из `@admiral-ds/admiral3-components`. Локальные импорты из папки компонента допустимы только для внутренних служебных сущностей, которые не нужны финальному пользователю библиотеки, например компонентных `constants`.
 6. Не каждый `*.template.tsx` обязан попадать в Storybook. Internal-only templates допустимы, если они используются только в playground/e2e.
 7. Общие контейнеры и layout helpers для templates хранятся в `src/components/stories`. Используйте их, если layout должен одинаково работать в Storybook и internal playground.
 8. Глобальные decorators и styles в `.storybook` используются только для Storybook shell: theme, fonts, docs/canvas padding и базовое выравнивание. Layout, который является частью demo-кейса или e2e-сценария, должен оставаться внутри template/helper.
