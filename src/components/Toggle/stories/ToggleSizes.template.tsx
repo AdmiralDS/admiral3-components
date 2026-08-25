@@ -1,18 +1,11 @@
-import styled from 'styled-components';
-
 import { Toggle } from '@admiral-ds/admiral3-primitives';
 
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-`;
+import { StoryDemoContainer } from '../../stories/StoryContainers';
 
 export const ToggleSizesTemplate = () => (
-  <Column>
+  <StoryDemoContainer $direction="column" $gap="16px">
     <Toggle dimension="m">Size M</Toggle>
     <Toggle dimension="s">Size S</Toggle>
     <Toggle dimension="xs">Size XS</Toggle>
-  </Column>
+  </StoryDemoContainer>
 );

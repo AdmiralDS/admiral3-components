@@ -1,16 +1,9 @@
-import styled from 'styled-components';
-
 import { Toggle } from '@admiral-ds/admiral3-primitives';
 
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
-`;
+import { StoryDemoContainer } from '../../stories/StoryContainers';
 
 export const ToggleFixedWidthTemplate = () => (
-  <Column>
+  <StoryDemoContainer $direction="column" $gap="16px">
     <Toggle labelPosition="left" width={192} dimension="m">
       Toggle text
     </Toggle>
@@ -29,5 +22,5 @@ export const ToggleFixedWidthTemplate = () => (
     <Toggle labelPosition="left" width={192} dimension="xs" defaultChecked extraText="Add text">
       Toggle text
     </Toggle>
-  </Column>
+  </StoryDemoContainer>
 );
