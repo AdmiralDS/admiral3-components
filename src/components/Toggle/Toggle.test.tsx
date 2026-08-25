@@ -3,17 +3,19 @@ import { createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { TOGGLE_DIMENSIONS, TOGGLE_ROOT_DATA_ATTRIBUTE } from './constants';
+import { TOGGLE_DIMENSIONS } from './constants';
 import { Toggle } from './Toggle';
 
 describe('Toggle', () => {
   afterEach(cleanup);
 
   it('renders an accessible switch with a label', () => {
-    render(<Toggle>Notifications</Toggle>);
+    render(<Toggle data-testid="toggle">Notifications</Toggle>);
 
-    expect(screen.getByRole('switch', { name: 'Notifications' })).not.toBeChecked();
-    expect(screen.getByText('Notifications').closest('label')).toHaveAttribute(TOGGLE_ROOT_DATA_ATTRIBUTE, 'true');
+    const toggle = screen.getByTestId('toggle');
+
+    expect(toggle).toBe(screen.getByRole('switch', { name: 'Notifications' }));
+    expect(toggle).not.toBeChecked();
   });
 
   it('forwards input attributes and ref', () => {

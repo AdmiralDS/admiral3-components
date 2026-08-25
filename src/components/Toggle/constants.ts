@@ -1,6 +1,5 @@
 import { INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from '../_internal/InputAtoms/constants';
 
-export const TOGGLE_ROOT_DATA_ATTRIBUTE = 'data-admiral-toggle' as const;
 export const TOGGLE_DIMENSIONS = INPUT_DIMENSIONS;
 export const TOGGLE_LABEL_POSITIONS = ['right', 'left'] as const;
 

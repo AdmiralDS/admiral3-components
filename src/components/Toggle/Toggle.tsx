@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 
-import { TOGGLE_ROOT_DATA_ATTRIBUTE } from './constants';
 import { Control, LabelContent, StyledToggle, Thumb } from './style';
 import type { ToggleProps } from './types';
 import { NativeInput, SelectionControlExtraText } from '../_internal/InputAtoms';
@@ -35,7 +34,6 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
 
     return (
       <StyledToggle
-        {...{ [TOGGLE_ROOT_DATA_ATTRIBUTE]: 'true' }}
         className={className}
         style={style}
         $disabled={disabled}
