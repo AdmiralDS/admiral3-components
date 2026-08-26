@@ -1,10 +1,10 @@
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import type { CSSObject } from 'styled-components';
 
-export const INPUT_DIMENSIONS = ['m', 's', 'xs'] as const;
+export const SELECTION_CONTROL_INPUT_DIMENSIONS = ['m', 's', 'xs'] as const;
 
-export const INPUT_DIMENSION_PARAMETERS: Record<
-  (typeof INPUT_DIMENSIONS)[number],
+export const SELECTION_CONTROL_INPUT_DIMENSION_PARAMETERS: Record<
+  (typeof SELECTION_CONTROL_INPUT_DIMENSIONS)[number],
   {
     controlSize: number;
     controlMarginBlock: number;

@@ -11,7 +11,11 @@ import SuccessXsIcon from './assets/Success_XS.svg?react';
 import { Control, StyledCheckBox } from './style';
 import type { CheckBoxProps } from './types';
 import { refSetter } from '../../utils/refSetter';
-import { NativeInput, SelectionControlExtraText, SelectionControlLabelContent } from '../_internal/InputAtoms';
+import {
+  SelectionControlExtraText,
+  SelectionControlLabelContent,
+  SelectionControlNativeInput,
+} from '../_internal/InputAtoms';
 
 const SUCCESS_ICONS = {
   m: SuccessMIcon,
@@ -78,7 +82,7 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
         className={className}
         style={style}
       >
-        <NativeInput
+        <SelectionControlNativeInput
           ref={refSetter(inputRef, ref)}
           type="checkbox"
           disabled={disabled}

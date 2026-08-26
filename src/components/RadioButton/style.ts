@@ -4,7 +4,7 @@ import { RADIO_BUTTON_DIMENSION_PARAMETERS } from './constants';
 import type { StyledRadioButtonProps } from './types';
 import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
-import { NativeInput } from '../_internal/InputAtoms';
+import { SelectionControlNativeInput } from '../_internal/InputAtoms';
 
 const backgroundRest = cssToken('--admiral-color-neutral-base-1-rest', (theme) => theme.color.neutral.base._1.rest);
 const backgroundHover = cssToken('--admiral-color-neutral-base-1-hover', (theme) => theme.color.neutral.base._1.hover);
@@ -90,46 +90,46 @@ export const Control = styled.span<{ $error: boolean }>`
     --admiral-radio-button-checked-border-width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.checkedBorderWidth}px;
   }
 
-  ${NativeInput} + & {
+  ${SelectionControlNativeInput} + & {
     background-color: ${backgroundRest};
     box-shadow: inset 0 0 0 1px ${({ $error }) => ($error ? errorColor : borderRest)};
   }
 
-  ${NativeInput}:hover + & {
+  ${SelectionControlNativeInput}:hover + & {
     background-color: ${backgroundHover};
   }
 
-  ${NativeInput}:active + & {
+  ${SelectionControlNativeInput}:active + & {
     background-color: ${backgroundPress};
   }
 
-  ${NativeInput}:checked + & {
+  ${SelectionControlNativeInput}:checked + & {
     background-color: ${backgroundRest};
     box-shadow: inset 0 0 0 var(--admiral-radio-button-checked-border-width) ${selectedRest};
   }
 
-  ${NativeInput}:checked:hover + & {
+  ${SelectionControlNativeInput}:checked:hover + & {
     background-color: ${backgroundRest};
     box-shadow: inset 0 0 0 var(--admiral-radio-button-checked-border-width) ${selectedHover};
   }
 
-  ${NativeInput}:checked:active + & {
+  ${SelectionControlNativeInput}:checked:active + & {
     background-color: ${backgroundRest};
     box-shadow: inset 0 0 0 var(--admiral-radio-button-checked-border-width) ${selectedPress};
   }
 
-  ${NativeInput}:disabled + &,
-  ${NativeInput}[readonly] + & {
+  ${SelectionControlNativeInput}:disabled + &,
+  ${SelectionControlNativeInput}[readonly] + & {
     background-color: ${backgroundDisabled};
     box-shadow: inset 0 0 0 1px ${borderDisabled};
   }
 
-  ${NativeInput}:disabled:checked + &, ${NativeInput}[readonly]:checked + & {
+  ${SelectionControlNativeInput}:disabled:checked + &, ${SelectionControlNativeInput}[readonly]:checked + & {
     background-color: ${backgroundRest};
     box-shadow: inset 0 0 0 var(--admiral-radio-button-checked-border-width) ${selectedDisabled};
   }
 
-  ${NativeInput}:focus-visible + & {
+  ${SelectionControlNativeInput}:focus-visible + & {
     outline: 2px solid ${focusColor};
     outline-offset: 2px;
   }

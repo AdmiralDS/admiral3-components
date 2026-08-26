@@ -2,7 +2,11 @@ import { forwardRef } from 'react';
 
 import { Control, StyledRadioButton } from './style';
 import type { RadioButtonProps } from './types';
-import { NativeInput, SelectionControlExtraText, SelectionControlLabelContent } from '../_internal/InputAtoms';
+import {
+  SelectionControlExtraText,
+  SelectionControlLabelContent,
+  SelectionControlNativeInput,
+} from '../_internal/InputAtoms';
 
 // TODO в будущем readOnly состояние вынести на уровень RadioGroup
 
@@ -52,7 +56,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         $readOnly={readOnly}
         data-dimension={dimension}
       >
-        <NativeInput
+        <SelectionControlNativeInput
           ref={ref}
           type="radio"
           disabled={disabled}

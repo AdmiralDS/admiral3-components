@@ -10,7 +10,7 @@
       "rawBytes": 22791
     },
     "check-box": {
-      "rawBytes": 9721
+      "rawBytes": 9795
     },
     "helper-components": {
       "rawBytes": 1067
@@ -25,7 +25,7 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 6551
+      "rawBytes": 6625
     },
     "skeleton": {
       "rawBytes": 1298
@@ -34,7 +34,7 @@
       "rawBytes": 6566
     },
     "toggle": {
-      "rawBytes": 7626
+      "rawBytes": 7700
     }
   },
   "version": 1
