@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import type { CheckBoxProps } from '@admiral-ds/admiral3-components';
 
-import { CheckBoxStatesTemplate } from '../../src/components/CheckBox/stories/CheckBoxStates.template';
+import { CheckBoxStatesTemplate } from './CheckBoxStates.template';
 
 const StatesContainer = styled.div`
   display: flex;
