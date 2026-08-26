@@ -1,6 +1,6 @@
 # PROJECT-MAP.md
 
-Документ описывает структуру репозитория `@admiral-ds/admiral3-primitives` и назначение файлов, которые видит Git.
+Документ описывает структуру репозитория `@admiral-ds/admiral3-components` и назначение файлов, которые видит Git.
 
 Перечень файлов ниже построен по команде:
 
@@ -41,6 +41,7 @@ Template-файлы для Storybook и playground в этом документ�
 │   ├── theme/                # Helpers для CSS token fallback и системных transition
 │   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
 ├── tests/                    # E2E-тесты Playwright и документация по тестам
+├── PATTERNS.md               # Причины проектных паттернов и отличия от react-ui
 ├── package.json              # npm package manifest, exports, scripts, dependencies
 ├── vite.config.ts            # Vite library build
 ├── vite.playground.config.ts # Vite build/dev config для playground
@@ -88,7 +89,7 @@ Storybook использует `src/**/*.stories.tsx`, а playground испол�
 
 Общее правило проекта: Storybook не нужно зеркалить в playground целиком. Playground-сценарии добавляются для тех примеров и edge cases, которые осмысленно покрывать через e2e или проверять как browser/runtime integration.
 
-Storybook и playground импортируют пакет через alias `@admiral-ds/admiral3-primitives`, который указывает на `src/index.ts`. Это сохраняет consumer-like импорт и при этом позволяет работать с исходниками в dev-режиме.
+Storybook и playground импортируют пакет через alias `@admiral-ds/admiral3-components`, который указывает на `src/index.ts`. Это сохраняет consumer-like импорт и при этом позволяет работать с исходниками в dev-режиме.
 
 ## Файлы в корне
 
@@ -99,6 +100,8 @@ Storybook и playground импортируют пакет через alias `@adm
 - `CONTRIBUTING.md` - краткий стартовый чек-лист и обязательные правила внесения изменений: commit style, проверки перед PR, release flow, accessibility, порядок добавления новых компонентов, Storybook/playground/e2e правила.
 - `generate-react-cli.json` - конфигурация `generate-react-cli` для scaffolding primitive-компонентов по локальным templates.
 - `LICENSE` - лицензионный файл пакета.
+- `PATTERNS.md` - onboarding-документ с объяснением архитектурных и API-паттернов Admiral 3 components, включая
+  `ColorConfig`, закрытые варианты props, token mappings, границы публичного API и отличия от `@admiral-ds/react-ui`.
 - `bundle-size-baseline.json` - автоматически пересчитываемый committed baseline raw-размеров публичных component
   subpaths; существенным считается одновременный рост raw-размера более чем на 10% и более чем на 1 KiB.
 - `PROJECT-MAP.md` - текущая карта структуры проекта и назначений файлов.
@@ -107,7 +110,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `package-lock.json` - lockfile npm. Фиксирует точные версии зависимостей и должен меняться только вместе с изменениями зависимостей или npm metadata.
 - `package.json` - manifest npm-пакета. Описывает root/component `exports`, публикуемые файлы, side effects, scripts, peer/dev dependencies, repository metadata и publish config.
 - `playwright.config.ts` - конфигурация e2e тестов Playwright. Указывает `tests/e2e`, базовый URL playground, браузерные проекты, timeout, reporter и webServer `npm run playground:serve`.
-- `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с точным сравнением пикселей; тест снимает ряды `VisualSamples` во всех theme modes playground.
+- `playwright.visual.config.ts` - Chromium-only конфигурация visual regression тестов playground: фиксирует viewport и Linux baseline с явными `threshold: 0` и `maxDiffPixels: 0`; тест снимает ряды `VisualSamples` во всех theme modes playground.
 - `scripts/check-full.mjs` - последовательно запускает все проверки из `check:full`, останавливается на первой ошибке и выводит общую длительность прогона.
 - `scripts/generate-react-component.mjs` - обвязка над `generate-react-cli`, которая создаёт component/story/playground/e2e/visual scaffolding, обновляет root export и component subpath, а также сохраняет component playground-сценарии и элементы visual-группы в алфавитном порядке.
 - `scripts/test-tree-shaking.mjs` - consumer integration check, который создаёт и устанавливает npm tarball в изолированный
@@ -126,7 +129,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `tsconfig.node.json` - TypeScript config для Node-side файлов: Vite/Vitest/Playwright configs.
 - `tsconfig.playground.json` - TypeScript config для internal playground.
 - `tsconfig.storybook.json` - TypeScript config для Storybook и story files.
-- `tsconfig.test.json` - TypeScript config для unit/e2e тестового контура.
+- `tsconfig.test.json` - TypeScript config для unit/e2e тестового контура и unit-test template генератора компонентов.
 - `vite.config.ts` - Vite multi-entry library build. Автоматически добавляет component barrels, сохраняет стабильные entry
   filenames, выносит общую реализацию в chunks и оставляет все peer dependencies вместе с их subpaths external на основе
   `package.json`.

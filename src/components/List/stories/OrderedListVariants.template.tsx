@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { OrderedList, ListItem, type OrderedListProps } from '@admiral-ds/admiral3-primitives';
+import { OrderedList, ListItem, type OrderedListProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { UnorderedList, type UnorderedListProps } from '@admiral-ds/admiral3-primitives';
+import { UnorderedList, type UnorderedListProps } from '@admiral-ds/admiral3-components';
 
 import { UnorderedListPlaygroundTemplate } from './UnorderedListPlayground.template';
 import unorderedListPlaygroundTemplateRaw from './UnorderedListPlayground.template?raw';

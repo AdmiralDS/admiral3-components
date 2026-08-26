@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CheckBox, type CheckBoxProps } from '@admiral-ds/admiral3-primitives';
+import { CheckBox, type CheckBoxProps } from '@admiral-ds/admiral3-components';
 
 import { CheckBoxAdditionalTextTemplate } from './CheckBoxAdditionalText.template';
 import checkBoxAdditionalTextTemplateRaw from './CheckBoxAdditionalText.template?raw';

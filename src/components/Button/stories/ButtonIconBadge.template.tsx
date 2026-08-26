@@ -1,7 +1,7 @@
 import { ServiceCheckOutline, ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
-import { Badge, Button, type ButtonProps } from '@admiral-ds/admiral3-primitives';
+import { Badge, Button, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 import { BUTTON_APPEARANCES } from '../constants';

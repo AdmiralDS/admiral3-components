@@ -11,6 +11,7 @@ import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { toggleScenarios } from './toggle';
 import { visualScenarios } from './visual';
 
 export type PlaygroundScenario = {
@@ -32,5 +33,6 @@ export const playgroundScenarios = [
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
+  ...toggleScenarios,
   ...visualScenarios,
 ];

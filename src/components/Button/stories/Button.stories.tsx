@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import styled from 'styled-components';
 
-import { Button, type ButtonProps, type ButtonAppearance, type ButtonColorMode } from '@admiral-ds/admiral3-primitives';
+import { Button, type ButtonProps, type ButtonAppearance, type ButtonColorMode } from '@admiral-ds/admiral3-components';
 
 import { ButtonAppereancesTemplate } from './ButtonAppearances.template';
 import buttonAppereancesTemplateRaw from './ButtonAppearances.template?raw';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Skeleton } from '@admiral-ds/admiral3-primitives';
+import { Skeleton } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

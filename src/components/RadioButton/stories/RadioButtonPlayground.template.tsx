@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { RadioButton, type RadioButtonProps, Button } from '@admiral-ds/admiral3-primitives';
+import { RadioButton, type RadioButtonProps, Button } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 

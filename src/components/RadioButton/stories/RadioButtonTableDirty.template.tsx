@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { RadioButton, type RadioButtonDimension } from '@admiral-ds/admiral3-primitives';
+import { RadioButton, type RadioButtonDimension } from '@admiral-ds/admiral3-components';
 
 const Table = styled.table`
   border-collapse: collapse;

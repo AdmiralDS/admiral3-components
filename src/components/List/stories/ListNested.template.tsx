@@ -6,7 +6,7 @@ import {
   ListItem,
   type OrderedListProps,
   type UnorderedListProps,
-} from '@admiral-ds/admiral3-primitives';
+} from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

@@ -1,7 +1,7 @@
 import { DocumentsTasksOutline, SystemEmailOutline, SystemPeopleOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
-import { UnorderedList, ListItem, ListIcon, type UnorderedListProps } from '@admiral-ds/admiral3-primitives';
+import { UnorderedList, ListItem, ListIcon, type UnorderedListProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 

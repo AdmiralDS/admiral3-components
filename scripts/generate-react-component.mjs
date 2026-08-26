@@ -77,6 +77,7 @@ const toCamelCase = (value) => value.charAt(0).toLowerCase() + value.slice(1);
 
 const componentKebabName = toKebabCase(componentName);
 const componentCamelName = toCamelCase(componentName);
+const componentConstantName = componentKebabName.replaceAll('-', '_').toUpperCase();
 const testId = componentKebabName;
 const componentDir = join(rootDir, 'src', 'components', componentName);
 const storiesDir = join(componentDir, 'stories');
@@ -271,9 +272,19 @@ const addVisualScenarioToIndex = () => {
   const visualScenarioEntries = lines
     .slice(visualScenariosStart + 1, visualScenariosEnd)
     .map((line, index) => {
-      const match = line.match(/^ {2}\{ id: VISUAL_SCENARIO_IDS\.([A-Za-z][A-Za-z0-9]*),/);
+      const match = line.match(/VISUAL_SCENARIO_IDS\.([A-Za-z][A-Za-z0-9]*)/);
 
-      return match ? { index: visualScenariosStart + 1 + index, key: match[1] } : undefined;
+      if (!match) {
+        return undefined;
+      }
+
+      let entryIndex = visualScenariosStart + 1 + index;
+
+      while (entryIndex > visualScenariosStart + 1 && !lines[entryIndex].startsWith('  {')) {
+        entryIndex -= 1;
+      }
+
+      return { index: entryIndex, key: match[1] };
     })
     .filter(Boolean);
   const insertionIndex =
@@ -339,7 +350,7 @@ writeFileSync(
   visualTemplatePath,
   `import type { ComponentProps } from 'react';
 
-import { ${componentName} } from '@admiral-ds/admiral3-primitives';
+import { ${componentName} } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -352,14 +363,18 @@ import {
   VisualSection,
   VisualTitle,
 } from './VisualLayout';
+import { ${componentConstantName}_DIMENSIONS } from '../../../src/components/${componentName}/constants';
 
 type VisualVariant = {
   label: string;
   props: ComponentProps<typeof ${componentName}>;
 };
 
-// Replace the starter entries with every supported size and appearance.
-const VARIANTS: VisualVariant[] = [{ label: 'default', props: {} }];
+// Add every supported appearance alongside the generated dimension matrix.
+const VARIANTS: VisualVariant[] = ${componentConstantName}_DIMENSIONS.map((dimension) => ({
+  label: \`size \${dimension}\`,
+  props: { dimension },
+}));
 
 // Add every visually distinct interactive and disabled state.
 const STATES: VisualVariant[] = [{ label: 'default', props: {} }];

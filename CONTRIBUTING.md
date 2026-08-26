@@ -67,7 +67,7 @@ npm run generate:component -- ComponentName
 2. Не используйте inline-стили `style={{ ... }}` для постоянной разметки компонентов, stories и templates.
 3. Типографику берите готовым объектом из токенов, например `textStyles.body.body2Long`.
 4. Публичные props и типы компонента экспортируйте через локальный `index.ts` и root `src/index.ts`.
-5. Импортируйте компоненты в stories/templates как потребитель: из `@admiral-ds/admiral3-primitives`.
+5. Импортируйте компоненты в stories/templates как потребитель: из `@admiral-ds/admiral3-components`.
 6. Добавляйте только явные component subpaths; внутренние файлы компонента не должны появляться в `package.json#exports`.
 7. Не коммитьте изменения, если обязательные проверки не проходили или падали.
 
@@ -89,11 +89,12 @@ Animation-токены с CSS custom property fallback собраны в `src/th
 
 ### Где искать детали
 
-1. Коммиты и PR: разделы [Коммиты](#коммиты), [Подготовка изменений перед PR](#подготовка-изменений-перед-pr) и [Минимальное ожидание от каждого PR](#минимальное-ожидание-от-каждого-pr).
-2. Стили и типографика: раздел [Стили и типографика](#стили-и-типографика).
-3. Accessibility: раздел [Accessibility](#accessibility).
-4. Новый компонент: раздел [Новый компонент](#новый-компонент).
-5. Unit/e2e/Storybook правила: [tests/TESTING_README.md](tests/TESTING_README.md).
+1. Причины проектных решений и отличия от `@admiral-ds/react-ui`: [PATTERNS.md](PATTERNS.md).
+2. Коммиты и PR: разделы [Коммиты](#коммиты), [Подготовка изменений перед PR](#подготовка-изменений-перед-pr) и [Минимальное ожидание от каждого PR](#минимальное-ожидание-от-каждого-pr).
+3. Стили и типографика: раздел [Стили и типографика](#стили-и-типографика).
+4. Accessibility: раздел [Accessibility](#accessibility).
+5. Новый компонент: раздел [Новый компонент](#новый-компонент).
+6. Unit/e2e/Storybook правила: [tests/TESTING_README.md](tests/TESTING_README.md).
 
 ## Коммиты
 
@@ -216,6 +217,7 @@ npm run test:visual
 
 При подтвержденном изменении внешнего вида baseline обновляется через `npm run test:visual:update` и просматривается
 вручную перед добавлением в PR. Visual-контур не входит в `check:full`, но является отдельной обязательной CI-проверкой.
+Сравнение выполняется без допуска (`threshold: 0`, `maxDiffPixels: 0`) и ловит любое изменение пикселя или его цвета.
 
 `test:bundle` создаёт настоящий tarball через `npm pack`, устанавливает его в изолированный consumer project, собирает
 fixtures для root и component imports и автоматически проверяет совпадение их Rollup module graphs. Поэтому TypeScript и
@@ -257,7 +259,7 @@ npm run test:bundle
 ```
 
 `npm run storybook` запускает Storybook из исходников и не требует предварительной сборки CSS.
-`npm run playground` запускает Vite playground с hot reload. Playground может импортировать CSS из `@admiral-ds/admiral3-tokens`, но primitives-пакет не генерирует CSS при сборке.
+`npm run playground` запускает Vite playground с hot reload. Playground может импортировать CSS из `@admiral-ds/admiral3-tokens`, но components-пакет не генерирует CSS при сборке.
 
 Подробные правила по организации unit-тестов, e2e и Storybook stories вынесены в [tests/TESTING_README.md](tests/TESTING_README.md).
 
@@ -468,9 +470,13 @@ npm run generate:component -- ComponentName
 
 Конфигурация находится в `generate-react-cli.json`, templates - в `scripts/templates/generate-react-component`.
 Сгенерированный код является стартовым шаблоном. Visual template сразу создаётся с отдельными матричными секциями
-`Sizes and appearances` и `States`, разбитыми на snapshot-ряды через `VisualSamples`. После генерации нужно заменить
-placeholder-реализацию на фактический API компонента, заполнить обе visual-матрицы всеми поддерживаемыми размерами,
-appearance и значимыми состояниями, расширить stories/tests/e2e и затем запустить обязательные проверки.
+`Sizes and appearances` и `States`, разбитыми на snapshot-ряды через `VisualSamples`; стартовая секция размеров
+перебирает dimension-константу компонента. После генерации нужно заменить placeholder-реализацию на фактический API
+компонента, дополнить visual-матрицы всеми appearance и значимыми состояниями, расширить stories/tests/e2e и затем
+запустить обязательные проверки.
+
+Unit-test template входит в `tsconfig.test.json`: ошибки TypeScript и типы `jest-dom` в нём должны проверяться тем же
+контуром, что и unit-тесты сгенерированных компонентов.
 
 Структурные правила компонента проверяются командой:
 
@@ -534,7 +540,7 @@ src/components/ComponentName/stories/ComponentNameDirty.template.tsx
 2. Storybook-специфика (`Meta`, `StoryObj`, `args`, `argTypes`, story exports) должна находиться в `*.stories.tsx`.
 3. `*.template.tsx` должен содержать только React-код и не должен зависеть от типов или объектов Storybook.
 4. Stories должны использовать публичный импорт пакета, то есть так, как компонент будет использоваться потребителем.
-5. `*.stories.tsx` и `*.template.tsx` должны импортировать публичные компоненты, props и публичные типы из `@admiral-ds/admiral3-primitives`. Локальные импорты из папки компонента допустимы только для внутренних служебных сущностей, которые не нужны финальному пользователю библиотеки, например компонентных `constants`.
+5. `*.stories.tsx` и `*.template.tsx` должны импортировать публичные компоненты, props и публичные типы из `@admiral-ds/admiral3-components`. Локальные импорты из папки компонента допустимы только для внутренних служебных сущностей, которые не нужны финальному пользователю библиотеки, например компонентных `constants`.
 6. Не каждый `*.template.tsx` обязан попадать в Storybook. Internal-only templates допустимы, если они используются только в playground/e2e.
 7. Общие контейнеры и layout helpers для templates хранятся в `src/components/stories`. Используйте их, если layout должен одинаково работать в Storybook и internal playground.
 8. Глобальные decorators и styles в `.storybook` используются только для Storybook shell: theme, fonts, docs/canvas padding и базовое выравнивание. Layout, который является частью demo-кейса или e2e-сценария, должен оставаться внутри template/helper.

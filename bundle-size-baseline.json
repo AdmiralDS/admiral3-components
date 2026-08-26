@@ -35,6 +35,9 @@
     },
     "spinner": {
       "rawBytes": 6566
+    },
+    "toggle": {
+      "rawBytes": 7626
     }
   },
   "version": 1

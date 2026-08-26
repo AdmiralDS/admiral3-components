@@ -1,0 +1,74 @@
+import { createRef } from 'react';
+
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { TOGGLE_DIMENSIONS } from './constants';
+import { Toggle } from './Toggle';
+
+describe('Toggle', () => {
+  afterEach(cleanup);
+
+  it('renders an accessible switch with a label', () => {
+    render(<Toggle data-testid="toggle">Notifications</Toggle>);
+
+    const toggle = screen.getByTestId('toggle');
+
+    expect(toggle).toBe(screen.getByRole('switch', { name: 'Notifications' }));
+    expect(toggle).not.toBeChecked();
+  });
+
+  it('forwards input attributes and ref', () => {
+    const ref = createRef<HTMLInputElement>();
+    render(<Toggle ref={ref} name="notifications" defaultChecked />);
+
+    expect(ref.current).toBe(screen.getByRole('switch'));
+    expect(ref.current).toHaveAttribute('name', 'notifications');
+    expect(ref.current).toBeChecked();
+  });
+
+  it.each(TOGGLE_DIMENSIONS)('supports %s dimension, left label and extra text', (dimension) => {
+    render(
+      <Toggle dimension={dimension} labelPosition="left" extraText="Used for important updates">
+        Notifications
+      </Toggle>,
+    );
+
+    expect(screen.getByText('Notifications').closest('label')).toHaveAttribute('data-dimension', dimension);
+    expect(screen.getByText('Used for important updates')).toBeVisible();
+  });
+
+  it('applies fixed width independently of label position', () => {
+    const { rerender } = render(
+      <Toggle labelPosition="left" width={192}>
+        Notifications
+      </Toggle>,
+    );
+
+    expect(screen.getByText('Notifications').closest('label')).toHaveStyle({ width: '192px' });
+
+    rerender(<Toggle width={192}>Notifications</Toggle>);
+
+    expect(screen.getByText('Notifications').closest('label')).toHaveStyle({ width: '192px' });
+  });
+
+  it('does not change or emit change when readOnly', () => {
+    const onChange = vi.fn();
+    render(
+      <Toggle readOnly onChange={onChange}>
+        Notifications
+      </Toggle>,
+    );
+
+    fireEvent.click(screen.getByRole('switch'));
+
+    expect(screen.getByRole('switch')).not.toBeChecked();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('is excluded from interaction when disabled', () => {
+    render(<Toggle disabled>Notifications</Toggle>);
+
+    expect(screen.getByRole('switch')).toBeDisabled();
+  });
+});

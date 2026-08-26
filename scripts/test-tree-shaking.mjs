@@ -21,7 +21,7 @@ const maxRawGrowthBytes = 1024;
 const consumerRoot = mkdtempSync(join(rootDir, 'node_modules', '.tmp', 'tree-shaking-'));
 const fixtureDir = join(consumerRoot, 'fixtures');
 const outputRoot = join(consumerRoot, 'bundles');
-const packageName = '@admiral-ds/admiral3-primitives';
+const packageName = '@admiral-ds/admiral3-components';
 const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
 const installedPackageDir = join(consumerRoot, 'node_modules', ...packageName.split('/'));
 

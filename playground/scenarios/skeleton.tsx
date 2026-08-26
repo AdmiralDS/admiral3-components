@@ -1,4 +1,4 @@
-import type { SkeletonProps } from '@admiral-ds/admiral3-primitives';
+import type { SkeletonProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { SkeletonPlaygroundTemplate } from '../../src/components/Skeleton/stories/SkeletonPlayground.template';

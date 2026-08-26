@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { BadgeDot, type BadgeDotProps } from '@admiral-ds/admiral3-primitives';
+import { BadgeDot, type BadgeDotProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 import { BADGE_DOT_APPEARANCES, BADGE_DOT_DIMENSIONS } from '../constants';

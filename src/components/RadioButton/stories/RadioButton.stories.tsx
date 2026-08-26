@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-primitives';
+import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-components';
 
 import { RadioButtonExtraTextTemplate } from './RadioButtonExtraText.template';
 import radioButtonExtraTextTemplateRaw from './RadioButtonExtraText.template?raw';

@@ -1,5 +1,5 @@
 {
-  "name": "@admiral-ds/admiral3-primitives",
+  "name": "@admiral-ds/admiral3-components",
   "version": "0.0.0",
   "description": "React component library for Admiral design system 3.0",
   "type": "module",
@@ -57,6 +57,10 @@
     "./spinner": {
       "types": "./dist/components/Spinner/index.d.ts",
       "import": "./dist/components/Spinner/index.js"
+    },
+    "./toggle": {
+      "types": "./dist/components/Toggle/index.d.ts",
+      "import": "./dist/components/Toggle/index.js"
     }
   },
   "keywords": [
@@ -76,7 +80,7 @@
   "scripts": {
     "check:fix": "npm run format && npm run lint:fix",
     "check:full": "node scripts/check-full.mjs",
-    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=changed'",
+    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all'",
     "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run'",
     "test:visual:report": "playwright show-report playwright-visual-report",
     "storybook": "storybook dev -p 6006",
@@ -150,9 +154,9 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.1.2"
   },
-  "repository": "https://github.com/AdmiralDS/admiral3-primitives",
+  "repository": "https://github.com/AdmiralDS/admiral3-components",
   "bugs": {
-    "url": "https://github.com/AdmiralDS/admiral3-primitives/issues"
+    "url": "https://github.com/AdmiralDS/admiral3-components/issues"
   },
   "publishConfig": {
     "access": "public"
