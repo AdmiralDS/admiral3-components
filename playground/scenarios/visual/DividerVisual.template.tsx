@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Divider, type DividerAppearance } from '@admiral-ds/admiral3-primitives';
+import { Divider, type DividerAppearance } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,

@@ -1,6 +1,6 @@
 import { StoryDemoContainer, StoryDemoDescription } from '#src/components/stories/StoryContainers';
 
-import { Divider, ListItem, UnorderedList, type DividerProps } from '@admiral-ds/admiral3-primitives';
+import { Divider, ListItem, UnorderedList, type DividerProps } from '@admiral-ds/admiral3-components';
 
 export const DividerPlaygroundTemplate = (args: DividerProps) => {
   return (

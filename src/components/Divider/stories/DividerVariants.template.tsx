@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '#src/components/stories/StoryContainers';
 
-import { Divider, ListItem, UnorderedList } from '@admiral-ds/admiral3-primitives';
+import { Divider, ListItem, UnorderedList } from '@admiral-ds/admiral3-components';
 
 const Container = styled.div`
   box-sizing: border-box;

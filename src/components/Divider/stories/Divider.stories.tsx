@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Divider, type DividerProps } from '@admiral-ds/admiral3-primitives';
+import { Divider, type DividerProps } from '@admiral-ds/admiral3-components';
 
 import { DividerPlaygroundTemplate } from './DividerPlayground.template';
 import dividerPlaygroundTemplateRaw from './DividerPlayground.template?raw';
