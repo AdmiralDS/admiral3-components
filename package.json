@@ -26,6 +26,10 @@
       "types": "./dist/components/CheckBox/index.d.ts",
       "import": "./dist/components/CheckBox/index.js"
     },
+    "./field-set": {
+      "types": "./dist/components/FieldSet/index.d.ts",
+      "import": "./dist/components/FieldSet/index.js"
+    },
     "./helper-components": {
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
