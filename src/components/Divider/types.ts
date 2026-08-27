@@ -21,6 +21,11 @@ export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: DividerOrientation;
   /** Длина компонента. Значение по умолчанию '100%'. */
   length?: string | number;
+  /**
+   * Определяет семантику Divider. При false компонент имеет роль separator и aria-orientation,
+   * при true исключается из accessibility tree. Значение по умолчанию false.
+   */
+  decorative?: boolean;
 }
 
 export interface StyledDividerProps {

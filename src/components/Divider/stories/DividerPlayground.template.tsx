@@ -1,6 +1,16 @@
+import styled from 'styled-components';
+
 import { StoryDemoContainer, StoryDemoDescription } from '#src/components/stories/StoryContainers';
 
 import { Divider, ListItem, UnorderedList, type DividerProps } from '@admiral-ds/admiral3-components';
+
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  height: 70px;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const DividerPlaygroundTemplate = (args: DividerProps) => {
   return (
@@ -23,7 +33,9 @@ export const DividerPlaygroundTemplate = (args: DividerProps) => {
           Не ставьте разделители перед первым элементом и после последнего.
         </ListItem>
       </UnorderedList>
-      <Divider {...args} />
+      <Container>
+        <Divider {...args} />
+      </Container>
     </StoryDemoContainer>
   );
 };

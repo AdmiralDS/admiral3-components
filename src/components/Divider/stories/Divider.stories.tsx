@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Divider, type DividerProps } from '@admiral-ds/admiral3-components';
 
+import { DividerAccessibilityTemplate } from './DividerAccessibility.template';
+import dividerAccessibilityTemplateRaw from './DividerAccessibility.template?raw';
 import { DividerPlaygroundTemplate } from './DividerPlayground.template';
 import dividerPlaygroundTemplateRaw from './DividerPlayground.template?raw';
 import { DividerVariantsTemplate } from './DividerVariants.template';
@@ -25,6 +27,9 @@ const meta = {
       control: 'radio',
       options: DIVIDER_ORIENTATIONS,
     },
+    decorative: {
+      control: 'boolean',
+    },
   },
 } satisfies Meta<typeof Divider>;
 
@@ -34,6 +39,7 @@ const defaultArgs: DividerProps = {
   dimension: 'm',
   appearance: 'default',
   orientation: 'horizontal',
+  decorative: false,
 };
 
 export const Playground: StoryObj<DividerProps> = {
@@ -53,11 +59,26 @@ export const Variants: StoryObj<DividerProps> = {
   render: DividerVariantsTemplate,
   parameters: {
     controls: {
-      exclude: ['appearance', 'dimension', 'length', 'orientation'],
+      exclude: ['appearance', 'decorative', 'dimension', 'length', 'orientation'],
     },
     docs: {
       source: {
         code: dividerVariantsTemplateRaw,
+      },
+    },
+  },
+};
+
+export const Accessibility: StoryObj<DividerProps> = {
+  args: defaultArgs,
+  render: DividerAccessibilityTemplate,
+  parameters: {
+    controls: {
+      exclude: ['appearance', 'decorative', 'dimension', 'length', 'orientation'],
+    },
+    docs: {
+      source: {
+        code: dividerAccessibilityTemplateRaw,
       },
     },
   },

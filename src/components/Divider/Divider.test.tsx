@@ -32,7 +32,31 @@ describe('Divider', () => {
     expect(divider).toHaveAttribute('data-appearance', 'default');
     expect(divider).toHaveAttribute('data-dimension', 'm');
     expect(divider).toHaveAttribute('data-orientation', 'horizontal');
+    expect(divider).toHaveAttribute('role', 'separator');
+    expect(divider).toHaveAttribute('aria-orientation', 'horizontal');
     expect(divider).toHaveStyle({ width: '100%', height: '2px' });
+  });
+
+  it.each([
+    ['horizontal', 'horizontal'],
+    ['vertical', 'vertical'],
+  ] as const)('renders a semantic %s divider', (orientation, ariaOrientation) => {
+    render(<Divider data-testid="divider" orientation={orientation} decorative={false} />);
+
+    const divider = screen.getByTestId('divider');
+
+    expect(divider).toHaveAttribute('role', 'separator');
+    expect(divider).toHaveAttribute('aria-orientation', ariaOrientation);
+  });
+
+  it.each(['horizontal', 'vertical'] as const)('renders a decorative %s divider', (orientation) => {
+    render(<Divider data-testid="divider" orientation={orientation} decorative />);
+
+    const divider = screen.getByTestId('divider');
+
+    expect(divider).toHaveAttribute('role', 'none');
+    expect(divider).not.toHaveAttribute('aria-hidden');
+    expect(divider).not.toHaveAttribute('aria-orientation');
   });
 
   it('applies horizontal dimension and numeric length', () => {

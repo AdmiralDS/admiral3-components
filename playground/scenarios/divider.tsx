@@ -7,4 +7,9 @@ export const dividerScenarios: PlaygroundScenario[] = [
     title: 'Divider Default',
     render: () => <DividerPlaygroundTemplate data-testid="divider" />,
   },
+  {
+    id: 'divider/vertical',
+    title: 'Divider Vertical',
+    render: () => <DividerPlaygroundTemplate data-testid="divider" orientation="vertical" />,
+  },
 ];
