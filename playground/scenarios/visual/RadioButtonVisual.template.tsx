@@ -49,26 +49,17 @@ const renderStates = (withExtraText: boolean) => (
   </VisualGroups>
 );
 
-const renderReadOnlyStates = (withExtraText: boolean) => (
+const renderGroup = () => (
   <VisualGroups>
     <VisualGroup>
-      <VisualGroupTitle>readOnly group</VisualGroupTitle>
+      <VisualGroupTitle>default group</VisualGroupTitle>
       <VisualSamples>
         {RADIO_BUTTON_DIMENSIONS.map((dimension) => (
           <VisualSample key={dimension}>
             <VisualLabel>{dimension}</VisualLabel>
-            <RadioGroup
-              name={`visual-readonly-${dimension}-${withExtraText}`}
-              dimension={dimension}
-              defaultValue="checked"
-              readOnly
-            >
-              <RadioButton value="checked" extraText={withExtraText ? 'Дополнительный текст' : undefined}>
-                Checked RadioButton
-              </RadioButton>
-              <RadioButton value="unchecked" extraText={withExtraText ? 'Дополнительный текст' : undefined}>
-                Not checked RadioButton
-              </RadioButton>
+            <RadioGroup name={`visual-group-${dimension}`} dimension={dimension} defaultValue="first">
+              <RadioButton value="first">First RadioButton</RadioButton>
+              <RadioButton value="second">Second RadioButton</RadioButton>
             </RadioGroup>
           </VisualSample>
         ))}
@@ -88,12 +79,8 @@ export const RadioButtonVisualTemplate = () => (
       {renderStates(true)}
     </VisualSection>
     <VisualSection>
-      <VisualTitle>ReadOnly RadioGroup</VisualTitle>
-      {renderReadOnlyStates(false)}
-    </VisualSection>
-    <VisualSection>
-      <VisualTitle>ReadOnly RadioGroup with extra text</VisualTitle>
-      {renderReadOnlyStates(true)}
+      <VisualTitle>RadioGroup</VisualTitle>
+      {renderGroup()}
     </VisualSection>
   </VisualLayout>
 );

@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CheckBox } from './CheckBox';
+import { CheckBoxGroup } from './CheckBoxGroup';
 import { CHECK_BOX_DIMENSIONS } from './constants';
 
 describe('CheckBox', () => {
@@ -83,7 +84,7 @@ describe('CheckBox', () => {
     expect(input).not.toHaveAttribute('style');
   });
 
-  it('inherits dimension from a fieldset', () => {
+  it('does not derive dimension from an arbitrary fieldset', () => {
     render(
       <fieldset data-dimension="xs">
         <CheckBox>Option</CheckBox>
@@ -93,8 +94,8 @@ describe('CheckBox', () => {
     const input = screen.getByRole('checkbox', { name: 'Option' });
     const control = input.nextElementSibling;
 
-    expect(input.parentElement).toHaveStyle({ gap: '8px' });
-    expect(control).toHaveStyle({ width: '14px', height: '14px', marginBlock: '1px' });
+    expect(input.parentElement).toHaveStyle({ gap: '10px' });
+    expect(control).toHaveStyle({ width: '20px', height: '20px', marginBlock: '2px' });
   });
 
   it('supports checked and indeterminate states', () => {
@@ -130,11 +131,11 @@ describe('CheckBox', () => {
     expect(screen.queryByText('Дополнительный текст')).not.toBeInTheDocument();
   });
 
-  it('inherits the disabled presentation from a fieldset', () => {
+  it('supports the disabled presentation', () => {
     render(
-      <fieldset disabled>
-        <CheckBox extraText="Дополнительный текст">Option</CheckBox>
-      </fieldset>,
+      <CheckBox extraText="Дополнительный текст" disabled>
+        Option
+      </CheckBox>,
     );
 
     const input = screen.getByRole('checkbox', { name: /Option.*Дополнительный текст/ });
@@ -188,5 +189,142 @@ describe('CheckBox', () => {
     render(<CheckBox error aria-label="Option" />);
 
     expect(screen.getByRole('checkbox', { name: 'Option' })).toHaveAttribute('aria-invalid', 'true');
+  });
+});
+
+describe('CheckBoxGroup', () => {
+  afterEach(cleanup);
+
+  it('renders a FieldSet and passes common props to checkboxes except required and name', () => {
+    render(
+      <CheckBoxGroup name="subscriptions" legend="Subscriptions" dimension="s" required error>
+        <CheckBox value="news" required>
+          News
+        </CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    const group = screen.getByRole('group', { name: 'Subscriptions' });
+    const news = screen.getByRole('checkbox', { name: 'News' });
+    const offers = screen.getByRole('checkbox', { name: 'Offers' });
+
+    expect(group).toHaveAttribute('data-dimension', 's');
+    expect(group).toHaveAttribute('data-required', '');
+    expect(group).toHaveAttribute('aria-invalid', 'true');
+    expect(news).not.toHaveAttribute('name');
+    expect(offers).not.toHaveAttribute('name');
+    expect(news).toBeRequired();
+    expect(offers).not.toBeRequired();
+  });
+
+  it('supports uncontrolled array value', () => {
+    const onChange = vi.fn();
+    render(
+      <CheckBoxGroup name="subscriptions" defaultValue={['news']} onChange={onChange}>
+        <CheckBox value="news">News</CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    const news = screen.getByRole('checkbox', { name: 'News' });
+    const offers = screen.getByRole('checkbox', { name: 'Offers' });
+    expect(news).toBeChecked();
+
+    fireEvent.click(offers);
+    expect(offers).toBeChecked();
+    expect(onChange).toHaveBeenLastCalledWith(['news', 'offers']);
+
+    fireEvent.click(news);
+    expect(news).not.toBeChecked();
+    expect(onChange).toHaveBeenLastCalledWith(['offers']);
+  });
+
+  it('supports controlled array value', () => {
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <CheckBoxGroup name="subscriptions" value={['news']} onChange={onChange}>
+        <CheckBox value="news">News</CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Offers' }));
+    expect(onChange).toHaveBeenCalledWith(['news', 'offers']);
+    expect(screen.getByRole('checkbox', { name: 'Offers' })).not.toBeChecked();
+
+    rerender(
+      <CheckBoxGroup name="subscriptions" value={['news', 'offers']} onChange={onChange}>
+        <CheckBox value="news">News</CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+    expect(screen.getByRole('checkbox', { name: 'Offers' })).toBeChecked();
+  });
+
+  it('gives group state and props priority over checkbox props', () => {
+    render(
+      <CheckBoxGroup name="group-name" defaultValue={['news']} dimension="s">
+        <CheckBox name="checkbox-name" value="news" checked={false} dimension="xs">
+          News
+        </CheckBox>
+        <CheckBox value="offers" defaultChecked>
+          Offers
+        </CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    const news = screen.getByRole('checkbox', { name: 'News' });
+    const offers = screen.getByRole('checkbox', { name: 'Offers' });
+    expect(news).toBeChecked();
+    expect(offers).not.toBeChecked();
+    expect(news).toHaveAttribute('name', 'checkbox-name');
+    expect(news.closest('label')).toHaveAttribute('data-dimension', 's');
+  });
+
+  it('calls both checkbox and group change handlers', () => {
+    const onCheckBoxChange = vi.fn();
+    const onGroupChange = vi.fn();
+    render(
+      <CheckBoxGroup name="subscriptions" onChange={onGroupChange}>
+        <CheckBox value="news" onChange={onCheckBoxChange}>
+          News
+        </CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'News' }));
+    expect(onCheckBoxChange).toHaveBeenCalledOnce();
+    expect(onGroupChange).toHaveBeenCalledWith(['news']);
+  });
+
+  it('applies readOnly state without disabling focus', () => {
+    const onChange = vi.fn();
+    render(
+      <CheckBoxGroup name="subscriptions" defaultValue={['news']} readOnly onChange={onChange}>
+        <CheckBox value="news">News</CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    const offers = screen.getByRole('checkbox', { name: 'Offers' });
+    expect(offers).not.toBeChecked();
+    fireEvent.click(offers);
+    expect(offers).not.toBeDisabled();
+    expect(offers).toHaveAttribute('aria-readonly', 'true');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('disables all checkboxes and forwards ref to FieldSet', () => {
+    const ref = createRef<HTMLFieldSetElement>();
+    render(
+      <CheckBoxGroup ref={ref} name="subscriptions" legend="Subscriptions" disabled>
+        <CheckBox value="news">News</CheckBox>
+        <CheckBox value="offers">Offers</CheckBox>
+      </CheckBoxGroup>,
+    );
+
+    screen.getAllByRole('checkbox').forEach((checkbox) => expect(checkbox).toBeDisabled());
+    expect(ref.current).toBe(screen.getByRole('group', { name: 'Subscriptions' }));
   });
 });
