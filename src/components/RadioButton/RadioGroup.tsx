@@ -1,8 +1,9 @@
-import { forwardRef, useId, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { RadioGroupContext } from './RadioGroupContext';
 import type { RadioGroupContextValue } from './RadioGroupContext';
 import type { RadioGroupProps } from './types';
+import { refSetter } from '../../utils/refSetter';
 import { FieldSet } from '../FieldSet';
 
 /** Группа радиокнопок с общими состоянием, именем и семантикой FieldSet. */
@@ -27,15 +28,28 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const value = controlledValue === undefined ? uncontrolledValue : controlledValue;
 
-    const handleChange = (event: React.SyntheticEvent<HTMLFieldSetElement>) => {
-      if (readOnly) return;
-      const nextValue = (event.target as HTMLInputElement).value;
+    const fieldSetRef = useRef<HTMLFieldSetElement | null>(null);
+    const initialValueRef = useRef(defaultValue);
 
-      if (controlledValue === undefined) {
-        setUncontrolledValue(nextValue);
+    const handleValueChange = useCallback(
+      (nextValue: string) => {
+        if (controlledValue === undefined) {
+          setUncontrolledValue(nextValue);
+        }
+        onChange?.(nextValue);
+      },
+      [controlledValue, onChange],
+    );
+
+    useEffect(() => {
+      const form = fieldSetRef.current?.form;
+
+      if (form && controlledValue === undefined) {
+        const handleReset = () => setUncontrolledValue(initialValueRef.current);
+        form.addEventListener('reset', handleReset);
+        return () => form.removeEventListener('reset', handleReset);
       }
-      onChange?.(nextValue);
-    };
+    }, [controlledValue]);
 
     const contextValue = useMemo<RadioGroupContextValue>(
       () => ({
@@ -45,19 +59,19 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         disabled,
         readOnly,
         required,
+        onValueChange: handleValueChange,
       }),
-      [name, value, dimension, disabled, readOnly, required],
+      [name, value, dimension, disabled, readOnly, required, handleValueChange],
     );
 
     return (
       <RadioGroupContext.Provider value={contextValue}>
         <FieldSet
-          ref={ref}
+          ref={refSetter(fieldSetRef, ref)}
           aria-readonly={readOnly || undefined}
           dimension={dimension}
           disabled={disabled}
           required={required}
-          onChange={handleChange}
           {...props}
         >
           {children}

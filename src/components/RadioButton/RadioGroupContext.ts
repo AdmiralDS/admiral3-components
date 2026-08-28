@@ -9,6 +9,7 @@ export interface RadioGroupContextValue {
   disabled: boolean;
   readOnly: boolean;
   required: boolean;
+  onValueChange: (value: string) => void;
 }
 
 export const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);

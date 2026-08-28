@@ -72,6 +72,7 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (!readOnly) {
         onChange?.(event);
+        group?.onItemChange(event.currentTarget.value, event.currentTarget.checked);
       }
 
       event.currentTarget.indeterminate = indeterminate;

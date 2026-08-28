@@ -7,6 +7,7 @@ export interface CheckBoxGroupContextValue {
   dimension: CheckBoxDimension;
   disabled: boolean;
   readOnly: boolean;
+  onItemChange: (value: string, checked: boolean) => void;
 }
 
 export const CheckBoxGroupContext = createContext<CheckBoxGroupContextValue | null>(null);

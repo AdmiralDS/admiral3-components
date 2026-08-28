@@ -214,6 +214,39 @@ describe('RadioButton components', () => {
       expect(onGroupChange).toHaveBeenCalledWith('yes');
     });
 
+    it('restores the initial uncontrolled value when the form is reset', () => {
+      render(
+        <form aria-label="Form">
+          <RadioGroup name="answer" defaultValue="yes">
+            <RadioButton value="yes">Yes</RadioButton>
+            <RadioButton value="no">No</RadioButton>
+          </RadioGroup>
+        </form>,
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: 'No' }));
+      expect(screen.getByRole('radio', { name: 'No' })).toBeChecked();
+
+      fireEvent.reset(screen.getByRole('form', { name: 'Form' }));
+
+      expect(screen.getByRole('radio', { name: 'Yes' })).toBeChecked();
+    });
+
+    it('does not change a controlled value when the form is reset', () => {
+      render(
+        <form aria-label="Form">
+          <RadioGroup name="answer" value="no">
+            <RadioButton value="yes">Yes</RadioButton>
+            <RadioButton value="no">No</RadioButton>
+          </RadioGroup>
+        </form>,
+      );
+
+      fireEvent.reset(screen.getByRole('form', { name: 'Form' }));
+
+      expect(screen.getByRole('radio', { name: 'No' })).toBeChecked();
+    });
+
     it('applies group readOnly state without disabling focus', () => {
       const onChange = vi.fn();
       render(

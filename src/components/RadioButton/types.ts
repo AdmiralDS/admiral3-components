@@ -3,7 +3,10 @@ import type { FieldSetProps } from '../FieldSet';
 
 export type RadioButtonDimension = (typeof RADIO_BUTTON_DIMENSIONS)[number];
 
-export interface RadioButtonProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
+export interface RadioButtonProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'type' | 'readOnly'
+> {
   /** Размер RadioButton. Значение по умолчанию 'm'. */
   dimension?: RadioButtonDimension;
   /** Состояние ошибки. */

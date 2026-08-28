@@ -56,6 +56,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       // Не выпускаем такое событие наружу, иначе пользователь через controlled state сможет изменить readonly-значение.
       if (!readOnly) {
         onChange?.(event);
+        group?.onValueChange(event.currentTarget.value);
       }
     };
 

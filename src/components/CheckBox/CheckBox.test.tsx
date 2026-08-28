@@ -298,6 +298,43 @@ describe('CheckBoxGroup', () => {
     expect(onGroupChange).toHaveBeenCalledWith(['news']);
   });
 
+  it('restores the initial uncontrolled value when the form is reset', () => {
+    render(
+      <form aria-label="Form">
+        <CheckBoxGroup defaultValue={['news']}>
+          <CheckBox value="news">News</CheckBox>
+          <CheckBox value="offers">Offers</CheckBox>
+        </CheckBoxGroup>
+      </form>,
+    );
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Offers' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: 'News' }));
+    expect(screen.getByRole('checkbox', { name: 'Offers' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'News' })).not.toBeChecked();
+
+    fireEvent.reset(screen.getByRole('form', { name: 'Form' }));
+
+    expect(screen.getByRole('checkbox', { name: 'News' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Offers' })).not.toBeChecked();
+  });
+
+  it('does not change a controlled value when the form is reset', () => {
+    render(
+      <form aria-label="Form">
+        <CheckBoxGroup value={['offers']}>
+          <CheckBox value="news">News</CheckBox>
+          <CheckBox value="offers">Offers</CheckBox>
+        </CheckBoxGroup>
+      </form>,
+    );
+
+    fireEvent.reset(screen.getByRole('form', { name: 'Form' }));
+
+    expect(screen.getByRole('checkbox', { name: 'News' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Offers' })).toBeChecked();
+  });
+
   it('applies readOnly state without disabling focus', () => {
     const onChange = vi.fn();
     render(

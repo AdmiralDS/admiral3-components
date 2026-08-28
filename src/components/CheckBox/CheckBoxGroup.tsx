@@ -1,8 +1,9 @@
-import { forwardRef, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CheckBoxGroupContext } from './CheckBoxGroupContext';
 import type { CheckBoxGroupContextValue } from './CheckBoxGroupContext';
 import type { CheckBoxGroupProps } from './types';
+import { refSetter } from '../../utils/refSetter';
 import { FieldSet } from '../FieldSet';
 
 /** Группа чекбоксов с общими состоянием и семантикой FieldSet. */
@@ -22,32 +23,47 @@ export const CheckBoxGroup = forwardRef<HTMLFieldSetElement, CheckBoxGroupProps>
   ) => {
     const [uncontrolledValue, setUncontrolledValue] = useState<string[]>(defaultValue);
     const value = controlledValue === undefined ? uncontrolledValue : controlledValue;
+    const fieldSetRef = useRef<HTMLFieldSetElement | null>(null);
+    const initialValueRef = useRef(defaultValue);
 
-    const handleChange = (event: React.SyntheticEvent<HTMLFieldSetElement>) => {
-      if (readOnly) return;
+    const handleItemChange = useCallback(
+      (itemValue: string, checked: boolean) => {
+        const nextValue = checked
+          ? value.includes(itemValue)
+            ? value
+            : [...value, itemValue]
+          : value.filter((item) => item !== itemValue);
 
-      const input = event.target as HTMLInputElement;
-      const nextValue = input.checked ? [...value, input.value] : value.filter((item) => item !== input.value);
+        if (controlledValue === undefined) {
+          setUncontrolledValue(nextValue);
+        }
+        onChange?.(nextValue);
+      },
+      [controlledValue, onChange, value],
+    );
 
-      if (controlledValue === undefined) {
-        setUncontrolledValue(nextValue);
+    useEffect(() => {
+      const form = fieldSetRef.current?.form;
+
+      if (form && controlledValue === undefined) {
+        const handleReset = () => setUncontrolledValue([...initialValueRef.current]);
+        form.addEventListener('reset', handleReset);
+        return () => form.removeEventListener('reset', handleReset);
       }
-      onChange?.(nextValue);
-    };
+    }, [controlledValue]);
 
     const contextValue = useMemo<CheckBoxGroupContextValue>(
-      () => ({ value, dimension, disabled, readOnly }),
-      [value, dimension, disabled, readOnly],
+      () => ({ value, dimension, disabled, readOnly, onItemChange: handleItemChange }),
+      [value, dimension, disabled, readOnly, handleItemChange],
     );
 
     return (
       <CheckBoxGroupContext.Provider value={contextValue}>
         <FieldSet
-          ref={ref}
+          ref={refSetter(fieldSetRef, ref)}
           aria-readonly={readOnly || undefined}
           dimension={dimension}
           disabled={disabled}
-          onChange={handleChange}
           {...props}
         >
           {children}
