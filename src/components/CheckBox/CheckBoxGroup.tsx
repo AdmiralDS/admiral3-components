@@ -6,7 +6,10 @@ import type { CheckBoxGroupProps } from './types';
 import { refSetter } from '../../utils/refSetter';
 import { FieldSet } from '../FieldSet';
 
-/** Группа чекбоксов с общими состоянием и семантикой FieldSet. */
+/**
+ * Группа чекбоксов с общими состоянием и семантикой FieldSet.
+ * Каждый CheckBox в составе группы должен иметь явно заданный уникальный value.
+ */
 export const CheckBoxGroup = forwardRef<HTMLFieldSetElement, CheckBoxGroupProps>(
   (
     {

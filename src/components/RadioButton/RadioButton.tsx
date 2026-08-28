@@ -34,9 +34,9 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     /** При наличии RadioGroup настройки группы имеют приоритет в сравнении
      * с индивидуальными настройками RadioButton */
     const dimension = group?.dimension ?? dimensionProp;
-    const disabled = group?.disabled ?? disabledProp;
+    const disabled = Boolean(group?.disabled || disabledProp);
     const readOnly = Boolean(group?.readOnly);
-    const required = group?.required ?? requiredProp;
+    const required = Boolean(group?.required || requiredProp);
     const name = group?.name ?? nameProp;
     const checked = group ? group.value === String(value) : checkedProp;
     const defaultChecked = group ? undefined : defaultCheckedProp;

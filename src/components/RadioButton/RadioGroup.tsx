@@ -6,7 +6,10 @@ import type { RadioGroupProps } from './types';
 import { refSetter } from '../../utils/refSetter';
 import { FieldSet } from '../FieldSet';
 
-/** Группа радиокнопок с общими состоянием, именем и семантикой FieldSet. */
+/**
+ * Группа радиокнопок с общими состоянием, именем и семантикой FieldSet.
+ * Каждый RadioButton в составе группы должен иметь явно заданный уникальный value.
+ */
 export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   (
     {

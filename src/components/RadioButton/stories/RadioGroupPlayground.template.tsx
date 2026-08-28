@@ -6,7 +6,7 @@ export const RadioGroupPlaygroundTemplate = (args: RadioGroupProps) => (
   <StoryDemoContainer $direction="column" $gap="24px">
     <StoryDemoDescription>
       RadioButton используется в составе RadioGroup, который задаёт общие имя, размер, состояние и расположение
-      вариантов.
+      вариантов. Каждый RadioButton в составе группы должен иметь явно заданный уникальный value.
     </StoryDemoDescription>
     <RadioGroup {...args}>
       <RadioButton value="courier">Курьером</RadioButton>

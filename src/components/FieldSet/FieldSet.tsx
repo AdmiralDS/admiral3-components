@@ -35,7 +35,7 @@ export const FieldSet = forwardRef<HTMLFieldSetElement, FieldSetProps>(
         aria-invalid={error || ariaInvalid || undefined}
         {...props}
       >
-        {legend && <StyledLegend>{legend}</StyledLegend>}
+        {legend != null && <StyledLegend>{legend}</StyledLegend>}
         {children}
       </StyledFieldSet>
     );

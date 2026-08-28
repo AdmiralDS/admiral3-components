@@ -53,8 +53,8 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
     /** При наличии CheckBoxGroup настройки группы имеют приоритет в сравнении
      * с индивидуальными настройками CheckBox. */
     const dimension = group?.dimension ?? dimensionProp;
-    const disabled = group?.disabled ?? disabledProp;
-    const readOnly = group?.readOnly ?? readOnlyProp;
+    const disabled = Boolean(group?.disabled || disabledProp);
+    const readOnly = Boolean(group?.readOnly || readOnlyProp);
     const checked = group ? group.value.includes(String(value)) : checkedProp;
     const defaultChecked = group ? undefined : defaultCheckedProp;
 
