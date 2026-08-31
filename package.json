@@ -26,6 +26,10 @@
       "types": "./dist/components/CheckBox/index.d.ts",
       "import": "./dist/components/CheckBox/index.js"
     },
+    "./divider": {
+      "types": "./dist/components/Divider/index.d.ts",
+      "import": "./dist/components/Divider/index.js"
+    },
     "./field-set": {
       "types": "./dist/components/FieldSet/index.d.ts",
       "import": "./dist/components/FieldSet/index.js"
