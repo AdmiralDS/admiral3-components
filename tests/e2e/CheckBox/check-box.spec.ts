@@ -7,6 +7,79 @@ const statesScenarioId = 'check-box/states';
 const tableSelectionScenarioId = 'check-box/table-selection';
 
 test.describe('CheckBox playground', () => {
+  test('selects multiple values by clicking their labels', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('check-box-group/sizes'));
+
+    const fieldset = page.locator('fieldset').first();
+    const first = fieldset.getByRole('checkbox', { name: 'Уведомления' });
+    const second = fieldset.getByRole('checkbox', { name: 'Аналитика' });
+
+    await expect(first).toBeChecked();
+    await expect(second).not.toBeChecked();
+    await second.locator('xpath=..').click();
+    await expect(first).toBeChecked();
+    await expect(second).toBeChecked();
+    await first.locator('xpath=..').click();
+    await expect(first).not.toBeChecked();
+    await expect(second).toBeChecked();
+  });
+
+  test('inherits dimension and disabled state from CheckBoxGroup', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('check-box-group/sizes'));
+
+    const input = page.locator("fieldset[data-dimension='xs']").getByRole('checkbox', { name: 'Уведомления' });
+    const control = input.locator('xpath=following-sibling::span[1]');
+
+    await expect(input).toBeDisabled();
+    await expect(input.locator('xpath=..')).toHaveAttribute('data-dimension', 'xs');
+    await expect(control).toHaveCSS('width', '14px');
+    await expect(control).toHaveCSS('height', '14px');
+  });
+
+  test('does not change readOnly group values with mouse or keyboard', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('check-box-group/readonly'));
+
+    const first = page.getByRole('checkbox', { name: 'Уведомления' });
+    const second = page.getByRole('checkbox', { name: 'Аналитика' });
+    const third = page.getByRole('checkbox', { name: 'Специальные предложения' });
+
+    await expect(first).toBeChecked();
+    await expect(second).not.toBeChecked();
+    await expect(third).toBeChecked();
+    await expect(first).toHaveAttribute('aria-readonly', 'true');
+    await expect(second).toHaveAttribute('aria-readonly', 'true');
+    await expect(third).toHaveAttribute('aria-readonly', 'true');
+
+    await second.locator('xpath=..').click();
+    await expect(second).not.toBeChecked();
+
+    await first.focus();
+    await expect(first).toBeFocused();
+    await page.keyboard.press('Space');
+    await expect(first).toBeChecked();
+    await expect(first).not.toBeDisabled();
+    await expect(first.locator('xpath=..')).toHaveCSS('cursor', 'default');
+  });
+
+  test('renders readOnly group visual states with theme tokens', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('check-box-group/readonly'));
+
+    const backgroundDisabled = await resolveCssColorToken(page, '--admiral-color-neutral-base-opacity-rest');
+    const borderDisabled = await resolveCssColorToken(page, '--admiral-color-neutral-stroke-1-rest');
+    const selectedDisabled = await resolveCssColorToken(page, '--admiral-color-primary-base-1-disable');
+
+    const controlFor = (name: string) =>
+      page.getByRole('checkbox', { name, exact: true }).locator('xpath=following-sibling::span[1]');
+
+    const readOnlyUnchecked = controlFor('Аналитика');
+    await expect(readOnlyUnchecked).toHaveCSS('background-color', backgroundDisabled);
+    await expect(readOnlyUnchecked).toHaveCSS('border-color', borderDisabled);
+
+    const readOnlyChecked = controlFor('Уведомления');
+    await expect(readOnlyChecked).toHaveCSS('background-color', selectedDisabled);
+    await expect(readOnlyChecked).toHaveCSS('border-color', 'rgba(0, 0, 0, 0)');
+  });
+
   test('supports mouse and keyboard interaction and resolves theme colors', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(defaultScenarioId));
 

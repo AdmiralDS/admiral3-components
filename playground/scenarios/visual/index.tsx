@@ -3,6 +3,8 @@ import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
+import { DividerVisualTemplate } from './DividerVisual.template';
+import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
@@ -26,6 +28,13 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / CheckBox',
     visual: true,
     render: () => <CheckBoxVisualTemplate />,
+  },
+  { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.fieldSet,
+    title: 'Visual / FieldSet',
+    visual: true,
+    render: () => <FieldSetVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },

@@ -1,4 +1,4 @@
-import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-components';
+import { RadioButton, RadioGroup, type RadioButtonProps } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -15,15 +15,13 @@ import { RADIO_BUTTON_DIMENSIONS } from '../../../src/components/RadioButton/con
 
 const RADIO_BUTTON_STATES: Array<{
   label: string;
-  props: Pick<RadioButtonProps, 'defaultChecked' | 'disabled' | 'error' | 'readOnly'>;
+  props: Pick<RadioButtonProps, 'defaultChecked' | 'disabled' | 'error'>;
 }> = [
   { label: 'default', props: {} },
   { label: 'checked', props: { defaultChecked: true } },
   { label: 'error', props: { error: true } },
   { label: 'disabled', props: { disabled: true } },
   { label: 'disabled checked', props: { defaultChecked: true, disabled: true } },
-  { label: 'readOnly', props: { readOnly: true } },
-  { label: 'readOnly checked', props: { defaultChecked: true, readOnly: true } },
 ];
 
 const renderStates = (withExtraText: boolean) => (
@@ -51,6 +49,25 @@ const renderStates = (withExtraText: boolean) => (
   </VisualGroups>
 );
 
+const renderGroup = () => (
+  <VisualGroups>
+    <VisualGroup>
+      <VisualGroupTitle>default group</VisualGroupTitle>
+      <VisualSamples>
+        {RADIO_BUTTON_DIMENSIONS.map((dimension) => (
+          <VisualSample key={dimension}>
+            <VisualLabel>{dimension}</VisualLabel>
+            <RadioGroup name={`visual-group-${dimension}`} dimension={dimension} defaultValue="first">
+              <RadioButton value="first">First RadioButton</RadioButton>
+              <RadioButton value="second">Second RadioButton</RadioButton>
+            </RadioGroup>
+          </VisualSample>
+        ))}
+      </VisualSamples>
+    </VisualGroup>
+  </VisualGroups>
+);
+
 export const RadioButtonVisualTemplate = () => (
   <VisualLayout>
     <VisualSection>
@@ -60,6 +77,10 @@ export const RadioButtonVisualTemplate = () => (
     <VisualSection>
       <VisualTitle>States with extra text</VisualTitle>
       {renderStates(true)}
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>RadioGroup</VisualTitle>
+      {renderGroup()}
     </VisualSection>
   </VisualLayout>
 );

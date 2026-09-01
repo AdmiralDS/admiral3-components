@@ -30,8 +30,6 @@ const textDisabled = cssToken(
   (theme) => theme.color.neutral.text.disable.rest,
 );
 
-// TODO При разработке RadioGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
-
 export const StyledRadioButton = styled.label<StyledRadioButtonProps>`
   display: flex;
   align-items: flex-start;
@@ -43,21 +41,14 @@ export const StyledRadioButton = styled.label<StyledRadioButtonProps>`
   gap: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.gap}px;
   ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.typography}
 
-  &[data-dimension='s'],
-  fieldset[data-dimension='s'] & {
+  &[data-dimension='s'] {
     gap: ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.gap}px;
     ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.typography}
   }
 
-  &[data-dimension='xs'],
-  fieldset[data-dimension='xs'] & {
+  &[data-dimension='xs'] {
     gap: ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.gap}px;
     ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.typography}
-  }
-
-  fieldset:disabled & {
-    color: ${textDisabled};
-    cursor: not-allowed;
   }
 `;
 
@@ -74,16 +65,14 @@ export const Control = styled.span<{ $error: boolean }>`
   margin-block: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.controlMarginBlock}px;
   --admiral-radio-button-checked-border-width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.m.checkedBorderWidth}px;
 
-  ${StyledRadioButton}[data-dimension='s'] &,
-  fieldset[data-dimension='s'] & {
+  ${StyledRadioButton}[data-dimension='s'] & {
     width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.controlSize}px;
     height: ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.controlSize}px;
     margin-block: ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.controlMarginBlock}px;
     --admiral-radio-button-checked-border-width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.s.checkedBorderWidth}px;
   }
 
-  ${StyledRadioButton}[data-dimension='xs'] &,
-  fieldset[data-dimension='xs'] & {
+  ${StyledRadioButton}[data-dimension='xs'] & {
     width: ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.controlSize}px;
     height: ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.controlSize}px;
     margin-block: ${RADIO_BUTTON_DIMENSION_PARAMETERS.xs.controlMarginBlock}px;

@@ -1,5 +1,6 @@
-import { forwardRef } from 'react';
+import { forwardRef, useContext } from 'react';
 
+import { RadioGroupContext } from './RadioGroupContext';
 import { Control, StyledRadioButton } from './style';
 import type { RadioButtonProps } from './types';
 import {
@@ -8,15 +9,19 @@ import {
   SelectionControlNativeInput,
 } from '../_internal/InputAtoms';
 
-// TODO в будущем readOnly состояние вынести на уровень RadioGroup
+const DEFAULT_DIMENSION = 'm';
 
 /** Радиальные кнопки применяются, когда есть список опций, из которых пользователь может выбрать только один вариант. */
 export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
   (
     {
-      dimension = 'm',
-      disabled = false,
-      readOnly = false,
+      name: nameProp,
+      value,
+      checked: checkedProp,
+      defaultChecked: defaultCheckedProp,
+      dimension: dimensionProp = DEFAULT_DIMENSION,
+      required: requiredProp = false,
+      disabled: disabledProp = false,
       error = false,
       children,
       extraText,
@@ -29,6 +34,17 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     },
     ref,
   ) => {
+    const group = useContext(RadioGroupContext);
+    /** При наличии RadioGroup настройки группы имеют приоритет в сравнении
+     * с индивидуальными настройками RadioButton */
+    const dimension = group?.dimension ?? dimensionProp;
+    const disabled = Boolean(group?.disabled || disabledProp);
+    const readOnly = Boolean(group?.readOnly);
+    const required = Boolean(group?.required || requiredProp);
+    const name = group?.name ?? nameProp;
+    const checked = group ? group.value === String(value) : checkedProp;
+    const defaultChecked = group ? undefined : defaultCheckedProp;
+
     const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
       if (readOnly) {
         // Нативный readonly не поддерживается radio кнопками. Отменяем click, который браузер создаёт
@@ -44,6 +60,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       // Не выпускаем такое событие наружу, иначе пользователь через controlled state сможет изменить readonly-значение.
       if (!readOnly) {
         onChange?.(event);
+        group?.onValueChange(event.currentTarget.value);
       }
     };
 
@@ -59,6 +76,11 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         <SelectionControlNativeInput
           ref={ref}
           type="radio"
+          name={name}
+          value={value}
+          checked={checked}
+          defaultChecked={defaultChecked}
+          required={required}
           disabled={disabled}
           readOnly={readOnly}
           aria-readonly={readOnly || undefined}
