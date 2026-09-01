@@ -35,8 +35,6 @@ const iconColor = cssToken(
 );
 const borderRadius = cssToken('--admiral-radius-by-base-4-small', (theme) => theme.radius.byBase['4'].small);
 
-// TODO При разработке CheckBoxGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
-
 export const StyledCheckBox = styled.label.attrs<
   StyledCheckBoxProps & {
     'data-dimension': string;
@@ -54,21 +52,14 @@ export const StyledCheckBox = styled.label.attrs<
   gap: ${CHECK_BOX_DIMENSION_PARAMETERS.m.gap}px;
   ${CHECK_BOX_DIMENSION_PARAMETERS.m.typography}
 
-  &[data-dimension='s'],
-  fieldset[data-dimension='s'] & {
+  &[data-dimension='s'] {
     gap: ${CHECK_BOX_DIMENSION_PARAMETERS.s.gap}px;
     ${CHECK_BOX_DIMENSION_PARAMETERS.s.typography}
   }
 
-  &[data-dimension='xs'],
-  fieldset[data-dimension='xs'] & {
+  &[data-dimension='xs'] {
     gap: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.gap}px;
     ${CHECK_BOX_DIMENSION_PARAMETERS.xs.typography}
-  }
-
-  fieldset:disabled & {
-    color: ${textDisabled};
-    cursor: not-allowed;
   }
 `;
 
@@ -91,15 +82,13 @@ export const Control = styled.span<{ $error: boolean }>`
   height: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlSize}px;
   margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlMarginBlock}px;
 
-  ${StyledCheckBox}[data-dimension='s'] &,
-  fieldset[data-dimension='s'] & {
+  ${StyledCheckBox}[data-dimension='s'] & {
     width: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlSize}px;
     height: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlSize}px;
     margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlMarginBlock}px;
   }
 
-  ${StyledCheckBox}[data-dimension='xs'] &,
-  fieldset[data-dimension='xs'] & {
+  ${StyledCheckBox}[data-dimension='xs'] & {
     width: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlSize}px;
     height: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlSize}px;
     margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlMarginBlock}px;

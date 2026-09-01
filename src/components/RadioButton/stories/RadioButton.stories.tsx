@@ -4,10 +4,6 @@ import { RadioButton, type RadioButtonProps } from '@admiral-ds/admiral3-compone
 
 import { RadioButtonExtraTextTemplate } from './RadioButtonExtraText.template';
 import radioButtonExtraTextTemplateRaw from './RadioButtonExtraText.template?raw';
-import { RadioButtonFieldsetTemplate } from './RadioButtonFieldset.template';
-import radioButtonFieldsetTemplateRaw from './RadioButtonFieldset.template?raw';
-import { RadioButtonFieldsetReadOnlyTemplate } from './RadioButtonFieldsetReadOnly.template';
-import radioButtonFieldsetReadOnlyTemplateRaw from './RadioButtonFieldsetReadOnly.template?raw';
 import { RadioButtonInformerTemplate } from './RadioButtonInformer.template';
 import radioButtonInformerTemplateRaw from './RadioButtonInformer.template?raw';
 import { RadioButtonPlaygroundTemplate } from './RadioButtonPlayground.template';
@@ -19,7 +15,7 @@ import radioButtonStatesTemplateRaw from './RadioButtonStates.template?raw';
 import { RADIO_BUTTON_DIMENSIONS } from '../constants';
 
 const meta = {
-  title: 'Components/RadioButton',
+  title: 'Components/RadioButton/RadioButton',
   component: RadioButton,
   tags: ['autodocs'],
   argTypes: {
@@ -31,9 +27,6 @@ const meta = {
       control: { type: 'boolean' },
     },
     error: {
-      control: { type: 'boolean' },
-    },
-    readOnly: {
       control: { type: 'boolean' },
     },
     extraText: {
@@ -90,7 +83,7 @@ export const States: StoryObj<RadioButtonProps> = {
   render: RadioButtonStatesTemplate,
   parameters: {
     controls: {
-      exclude: ['children', 'checked', 'defaultChecked', 'disabled', 'error', 'name', 'readOnly'],
+      exclude: ['children', 'checked', 'defaultChecked', 'disabled', 'error', 'name'],
     },
     docs: {
       source: {
@@ -125,36 +118,6 @@ export const WithInformer: StoryObj<RadioButtonProps> = {
     docs: {
       source: {
         code: radioButtonInformerTemplateRaw,
-      },
-    },
-  },
-};
-
-export const Fieldset: StoryObj<RadioButtonProps> = {
-  args: defaultArgs,
-  render: RadioButtonFieldsetTemplate,
-  parameters: {
-    controls: {
-      exclude: ['children', 'checked', 'defaultChecked', 'name', 'readOnly'],
-    },
-    docs: {
-      source: {
-        code: radioButtonFieldsetTemplateRaw,
-      },
-    },
-  },
-};
-
-export const FieldsetReadOnly: StoryObj<RadioButtonProps> = {
-  args: defaultArgs,
-  render: RadioButtonFieldsetReadOnlyTemplate,
-  parameters: {
-    controls: {
-      exclude: ['children', 'checked', 'defaultChecked', 'name', 'readOnly'],
-    },
-    docs: {
-      source: {
-        code: radioButtonFieldsetReadOnlyTemplateRaw,
       },
     },
   },

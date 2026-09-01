@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef } from 'react';
+import { forwardRef, useContext, useLayoutEffect, useRef } from 'react';
 
 // Иконки отличаются от стандартных из пакета по path
 // поэтому для этого компонента выгружены отдельно по размерам
@@ -8,6 +8,7 @@ import MinusXsIcon from './assets/Minus_XS.svg?react';
 import SuccessMIcon from './assets/Success_M.svg?react';
 import SuccessSIcon from './assets/Success_S.svg?react';
 import SuccessXsIcon from './assets/Success_XS.svg?react';
+import { CheckBoxGroupContext } from './CheckBoxGroupContext';
 import { Control, StyledCheckBox } from './style';
 import type { CheckBoxProps } from './types';
 import { refSetter } from '../../utils/refSetter';
@@ -29,13 +30,16 @@ const MINUS_ICONS = {
 export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
   (
     {
-      dimension = 'm',
+      value,
+      checked: checkedProp,
+      defaultChecked: defaultCheckedProp,
+      dimension: dimensionProp = 'm',
       indeterminate = false,
       error = false,
-      readOnly = false,
+      readOnly: readOnlyProp = false,
       children,
       extraText,
-      disabled = false,
+      disabled: disabledProp = false,
       className,
       style,
       onChange,
@@ -45,6 +49,15 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
     },
     ref,
   ) => {
+    const group = useContext(CheckBoxGroupContext);
+    /** При наличии CheckBoxGroup настройки группы имеют приоритет в сравнении
+     * с индивидуальными настройками CheckBox. */
+    const dimension = group?.dimension ?? dimensionProp;
+    const disabled = Boolean(group?.disabled || disabledProp);
+    const readOnly = Boolean(group?.readOnly || readOnlyProp);
+    const checked = group ? group.value.includes(String(value)) : checkedProp;
+    const defaultChecked = group ? undefined : defaultCheckedProp;
+
     const inputRef = useRef<HTMLInputElement | null>(null);
     const StateIcon = indeterminate ? MINUS_ICONS[dimension] : SUCCESS_ICONS[dimension];
 
@@ -59,6 +72,7 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (!readOnly) {
         onChange?.(event);
+        group?.onItemChange(event.currentTarget.value, event.currentTarget.checked);
       }
 
       event.currentTarget.indeterminate = indeterminate;
@@ -81,6 +95,9 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
         <NativeInput
           ref={refSetter(inputRef, ref)}
           type="checkbox"
+          value={value}
+          checked={checked}
+          defaultChecked={defaultChecked}
           disabled={disabled}
           readOnly={readOnly}
           aria-readonly={readOnly || undefined}

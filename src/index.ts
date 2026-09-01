@@ -3,6 +3,7 @@ export * from './components/BadgeDot';
 export * from './components/Button';
 export * from './components/CheckBox';
 export * from './components/Divider';
+export * from './components/FieldSet';
 export * from './components/HelperComponents';
 export * from './components/Link';
 export * from './components/List';

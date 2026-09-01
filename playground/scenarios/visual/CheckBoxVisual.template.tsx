@@ -1,4 +1,4 @@
-import { CheckBox, type CheckBoxProps } from '@admiral-ds/admiral3-components';
+import { CheckBox, CheckBoxGroup, type CheckBoxProps } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -49,6 +49,25 @@ const renderStates = (withExtraText: boolean) => (
   </VisualGroups>
 );
 
+const renderGroup = () => (
+  <VisualGroups>
+    <VisualGroup>
+      <VisualGroupTitle>default group</VisualGroupTitle>
+      <VisualSamples>
+        {CHECK_BOX_DIMENSIONS.map((dimension) => (
+          <VisualSample key={dimension}>
+            <VisualLabel>{dimension}</VisualLabel>
+            <CheckBoxGroup dimension={dimension} defaultValue={['first']}>
+              <CheckBox value="first">First CheckBox</CheckBox>
+              <CheckBox value="second">Second CheckBox</CheckBox>
+            </CheckBoxGroup>
+          </VisualSample>
+        ))}
+      </VisualSamples>
+    </VisualGroup>
+  </VisualGroups>
+);
+
 export const CheckBoxVisualTemplate = () => (
   <VisualLayout>
     <VisualSection>
@@ -58,6 +77,10 @@ export const CheckBoxVisualTemplate = () => (
     <VisualSection>
       <VisualTitle>States with extra text</VisualTitle>
       {renderStates(true)}
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>CheckBoxGroup</VisualTitle>
+      {renderGroup()}
     </VisualSection>
   </VisualLayout>
 );
