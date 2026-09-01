@@ -62,6 +62,22 @@ test.describe('Button playground', () => {
     await expect(button).toHaveCSS('background-color', expectedDarkBackgroundColor);
   });
 
+  test('uses the corner radius selected in the playground', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(defaultScenarioId));
+
+    const button = page.getByTestId('button');
+    const playground = page.locator('[data-admiral-corner-radius]');
+
+    await expect(button).toHaveCSS('border-radius', '4px');
+    await page.locator('#playground-corner-radius').selectOption('8');
+    await expect(playground).toHaveAttribute('data-admiral-corner-radius', '8');
+    await expect(button).toHaveCSS('border-radius', '8px');
+
+    await page.reload();
+    await expect(page.locator('#playground-corner-radius')).toHaveValue('8');
+    await expect(button).toHaveCSS('border-radius', '8px');
+  });
+
   test('resolves custom color config in the browser', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(customColorsScenarioId));
 

@@ -79,6 +79,10 @@ Animation-токены с CSS custom property fallback собраны в `src/th
 меняются между интерактивными состояниями. При появлении других повторяющихся сочетаний duration и easing этот файл можно
 расширять новыми составными переменными по аналогии с `hoverPressLeaveTransition`.
 
+Для скруглений компонент выбирает только семантическую группу `theme.radius.small`, `theme.radius.medium` или
+`theme.radius.large` и matching CSS variable `--admiral-radius-small|medium|large`. Конкретную corner-radius base задаёт
+тема; прямое обращение компонента к `theme.radius.byBase` не используется.
+
 Общие внутренние styled-примитивы компонентов размещаются в `src/components/_internal`. Они импортируются только
 реализациями компонентов и не добавляются в component barrels, root API или `package.json#exports`.
 
