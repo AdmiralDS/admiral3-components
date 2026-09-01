@@ -59,8 +59,7 @@ export const StyledButton = styled.button.attrs<
   border: none;
   overflow: hidden;
   transition: background-color ${hoverPressLeaveTransition};
-  border-radius: ${(p) =>
-    p.$skeleton ? 0 : cssToken('--admiral-radius-by-base-4-medium', (theme) => theme.radius.byBase['4'].medium)};
+  border-radius: ${(p) => (p.$skeleton ? 0 : cssToken('--admiral-radius-medium', (theme) => theme.radius.medium))};
 
   cursor: pointer;
   ${(p) => p.disabled && 'cursor: not-allowed;'}

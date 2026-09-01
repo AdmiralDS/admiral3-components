@@ -33,7 +33,7 @@ const iconColor = cssToken(
   '--admiral-color-neutral-text-static-white-1',
   (theme) => theme.color.neutral.text.staticWhite._1,
 );
-const borderRadius = cssToken('--admiral-radius-by-base-4-small', (theme) => theme.radius.byBase['4'].small);
+const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 
 export const StyledCheckBox = styled.label.attrs<
   StyledCheckBoxProps & {

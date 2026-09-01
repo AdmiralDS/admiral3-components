@@ -1,6 +1,8 @@
 import { createRef } from 'react';
 
+import { buildTheme } from '@admiral-ds/admiral3-tokens';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from 'styled-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CheckBox } from './CheckBox';
@@ -30,6 +32,18 @@ describe('CheckBox', () => {
     CHECK_BOX_DIMENSIONS.forEach((dimension) => {
       rerender(<CheckBox dimension={dimension}>CheckBox</CheckBox>);
       expect(root).toHaveAttribute('data-dimension', dimension);
+    });
+  });
+
+  it('uses the small radius group from the current theme', () => {
+    render(
+      <ThemeProvider theme={buildTheme('light', { cornerRadius: '2' })}>
+        <CheckBox>CheckBox</CheckBox>
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('checkbox').nextElementSibling).toHaveStyle({
+      borderRadius: 'var(--admiral-radius-small, 2px)',
     });
   });
 
