@@ -1,4 +1,4 @@
-import type { ThemeMode } from '@admiral-ds/admiral3-tokens';
+import { cornerRadiusOptions, type CornerRadiusBase, type ThemeMode } from '@admiral-ds/admiral3-tokens';
 
 export type StorybookSimpleTheme = 'light' | 'dark';
 export type StorybookAdmiralTheme = 'system' | ThemeMode;
@@ -21,6 +21,10 @@ export const storybookAdmiralThemes: StorybookAdmiralTheme[] = [
 
 export const isStorybookAdmiralTheme = (theme: unknown): theme is StorybookAdmiralTheme => {
   return typeof theme === 'string' && storybookAdmiralThemes.includes(theme as StorybookAdmiralTheme);
+};
+
+export const isStorybookCornerRadius = (cornerRadius: unknown): cornerRadius is CornerRadiusBase => {
+  return typeof cornerRadius === 'string' && cornerRadiusOptions.includes(cornerRadius as CornerRadiusBase);
 };
 
 export const getPreferredSimpleTheme = (): StorybookSimpleTheme => {

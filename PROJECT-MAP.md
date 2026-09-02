@@ -149,14 +149,17 @@ Storybook и playground импортируют пакет через alias `@adm
 - `.storybook/main.ts` - основная конфигурация Storybook. Ищет `src/**/*.stories.*`, подключает docs/a11y addons, React Vite framework, react-docgen TypeScript и Vite aliases для root entrypoint пакета.
 - `.storybook/manager.ts` - manager-side настройки Storybook UI. Синхронизирует внешний manager theme с выбранной Admiral theme через простой `light`/`dark` shell.
 - `.storybook/preview.css` - глобальные стили preview iframe: базовый font-family, color-scheme, фон и цвет для light/dark Storybook shell.
-- `.storybook/preview.tsx` - preview config. Добавляет decorators, `ThemeProvider`, fonts из tokens package, переключатель темы, a11y strict mode, fullscreen layout и docs container.
+- `.storybook/preview.tsx` - preview config. Добавляет decorators, `ThemeProvider`, fonts из tokens package, независимые
+  переключатели цветовой темы и corner-radius base, a11y strict mode, fullscreen layout и docs container.
 - `.storybook/storybookThemes.ts` - общий helper для Storybook theme toolbar: валидирует Admiral theme modes и мапит `lightNeutral`/`darkNeutral` на простую внешнюю оболочку `light`/`dark`.
 
 ## Playground
 
 - `playground/css-imports.d.ts` - TypeScript declarations для импортов CSS subpaths tokens package в playground.
 - `playground/index.html` - HTML entrypoint Vite playground.
-- `playground/main.tsx` - React entrypoint playground. Монтирует приложение, подключает CSS tokens, font helpers, сценарии, общий `ThemeProvider`, переключатель theme mode и navigation по `?scenario=...`.
+- `playground/main.tsx` - React entrypoint playground. Монтирует приложение, подключает CSS tokens, font helpers,
+  сценарии, общий `ThemeProvider`, независимые переключатели theme mode и corner-radius base и navigation по
+  `?scenario=...`.
 - `playground/styles.css` - глобальные стили playground: layout, header, sidebar navigation, preview area и базовые визуальные состояния на generated CSS token variables.
 
 ### Playground scenarios
