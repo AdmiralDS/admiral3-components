@@ -17,7 +17,7 @@ import checkBoxTableSelectionTemplateRaw from './CheckBoxTableSelection.template
 import { CHECK_BOX_DIMENSIONS } from '../constants';
 
 const meta = {
-  title: 'Components/CheckBox',
+  title: 'Components/CheckBox/CheckBox',
   component: CheckBox,
   tags: ['autodocs'],
   argTypes: {
