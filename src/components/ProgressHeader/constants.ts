@@ -1,0 +1,2 @@
+export const PROGRESS_HEADER_HEIGHT = 4;
+export const PROGRESS_HEADER_Z_INDEX = 1000;

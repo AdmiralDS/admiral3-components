@@ -7,6 +7,7 @@ export const VISUAL_SCENARIO_IDS = {
   fieldSet: 'visual/field-set',
   link: 'visual/link',
   list: 'visual/list',
+  progressHeader: 'visual/progress-header',
   pulse: 'visual/pulse',
   radioButton: 'visual/radio-button',
   skeleton: 'visual/skeleton',
