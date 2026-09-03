@@ -12,3 +12,4 @@ export * from './components/RadioButton';
 export * from './components/Skeleton';
 export * from './components/Spinner';
 export * from './components/Toggle';
+export * from './components/Tooltip';

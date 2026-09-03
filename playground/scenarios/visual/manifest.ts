@@ -12,4 +12,5 @@ export const VISUAL_SCENARIO_IDS = {
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
   toggle: 'visual/toggle',
+  tooltip: 'visual/tooltip',
 } as const;

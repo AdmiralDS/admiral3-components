@@ -14,6 +14,7 @@ import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
 import { toggleScenarios } from './toggle';
 import { visualScenarios } from './visual';
+import { tooltipScenarios } from './tooltip';
 
 export type PlaygroundScenario = {
   id: string;
@@ -36,5 +37,6 @@ export const playgroundScenarios = [
   ...skeletonScenarios,
   ...spinnerScenarios,
   ...toggleScenarios,
+  ...tooltipScenarios,
   ...visualScenarios,
 ];
