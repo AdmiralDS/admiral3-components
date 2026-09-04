@@ -19,6 +19,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       iconsBefore,
       iconsAfter,
       showClearIcon = false,
+      onClear,
+      clearButtonProps,
       prefix,
       suffix,
       showAffixDivider = true,
@@ -54,6 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       if (!input) return;
 
       clearNativeTextInput(input);
+      onClear?.();
     };
 
     const handleMouseEnter = (event: MouseEvent<HTMLInputElement>) => {
@@ -137,7 +140,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         />
         {(displayClearIcon || hasIconsAfter) && (
           <StyledIconPanel data-role="icon-panel-after" data-clear-only={!hasIconsAfter || undefined}>
-            {displayClearIcon && <ClearInputIconButton data-role="clear-input-button" onClick={handleClear} />}
+            {displayClearIcon && (
+              <ClearInputIconButton {...clearButtonProps} data-role="clear-input-button" onClick={handleClear} />
+            )}
             {iconsAfter}
           </StyledIconPanel>
         )}

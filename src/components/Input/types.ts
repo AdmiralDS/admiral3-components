@@ -1,5 +1,6 @@
-import type { HTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from 'react';
+import type { AriaAttributes, ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from 'react';
 
+import type { DataAttributes } from '../../utils/dataAttributes';
 import type { BaseInputAppearance, BaseInputDimension, BaseInputStatus } from '../_internal/InputAtoms/types';
 
 export type InputDimension = BaseInputDimension;
@@ -7,9 +8,11 @@ export type InputAppearance = BaseInputAppearance;
 export type InputStatus = BaseInputStatus;
 export type InputType = 'text' | 'password' | 'email' | 'url';
 
-export type InputContainerProps = HTMLAttributes<HTMLDivElement> & {
-  [attribute: `data-${string}`]: string | number | undefined;
-};
+export type InputContainerProps = HTMLAttributes<HTMLDivElement> & DataAttributes;
+
+export type InputClearButtonProps = AriaAttributes &
+  Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'className' | 'title' | 'tabIndex'> &
+  DataAttributes;
 
 export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -35,6 +38,10 @@ export interface InputProps extends Omit<
   iconsAfter?: ReactNode;
   /** Отображает кнопку очистки, когда поле содержит значение. Кнопка скрыта в состояниях disabled и readOnly. */
   showClearIcon?: boolean;
+  /** Вызывается после очистки значения и отправки обычного события изменения поля. */
+  onClear?: () => void;
+  /** Безопасные HTML- и ARIA-атрибуты кнопки очистки. */
+  clearButtonProps?: InputClearButtonProps;
   /** Содержимое в начале поля перед иконками и нативным полем ввода. */
   prefix?: ReactNode;
   /** Содержимое в конце поля после нативного поля ввода и иконок. */

@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from './constants';
 import { Input } from './Input';
+import type { InputClearButtonProps } from './types';
 import { InputIconButton, InputIconInformer } from '../HelperComponents';
 
 const PointerIcon = styled.span`
@@ -380,15 +381,58 @@ describe('Input', () => {
 
   it('clears the value, emits a change event and restores input focus', () => {
     const onChange = vi.fn();
+    const onClear = vi.fn();
 
-    render(<Input data-testid="input" defaultValue="Value" showClearIcon onChange={onChange} />);
+    render(<Input data-testid="input" defaultValue="Value" showClearIcon onChange={onChange} onClear={onClear} />);
 
     const input = screen.getByTestId('input');
     fireEvent.click(screen.getByRole('button', { name: 'Очистить поле' }));
 
     expect(input).toHaveValue('');
     expect(onChange).toHaveBeenCalledOnce();
+    expect(onClear).toHaveBeenCalledOnce();
+    expect(onChange.mock.invocationCallOrder[0]).toBeLessThan(onClear.mock.invocationCallOrder[0]);
     expect(input).toHaveFocus();
+  });
+
+  it('passes safe attributes to the clear button and keeps its internal attributes', () => {
+    render(
+      <Input
+        defaultValue="Value"
+        showClearIcon
+        clearButtonProps={{
+          'aria-label': 'Очистить поиск',
+          'data-testid': 'custom-clear-button',
+          id: 'clear-search',
+          title: 'Очистить',
+          tabIndex: -1,
+        }}
+      />,
+    );
+
+    const clearButton = screen.getByRole('button', { name: 'Очистить поиск' });
+
+    expect(clearButton).toHaveAttribute('data-testid', 'custom-clear-button');
+    expect(clearButton).toHaveAttribute('data-role', 'clear-input-button');
+    expect(clearButton).toHaveAttribute('id', 'clear-search');
+    expect(clearButton).toHaveAttribute('title', 'Очистить');
+    expect(clearButton).toHaveAttribute('tabindex', '-1');
+    expect(clearButton).toHaveAttribute('type', 'button');
+  });
+
+  it('protects the clear button type and click handler at runtime', () => {
+    const externalOnClick = vi.fn();
+    const onClear = vi.fn();
+    const unsafeProps = { type: 'submit', onClick: externalOnClick } as unknown as InputClearButtonProps;
+
+    render(<Input defaultValue="Value" showClearIcon onClear={onClear} clearButtonProps={unsafeProps} />);
+
+    const clearButton = screen.getByRole('button', { name: 'Очистить поле' });
+    fireEvent.click(clearButton);
+
+    expect(clearButton).toHaveAttribute('type', 'button');
+    expect(externalOnClick).not.toHaveBeenCalled();
+    expect(onClear).toHaveBeenCalledOnce();
   });
 
   it.each(['disabled', 'readOnly'] as const)('hides the clear icon button when the input is %s', (state) => {

@@ -189,6 +189,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `src/utils/hasSlotContent.ts` - внутренняя проверка содержимого опциональных ReactNode-слотов перед созданием
   layout-обёрток.
 - `src/utils/hasSlotContent.test.ts` - unit-тесты пустых и отображаемых значений слотов.
+- `src/utils/dataAttributes.ts` - общий внутренний тип допустимых пользовательских `data-*`-атрибутов.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
 - `src/integrations/react-hook-form/` - отдельный Storybook-раздел с примером формы на React Hook Form, который проверяет совместную работу Input, RadioButton, CheckBox и Toggle.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.

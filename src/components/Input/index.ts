@@ -1,2 +1,10 @@
 export { Input } from './Input';
-export type { InputAppearance, InputContainerProps, InputDimension, InputProps, InputStatus, InputType } from './types';
+export type {
+  InputAppearance,
+  InputClearButtonProps,
+  InputContainerProps,
+  InputDimension,
+  InputProps,
+  InputStatus,
+  InputType,
+} from './types';

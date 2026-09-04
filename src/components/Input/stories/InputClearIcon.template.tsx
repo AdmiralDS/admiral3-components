@@ -6,10 +6,12 @@ export const InputClearIconTemplate = (args: InputProps) => (
   <StoryDemoContainer $direction="column" $gap="16px">
     <StoryDemoDescription>
       Иконка очистки поля является опциональной. В случае её применения она появляется при наличии хотя бы одного знака,
-      введённого пользователем. Если поле не заполнено или все знаки удалены, то иконка очистки не видна.
+      введённого пользователем. Если поле не заполнено или все знаки удалены, то иконка очистки не видна. Обработчик
+      onClear вызывается после очистки, а clearButtonProps позволяет локализовать доступное имя и передать безопасные
+      атрибуты кнопки.
     </StoryDemoDescription>
     <StoryDemoItem>
-      <Input {...args} />
+      <Input {...args} clearButtonProps={{ 'aria-label': 'Очистить значение поля' }} />
     </StoryDemoItem>
   </StoryDemoContainer>
 );
