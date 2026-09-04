@@ -33,6 +33,12 @@ describe('Input', () => {
     expect(screen.getByTestId('input')).toHaveAttribute('type', 'password');
   });
 
+  it('adds a blank placeholder when one is not provided', () => {
+    render(<Input data-testid="input" />);
+
+    expect(screen.getByTestId('input')).toHaveAttribute('placeholder', ' ');
+  });
+
   it('focuses the input on pointer press of an icon button by default', () => {
     render(<Input data-testid="input" iconsAfter={<InputIconButton aria-label="Действие с полем" />} />);
 
@@ -308,30 +314,20 @@ describe('Input', () => {
     expect(clearButton.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('shows the clear icon button only while an uncontrolled input has a value', () => {
+  it('keeps the clear icon button mounted so CSS can reflect the native input value', () => {
     render(<Input data-testid="input" showClearIcon />);
 
-    const input = screen.getByTestId('input');
-
-    expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
-
-    fireEvent.change(input, { target: { value: 'Value' } });
-
-    expect(screen.getByRole('button', { name: 'Очистить поле' })).toBeInTheDocument();
-
-    fireEvent.change(input, { target: { value: '' } });
-
-    expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Очистить поле' })).toHaveAttribute('data-role', 'clear-input-button');
   });
 
-  it('updates the clear icon button visibility from the controlled value', () => {
+  it('passes an updated controlled value to the native input', () => {
     const { rerender } = render(<Input value="Value" showClearIcon onChange={() => undefined} />);
 
-    expect(screen.getByRole('button', { name: 'Очистить поле' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('Value');
 
     rerender(<Input value="" showClearIcon onChange={() => undefined} />);
 
-    expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
   it('clears the value, emits a change event and restores input focus', () => {
@@ -345,7 +341,6 @@ describe('Input', () => {
     expect(input).toHaveValue('');
     expect(onChange).toHaveBeenCalledOnce();
     expect(input).toHaveFocus();
-    expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
   });
 
   it.each(['disabled', 'readOnly'] as const)('hides the clear icon button when the input is %s', (state) => {

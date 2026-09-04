@@ -32,6 +32,45 @@ test.describe('Input playground', () => {
     await expect(page.getByRole('button', { name: 'Очистить поле' })).toBeHidden();
   });
 
+  test('keeps the clear button in sync with native value changes and form reset', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(clearIconScenarioId));
+
+    const component = page.getByTestId('input');
+    const clearButton = page.getByRole('button', { name: 'Очистить поле' });
+
+    await expect(clearButton).toBeVisible();
+
+    await component.evaluate((input: HTMLInputElement) => {
+      input.value = '';
+    });
+    await expect(clearButton).toBeHidden();
+
+    await component.evaluate((input: HTMLInputElement) => {
+      input.value = 'Native input';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await expect(clearButton).toBeVisible();
+
+    await component.evaluate((input: HTMLInputElement) => {
+      input.value = '';
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await expect(clearButton).toBeHidden();
+
+    await component.evaluate((input: HTMLInputElement) => {
+      const container = input.parentElement;
+      const form = document.createElement('form');
+
+      if (!container?.parentElement) return;
+      container.parentElement.insertBefore(form, container);
+      form.append(container);
+      form.reset();
+    });
+
+    await expect(component).toHaveValue('Input value');
+    await expect(clearButton).toBeVisible();
+  });
+
   test('activates the clear button with Space and returns focus to the input', async ({ page, browserName }) => {
     await page.goto(getPlaygroundScenarioPath(clearIconScenarioId));
 

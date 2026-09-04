@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState, type ChangeEvent, type MouseEvent, type PointerEvent } from 'react';
+import { forwardRef, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
@@ -27,7 +27,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       containerRef,
       value,
       defaultValue,
-      onChange,
+      placeholder,
       onMouseEnter,
       onMouseLeave,
       title,
@@ -37,22 +37,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const [overflowTitle, setOverflowTitle] = useState<string>();
-    const currentValue = value !== undefined ? value : uncontrolledValue;
-    const displayClearIcon = showClearIcon && String(currentValue ?? '').length > 0 && !disabled && !readOnly;
+    const displayClearIcon = showClearIcon && !disabled && !readOnly;
     const hasIconsBefore = hasSlotContent(iconsBefore);
     const hasIconsAfter = hasSlotContent(iconsAfter);
     const hasPrefix = hasSlotContent(prefix);
     const hasSuffix = hasSlotContent(suffix);
     const { onPointerDown: onContainerPointerDown, ...restContainerProps } = containerProps ?? {};
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      if (value === undefined) {
-        setUncontrolledValue(event.currentTarget.value);
-      }
-      onChange?.(event);
-    };
 
     const handleClear = () => {
       const input = inputRef.current;
@@ -115,7 +106,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           readOnly={readOnly}
           value={value}
           defaultValue={defaultValue}
-          onChange={handleChange}
+          placeholder={placeholder ?? ' '}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           aria-invalid={status === 'error' || ariaInvalid || undefined}
@@ -123,8 +114,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {(displayClearIcon || hasIconsAfter) && (
-          <StyledIconPanel data-role="icon-panel-after">
-            {displayClearIcon && <ClearInputIconButton onClick={handleClear} />}
+          <StyledIconPanel data-role="icon-panel-after" data-clear-only={!hasIconsAfter || undefined}>
+            {displayClearIcon && <ClearInputIconButton data-role="clear-input-button" onClick={handleClear} />}
             {iconsAfter}
           </StyledIconPanel>
         )}
