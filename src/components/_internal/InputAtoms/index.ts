@@ -9,6 +9,8 @@ export {
 export { ClearInputIconButton } from './ClearInputIconButton';
 export { clearNativeTextInput } from './clearNativeTextInput';
 export type { NativeTextInput } from './clearNativeTextInput';
+export { InputIconButton } from './InputIconButton';
+export type { InputIconButtonProps } from './InputIconButton';
 export {
   SelectionControlExtraText,
   SelectionControlLabelContent,
@@ -17,7 +19,6 @@ export {
 export {
   baseInputEditableStyles,
   InputIcon,
-  InputIconButton,
   NativeInput,
   StyledAffix,
   StyledBaseInputBorder,

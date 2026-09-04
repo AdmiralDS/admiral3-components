@@ -86,6 +86,9 @@ test.describe('Input playground', () => {
 
     await page.keyboard.press(reverseTabKey);
     await expect(previousElement).toBeFocused();
+
+    await informerIcon.click();
+    await expect(component).not.toBeFocused();
   });
 
   test('selects readOnly text and skips a disabled input during Tab navigation', async ({ page, browserName }) => {
@@ -144,10 +147,7 @@ test.describe('Input playground', () => {
     await expect(page.getByTestId('suffix').locator('..')).toHaveCSS('padding-right', '16px');
   });
 
-  test('shows the input border for keyboard focus within the component but not for an icon click', async ({
-    page,
-    browserName,
-  }) => {
+  test('focuses the input on icon pointer press and keeps native keyboard focus', async ({ page, browserName }) => {
     await page.goto(getPlaygroundScenarioPath(cursorZonesScenarioId));
 
     const component = page.getByTestId('input');
@@ -164,11 +164,16 @@ test.describe('Input playground', () => {
     await expect(iconButton).toHaveCSS('outline-width', '2px');
     await expect(iconButton).toHaveCSS('outline-style', 'solid');
 
+    await page.keyboard.press('Enter');
+    await expect(iconButton).toBeFocused();
+    await expect(component).not.toBeFocused();
+
     await component.click();
     await iconButton.click();
 
-    await expect(component).not.toBeFocused();
-    await expect(border).toHaveCSS('border-top-width', '1px');
+    await expect(component).toBeFocused();
+    await expect(iconButton).not.toBeFocused();
+    await expect(border).toHaveCSS('border-top-width', '2px');
   });
 
   test.describe('currency input', () => {

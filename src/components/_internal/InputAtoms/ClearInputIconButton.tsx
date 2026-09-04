@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react';
 
 import { ServiceCloseOutline } from '@admiral-ds/admiral3-icons';
 
-import { InputIconButton } from './style';
+import { InputIconButton } from './InputIconButton';
 
 export type ClearInputIconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type'>;
 

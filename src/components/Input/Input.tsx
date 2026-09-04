@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState, type ChangeEvent, type MouseEvent } from 'react';
+import { forwardRef, useRef, useState, type ChangeEvent, type MouseEvent, type PointerEvent } from 'react';
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
@@ -45,6 +45,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const hasIconsAfter = hasSlotContent(iconsAfter);
     const hasPrefix = hasSlotContent(prefix);
     const hasSuffix = hasSlotContent(suffix);
+    const { onPointerDown: onContainerPointerDown, ...restContainerProps } = containerProps ?? {};
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
       if (value === undefined) {
@@ -75,6 +76,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onMouseLeave?.(event);
     };
 
+    const handleContainerPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+      const iconButton = (event.target as Element).closest('[data-input-icon-button]');
+
+      if (iconButton && !iconButton.hasAttribute('data-prevent-input-focus')) {
+        event.preventDefault();
+        inputRef.current?.focus();
+      }
+      onContainerPointerDown?.(event);
+    };
+
     return (
       <StyledBaseInputContainer
         ref={containerRef}
@@ -88,7 +99,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         data-disabled={disabled ? '' : undefined}
         data-read-only={readOnly ? '' : undefined}
         data-status={status}
-        {...containerProps}
+        onPointerDown={handleContainerPointerDown}
+        {...restContainerProps}
       >
         {hasPrefix ? (
           <>
@@ -112,9 +124,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         />
         {(displayClearIcon || hasIconsAfter) && (
           <StyledIconPanel data-role="icon-panel-after">
-            {displayClearIcon && (
-              <ClearInputIconButton onPointerDown={(event) => event.preventDefault()} onClick={handleClear} />
-            )}
+            {displayClearIcon && <ClearInputIconButton onClick={handleClear} />}
             {iconsAfter}
           </StyledIconPanel>
         )}

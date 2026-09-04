@@ -17,8 +17,8 @@ export const InputKeyboardNavigationPlaygroundTemplate = () => {
           <>
             <InputIconInformer
               data-testid="informer-icon"
+              aria-label="Дополнительная информация о поле ввода"
               title="Дополнительная информация о поле ввода"
-              tabIndex={0}
             />
             <InputIconButton aria-label="Пользовательское действие">
               <SystemSearchOutline aria-hidden />

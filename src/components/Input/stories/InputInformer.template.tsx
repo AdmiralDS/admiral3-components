@@ -16,7 +16,7 @@ const StoryInputIconInformer = styled(InputIconInformer)`
 export const InputInformerTemplate = (args: InputProps) => (
   <StoryDemoContainer $direction="column" $gap="16px">
     <StoryDemoDescription>
-      Поле ввода с информером. Необходимы, если для правильного заполнения поля может потребоваться дополнительная
+      Поле ввода с информером. Необходимо, если для правильного заполнения поля может потребоваться дополнительная
       информация.
     </StoryDemoDescription>
     <StoryDemoDescription>
@@ -26,7 +26,7 @@ export const InputInformerTemplate = (args: InputProps) => (
     </StoryDemoDescription>
     <StoryDemoItem>
       {/* TODO: Заменить нативный title на Hint после реализации компонента Hint. */}
-      <Input {...args} iconsAfter={<StoryInputIconInformer title={INFORMER_TEXT} tabIndex={0} />} />
+      <Input {...args} iconsAfter={<StoryInputIconInformer aria-label={INFORMER_TEXT} title={INFORMER_TEXT} />} />
     </StoryDemoItem>
   </StoryDemoContainer>
 );

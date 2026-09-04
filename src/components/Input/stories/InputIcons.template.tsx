@@ -30,7 +30,7 @@ const InputWithIcons = (args: InputProps) => {
           <InputIconButton aria-label="Показать информацию">
             <ServiceInfoOutline aria-hidden />
           </InputIconButton>
-          <InputIconButton aria-label="Скопировать значение" disabled={args.disabled} onClick={handleCopy}>
+          <InputIconButton aria-label="Скопировать значение" disabled={args.disabled} onClick={handleCopy} preventFocus>
             <DocumentsCopyOutline aria-hidden />
           </InputIconButton>
         </>
@@ -50,11 +50,11 @@ export const InputIconsTemplate = (args: InputProps) => (
     <StoryDemoDescription>
       Для декоративной иконки без действия используйте <code>InputIcon</code>. По умолчанию такая иконка не получает
       фокус и не участвует в клавиатурной навигации. Для интерактивной иконки используйте <code>InputIconButton</code>:
-      добавьте ей обработчик действия и доступное имя, например через <code>aria-label</code>. По умолчанию кнопка
-      участвует в Tab-порядке и нативно активируется клавишами <code>Space</code> и <code>Enter</code>. Input не
-      управляет поведением переданных пользователем иконок и не накладывает на них дополнительных ограничений.
-      Пользователь самостоятельно определяет, должна ли иконка переводить фокус в поле, участвовать в Tab-порядке, быть
-      видимой или доступной в состояниях <code>readOnly</code> и <code>disabled</code>, используя обработчики,{' '}
+      добавьте ей обработчик действия и доступное имя, например через <code>aria-label</code>. По умолчанию кнопка при
+      нажатии указателем переводит фокус в поле и устанавливает в нём каретку. Это поведение можно отключить пропом{' '}
+      <code>preventFocus</code>. При этом кнопка участвует в Tab-порядке и нативно активируется клавишами{' '}
+      <code>Space</code> и <code>Enter</code>. Пользователь самостоятельно определяет, должна ли иконка участвовать в
+      Tab-порядке, быть видимой или доступной в состояниях <code>readOnly</code> и <code>disabled</code>, используя{' '}
       <code>tabIndex</code>, <code>disabled</code> и условный рендер.
     </StoryDemoDescription>
     <StoryDemoItem>

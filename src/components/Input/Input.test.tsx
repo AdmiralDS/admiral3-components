@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from './constants';
 import { Input } from './Input';
-import { InputIconInformer } from '../HelperComponents/InputIconInformer';
+import { InputIconButton, InputIconInformer } from '../HelperComponents';
 
 const PointerIcon = styled.span`
   cursor: pointer;
@@ -31,6 +31,24 @@ describe('Input', () => {
     render(<Input data-testid="input" type="password" />);
 
     expect(screen.getByTestId('input')).toHaveAttribute('type', 'password');
+  });
+
+  it('focuses the input on pointer press of an icon button by default', () => {
+    render(<Input data-testid="input" iconsAfter={<InputIconButton aria-label="Действие с полем" />} />);
+
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Действие с полем' }));
+
+    expect(screen.getByTestId('input')).toHaveFocus();
+  });
+
+  it('does not focus the input when the icon button prevents focus', () => {
+    render(
+      <Input data-testid="input" iconsAfter={<InputIconButton aria-label="Независимое действие" preventFocus />} />,
+    );
+
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Независимое действие' }));
+
+    expect(screen.getByTestId('input')).not.toHaveFocus();
   });
 
   it('renders a native email input', () => {

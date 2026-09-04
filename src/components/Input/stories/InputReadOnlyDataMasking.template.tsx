@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react';
+import { useState } from 'react';
 
 import { ServiceEyeCloseOutline, ServiceEyeOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
@@ -26,10 +26,6 @@ type ReadOnlyMaskedInputProps = InputProps & (typeof examples)[number];
 const ReadOnlyMaskedInput = ({ label, maskedValue, name, value, ...args }: ReadOnlyMaskedInputProps) => {
   const [visible, setVisible] = useState(false);
 
-  const preventIconMouseDefault = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
-
   return (
     <Input
       {...args}
@@ -42,8 +38,6 @@ const ReadOnlyMaskedInput = ({ label, maskedValue, name, value, ...args }: ReadO
           aria-label={visible ? `Скрыть: ${label}` : `Показать: ${label}`}
           aria-pressed={visible}
           disabled={args.disabled}
-          onMouseDown={preventIconMouseDefault}
-          onMouseUp={preventIconMouseDefault}
           onClick={() => setVisible((currentVisible) => !currentVisible)}
         >
           {visible ? <ServiceEyeOutline aria-hidden /> : <ServiceEyeCloseOutline aria-hidden />}

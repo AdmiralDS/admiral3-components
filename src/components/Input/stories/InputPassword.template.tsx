@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react';
+import { useState } from 'react';
 
 import { ServiceEyeCloseOutline, ServiceEyeOutline } from '@admiral-ds/admiral3-icons';
 
@@ -8,10 +8,6 @@ import { StoryDemoContainer, StoryDemoDescription, StoryDemoItem } from '../../s
 
 const PasswordInput = (args: InputProps) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const preventIconMouseDefault = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
   const handleVisibilityChange = () => {
     setPasswordVisible((visible) => !visible);
@@ -28,8 +24,7 @@ const PasswordInput = (args: InputProps) => {
             aria-label={passwordVisible ? 'Скрыть пароль' : 'Показать пароль'}
             aria-pressed={passwordVisible}
             disabled={args.disabled}
-            onMouseDown={preventIconMouseDefault}
-            onMouseUp={preventIconMouseDefault}
+            preventFocus
             onClick={handleVisibilityChange}
           >
             {passwordVisible ? <ServiceEyeOutline aria-hidden /> : <ServiceEyeCloseOutline aria-hidden />}

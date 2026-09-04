@@ -296,7 +296,7 @@ export const InputIcon = styled.span`
   ${inputIconStyles}
 `;
 
-export const InputIconButton = styled.button.attrs({ type: 'button' })`
+export const StyledInputIconButton = styled.button.attrs({ type: 'button' })`
   ${inputIconStyles}
   margin: 0;
   padding: 0;
