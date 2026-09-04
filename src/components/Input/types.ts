@@ -5,6 +5,7 @@ import type { BaseInputAppearance, BaseInputDimension, BaseInputStatus } from '.
 export type InputDimension = BaseInputDimension;
 export type InputAppearance = BaseInputAppearance;
 export type InputStatus = BaseInputStatus;
+export type InputType = 'text' | 'password' | 'email' | 'url';
 
 export type InputContainerProps = HTMLAttributes<HTMLDivElement> & {
   [attribute: `data-${string}`]: string | number | undefined;
@@ -12,8 +13,10 @@ export type InputContainerProps = HTMLAttributes<HTMLDivElement> & {
 
 export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  'size' | 'children' | 'prefix' | 'suffix'
+  'size' | 'children' | 'prefix' | 'suffix' | 'type'
 > {
+  /** Поддерживаемый нативный тип поля. Значение по умолчанию 'text'. */
+  type?: InputType;
   /** Размер компонента. Значение по умолчанию 'm'. */
   dimension?: InputDimension;
   /** Внешний вид поля. Значение по умолчанию 'standard'. */

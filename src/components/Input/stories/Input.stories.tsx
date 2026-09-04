@@ -10,6 +10,8 @@ import { InputClearIconTemplate } from './InputClearIcon.template';
 import inputClearIconTemplateRaw from './InputClearIcon.template?raw';
 import { InputCurrencyTemplate } from './InputCurrency.template';
 import inputCurrencyTemplateRaw from './InputCurrency.template?raw';
+import { InputEmailAndUrlTemplate } from './InputEmailAndUrl.template';
+import inputEmailAndUrlTemplateRaw from './InputEmailAndUrl.template?raw';
 import { InputHighPrecisionNumbersTemplate } from './InputHighPrecisionNumbers.template';
 import inputHighPrecisionNumbersTemplateRaw from './InputHighPrecisionNumbers.template?raw';
 import { InputIconsTemplate } from './InputIcons.template';
@@ -210,6 +212,23 @@ export const PasswordInput: StoryObj<InputProps> = {
   parameters: {
     controls: { exclude: ['type', 'iconsAfter', 'name'] },
     docs: { source: { code: inputPasswordTemplateRaw } },
+  },
+};
+
+export const EmailAndUrlInput: StoryObj<InputProps> = {
+  args: {
+    ...defaultArgs,
+    showClearIcon: true,
+  },
+  render: InputEmailAndUrlTemplate,
+  parameters: {
+    controls: { exclude: ['type', 'name', 'placeholder', 'autoComplete'] },
+    docs: {
+      description: {
+        story: 'Нативные поля типов email и url с браузерной валидацией, автозаполнением и кнопкой очистки.',
+      },
+      source: { code: inputEmailAndUrlTemplateRaw },
+    },
   },
 };
 

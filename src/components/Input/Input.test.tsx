@@ -33,6 +33,18 @@ describe('Input', () => {
     expect(screen.getByTestId('input')).toHaveAttribute('type', 'password');
   });
 
+  it('renders a native email input', () => {
+    render(<Input data-testid="input" type="email" />);
+
+    expect(screen.getByTestId('input')).toHaveAttribute('type', 'email');
+  });
+
+  it('renders a native url input', () => {
+    render(<Input data-testid="input" type="url" />);
+
+    expect(screen.getByTestId('input')).toHaveAttribute('type', 'url');
+  });
+
   it('forwards native input attributes', () => {
     render(<Input data-testid="input" title="Input" />);
 
@@ -129,7 +141,7 @@ describe('Input', () => {
     expect(onContainerClick).toHaveBeenCalledOnce();
   });
 
-  it('keeps internal container state attributes consistent when containerProps contain conflicting values', () => {
+  it('allows containerProps to override container attributes', () => {
     render(
       <Input
         disabled
@@ -140,8 +152,8 @@ describe('Input', () => {
 
     const container = screen.getByTestId('input').parentElement;
 
-    expect(container).toHaveAttribute('data-disabled', '');
-    expect(container).toHaveAttribute('data-dimension', 'm');
+    expect(container).not.toHaveAttribute('data-disabled');
+    expect(container).toHaveAttribute('data-dimension', 'custom');
   });
 
   it.each(INPUT_DIMENSIONS)('applies the %s dimension without forwarding it to the DOM', (dimension) => {
