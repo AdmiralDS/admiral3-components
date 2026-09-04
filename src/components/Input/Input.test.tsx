@@ -466,7 +466,7 @@ describe('Input', () => {
     expect(input.selectionEnd).toBe(4);
   });
 
-  it('shows the not-allowed cursor over the whole disabled surface', () => {
+  it('keeps custom icon cursors under consumer control when the input is disabled', () => {
     render(
       <Input
         data-testid="input"
@@ -481,8 +481,27 @@ describe('Input', () => {
 
     expect(container).toHaveStyle({ cursor: 'not-allowed' });
     expect(input).toHaveStyle({ cursor: 'not-allowed' });
-    expect(screen.getByTestId('before-icon')).toHaveStyle({ cursor: 'not-allowed' });
-    expect(screen.getByTestId('after-icon')).toHaveStyle({ cursor: 'not-allowed' });
+    expect(screen.getByTestId('before-icon')).toHaveStyle({ cursor: 'pointer' });
+    expect(screen.getByTestId('after-icon')).toHaveStyle({ cursor: 'pointer' });
+  });
+
+  it('applies the disabled cursor locally to affixes', () => {
+    render(
+      <Input
+        data-testid="input"
+        disabled
+        prefix={<span data-testid="prefix">Prefix</span>}
+        suffix={<span data-testid="suffix">Suffix</span>}
+      />,
+    );
+
+    const prefix = screen.getByTestId('prefix').parentElement;
+    const suffix = screen.getByTestId('suffix').parentElement;
+
+    expect(prefix).toHaveAttribute('data-disabled');
+    expect(prefix).toHaveStyle({ cursor: 'not-allowed' });
+    expect(suffix).toHaveAttribute('data-disabled');
+    expect(suffix).toHaveStyle({ cursor: 'not-allowed' });
   });
 
   it('limits the text cursor to the full-height native input zone', () => {

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import { BASE_INPUT_DIMENSION_PARAMETERS } from './constants';
-import type { BaseInputAppearance, StyledBaseInputContainerProps } from './types';
+import type { BaseInputAppearance, InputIconProps, StyledBaseInputContainerProps } from './types';
 import { hoverPressLeaveTransition } from '../../../theme/animation';
 import { cssToken } from '../../../theme/cssToken';
 import { Divider } from '../../Divider';
@@ -111,7 +111,7 @@ export const StyledBaseInputContainer = styled.div<StyledBaseInputContainerProps
     cursor: not-allowed;
   }
 
-  &[data-disabled] * {
+  &[data-disabled] > input {
     cursor: not-allowed;
   }
 `;
@@ -243,6 +243,10 @@ export const StyledAffix = styled.span`
   gap: 4px;
   color: var(--admiral-input-additional-color);
   white-space: nowrap;
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
 `;
 
 export const StyledInputDivider = styled(Divider).attrs({
@@ -275,7 +279,8 @@ const inputIconStyles = css`
     color: ${secondaryTextPress};
   }
 
-  &:disabled {
+  &:disabled,
+  &[data-disabled] {
     color: ${textDisabled};
     cursor: not-allowed;
   }
@@ -292,7 +297,9 @@ const inputIconStyles = css`
   }
 `;
 
-export const InputIcon = styled.span`
+export const InputIcon = styled.span
+  .withConfig({ shouldForwardProp: (prop) => prop !== 'disabled' })
+  .attrs<InputIconProps>(({ disabled }) => ({ 'data-disabled': disabled ? '' : undefined }))<InputIconProps>`
   ${inputIconStyles}
 `;
 

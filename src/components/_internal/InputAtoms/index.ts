@@ -26,4 +26,4 @@ export {
   StyledIconPanel,
   StyledInputDivider,
 } from './style';
-export type { BaseInputAppearance, BaseInputDimension, BaseInputStatus } from './types';
+export type { BaseInputAppearance, BaseInputDimension, BaseInputStatus, InputIconProps } from './types';

@@ -136,6 +136,7 @@ test.describe('Input playground', () => {
     const customButton = page.getByRole('button', { name: 'Пользовательское действие' });
     const readOnlyInput = page.getByTestId('read-only-input');
     const disabledInput = page.getByTestId('disabled-input');
+    const disabledInformerIcon = page.getByTestId('disabled-informer-icon');
     const nextElement = page.getByTestId('after-input-states');
     const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
 
@@ -149,7 +150,24 @@ test.describe('Input playground', () => {
     await page.keyboard.press(tabKey);
 
     await expect(disabledInput).not.toBeFocused();
+    await expect(disabledInformerIcon).toBeFocused();
+
+    await page.keyboard.press(tabKey);
+
     await expect(nextElement).toBeFocused();
+  });
+
+  test('keeps a consumer-controlled informer active in a disabled input', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(keyboardNavigationScenarioId));
+
+    const disabledInput = page.getByTestId('disabled-input');
+    const informerIcon = page.getByTestId('disabled-informer-icon');
+
+    await expect(disabledInput).toHaveCSS('cursor', 'not-allowed');
+    await expect(informerIcon).toBeEnabled();
+    await expect(informerIcon).toHaveCSS('cursor', 'pointer');
+    await informerIcon.click();
+    await expect(disabledInput).not.toBeFocused();
   });
 
   test('shows the text cursor only over the full-height native input zone', async ({ page }) => {

@@ -117,7 +117,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       >
         {hasPrefix ? (
           <>
-            <StyledAffix>{prefix}</StyledAffix>
+            <StyledAffix data-disabled={disabled ? '' : undefined}>{prefix}</StyledAffix>
             {showAffixDivider && <StyledInputDivider />}
           </>
         ) : null}
@@ -144,7 +144,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {hasSuffix ? (
           <>
             {showAffixDivider && <StyledInputDivider />}
-            <StyledAffix>{suffix}</StyledAffix>
+            <StyledAffix data-disabled={disabled ? '' : undefined}>{suffix}</StyledAffix>
           </>
         ) : null}
         <StyledBaseInputBorder />

@@ -27,7 +27,18 @@ export const InputKeyboardNavigationPlaygroundTemplate = () => {
         }
       />
       <Input data-testid="read-only-input" defaultValue="Read only value" readOnly />
-      <Input data-testid="disabled-input" defaultValue="Disabled value" disabled />
+      <Input
+        data-testid="disabled-input"
+        defaultValue="Disabled value"
+        disabled
+        iconsAfter={
+          <InputIconInformer
+            data-testid="disabled-informer-icon"
+            aria-label="Дополнительная информация о недоступном поле"
+            title="Дополнительная информация о недоступном поле"
+          />
+        }
+      />
       <button data-testid="after-input-states" type="button">
         Следующий элемент
       </button>

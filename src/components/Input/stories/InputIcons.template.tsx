@@ -21,7 +21,7 @@ const InputWithIcons = (args: InputProps) => {
       ref={inputRef}
       showClearIcon
       iconsBefore={
-        <InputIcon aria-hidden>
+        <InputIcon aria-hidden disabled={args.disabled}>
           <SystemSearchOutline />
         </InputIcon>
       }
