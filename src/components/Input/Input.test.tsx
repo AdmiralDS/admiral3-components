@@ -99,6 +99,51 @@ describe('Input', () => {
     expect(ref.current).toBe(screen.getByTestId('input'));
   });
 
+  it('forwards containerProps and containerRef to the root container without changing the input contract', () => {
+    const inputRef = createRef<HTMLInputElement>();
+    const containerRef = createRef<HTMLDivElement>();
+    const onContainerClick = vi.fn();
+
+    render(
+      <Input
+        ref={inputRef}
+        containerRef={containerRef}
+        containerProps={{
+          'aria-label': 'Контейнер поля',
+          'data-testid': 'input-container',
+          onClick: onContainerClick,
+        }}
+        data-testid="input"
+      />,
+    );
+
+    const input = screen.getByTestId('input');
+    const container = screen.getByTestId('input-container');
+
+    expect(inputRef.current).toBe(input);
+    expect(containerRef.current).toBe(container);
+    expect(container).toHaveAttribute('aria-label', 'Контейнер поля');
+    expect(input).not.toHaveAttribute('aria-label', 'Контейнер поля');
+
+    fireEvent.click(container);
+    expect(onContainerClick).toHaveBeenCalledOnce();
+  });
+
+  it('keeps internal container state attributes consistent when containerProps contain conflicting values', () => {
+    render(
+      <Input
+        disabled
+        containerProps={{ 'data-disabled': undefined, 'data-dimension': 'custom' }}
+        data-testid="input"
+      />,
+    );
+
+    const container = screen.getByTestId('input').parentElement;
+
+    expect(container).toHaveAttribute('data-disabled', '');
+    expect(container).toHaveAttribute('data-dimension', 'm');
+  });
+
   it.each(INPUT_DIMENSIONS)('applies the %s dimension without forwarding it to the DOM', (dimension) => {
     render(<Input data-testid="input" dimension={dimension} />);
 

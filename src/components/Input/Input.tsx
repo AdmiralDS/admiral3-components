@@ -30,6 +30,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       suffix,
       showAffixDivider = true,
       showTooltip = true,
+      containerProps,
+      containerRef,
       value,
       defaultValue,
       onChange,
@@ -98,6 +100,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <StyledBaseInputContainer
+        ref={containerRef}
         $appearance={appearance}
         $dimension={dimension}
         $disabled={disabled}
@@ -108,6 +111,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         data-disabled={disabled ? '' : undefined}
         data-read-only={readOnly ? '' : undefined}
         data-status={status}
+        {...containerProps}
       >
         {prefix != null ? (
           <>

@@ -1,10 +1,14 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { HTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from 'react';
 
 import type { BaseInputAppearance, BaseInputDimension, BaseInputStatus } from '../_internal/InputAtoms/types';
 
 export type InputDimension = BaseInputDimension;
 export type InputAppearance = BaseInputAppearance;
 export type InputStatus = BaseInputStatus;
+
+export type InputContainerProps = HTMLAttributes<HTMLDivElement> & {
+  [attribute: `data-${string}`]: string | number | undefined;
+};
 
 export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -36,4 +40,8 @@ export interface InputProps extends Omit<
   showAffixDivider?: boolean;
   /** Отображает подсказку с полным значением при переполнении поля. Значение по умолчанию 'true'. */
   showTooltip?: boolean;
+  /** HTML-атрибуты корневого контейнера. Нативные атрибуты верхнего уровня по-прежнему передаются в input. */
+  containerProps?: InputContainerProps;
+  /** Ref корневого контейнера. Основной ref компонента по-прежнему указывает на нативный input. */
+  containerRef?: Ref<HTMLDivElement>;
 }
