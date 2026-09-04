@@ -1,8 +1,6 @@
 import { useState } from 'react';
 
-import { ServiceEyeCloseOutline, ServiceEyeOutline } from '@admiral-ds/admiral3-icons';
-
-import { Input, InputIconButton, type InputProps } from '@admiral-ds/admiral3-components';
+import { Input, InputIconPasswordButton, type InputProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription, StoryDemoItem } from '../../stories/StoryContainers';
 
@@ -20,15 +18,11 @@ const PasswordInput = (args: InputProps) => {
       type={args.readOnly || passwordVisible ? 'text' : 'password'}
       iconsAfter={
         args.readOnly ? undefined : (
-          <InputIconButton
-            aria-label={passwordVisible ? 'Скрыть пароль' : 'Показать пароль'}
-            aria-pressed={passwordVisible}
+          <InputIconPasswordButton
+            visible={passwordVisible}
             disabled={args.disabled}
-            preventFocus
-            onClick={handleVisibilityChange}
-          >
-            {passwordVisible ? <ServiceEyeOutline aria-hidden /> : <ServiceEyeCloseOutline aria-hidden />}
-          </InputIconButton>
+            onVisibleChange={handleVisibilityChange}
+          />
         )
       }
     />

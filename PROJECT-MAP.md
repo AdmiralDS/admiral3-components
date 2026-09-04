@@ -203,7 +203,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `src/components/<ComponentName>/stories/` - Storybook CSF и render templates компонента. Templates могут переиспользоваться в playground, но их внутренняя демонстрационная разметка здесь не разбирается.
 - `src/components/stories/` - shared helpers для story templates и playground-сценариев. Не является публичным API библиотеки.
 - `src/components/HelperComponents/` - публичные вспомогательные компоненты для внешней композиции, включая
-  `SelectionControlInformer` и `SelectionControlLayout`.
+  `InputIconPasswordButton`, `SelectionControlInformer` и `SelectionControlLayout`.
 - `src/components/_internal/InputAtoms/` - внутренняя layout-композиция и общие размерные параметры полей выбора. Не
   экспортируется из публичного API библиотеки.
 
