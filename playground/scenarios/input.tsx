@@ -7,6 +7,7 @@ import type { InputProps } from '../../src/components/Input';
 import { InputCurrencyTemplate } from '../../src/components/Input/stories/InputCurrency.template';
 import { InputHighPrecisionNumbersTemplate } from '../../src/components/Input/stories/InputHighPrecisionNumbers.template';
 import { InputKeyboardNavigationPlaygroundTemplate } from '../../src/components/Input/stories/InputKeyboardNavigationPlayground.template';
+import { InputNativeFormPlaygroundTemplate } from '../../src/components/Input/stories/InputNativeFormPlayground.template';
 import { InputPasswordTemplate } from '../../src/components/Input/stories/InputPassword.template';
 import { InputPlaygroundTemplate } from '../../src/components/Input/stories/InputPlayground.template';
 import { InputReadOnlyDataMaskingTemplate } from '../../src/components/Input/stories/InputReadOnlyDataMasking.template';
@@ -50,6 +51,11 @@ export const inputScenarios: PlaygroundScenario[] = [
     id: 'input/keyboard-navigation',
     title: 'Input Keyboard Navigation',
     render: () => <InputKeyboardNavigationPlaygroundTemplate />,
+  },
+  {
+    id: 'input/native-form',
+    title: 'Input Native Form',
+    render: () => <InputNativeFormPlaygroundTemplate />,
   },
   {
     id: 'input/currency',

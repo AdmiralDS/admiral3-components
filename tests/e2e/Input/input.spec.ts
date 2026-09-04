@@ -6,6 +6,7 @@ const defaultScenarioId = 'input/default';
 const clearIconScenarioId = 'input/clear-icon';
 const cursorZonesScenarioId = 'input/cursor-zones';
 const keyboardNavigationScenarioId = 'input/keyboard-navigation';
+const nativeFormScenarioId = 'input/native-form';
 const currencyScenarioId = 'input/currency';
 const highPrecisionNumbersScenarioId = 'input/high-precision-numbers';
 const passwordReadOnlyScenarioId = 'input/password-read-only';
@@ -135,6 +136,7 @@ test.describe('Input playground', () => {
 
     const customButton = page.getByRole('button', { name: 'Пользовательское действие' });
     const readOnlyInput = page.getByTestId('read-only-input');
+    const readOnlyAction = page.getByRole('button', { name: 'Действие поля только для чтения' });
     const disabledInput = page.getByTestId('disabled-input');
     const disabledInformerIcon = page.getByTestId('disabled-informer-icon');
     const nextElement = page.getByTestId('after-input-states');
@@ -146,6 +148,10 @@ test.describe('Input playground', () => {
     await expect(readOnlyInput).toBeFocused();
     await expect(readOnlyInput).toHaveJSProperty('selectionStart', 0);
     await expect(readOnlyInput).toHaveJSProperty('selectionEnd', 'Read only value'.length);
+
+    await page.keyboard.press(tabKey);
+
+    await expect(readOnlyAction).toBeFocused();
 
     await page.keyboard.press(tabKey);
 
@@ -168,6 +174,44 @@ test.describe('Input playground', () => {
     await expect(informerIcon).toHaveCSS('cursor', 'pointer');
     await informerIcon.click();
     await expect(disabledInput).not.toBeFocused();
+  });
+
+  test('preserves native form association, validation, submission and reset', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(nativeFormScenarioId));
+
+    const login = page.getByRole('textbox', { name: 'Логин' });
+    const readOnlyInput = page.getByRole('textbox', { name: 'Токен только для чтения' });
+    const disabledInput = page.getByRole('textbox', { name: 'Отключённое поле' });
+    const externalInput = page.getByRole('textbox', { name: 'Внешнее поле формы' });
+    const submittedData = page.getByTestId('submitted-form-data');
+    const invalidCount = page.getByTestId('invalid-event-count');
+
+    expect(await externalInput.evaluate((input: HTMLInputElement) => input.form?.id)).toBe('native-input-form');
+    await expect(readOnlyInput).toHaveAttribute('readonly');
+    await expect(disabledInput).toBeDisabled();
+
+    await page.getByRole('button', { name: 'Отправить' }).click();
+    await expect(submittedData).toHaveText(
+      JSON.stringify({ login: 'Admiral', token: 'read-only-token', externalField: 'external-value' }),
+    );
+
+    await login.fill('Адмирал');
+    await page.getByRole('button', { name: 'Отправить' }).click();
+    await expect(invalidCount).toHaveText('1');
+    await expect(submittedData).toHaveText(
+      JSON.stringify({ login: 'Admiral', token: 'read-only-token', externalField: 'external-value' }),
+    );
+
+    await login.fill('');
+    await page.getByRole('button', { name: 'Отправить' }).click();
+    await expect(invalidCount).toHaveText('2');
+
+    await login.fill('Updated');
+    await externalInput.fill('updated-external');
+    await page.getByRole('button', { name: 'Сбросить' }).click();
+    await expect(login).toHaveValue('Admiral');
+    await expect(externalInput).toHaveValue('external-value');
+    await expect(submittedData).toBeEmpty();
   });
 
   test('shows the text cursor only over the full-height native input zone', async ({ page }) => {

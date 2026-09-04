@@ -26,7 +26,12 @@ export const InputKeyboardNavigationPlaygroundTemplate = () => {
           </>
         }
       />
-      <Input data-testid="read-only-input" defaultValue="Read only value" readOnly />
+      <Input
+        data-testid="read-only-input"
+        defaultValue="Read only value"
+        readOnly
+        iconsAfter={<InputIconButton aria-label="Действие поля только для чтения" />}
+      />
       <Input
         data-testid="disabled-input"
         defaultValue="Disabled value"

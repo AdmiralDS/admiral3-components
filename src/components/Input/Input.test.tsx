@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import styled from 'styled-components';
@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from './constants';
 import { Input } from './Input';
 import type { InputClearButtonProps } from './types';
-import { InputIconButton, InputIconInformer } from '../HelperComponents';
+import { InputIcon, InputIconButton, InputIconInformer } from '../HelperComponents';
 
 const PointerIcon = styled.span`
   cursor: pointer;
@@ -379,6 +379,32 @@ describe('Input', () => {
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
+  it('clears a controlled value through the owner state and exposes the cleared value in onChange', () => {
+    const onChange = vi.fn();
+
+    const ControlledInput = () => {
+      const [value, setValue] = useState('Value');
+
+      return (
+        <Input
+          value={value}
+          showClearIcon
+          onChange={(event) => {
+            onChange(event.currentTarget.value);
+            setValue(event.currentTarget.value);
+          }}
+        />
+      );
+    };
+
+    render(<ControlledInput />);
+    fireEvent.click(screen.getByRole('button', { name: 'Очистить поле' }));
+
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith('');
+  });
+
   it('clears the value, emits a change event and restores input focus', () => {
     const onChange = vi.fn();
     const onClear = vi.fn();
@@ -481,6 +507,31 @@ describe('Input', () => {
     expect(screen.getByRole('button', { name: 'Доступное пользовательское действие' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Недоступное пользовательское действие' })).toBeDisabled();
   });
+
+  it.each([
+    { state: 'default', stateProps: {}, clearVisible: true },
+    { state: 'readOnly', stateProps: { readOnly: true }, clearVisible: false },
+    { state: 'disabled', stateProps: { disabled: true }, clearVisible: false },
+  ] as const)(
+    'keeps built-in and user-provided icon behavior predictable in $state state',
+    ({ stateProps, clearVisible }) => {
+      render(
+        <Input
+          defaultValue="Value"
+          showClearIcon
+          iconsBefore={<InputIcon data-testid="decorative-icon" aria-hidden />}
+          iconsAfter={<InputIconButton aria-label="Пользовательское действие" />}
+          {...stateProps}
+        />,
+      );
+
+      const clearButton = screen.queryByRole('button', { name: 'Очистить поле' });
+
+      expect(Boolean(clearButton)).toBe(clearVisible);
+      expect(screen.getByTestId('decorative-icon')).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Пользовательское действие' })).toBeEnabled();
+    },
+  );
 
   it('reflects status and native disabled/readOnly semantics', () => {
     const { rerender } = render(<Input data-testid="input" status="error" disabled />);
