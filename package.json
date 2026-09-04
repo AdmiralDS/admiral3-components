@@ -38,6 +38,10 @@
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
     },
+    "./input": {
+      "types": "./dist/components/Input/index.d.ts",
+      "import": "./dist/components/Input/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
@@ -124,6 +128,9 @@
     "@emnapi/core": "^1.10.0",
     "@emnapi/runtime": "^1.10.0",
     "@eslint/js": "^9.39.4",
+    "@maskito/core": "^5.4.0",
+    "@maskito/kit": "^5.4.0",
+    "@maskito/react": "^5.4.0",
     "@playwright/test": "^1.60.0",
     "@storybook/addon-a11y": "^10.5.10",
     "@storybook/addon-docs": "^10.5.10",
