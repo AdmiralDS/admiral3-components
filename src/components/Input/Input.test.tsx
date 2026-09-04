@@ -232,6 +232,26 @@ describe('Input', () => {
     expect(container?.querySelectorAll('[data-orientation="vertical"]')).toHaveLength(2);
   });
 
+  it('supports explicit accessibility semantics for meaningful and decorative affixes', () => {
+    const { rerender } = render(
+      <Input
+        aria-describedby="weight-unit"
+        aria-label="Вес"
+        data-testid="input"
+        suffix={<span id="weight-unit">кг</span>}
+      />,
+    );
+
+    expect(screen.getByTestId('input')).toHaveAccessibleDescription('кг');
+
+    rerender(
+      <Input aria-label="Приблизительное значение" data-testid="input" suffix={<span aria-hidden="true">≈</span>} />,
+    );
+
+    expect(screen.getByText('≈')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByTestId('input')).not.toHaveAttribute('aria-describedby');
+  });
+
   it('renders the clear icon button before custom and primary after icons', () => {
     render(
       <Input

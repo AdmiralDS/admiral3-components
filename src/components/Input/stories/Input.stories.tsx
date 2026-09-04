@@ -4,6 +4,8 @@ import { Input, type InputProps } from '@admiral-ds/admiral3-components';
 
 import { InputAffixesTemplate } from './InputAffixes.template';
 import inputAffixesTemplateRaw from './InputAffixes.template?raw';
+import { InputAffixesAccessibilityTemplate } from './InputAffixesAccessibility.template';
+import inputAffixesAccessibilityTemplateRaw from './InputAffixesAccessibility.template?raw';
 import { InputClearIconTemplate } from './InputClearIcon.template';
 import inputClearIconTemplateRaw from './InputClearIcon.template?raw';
 import { InputCurrencyTemplate } from './InputCurrency.template';
@@ -160,6 +162,15 @@ export const InputExtended: StoryObj<InputProps> = {
   parameters: {
     controls: { exclude: ['iconsBefore', 'iconsAfter'] },
     docs: { source: { code: inputAffixesTemplateRaw } },
+  },
+};
+
+export const AffixesAccessibility: StoryObj<InputProps> = {
+  args: defaultArgs,
+  render: InputAffixesAccessibilityTemplate,
+  parameters: {
+    controls: { exclude: ['prefix', 'suffix', 'placeholder'] },
+    docs: { source: { code: inputAffixesAccessibilityTemplateRaw } },
   },
 };
 
