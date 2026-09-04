@@ -191,6 +191,47 @@ describe('Input', () => {
     expect(container?.children[3]).toHaveAttribute('data-role', 'input-border');
   });
 
+  it.each([false, true, null, undefined, ''])(
+    'does not render wrappers, dividers or spacing for empty slot value %s',
+    (emptySlotValue) => {
+      render(
+        <Input
+          data-testid="input"
+          iconsBefore={emptySlotValue}
+          iconsAfter={emptySlotValue}
+          prefix={emptySlotValue}
+          suffix={emptySlotValue}
+        />,
+      );
+
+      const container = screen.getByTestId('input').parentElement;
+
+      expect(container?.children).toHaveLength(2);
+      expect(container?.querySelector('[data-role="icon-panel-before"]')).not.toBeInTheDocument();
+      expect(container?.querySelector('[data-role="icon-panel-after"]')).not.toBeInTheDocument();
+      expect(container?.querySelector('[data-orientation="vertical"]')).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([0, 'Slot content'])('renders valid slot value %s with its wrappers and dividers', (slotValue) => {
+    render(
+      <Input
+        data-testid="input"
+        iconsBefore={slotValue}
+        iconsAfter={slotValue}
+        prefix={slotValue}
+        suffix={slotValue}
+      />,
+    );
+
+    const container = screen.getByTestId('input').parentElement;
+
+    expect(container?.children).toHaveLength(8);
+    expect(container?.querySelector('[data-role="icon-panel-before"]')).toHaveTextContent(String(slotValue));
+    expect(container?.querySelector('[data-role="icon-panel-after"]')).toHaveTextContent(String(slotValue));
+    expect(container?.querySelectorAll('[data-orientation="vertical"]')).toHaveLength(2);
+  });
+
   it('renders the clear icon button before custom and primary after icons', () => {
     render(
       <Input

@@ -10,6 +10,7 @@ import {
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
+import { hasSlotContent } from '../../utils/hasSlotContent';
 import { isOverflowed } from '../../utils/isOverflowed';
 import { refSetter } from '../../utils/refSetter';
 import { ClearInputIconButton, clearNativeTextInput, StyledAffix, StyledInputDivider } from '../_internal/InputAtoms';
@@ -51,6 +52,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const [overflowTitle, setOverflowTitle] = useState<string>();
     const currentValue = value !== undefined ? value : uncontrolledValue;
     const displayClearIcon = showClearIcon && String(currentValue ?? '').length > 0 && !disabled && !readOnly;
+    const hasIconsBefore = hasSlotContent(iconsBefore);
+    const hasIconsAfter = hasSlotContent(iconsAfter);
+    const hasPrefix = hasSlotContent(prefix);
+    const hasSuffix = hasSlotContent(suffix);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
       if (value === undefined) {
@@ -113,13 +118,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         data-status={status}
         {...containerProps}
       >
-        {prefix != null ? (
+        {hasPrefix ? (
           <>
             <StyledAffix>{prefix}</StyledAffix>
             {showAffixDivider && <StyledInputDivider />}
           </>
         ) : null}
-        {iconsBefore != null && <StyledIconPanel data-role="icon-panel-before">{iconsBefore}</StyledIconPanel>}
+        {hasIconsBefore && <StyledIconPanel data-role="icon-panel-before">{iconsBefore}</StyledIconPanel>}
         <NativeInput
           ref={refSetter(inputRef, ref)}
           disabled={disabled}
@@ -135,7 +140,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           title={title ?? (showTooltip ? overflowTitle : undefined)}
           {...props}
         />
-        {(displayClearIcon || iconsAfter != null) && (
+        {(displayClearIcon || hasIconsAfter) && (
           <StyledIconPanel data-role="icon-panel-after">
             {displayClearIcon && (
               <ClearInputIconButton onPointerDown={(event) => event.preventDefault()} onClick={handleClear} />
@@ -143,7 +148,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {iconsAfter}
           </StyledIconPanel>
         )}
-        {suffix != null ? (
+        {hasSuffix ? (
           <>
             {showAffixDivider && <StyledInputDivider />}
             <StyledAffix>{suffix}</StyledAffix>

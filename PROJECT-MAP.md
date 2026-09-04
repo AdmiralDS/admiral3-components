@@ -185,6 +185,9 @@ Storybook и playground импортируют пакет через alias `@adm
 - `src/theme/animation.ts` - CSS-variable wrappers всех animation-токенов и внутренняя база transition для Hover, Press и Leave.
 - `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.
 - `src/utils/refSetter.test.ts` - unit-тесты синхронизации и очистки refs.
+- `src/utils/hasSlotContent.ts` - внутренняя проверка содержимого опциональных ReactNode-слотов перед созданием
+  layout-обёрток.
+- `src/utils/hasSlotContent.test.ts` - unit-тесты пустых и отображаемых значений слотов.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.
 
