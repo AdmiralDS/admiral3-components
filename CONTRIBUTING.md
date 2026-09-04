@@ -551,6 +551,7 @@ src/components/ComponentName/stories/ComponentNameDirty.template.tsx
 6. Не каждый `*.template.tsx` обязан попадать в Storybook. Internal-only templates допустимы, если они используются только в playground/e2e.
 7. Общие контейнеры и layout helpers для templates хранятся в `src/components/stories`. Используйте их, если layout должен одинаково работать в Storybook и internal playground.
 8. Глобальные decorators и styles в `.storybook` используются только для Storybook shell: theme, fonts, docs/canvas padding и базовое выравнивание. Layout, который является частью demo-кейса или e2e-сценария, должен оставаться внутри template/helper.
+9. Сквозные примеры с несколькими компонентами и внешними библиотеками размещаются в `src/integrations/<integration-name>` и используют верхнеуровневый Storybook-раздел `Integration`, а не раздел отдельного компонента.
 
 ### Правила для internal playground
 

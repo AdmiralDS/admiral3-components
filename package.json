@@ -155,6 +155,7 @@
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
     "prettier": "3.8.1",
+    "react-hook-form": "^7.87.0",
     "serve": "^14.2.5",
     "standard-version": "^9.5.0",
     "storybook": "^10.5.10",

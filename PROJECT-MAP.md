@@ -37,6 +37,7 @@ Template-файлы для Storybook и playground в этом документ�
 ├── src/                      # Исходный код публичного API, компонентов и тестовых настроек
 │   ├── components/           # Компоненты библиотеки
 │   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
+│   ├── integrations/         # Сквозные Storybook-примеры интеграции с внешними библиотеками
 │   ├── test/                 # Vitest setup
 │   ├── theme/                # Helpers для CSS token fallback и системных transition
 │   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
@@ -189,6 +190,7 @@ Storybook и playground импортируют пакет через alias `@adm
   layout-обёрток.
 - `src/utils/hasSlotContent.test.ts` - unit-тесты пустых и отображаемых значений слотов.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
+- `src/integrations/react-hook-form/` - отдельный Storybook-раздел с примером формы на React Hook Form, который проверяет совместную работу Input, RadioButton, CheckBox и Toggle.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.
 
 ## Components
