@@ -1,12 +1,4 @@
-import {
-  forwardRef,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FocusEvent,
-  type MouseEvent,
-  type PointerEvent,
-} from 'react';
+import { forwardRef, useRef, useState, type ChangeEvent, type MouseEvent } from 'react';
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
@@ -36,10 +28,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       value,
       defaultValue,
       onChange,
-      onFocus,
       onMouseEnter,
       onMouseLeave,
-      onPointerDown,
       title,
       'aria-invalid': ariaInvalid,
       ...props
@@ -47,7 +37,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
-    const pointerFocusRef = useRef(false);
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const [overflowTitle, setOverflowTitle] = useState<string>();
     const currentValue = value !== undefined ? value : uncontrolledValue;
@@ -69,23 +58,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       if (!input) return;
 
       clearNativeTextInput(input);
-    };
-
-    const handlePointerDown = (event: PointerEvent<HTMLInputElement>) => {
-      pointerFocusRef.current = true;
-      onPointerDown?.(event);
-
-      queueMicrotask(() => {
-        pointerFocusRef.current = false;
-      });
-    };
-
-    const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
-      if (readOnly && !pointerFocusRef.current) {
-        event.currentTarget.select();
-      }
-      pointerFocusRef.current = false;
-      onFocus?.(event);
     };
 
     const handleMouseEnter = (event: MouseEvent<HTMLInputElement>) => {
@@ -132,10 +104,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
-          onFocus={handleFocus}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onPointerDown={handlePointerDown}
           aria-invalid={status === 'error' || ariaInvalid || undefined}
           title={title ?? (showTooltip ? overflowTitle : undefined)}
           {...props}

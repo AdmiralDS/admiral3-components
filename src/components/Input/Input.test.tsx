@@ -393,25 +393,12 @@ describe('Input', () => {
     expect(input.parentElement).toHaveAttribute('data-read-only');
   });
 
-  it('selects the readOnly value when focus does not originate from a pointer', () => {
+  it('keeps the native selection when a readOnly input receives focus', () => {
     render(<Input data-testid="input" defaultValue="Read only value" readOnly />);
 
     const input = screen.getByTestId('input') as HTMLInputElement;
     input.setSelectionRange(4, 4);
 
-    fireEvent.focus(input);
-
-    expect(input.selectionStart).toBe(0);
-    expect(input.selectionEnd).toBe(input.value.length);
-  });
-
-  it('keeps the native selection when a readOnly input receives pointer focus', () => {
-    render(<Input data-testid="input" defaultValue="Read only value" readOnly />);
-
-    const input = screen.getByTestId('input') as HTMLInputElement;
-    input.setSelectionRange(4, 4);
-
-    fireEvent.pointerDown(input);
     fireEvent.focus(input);
 
     expect(input.selectionStart).toBe(4);
