@@ -47,6 +47,31 @@ describe('Input', () => {
     expect(screen.getByTestId('input')).toHaveFocus();
   });
 
+  it('does not refocus an active input and preserves its selection on icon pointer press', () => {
+    render(
+      <Input
+        data-testid="input"
+        defaultValue="Input value"
+        iconsAfter={<InputIconButton aria-label="Действие с полем" />}
+      />,
+    );
+
+    const input = screen.getByTestId('input') as HTMLInputElement;
+    const iconButton = screen.getByRole('button', { name: 'Действие с полем' });
+    input.focus();
+    input.setSelectionRange(2, 7, 'forward');
+    const focus = vi.spyOn(input, 'focus');
+
+    fireEvent.pointerDown(iconButton);
+    fireEvent.pointerUp(iconButton);
+
+    expect(focus).not.toHaveBeenCalled();
+    expect(input).toHaveFocus();
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(7);
+    expect(input.selectionDirection).toBe('forward');
+  });
+
   it('does not focus the input when the icon button prevents focus', () => {
     render(
       <Input data-testid="input" iconsAfter={<InputIconButton aria-label="Независимое действие" preventFocus />} />,
@@ -55,6 +80,29 @@ describe('Input', () => {
     fireEvent.pointerDown(screen.getByRole('button', { name: 'Независимое действие' }));
 
     expect(screen.getByTestId('input')).not.toHaveFocus();
+  });
+
+  it('preserves focus and selection of an active input when the icon button prevents focus', () => {
+    render(
+      <Input
+        data-testid="input"
+        defaultValue="Input value"
+        iconsAfter={<InputIconButton aria-label="Независимое действие" preventFocus />}
+      />,
+    );
+
+    const input = screen.getByTestId('input') as HTMLInputElement;
+    const iconButton = screen.getByRole('button', { name: 'Независимое действие' });
+    input.focus();
+    input.setSelectionRange(2, 7, 'forward');
+
+    fireEvent.pointerDown(iconButton);
+    fireEvent.pointerUp(iconButton);
+
+    expect(input).toHaveFocus();
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(7);
+    expect(input.selectionDirection).toBe('forward');
   });
 
   it('renders a native email input', () => {

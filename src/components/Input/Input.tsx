@@ -43,7 +43,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const hasIconsAfter = hasSlotContent(iconsAfter);
     const hasPrefix = hasSlotContent(prefix);
     const hasSuffix = hasSlotContent(suffix);
-    const { onPointerDown: onContainerPointerDown, ...restContainerProps } = containerProps ?? {};
+    const {
+      onPointerDown: onContainerPointerDown,
+      onPointerUp: onContainerPointerUp,
+      ...restContainerProps
+    } = containerProps ?? {};
 
     const handleClear = () => {
       const input = inputRef.current;
@@ -69,12 +73,29 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const handleContainerPointerDown = (event: PointerEvent<HTMLDivElement>) => {
       const iconButton = (event.target as Element).closest('[data-input-icon-button]');
+      const input = inputRef.current;
+      const inputHasFocus = document.activeElement === input;
+      const shouldFocusInput = iconButton && !iconButton.hasAttribute('data-prevent-input-focus');
 
-      if (iconButton && !iconButton.hasAttribute('data-prevent-input-focus')) {
+      if (iconButton && (inputHasFocus || shouldFocusInput)) {
         event.preventDefault();
-        inputRef.current?.focus();
+
+        if (input && !inputHasFocus && shouldFocusInput) {
+          input.focus({ preventScroll: true });
+        }
       }
       onContainerPointerDown?.(event);
+    };
+
+    const handleContainerPointerUp = (event: PointerEvent<HTMLDivElement>) => {
+      const iconButton = (event.target as Element).closest('[data-input-icon-button]');
+      const inputHasFocus = document.activeElement === inputRef.current;
+      const shouldFocusInput = iconButton && !iconButton.hasAttribute('data-prevent-input-focus');
+
+      if (iconButton && (inputHasFocus || shouldFocusInput)) {
+        event.preventDefault();
+      }
+      onContainerPointerUp?.(event);
     };
 
     return (
@@ -91,6 +112,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         data-read-only={readOnly ? '' : undefined}
         data-status={status}
         onPointerDown={handleContainerPointerDown}
+        onPointerUp={handleContainerPointerUp}
         {...restContainerProps}
       >
         {hasPrefix ? (

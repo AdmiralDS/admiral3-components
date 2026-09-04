@@ -207,12 +207,22 @@ test.describe('Input playground', () => {
     await expect(iconButton).toBeFocused();
     await expect(component).not.toBeFocused();
 
-    await component.click();
+    await component.fill('Input value');
+    await component.evaluate((input: HTMLInputElement) => input.setSelectionRange(2, 7, 'forward'));
     await iconButton.click();
 
     await expect(component).toBeFocused();
     await expect(iconButton).not.toBeFocused();
     await expect(border).toHaveCSS('border-top-width', '2px');
+    await expect
+      .poll(() =>
+        component.evaluate((input: HTMLInputElement) => ({
+          start: input.selectionStart,
+          end: input.selectionEnd,
+          direction: input.selectionDirection,
+        })),
+      )
+      .toEqual({ start: 2, end: 7, direction: 'forward' });
   });
 
   test.describe('currency input', () => {
