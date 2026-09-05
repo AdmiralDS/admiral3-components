@@ -7,13 +7,19 @@ export { NativeInput, StyledBaseInputBorder, StyledIconPanel } from '../_interna
 /* :placeholder-shown здесь служит нативным признаком пустого input.
    При скрытой clear-icon-only панели сохраняем правый отступ у самого input. */
 export const StyledBaseInputContainer = styled(BaseInputContainer)`
-  &[data-clear-icon-only]:has(> input:placeholder-shown) {
-    > [data-role='icon-panel-after'] {
+  &:has(> input:placeholder-shown) {
+    [data-role='clear-input-button'] {
       display: none;
     }
 
-    > input {
-      padding-inline-end: var(--admiral-input-padding-inline);
+    &[data-clear-icon-only] {
+      > [data-role='icon-panel-after'] {
+        display: none;
+      }
+
+      > input {
+        padding-inline-end: var(--admiral-input-padding-inline);
+      }
     }
   }
 `;
