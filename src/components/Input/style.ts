@@ -4,9 +4,16 @@ import { StyledBaseInputContainer as BaseInputContainer } from '../_internal/Inp
 
 export { NativeInput, StyledBaseInputBorder, StyledIconPanel } from '../_internal/InputAtoms/style';
 
+/* :placeholder-shown здесь служит нативным признаком пустого input.
+   При скрытой clear-icon-only панели сохраняем правый отступ у самого input. */
 export const StyledBaseInputContainer = styled(BaseInputContainer)`
-  &:has(> input:placeholder-shown) [data-role='clear-input-button'],
-  &:has(> input:placeholder-shown) > [data-role='icon-panel-after'][data-clear-only] {
-    display: none;
+  &[data-clear-icon-only]:has(> input:placeholder-shown) {
+    > [data-role='icon-panel-after'] {
+      display: none;
+    }
+
+    > input {
+      padding-inline-end: var(--admiral-input-padding-inline);
+    }
   }
 `;

@@ -114,6 +114,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         data-disabled={disabled ? '' : undefined}
         data-read-only={readOnly ? '' : undefined}
         data-status={status}
+        data-clear-icon-only={displayClearIcon && !hasIconsAfter && !hasSuffix ? '' : undefined}
         onPointerDown={handleContainerPointerDown}
         onPointerUp={handleContainerPointerUp}
         {...restContainerProps}
@@ -139,7 +140,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {(displayClearIcon || hasIconsAfter) && (
-          <StyledIconPanel data-role="icon-panel-after" data-clear-only={!hasIconsAfter || undefined}>
+          <StyledIconPanel data-role="icon-panel-after" data-clear-icon-only={!hasIconsAfter || undefined}>
             {displayClearIcon && (
               <ClearInputIconButton {...clearButtonProps} data-role="clear-input-button" onClick={handleClear} />
             )}
