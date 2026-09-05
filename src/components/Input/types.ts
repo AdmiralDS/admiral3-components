@@ -1,12 +1,13 @@
 import type { AriaAttributes, ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from 'react';
 
+import type { TEXT_INPUT_TYPES } from './constants';
 import type { DataAttributes } from '../../utils/dataAttributes';
 import type { BaseInputAppearance, BaseInputDimension, BaseInputStatus } from '../_internal/InputAtoms/types';
 
 export type InputDimension = BaseInputDimension;
 export type InputAppearance = BaseInputAppearance;
 export type InputStatus = BaseInputStatus;
-export type InputType = 'text' | 'password' | 'email' | 'url';
+export type InputType = (typeof TEXT_INPUT_TYPES)[number];
 
 export type InputContainerProps = HTMLAttributes<HTMLDivElement> & DataAttributes;
 

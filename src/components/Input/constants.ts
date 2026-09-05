@@ -4,3 +4,5 @@ export {
   BASE_INPUT_DIMENSIONS as INPUT_DIMENSIONS,
   BASE_INPUT_STATUSES as INPUT_STATUSES,
 } from '../_internal/InputAtoms/constants';
+
+export const TEXT_INPUT_TYPES = ['text', 'password', 'email', 'url'] as const;

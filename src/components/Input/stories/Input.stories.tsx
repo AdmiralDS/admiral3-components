@@ -32,7 +32,7 @@ import { InputStatesTemplate } from './InputStates.template';
 import inputStatesTemplateRaw from './InputStates.template?raw';
 import { InputTextOverflowTemplate } from './InputTextOverflow.template';
 import inputTextOverflowTemplateRaw from './InputTextOverflow.template?raw';
-import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_STATUSES } from '../constants';
+import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_STATUSES, TEXT_INPUT_TYPES } from '../constants';
 
 const meta = {
   title: 'Components/Input',
@@ -51,6 +51,10 @@ const meta = {
       control: { type: 'inline-radio' },
       options: INPUT_STATUSES,
     },
+    type: {
+      control: { type: 'inline-radio' },
+      options: TEXT_INPUT_TYPES,
+    },
     readOnly: {
       control: { type: 'boolean' },
     },
@@ -59,6 +63,9 @@ const meta = {
     },
     iconsBefore: { control: false },
     iconsAfter: { control: false },
+    clearButtonProps: { control: false },
+    containerProps: { control: false },
+    containerRef: { control: false },
     showClearIcon: {
       control: { type: 'boolean' },
     },
@@ -80,6 +87,7 @@ const defaultArgs: InputProps = {
   dimension: 'm',
   placeholder: 'Input',
   readOnly: false,
+  type: 'text',
 };
 
 export const Playground: StoryObj<InputProps> = {
