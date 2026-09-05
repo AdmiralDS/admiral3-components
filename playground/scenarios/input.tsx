@@ -6,6 +6,7 @@ import type { PlaygroundScenario } from './index';
 import type { InputProps } from '../../src/components/Input';
 import { InputCurrencyTemplate } from '../../src/components/Input/stories/InputCurrency.template';
 import { InputHighPrecisionNumbersTemplate } from '../../src/components/Input/stories/InputHighPrecisionNumbers.template';
+import { InputIconsTemplate } from '../../src/components/Input/stories/InputIcons.template';
 import { InputKeyboardNavigationPlaygroundTemplate } from '../../src/components/Input/stories/InputKeyboardNavigationPlayground.template';
 import { InputNativeFormPlaygroundTemplate } from '../../src/components/Input/stories/InputNativeFormPlayground.template';
 import { InputPasswordTemplate } from '../../src/components/Input/stories/InputPassword.template';
@@ -28,6 +29,11 @@ export const inputScenarios: PlaygroundScenario[] = [
     render: () => (
       <InputPlaygroundTemplate {...defaultArgs} data-testid="input" defaultValue="Input value" showClearIcon />
     ),
+  },
+  {
+    id: 'input/icons',
+    title: 'Input Icons',
+    render: () => <InputIconsTemplate {...defaultArgs} data-testid="input" defaultValue="Input value" />,
   },
   {
     id: 'input/cursor-zones',

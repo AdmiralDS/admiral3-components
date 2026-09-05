@@ -4,6 +4,7 @@ import { getPlaygroundScenarioPath } from '../utils';
 
 const defaultScenarioId = 'input/default';
 const clearIconScenarioId = 'input/clear-icon';
+const iconsScenarioId = 'input/icons';
 const cursorZonesScenarioId = 'input/cursor-zones';
 const keyboardNavigationScenarioId = 'input/keyboard-navigation';
 const nativeFormScenarioId = 'input/native-form';
@@ -31,6 +32,44 @@ test.describe('Input playground', () => {
     await expect(component).toHaveValue('');
     await expect(component).toBeFocused();
     await expect(page.getByRole('button', { name: 'Очистить поле' })).toBeHidden();
+  });
+
+  test('shows the placeholder and hides the clear button after clearing an input with icons', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(iconsScenarioId));
+
+    const component = page.getByTestId('input');
+    const clearButton = page.getByRole('button', { name: 'Очистить поле' });
+
+    await clearButton.click();
+
+    await expect(component).toHaveValue('');
+    await expect(component).toHaveAttribute('placeholder', 'Input');
+    await expect.poll(() => component.evaluate((input) => input.matches(':placeholder-shown'))).toBe(true);
+    await expect(clearButton).toBeHidden();
+  });
+
+  test('moves the end padding from the native input to the clear icon panel when a value is entered', async ({
+    page,
+  }) => {
+    await page.goto(getPlaygroundScenarioPath(clearIconScenarioId));
+
+    const component = page.getByTestId('input');
+    const container = component.locator('..');
+    const iconPanel = container.locator('[data-role="icon-panel-after"]');
+    const expectedPadding = await container.evaluate((element) =>
+      getComputedStyle(element).getPropertyValue('--admiral-input-padding-inline').trim(),
+    );
+
+    await component.fill('');
+
+    await expect(component).toHaveCSS('padding-right', expectedPadding);
+    await expect(iconPanel).toBeHidden();
+
+    await component.fill('Input value');
+
+    await expect(component).toHaveCSS('padding-right', '0px');
+    await expect(iconPanel).toBeVisible();
+    await expect(iconPanel).toHaveCSS('padding-right', expectedPadding);
   });
 
   test('keeps the clear button in sync with native value changes and form reset', async ({ page }) => {
