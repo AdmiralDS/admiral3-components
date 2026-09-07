@@ -37,6 +37,7 @@ Template-файлы для Storybook и playground в этом документ�
 ├── src/                      # Исходный код публичного API, компонентов и тестовых настроек
 │   ├── components/           # Компоненты библиотеки
 │   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
+│   ├── integrations/         # Сквозные Storybook-примеры интеграции с внешними библиотеками
 │   ├── test/                 # Vitest setup
 │   ├── theme/                # Helpers для CSS token fallback и системных transition
 │   └── utils/                # Внутренние переиспользуемые TypeScript-утилиты
@@ -185,7 +186,12 @@ Storybook и playground импортируют пакет через alias `@adm
 - `src/theme/animation.ts` - CSS-variable wrappers всех animation-токенов и внутренняя база transition для Hover, Press и Leave.
 - `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.
 - `src/utils/refSetter.test.ts` - unit-тесты синхронизации и очистки refs.
+- `src/utils/hasSlotContent.ts` - внутренняя проверка содержимого опциональных ReactNode-слотов перед созданием
+  layout-обёрток.
+- `src/utils/hasSlotContent.test.ts` - unit-тесты пустых и отображаемых значений слотов.
+- `src/utils/dataAttributes.ts` - общий внутренний тип допустимых пользовательских `data-*`-атрибутов.
 - `src/components/stories/StoryContainers.tsx` - внутренние shared helpers для story templates и playground-сценариев: общий demo canvas, dirty/e2e container и demo description. Не является публичным API библиотеки.
+- `src/integrations/react-hook-form/` - отдельный Storybook-раздел с примером формы на React Hook Form, который проверяет совместную работу Input, RadioButton, CheckBox и Toggle.
 - `src/vite-env.d.ts` - Vite ambient declarations для TypeScript.
 
 ## Components
@@ -200,7 +206,7 @@ Storybook и playground импортируют пакет через alias `@adm
 - `src/components/<ComponentName>/stories/` - Storybook CSF и render templates компонента. Templates могут переиспользоваться в playground, но их внутренняя демонстрационная разметка здесь не разбирается.
 - `src/components/stories/` - shared helpers для story templates и playground-сценариев. Не является публичным API библиотеки.
 - `src/components/HelperComponents/` - публичные вспомогательные компоненты для внешней композиции, включая
-  `SelectionControlInformer` и `SelectionControlLayout`.
+  `InputIconPasswordButton`, `SelectionControlInformer` и `SelectionControlLayout`.
 - `src/components/_internal/InputAtoms/` - внутренняя layout-композиция и общие размерные параметры полей выбора. Не
   экспортируется из публичного API библиотеки.
 

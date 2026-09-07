@@ -4,7 +4,7 @@ import { CHECK_BOX_DIMENSION_PARAMETERS } from './constants';
 import type { StyledCheckBoxProps } from './types';
 import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
-import { NativeInput } from '../_internal/InputAtoms';
+import { SelectionControlNativeInput } from '../_internal/InputAtoms';
 
 const backgroundRest = cssToken('--admiral-color-neutral-base-1-rest', (theme) => theme.color.neutral.base._1.rest);
 const backgroundHover = cssToken('--admiral-color-neutral-base-1-hover', (theme) => theme.color.neutral.base._1.hover);
@@ -100,8 +100,8 @@ export const Control = styled.span<{ $error: boolean }>`
     overflow: visible;
   }
 
-  ${NativeInput}:checked + &,
-  ${NativeInput}:indeterminate + & {
+  ${SelectionControlNativeInput}:checked + &,
+  ${SelectionControlNativeInput}:indeterminate + & {
     border-color: transparent;
     background: ${selectedRest};
 
@@ -110,33 +110,33 @@ export const Control = styled.span<{ $error: boolean }>`
     }
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):hover + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):hover + & {
     background: ${backgroundHover};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):hover + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):hover + & {
     background: ${selectedHover};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):active + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):active + & {
     background: ${backgroundPress};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):active + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):active + & {
     background: ${selectedPress};
   }
 
-  ${NativeInput}:is(:disabled, [data-read-only]) + & {
+  ${SelectionControlNativeInput}:is(:disabled, [data-read-only]) + & {
     border-color: ${borderDisabled};
     background: ${backgroundDisabled};
   }
 
-  ${NativeInput}:is(:disabled, [data-read-only]):is(:checked, :indeterminate) + & {
+  ${SelectionControlNativeInput}:is(:disabled, [data-read-only]):is(:checked, :indeterminate) + & {
     border-color: transparent;
     background: ${selectedDisabled};
   }
 
-  ${NativeInput}:focus-visible + & {
+  ${SelectionControlNativeInput}:focus-visible + & {
     outline: 2px solid ${focusColor};
     outline-offset: 2px;
   }

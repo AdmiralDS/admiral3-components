@@ -3,7 +3,11 @@ import { forwardRef, useContext } from 'react';
 import { RadioGroupContext } from './RadioGroupContext';
 import { Control, StyledRadioButton } from './style';
 import type { RadioButtonProps } from './types';
-import { NativeInput, SelectionControlExtraText, SelectionControlLabelContent } from '../_internal/InputAtoms';
+import {
+  SelectionControlExtraText,
+  SelectionControlLabelContent,
+  SelectionControlNativeInput,
+} from '../_internal/InputAtoms';
 
 const DEFAULT_DIMENSION = 'm';
 
@@ -69,7 +73,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         $readOnly={readOnly}
         data-dimension={dimension}
       >
-        <NativeInput
+        <SelectionControlNativeInput
           ref={ref}
           type="radio"
           name={name}

@@ -1,11 +1,14 @@
-import { INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from '../_internal/InputAtoms/constants';
+import {
+  SELECTION_CONTROL_INPUT_DIMENSIONS,
+  SELECTION_CONTROL_INPUT_DIMENSION_PARAMETERS,
+} from '../_internal/InputAtoms/constants';
 
-export const TOGGLE_DIMENSIONS = INPUT_DIMENSIONS;
+export const TOGGLE_DIMENSIONS = SELECTION_CONTROL_INPUT_DIMENSIONS;
 export const TOGGLE_LABEL_POSITIONS = ['right', 'left'] as const;
 
 export const TOGGLE_DIMENSION_PARAMETERS = {
   m: {
-    ...INPUT_DIMENSION_PARAMETERS.m,
+    ...SELECTION_CONTROL_INPUT_DIMENSION_PARAMETERS.m,
     controlMarginBlock: 0,
     width: 36,
     height: 20,
@@ -14,7 +17,7 @@ export const TOGGLE_DIMENSION_PARAMETERS = {
     thumbTranslate: 16,
   },
   s: {
-    ...INPUT_DIMENSION_PARAMETERS.s,
+    ...SELECTION_CONTROL_INPUT_DIMENSION_PARAMETERS.s,
     controlMarginBlock: 0,
     width: 28,
     height: 16,
@@ -23,7 +26,7 @@ export const TOGGLE_DIMENSION_PARAMETERS = {
     thumbTranslate: 12,
   },
   xs: {
-    ...INPUT_DIMENSION_PARAMETERS.xs,
+    ...SELECTION_CONTROL_INPUT_DIMENSION_PARAMETERS.xs,
     controlMarginBlock: 0,
     width: 28,
     height: 16,

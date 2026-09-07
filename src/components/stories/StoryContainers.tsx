@@ -24,6 +24,13 @@ export const StoryDemoContainer = styled.div<StoryDemoContainerProps>`
     `}
 `;
 
+export const StoryDemoItem = styled.div`
+  display: flex;
+  inline-size: 320px;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 export const StoryDirtyContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
