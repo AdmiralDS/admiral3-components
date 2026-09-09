@@ -15,14 +15,27 @@ const meta = {
       control: { type: 'inline-radio' },
       options: TOOLTIP_DIMENSIONS,
     },
+    tooltipPosition: {
+      control: { type: 'inline-radio' },
+      options: ['bottom', 'top', 'left', 'right'],
+    },
+    fallbackPositions: {
+      control: 'object',
+    },
+    targetElement: { control: false },
+    renderContent: { control: false },
   },
 } satisfies Meta<typeof Tooltip>;
 
 export default meta;
 
 const defaultArgs: TooltipProps = {
-  children: 'Tooltip',
   dimension: 'm',
+  targetElement: null,
+  tooltipPosition: 'bottom',
+  fallbackPositions: ['top', 'right', 'left'],
+  renderContent: () =>
+    'Tooltip остаётся открытым при переводе указателя с кнопки на его содержимое. Пользователь может выделить и скопировать этот текст.',
 };
 
 export const Playground: StoryObj<TooltipProps> = {

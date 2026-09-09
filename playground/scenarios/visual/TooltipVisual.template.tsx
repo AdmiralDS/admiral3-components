@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ComponentProps } from 'react';
 
 import { Tooltip } from '@admiral-ds/admiral3-components';
@@ -17,7 +18,7 @@ import { TOOLTIP_DIMENSIONS } from '../../../src/components/Tooltip/constants';
 
 type VisualVariant = {
   label: string;
-  props: ComponentProps<typeof Tooltip>;
+  props: Partial<ComponentProps<typeof Tooltip>>;
 };
 
 // Add every supported appearance alongside the generated dimension matrix.
@@ -29,6 +30,24 @@ const VARIANTS: VisualVariant[] = TOOLTIP_DIMENSIONS.map((dimension) => ({
 // Add every visually distinct interactive and disabled state.
 const STATES: VisualVariant[] = [{ label: 'default', props: {} }];
 
+const TooltipSample = ({ props }: { props: VisualVariant['props'] }) => {
+  const [targetElement, setTargetElement] = useState<HTMLButtonElement | null>(null);
+
+  return (
+    <>
+      <button ref={setTargetElement}>Anchor</button>
+      {targetElement && (
+        <Tooltip
+          {...props}
+          targetElement={targetElement}
+          renderContent={() => 'Tooltip'}
+          fallbackPositions={['top', 'right', 'left']}
+        />
+      )}
+    </>
+  );
+};
+
 const renderMatrix = (items: VisualVariant[]) => (
   <VisualGroups>
     {items.map(({ label, props }) => (
@@ -37,7 +56,7 @@ const renderMatrix = (items: VisualVariant[]) => (
         <VisualSamples>
           <VisualSample>
             <VisualLabel>{label}</VisualLabel>
-            <Tooltip {...props}>Tooltip</Tooltip>
+            <TooltipSample props={props} />
           </VisualSample>
         </VisualSamples>
       </VisualGroup>
