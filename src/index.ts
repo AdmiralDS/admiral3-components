@@ -8,6 +8,7 @@ export * from './components/HelperComponents';
 export * from './components/Link';
 export * from './components/List';
 export * from './components/ProgressHeader';
+export * from './components/ProgressPage';
 export * from './components/Pulse';
 export * from './components/RadioButton';
 export * from './components/Skeleton';

@@ -50,6 +50,10 @@
       "types": "./dist/components/ProgressHeader/index.d.ts",
       "import": "./dist/components/ProgressHeader/index.js"
     },
+    "./progress-page": {
+      "types": "./dist/components/ProgressPage/index.d.ts",
+      "import": "./dist/components/ProgressPage/index.js"
+    },
     "./pulse": {
       "types": "./dist/components/Pulse/index.d.ts",
       "import": "./dist/components/Pulse/index.js"

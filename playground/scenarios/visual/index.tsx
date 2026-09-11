@@ -9,6 +9,7 @@ import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
 import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
+import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
@@ -44,6 +45,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / ProgressHeader',
     visual: true,
     render: () => <ProgressHeaderVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.progressPage,
+    title: 'Visual / ProgressPage',
+    visual: true,
+    render: () => <ProgressPageVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.pulse, title: 'Visual / Pulse', visual: true, render: () => <PulseVisualTemplate /> },
   {

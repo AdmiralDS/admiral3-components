@@ -8,6 +8,7 @@ export const VISUAL_SCENARIO_IDS = {
   link: 'visual/link',
   list: 'visual/list',
   progressHeader: 'visual/progress-header',
+  progressPage: 'visual/progress-page',
   pulse: 'visual/pulse',
   radioButton: 'visual/radio-button',
   skeleton: 'visual/skeleton',
