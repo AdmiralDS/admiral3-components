@@ -27,6 +27,12 @@
     "list": {
       "rawBytes": 4030
     },
+    "progress-header": {
+      "rawBytes": 2489
+    },
+    "progress-page": {
+      "rawBytes": 3151
+    },
     "pulse": {
       "rawBytes": 2252
     },

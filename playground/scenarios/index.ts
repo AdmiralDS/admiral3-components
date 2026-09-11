@@ -8,6 +8,8 @@ import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
+import { progressHeaderScenarios } from './progress-header';
+import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
@@ -31,6 +33,8 @@ export const playgroundScenarios = [
   ...fieldSetScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...progressHeaderScenarios,
+  ...progressPageScenarios,
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
