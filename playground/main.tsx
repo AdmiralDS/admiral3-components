@@ -1,6 +1,12 @@
-import { memo, StrictMode, useState } from 'react';
+import { memo, StrictMode, useMemo, useState } from 'react';
 
-import { themes, themeModes, type ThemeMode } from '@admiral-ds/admiral3-tokens';
+import {
+  buildTheme,
+  cornerRadiusOptions,
+  themeModes,
+  type CornerRadiusBase,
+  type ThemeMode,
+} from '@admiral-ds/admiral3-tokens';
 import { FontsSourceCodePro, FontsVTBGroup } from '@admiral-ds/admiral3-tokens/fonts';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from 'styled-components';
@@ -19,8 +25,11 @@ const scenarioId = new URLSearchParams(window.location.search).get('scenario') ?
 const scenario = playgroundScenarios.find((item) => item.id === scenarioId);
 const cssThemeMode = (mode: ThemeMode) => mode.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 const playgroundThemeStorageKey = 'admiral-playground-theme';
+const playgroundCornerRadiusStorageKey = 'admiral-playground-corner-radius';
 const playgroundSidebarStorageKey = 'admiral-playground-sidebar';
 const isThemeMode = (value: string | null): value is ThemeMode => themeModes.includes(value as ThemeMode);
+const isCornerRadiusBase = (value: string | null): value is CornerRadiusBase =>
+  cornerRadiusOptions.includes(value as CornerRadiusBase);
 
 const getStoredThemeMode = (): ThemeMode => {
   try {
@@ -35,6 +44,24 @@ const getStoredThemeMode = (): ThemeMode => {
 const storeThemeMode = (mode: ThemeMode) => {
   try {
     window.localStorage.setItem(playgroundThemeStorageKey, mode);
+  } catch {
+    // Ignore storage errors so the playground still works in restricted browser contexts.
+  }
+};
+
+const getStoredCornerRadius = (): CornerRadiusBase => {
+  try {
+    const storedCornerRadius = window.localStorage.getItem(playgroundCornerRadiusStorageKey);
+
+    return isCornerRadiusBase(storedCornerRadius) ? storedCornerRadius : '4';
+  } catch {
+    return '4';
+  }
+};
+
+const storeCornerRadius = (cornerRadius: CornerRadiusBase) => {
+  try {
+    window.localStorage.setItem(playgroundCornerRadiusStorageKey, cornerRadius);
   } catch {
     // Ignore storage errors so the playground still works in restricted browser contexts.
   }
@@ -67,11 +94,17 @@ const ScenarioPreview = memo(() => <div className="playground-preview">{scenario
 export const PlaygroundApp = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(getStoredSidebarOpen);
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredThemeMode);
-  const [fallbackTheme] = useState(() => themes[themeMode]);
+  const [cornerRadius, setCornerRadius] = useState<CornerRadiusBase>(getStoredCornerRadius);
+  const fallbackTheme = useMemo(() => buildTheme(themeMode, { cornerRadius }), [cornerRadius, themeMode]);
 
   const handleThemeModeChange = (mode: ThemeMode) => {
     setThemeMode(mode);
     storeThemeMode(mode);
+  };
+
+  const handleCornerRadiusChange = (value: CornerRadiusBase) => {
+    setCornerRadius(value);
+    storeCornerRadius(value);
   };
 
   const handleSidebarToggle = () => {
@@ -85,7 +118,11 @@ export const PlaygroundApp = () => {
 
   return (
     <ThemeProvider theme={fallbackTheme}>
-      <main className="playground-shell" data-admiral-theme={cssThemeMode(themeMode)}>
+      <main
+        className="playground-shell"
+        data-admiral-corner-radius={cornerRadius}
+        data-admiral-theme={cssThemeMode(themeMode)}
+      >
         <header className="playground-header">
           <h1 className="playground-page-title">Internal E2E Playground</h1>
           <div className="playground-header-controls">
@@ -101,6 +138,21 @@ export const PlaygroundApp = () => {
               {themeModes.map((mode) => (
                 <option key={mode} value={mode}>
                   {mode}
+                </option>
+              ))}
+            </select>
+            <label className="playground-theme-label" htmlFor="playground-corner-radius">
+              Corner radius
+            </label>
+            <select
+              className="playground-theme-select"
+              id="playground-corner-radius"
+              onChange={(event) => handleCornerRadiusChange(event.target.value as CornerRadiusBase)}
+              value={cornerRadius}
+            >
+              {cornerRadiusOptions.map((value) => (
+                <option key={value} value={value}>
+                  Radius {value}
                 </option>
               ))}
             </select>
