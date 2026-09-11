@@ -4,12 +4,16 @@ import { ProgressHeader, type ProgressHeaderProps } from '@admiral-ds/admiral3-c
 
 import { ProgressHeaderAnimationTemplate } from './ProgressHeaderAnimation.template';
 import progressHeaderAnimationTemplateRaw from './ProgressHeaderAnimation.template?raw';
+import { ProgressHeaderCustomAppearanceTemplate } from './ProgressHeaderCustomAppearance.template';
+import progressHeaderCustomAppearanceTemplateRaw from './ProgressHeaderCustomAppearance.template?raw';
+import { ProgressHeaderDeterminateTemplate } from './ProgressHeaderDeterminate.template';
+import progressHeaderDeterminateTemplateRaw from './ProgressHeaderDeterminate.template?raw';
 import { ProgressHeaderErrorTemplate } from './ProgressHeaderError.template';
 import progressHeaderErrorTemplateRaw from './ProgressHeaderError.template?raw';
+import { ProgressHeaderIndeterminateTemplate } from './ProgressHeaderIndeterminate.template';
+import progressHeaderIndeterminateTemplateRaw from './ProgressHeaderIndeterminate.template?raw';
 import { ProgressHeaderPlaygroundTemplate } from './ProgressHeaderPlayground.template';
 import progressHeaderPlaygroundTemplateRaw from './ProgressHeaderPlayground.template?raw';
-import { ProgressHeaderStatesTemplate } from './ProgressHeaderStates.template';
-import progressHeaderStatesTemplateRaw from './ProgressHeaderStates.template?raw';
 
 const meta = {
   title: 'Components/ProgressHeader',
@@ -48,6 +52,22 @@ export const Playground: StoryObj<ProgressHeaderProps> = {
   },
 };
 
+export const Determinate: StoryObj<ProgressHeaderProps> = {
+  args: defaultArgs,
+  render: ProgressHeaderDeterminateTemplate,
+  parameters: {
+    docs: { source: { code: progressHeaderDeterminateTemplateRaw } },
+  },
+};
+
+export const Indeterminate: StoryObj<ProgressHeaderProps> = {
+  render: ProgressHeaderIndeterminateTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: { source: { code: progressHeaderIndeterminateTemplateRaw } },
+  },
+};
+
 export const Animation: StoryObj<ProgressHeaderProps> = {
   render: ProgressHeaderAnimationTemplate,
   parameters: {
@@ -56,18 +76,21 @@ export const Animation: StoryObj<ProgressHeaderProps> = {
   },
 };
 
-export const DeterminateAndIndeterminate: StoryObj<ProgressHeaderProps> = {
-  render: ProgressHeaderStatesTemplate,
-  parameters: {
-    controls: { disable: true },
-    docs: { source: { code: progressHeaderStatesTemplateRaw } },
-  },
-};
-
 export const Error: StoryObj<ProgressHeaderProps> = {
   render: ProgressHeaderErrorTemplate,
   parameters: {
     controls: { disable: true },
     docs: { source: { code: progressHeaderErrorTemplateRaw } },
+  },
+};
+
+export const CustomAppearance: StoryObj<ProgressHeaderProps> = {
+  args: defaultArgs,
+  render: ProgressHeaderCustomAppearanceTemplate,
+  parameters: {
+    controls: {
+      exclude: ['appearance'],
+    },
+    docs: { source: { code: progressHeaderCustomAppearanceTemplateRaw } },
   },
 };

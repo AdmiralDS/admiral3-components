@@ -1,10 +1,10 @@
 import { forwardRef } from 'react';
-import type { CSSProperties } from 'react';
 
+import { PROGRESS_HEADER_VALUE_PROPERTY } from './constants';
 import { ProgressHeaderIndicator, StyledProgressHeader } from './style';
 import type { ProgressHeaderProps } from './types';
 
-const progressValueProperty = '--admiral-progress-header-value';
+const DEFAULT_APPEARANCE = 'primary';
 
 const normalizeValue = (value: number) => {
   if (Number.isNaN(value)) return 0;
@@ -12,21 +12,23 @@ const normalizeValue = (value: number) => {
   return Math.min(100, Math.max(0, value));
 };
 
-type ProgressHeaderStyle = CSSProperties & Record<typeof progressValueProperty, number>;
-
 /** Индикатор прогресса загрузки страницы, закреплённый у верхней границы viewport. */
 export const ProgressHeader = forwardRef<HTMLDivElement, ProgressHeaderProps>(
-  ({ value, error = false, style, ...props }, ref) => {
+  ({ value, error = false, appearance = DEFAULT_APPEARANCE, style, ...props }, ref) => {
     const isIndeterminate = value === undefined;
     const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
     const progressStyle = {
       ...style,
-      [progressValueProperty]: normalizedValue / 100,
-    } as ProgressHeaderStyle;
+      [PROGRESS_HEADER_VALUE_PROPERTY]: normalizedValue / 100,
+    };
+    const isCustomAppearance = typeof appearance === 'object';
+    const colorConfig = isCustomAppearance ? appearance : undefined;
 
     return (
       <StyledProgressHeader
         ref={ref}
+        $colorConfig={colorConfig}
+        data-appearance={isCustomAppearance ? 'custom' : appearance}
         style={progressStyle}
         role="progressbar"
         aria-valuemin={0}
@@ -34,7 +36,12 @@ export const ProgressHeader = forwardRef<HTMLDivElement, ProgressHeaderProps>(
         aria-valuenow={isIndeterminate ? undefined : normalizedValue}
         {...props}
       >
-        <ProgressHeaderIndicator $error={error} $indeterminate={isIndeterminate} aria-hidden="true" />
+        <ProgressHeaderIndicator
+          $error={error}
+          $indeterminate={isIndeterminate}
+          $colorConfig={colorConfig}
+          aria-hidden="true"
+        />
       </StyledProgressHeader>
     );
   },

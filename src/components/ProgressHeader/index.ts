@@ -1,2 +1,2 @@
 export { ProgressHeader } from './ProgressHeader';
-export type { ProgressHeaderProps } from './types';
+export type { ProgressHeaderAppearance, ProgressHeaderColorConfig, ProgressHeaderProps } from './types';
