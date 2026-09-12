@@ -2,8 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Tooltip, type TooltipProps } from '@admiral-ds/admiral3-components';
 
+import { TooltipBaseTemplate } from './TooltipBase.template';
+import tooltipBaseTemplateRaw from './TooltipBase.template?raw';
+import { TooltipCustomTemplate } from './TooltipCustom.template';
+import tooltipCustomTemplateRaw from './TooltipCustom.template?raw';
+import { TooltipDelayTemplate } from './TooltipDelay.template';
+import tooltipDelayTemplateRaw from './TooltipDelay.template?raw';
 import { TooltipPlaygroundTemplate } from './TooltipPlayground.template';
 import tooltipPlaygroundTemplateRaw from './TooltipPlayground.template?raw';
+import { TooltipRefTemplate } from './TooltipRef.template';
+import tooltipRefTemplateRaw from './TooltipRef.template?raw';
 import { TOOLTIP_DIMENSIONS } from '../constants';
 
 const meta = {
@@ -48,4 +56,40 @@ export const Playground: StoryObj<TooltipProps> = {
       },
     },
   },
+};
+
+export const Base: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipBaseTemplate,
+  parameters: {
+    docs: { source: { code: tooltipBaseTemplateRaw } },
+  },
+  name: 'Базовый пример',
+};
+
+export const Delay: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipDelayTemplate,
+  parameters: {
+    docs: { source: { code: tooltipDelayTemplateRaw } },
+  },
+  name: 'Пример с задержкой в появлении',
+};
+
+export const TooltipRef: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipRefTemplate,
+  parameters: {
+    docs: { source: { code: tooltipRefTemplateRaw } },
+  },
+  name: 'Пример с получением ref тултипа',
+};
+
+export const CustomContent: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipCustomTemplate,
+  parameters: {
+    docs: { source: { code: tooltipCustomTemplateRaw } },
+  },
+  name: 'Пример с кастомным наполнением тултипа',
 };
