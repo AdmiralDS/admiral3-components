@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { TOOLTIP_DIMENSION_PARAMETERS } from './constants';
 import type { StyledTooltipProps } from './types';
 import { cssToken } from '../../theme/cssToken';
-import { PositionInPortal } from '../_internal/Portal';
+import { Portal } from '../_internal/Portal';
 
 const backgroundColor = cssToken(
   '--admiral-color-neutral-base-inverted-rest',
@@ -55,7 +55,7 @@ export const FakeTarget = styled.div`
   flex: 0 0 auto;
 `;
 
-export const Portal = styled(PositionInPortal)<{ $flexDirection?: CSSProperties['flexDirection'] }>`
+export const StyledPortal = styled(Portal)<{ $flexDirection?: CSSProperties['flexDirection'] }>`
   display: flex;
   flex-wrap: nowrap;
   ${({ $flexDirection }) => ($flexDirection ? `flex-direction: ${$flexDirection};` : '')}

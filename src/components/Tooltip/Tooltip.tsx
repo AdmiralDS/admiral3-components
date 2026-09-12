@@ -1,36 +1,12 @@
 import type { CSSProperties } from 'react';
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { FakeTarget, Portal, TooltipContainer, TooltipWrapper } from './style';
+import { FakeTarget, StyledPortal, TooltipContainer, TooltipWrapper } from './style';
 import type { TooltipProps } from './types';
 import type { InternalTooltipPositionType } from './utils';
 import { getTooltipDirection } from './utils';
+import { getScrollbarSize } from '../../utils/getScrollbarSize';
 import { refSetter } from '../../utils/refSetter';
-
-/**
- * Обычно ширину полосы прокрутки можно вычислить с помощью offsetWidth - clientWidth. Но есть исключение:
- * если на Mac в настройках стоит System Preferences -> General -> Show scroll bars: Automatically based on mouse or trackpad,
- * то полоса прокрутки будет выводиться поверх всего layoutа и результатом вычислений offsetWidth - clientWidth будет 0.
- * Поэтому, если getScrollbarSize будет возвращать 0, буду вместо 0 брать стандартную для Mac ширину полосы прокрутки (16 пикселей)
- * https://gist.github.com/martynchamberlin/6aaf8a45b36907e9f1e21a28889f6b0a
- */
-const getScrollbarSize = () => {
-  let scrollBarWidth = 0;
-  const scrollbox = document.createElement('div');
-  scrollbox.textContent = 'scrollbar measurement';
-  scrollbox.style.overflow = 'scroll';
-  scrollbox.style.fontSize = '14px';
-  scrollbox.style.height = '50px';
-  scrollbox.style.maxHeight = '50px';
-  scrollbox.style.width = '100px';
-  scrollbox.style.position = 'absolute';
-  scrollbox.style.top = '-100000px';
-  scrollbox.style.left = '-100000px';
-  document.body.appendChild(scrollbox);
-  scrollBarWidth = scrollbox.offsetWidth - scrollbox.clientWidth;
-  document.body.removeChild(scrollbox);
-  return scrollBarWidth || 16;
-};
 
 export const TOOLTIP_DELAY = 1500;
 
@@ -46,6 +22,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     const [portalFlexDirection, setPortalFlexDirection] = useState<CSSProperties['flexDirection']>();
     const [portalFullWidth, setPortalFullWidth] = useState(false);
     const [recalculation, startRecalculation] = useState({});
+    const targetDocument = targetElement?.ownerDocument;
 
     const manageTooltip = useCallback(
       (scrollbarSize: number) => {
@@ -101,10 +78,10 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     );
 
     useEffect(() => {
-      const scrollbarSize = getScrollbarSize();
+      const scrollbarSize = getScrollbarSize(targetDocument);
       const animationFrame = requestAnimationFrame(() => manageTooltip(scrollbarSize));
       return () => cancelAnimationFrame(animationFrame);
-    }, [content, manageTooltip, recalculation]);
+    }, [content, manageTooltip, recalculation, targetDocument]);
 
     // During fonts loading tooltip size can be changed and tooltip direction should be recalculated
     useLayoutEffect(() => {
@@ -136,14 +113,18 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     }, [emptyContent]);
 
     return emptyContent ? null : (
-      <Portal targetElement={targetElement} $flexDirection={portalFlexDirection} fullContainerWidth={portalFullWidth}>
+      <StyledPortal
+        targetElement={targetElement}
+        $flexDirection={portalFlexDirection}
+        fullContainerWidth={portalFullWidth}
+      >
         <FakeTarget />
         <TooltipWrapper ref={refSetter(ref, tooltipElementRef)}>
           <TooltipContainer role="tooltip" $dimension={dimension} {...props}>
             {content}
           </TooltipContainer>
         </TooltipWrapper>
-      </Portal>
+      </StyledPortal>
     );
   },
 );

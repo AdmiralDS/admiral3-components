@@ -4,16 +4,16 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
-import observeRect from './observeRect';
+import { observeRect } from '../../../utils/observeRect';
 
-const PositionedPortalContainer = styled.div`
+const PortalContainer = styled.div`
   pointer-events: none;
   position: fixed;
   overflow: visible;
   z-index: 100;
 `;
 
-export interface PositionInPortalProps extends React.ComponentProps<'div'> {
+export interface PortalProps extends React.ComponentProps<'div'> {
   /** Элемент, относительно которого позиционируется портал */
   targetElement: Element | null;
 
@@ -36,27 +36,25 @@ export interface PositionInPortalProps extends React.ComponentProps<'div'> {
  * transform, perspective, или filter отличных от none. Также рекомендуется размещать контейнер портала в самом низу dom-дерева,
  * чтобы избежать возможных конфликтов стилей.
  */
-export const PositionInPortal = ({
+export const Portal = ({
   targetElement,
   rootRef,
   fullContainerWidth,
   ...props
-}: PropsWithChildren<PositionInPortalProps>): ReactPortal => {
-  const positionedPortalContainerRef = useRef<HTMLDivElement>(null);
+}: PropsWithChildren<PortalProps>): ReactPortal => {
+  const portalContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const node = positionedPortalContainerRef.current;
+    const node = portalContainerRef.current;
     const targetNode = targetElement;
     if (node && targetNode) {
       const observer = observeRect(targetNode, (rect) => {
-        if (rect) {
-          const { x, y, height, width } = rect;
-          const { style } = node;
-          style.top = `${y}px`;
-          style.left = fullContainerWidth ? '0px' : `${x}px`;
-          style.height = `${height}px`;
-          style.width = fullContainerWidth ? '100%' : `${width}px`;
-        }
+        const { x, y, height, width } = rect;
+        const { style } = node;
+        style.top = `${y}px`;
+        style.left = fullContainerWidth ? '0px' : `${x}px`;
+        style.height = `${height}px`;
+        style.width = fullContainerWidth ? '100%' : `${width}px`;
       });
       observer.observe();
       return () => {
@@ -65,5 +63,5 @@ export const PositionInPortal = ({
     }
   }, [targetElement, fullContainerWidth]);
 
-  return createPortal(<PositionedPortalContainer ref={positionedPortalContainerRef} {...props} />, document.body);
+  return createPortal(<PortalContainer ref={portalContainerRef} {...props} />, document.body);
 };

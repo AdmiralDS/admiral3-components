@@ -1,1 +1,1 @@
-export { PositionInPortal } from './Portal';
+export * from './Portal';
