@@ -10,8 +10,8 @@ import { getTooltipDirection } from './utils';
 
 vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: () => 16 }));
 
-vi.mock('../_internal/Portal', () => ({
-  PositionInPortal: forwardRef<
+vi.mock('../_internal/PositionedPortal', () => ({
+  PositionedPortal: forwardRef<
     HTMLDivElement,
     React.ComponentProps<'div'> & { targetElement: Element | null; fullContainerWidth?: boolean }
   >(({ targetElement: _targetElement, fullContainerWidth, ...props }, ref) => (

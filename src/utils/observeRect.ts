@@ -46,21 +46,21 @@ const rectChanged = (previousRect: Rect | undefined, nextRect: Rect) =>
   !previousRect || RECT_KEYS.some((key) => previousRect[key] !== nextRect[key]);
 
 /**
- * Наблюдает за геометрией элемента через requestAnimationFrame.
+ * Observes the element's geometry using requestAnimationFrame.
  *
- * observe() и unobserve() идемпотентны.
- * Callback может синхронно вызвать unobserve(); в этом случае следующий
- * кадр не будет запланирован.
+ * observe() and unobserve() are idempotent.
+ * The callback may call unobserve() synchronously; in that case, the next
+ * frame will not be scheduled.
  *
- * Использовать внутри useEffect или useLayoutEffect и обязательно
- * вызывать unobserve() в cleanup.
+ * Use inside useEffect or useLayoutEffect, and always call unobserve()
+ * during cleanup.
  */
 export function observeRect(node: Element, callback: (rect: Rect) => void): RectObserver {
-  // идентификатор уже запрошенного, но ещё не выполненного RAF
+  // ID of the requested RAF callback that has not run yet
   let animationFrameId: number | undefined;
-  // последний измеренный Rect, переданный в callback
+  // Last measured Rect passed to the callback
   let previousRect: Rect | undefined;
-  // логический признак того, должно ли наблюдение продолжаться
+  // Indicates whether observation should continue
   let isObserving = false;
 
   const requestNextFrame = () => {
