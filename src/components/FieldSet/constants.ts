@@ -1,9 +1,9 @@
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import type { CSSObject } from 'styled-components';
 
-import { INPUT_DIMENSIONS } from '../_internal/InputAtoms/constants';
+import { SELECTION_CONTROL_INPUT_DIMENSIONS } from '../_internal/InputAtoms/constants';
 
-export const FIELDSET_DIMENSIONS = INPUT_DIMENSIONS;
+export const FIELDSET_DIMENSIONS = SELECTION_CONTROL_INPUT_DIMENSIONS;
 export const FIELDSET_ORIENTATIONS = ['horizontal', 'vertical'] as const;
 
 export const FIELDSET_DIMENSION_PARAMETERS: Record<
