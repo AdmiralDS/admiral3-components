@@ -5,9 +5,12 @@ import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
+import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
+import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
+import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
@@ -36,8 +39,21 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <FieldSetVisualTemplate />,
   },
+  { id: VISUAL_SCENARIO_IDS.input, title: 'Visual / Input', visual: true, render: () => <InputVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.progressHeader,
+    title: 'Visual / ProgressHeader',
+    visual: true,
+    render: () => <ProgressHeaderVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.progressPage,
+    title: 'Visual / ProgressPage',
+    visual: true,
+    render: () => <ProgressPageVisualTemplate />,
+  },
   { id: VISUAL_SCENARIO_IDS.pulse, title: 'Visual / Pulse', visual: true, render: () => <PulseVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.radioButton,

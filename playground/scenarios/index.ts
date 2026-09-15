@@ -6,8 +6,11 @@ import { buttonScenarios } from './button';
 import { checkBoxScenarios } from './check-box';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
+import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
+import { progressHeaderScenarios } from './progress-header';
+import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
@@ -29,8 +32,11 @@ export const playgroundScenarios = [
   ...checkBoxScenarios,
   ...dividerScenarios,
   ...fieldSetScenarios,
+  ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...progressHeaderScenarios,
+  ...progressPageScenarios,
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,

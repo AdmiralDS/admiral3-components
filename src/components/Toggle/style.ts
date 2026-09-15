@@ -4,7 +4,7 @@ import { TOGGLE_DIMENSION_PARAMETERS } from './constants';
 import type { StyledToggleProps } from './types';
 import { durationShort4, easingAccelerateStandard, hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
-import { NativeInput, SelectionControlLabelContent } from '../_internal/InputAtoms';
+import { SelectionControlLabelContent, SelectionControlNativeInput } from '../_internal/InputAtoms';
 
 const backgroundRest = cssToken(
   '--admiral-color-neutral-base-invisible-rest',
@@ -102,34 +102,34 @@ export const Control = styled.span`
     margin-block: ${TOGGLE_DIMENSION_PARAMETERS.xs.controlMarginBlock}px;
   }
 
-  ${NativeInput}:hover + & {
+  ${SelectionControlNativeInput}:hover + & {
     border-color: ${borderHover};
     background: ${backgroundHover};
   }
-  ${NativeInput}:active + & {
+  ${SelectionControlNativeInput}:active + & {
     background: ${backgroundPress};
   }
-  ${NativeInput}:checked + & {
+  ${SelectionControlNativeInput}:checked + & {
     border-color: ${selectedRest};
     background: ${selectedRest};
   }
-  ${NativeInput}:checked:hover + & {
+  ${SelectionControlNativeInput}:checked:hover + & {
     border-color: ${selectedHover};
     background: ${selectedHover};
   }
-  ${NativeInput}:checked:active + & {
+  ${SelectionControlNativeInput}:checked:active + & {
     border-color: ${selectedPress};
     background: ${selectedPress};
   }
-  ${NativeInput}:disabled + &, ${NativeInput}[readonly] + & {
+  ${SelectionControlNativeInput}:disabled + &, ${SelectionControlNativeInput}[readonly] + & {
     border-color: ${borderHover};
     background: ${backgroundDisabled};
   }
-  ${NativeInput}:disabled:checked + &, ${NativeInput}[readonly]:checked + & {
+  ${SelectionControlNativeInput}:disabled:checked + &, ${SelectionControlNativeInput}[readonly]:checked + & {
     border-color: ${selectedDisabled};
     background: ${selectedDisabled};
   }
-  ${NativeInput}:focus-visible + & {
+  ${SelectionControlNativeInput}:focus-visible + & {
     outline: 2px solid ${focusColor};
     outline-offset: 2px;
   }
@@ -154,22 +154,22 @@ export const Thumb = styled.span`
     height: ${TOGGLE_DIMENSION_PARAMETERS.s.thumbSize}px;
   }
 
-  ${NativeInput}:checked + ${Control} & {
+  ${SelectionControlNativeInput}:checked + ${Control} & {
     transform: translate(${TOGGLE_DIMENSION_PARAMETERS.m.thumbTranslate}px, -50%);
     background: ${thumbActive};
   }
-  ${StyledToggle}[data-dimension='s'] ${NativeInput}:checked + ${Control} & {
+  ${StyledToggle}[data-dimension='s'] ${SelectionControlNativeInput}:checked + ${Control} & {
     transform: translate(${TOGGLE_DIMENSION_PARAMETERS.s.thumbTranslate}px, -50%);
   }
-  ${StyledToggle}[data-dimension='xs'] ${NativeInput}:checked + ${Control} & {
+  ${StyledToggle}[data-dimension='xs'] ${SelectionControlNativeInput}:checked + ${Control} & {
     transform: translate(${TOGGLE_DIMENSION_PARAMETERS.xs.thumbTranslate}px, -50%);
   }
 
-  ${NativeInput}:is(:disabled, [readonly]) + ${Control} & {
+  ${SelectionControlNativeInput}:is(:disabled, [readonly]) + ${Control} & {
     background: ${thumbDisabled};
   }
 
-  ${NativeInput}:is(:disabled, [readonly]):checked + ${Control} & {
+  ${SelectionControlNativeInput}:is(:disabled, [readonly]):checked + ${Control} & {
     background: ${thumbDisabledActive};
   }
 `;
