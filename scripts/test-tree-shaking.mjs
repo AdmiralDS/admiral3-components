@@ -8,6 +8,8 @@ import { gzipSync } from 'node:zlib';
 import ts from 'typescript';
 import { build } from 'vite';
 
+import { execNpmSync } from './utils/run-npm.mjs';
+
 // Все пути строятся относительно самого скрипта, а не текущей рабочей директории.
 // Благодаря этому проверку можно запускать не только из корня репозитория.
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -57,7 +59,7 @@ const installPackedLibrary = () => {
     'utf8',
   );
 
-  const packOutput = execFileSync('npm', ['pack', '--json', '--pack-destination', consumerRoot], {
+  const packOutput = execNpmSync(['pack', '--json', '--pack-destination', consumerRoot], {
     cwd: rootDir,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -68,8 +70,7 @@ const installPackedLibrary = () => {
     throw new Error('npm pack did not return the generated tarball name.');
   }
 
-  execFileSync(
-    'npm',
+  execNpmSync(
     [
       'install',
       '--ignore-scripts',
@@ -304,9 +305,12 @@ try {
   // Сначала проверяется TypeScript-контракт всех component subpaths. execFileSync
   // наследует stdout/stderr, поэтому диагностика tsc сразу видна пользователю.
   const typeFixture = createTypeFixture();
+
+  const tscCli = join(rootDir, 'node_modules', 'typescript', 'bin', 'tsc');
   execFileSync(
-    join(rootDir, 'node_modules', 'typescript', 'bin', 'tsc'),
+    process.execPath,
     [
+      tscCli,
       '--noEmit',
       '--skipLibCheck',
       '--module',
