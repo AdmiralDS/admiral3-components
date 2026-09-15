@@ -34,6 +34,10 @@
       "types": "./dist/components/FieldSet/index.d.ts",
       "import": "./dist/components/FieldSet/index.js"
     },
+    "./form-item": {
+      "types": "./dist/components/FormItem/index.d.ts",
+      "import": "./dist/components/FormItem/index.js"
+    },
     "./helper-components": {
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"

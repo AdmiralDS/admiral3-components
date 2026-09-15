@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { Controller, useForm } from 'react-hook-form';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {
   Button,
   CheckBox,
+  FormItem,
   Input,
   InputIconPasswordButton,
   RadioButton,
@@ -82,6 +83,33 @@ const ErrorText = styled.span`
   color: var(--admiral-color-error-text-1-rest);
 `;
 
+type InputFieldProps = {
+  children: ReactNode;
+  error?: string;
+  id: string;
+  label: string;
+  withFormItem: boolean;
+};
+
+const InputField = ({ children, error, id, label, withFormItem }: InputFieldProps) =>
+  withFormItem ? (
+    <FormItem
+      label={label}
+      htmlFor={id}
+      required
+      status={error ? 'error' : undefined}
+      description={error && <span id={`${id}-error`}>{error}</span>}
+    >
+      {children}
+    </FormItem>
+  ) : (
+    <Field>
+      <Label htmlFor={id}>{label}</Label>
+      {children}
+      {error && <ErrorText id={`${id}-error`}>{error}</ErrorText>}
+    </Field>
+  );
+
 const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -100,7 +128,7 @@ const Result = styled.pre`
   background-color: var(--admiral-color-neutral-base-2-rest);
 `;
 
-export const ReactHookFormTemplate = () => {
+export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?: boolean }) => {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const {
@@ -126,8 +154,7 @@ export const ReactHookFormTemplate = () => {
           через Controller.
         </Description>
 
-        <Field>
-          <Label htmlFor="rhf-name">Имя</Label>
+        <InputField id="rhf-name" label="Имя" error={errors.name?.message} withFormItem={withFormItem}>
           <Input
             id="rhf-name"
             type="text"
@@ -139,11 +166,9 @@ export const ReactHookFormTemplate = () => {
             aria-describedby={errors.name ? 'rhf-name-error' : undefined}
             {...register('name', { required: 'Введите имя' })}
           />
-          {errors.name && <ErrorText id="rhf-name-error">{errors.name.message}</ErrorText>}
-        </Field>
+        </InputField>
 
-        <Field>
-          <Label htmlFor="rhf-password">Пароль</Label>
+        <InputField id="rhf-password" label="Пароль" error={errors.password?.message} withFormItem={withFormItem}>
           <Input
             id="rhf-password"
             type={passwordVisible ? 'text' : 'password'}
@@ -165,11 +190,9 @@ export const ReactHookFormTemplate = () => {
               minLength: { value: 8, message: 'Пароль должен содержать не менее 8 символов' },
             })}
           />
-          {errors.password && <ErrorText id="rhf-password-error">{errors.password.message}</ErrorText>}
-        </Field>
+        </InputField>
 
-        <Field>
-          <Label htmlFor="rhf-email">Электронная почта</Label>
+        <InputField id="rhf-email" label="Электронная почта" error={errors.email?.message} withFormItem={withFormItem}>
           <Input
             id="rhf-email"
             type="email"
@@ -184,11 +207,9 @@ export const ReactHookFormTemplate = () => {
               pattern: { value: /^\S+@\S+\.\S+$/, message: 'Введите корректный адрес электронной почты' },
             })}
           />
-          {errors.email && <ErrorText id="rhf-email-error">{errors.email.message}</ErrorText>}
-        </Field>
+        </InputField>
 
-        <Field>
-          <Label htmlFor="rhf-website">Сайт</Label>
+        <InputField id="rhf-website" label="Сайт" error={errors.website?.message} withFormItem={withFormItem}>
           <Input
             id="rhf-website"
             type="url"
@@ -203,8 +224,7 @@ export const ReactHookFormTemplate = () => {
               pattern: { value: /^https?:\/\/.+/, message: 'Адрес должен начинаться с http:// или https://' },
             })}
           />
-          {errors.website && <ErrorText id="rhf-website-error">{errors.website.message}</ErrorText>}
-        </Field>
+        </InputField>
 
         <Controller
           name="delivery"

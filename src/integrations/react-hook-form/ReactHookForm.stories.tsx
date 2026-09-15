@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Интеграция Input, RadioButton, CheckBox и Toggle с React Hook Form. Пример включает все поддерживаемые типы Input, валидацию, отправку и сброс формы.',
+          'Интеграция Input, RadioButton, CheckBox и Toggle с React Hook Form. Текстовые поля показаны с обычными подписями и в обёртке FormItem; оба варианта включают валидацию, отправку и сброс формы.',
       },
     },
   },
@@ -23,6 +23,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Form: Story = {
+  name: 'Без FormItem',
+  args: { withFormItem: false },
+  parameters: {
+    docs: {
+      source: {
+        code: reactHookFormTemplateRaw,
+      },
+    },
+  },
+};
+
+export const FormWithFormItem: Story = {
+  name: 'С FormItem',
+  args: { withFormItem: true },
   parameters: {
     docs: {
       source: {
