@@ -72,6 +72,18 @@ import { skeletonAnimationMixin } from '@admiral-ds/admiral3-components/skeleton
 `@admiral-ds/admiral3-tokens`. CSS-токены удобны для переключения темы через атрибуты и CSS, а `ThemeProvider` — для
 React-приложений, где тема управляется через контекст `styled-components`.
 
+Базу скруглений можно выбрать независимо от цветовой темы через `buildTheme`. Компоненты используют семантические
+группы `theme.radius.small`, `theme.radius.medium` и `theme.radius.large`:
+
+```tsx
+import { buildTheme } from '@admiral-ds/admiral3-tokens';
+import { ThemeProvider } from 'styled-components';
+
+const theme = buildTheme('light', { cornerRadius: '8' });
+
+export const App = () => <ThemeProvider theme={theme}>...</ThemeProvider>;
+```
+
 ## Экспорт
 
 Публичный root API и явные component entrypoints поддерживают tree shaking.

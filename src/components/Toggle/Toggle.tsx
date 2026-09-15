@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 
 import { Control, LabelContent, StyledToggle, Thumb } from './style';
 import type { ToggleProps } from './types';
-import { NativeInput, SelectionControlExtraText } from '../_internal/InputAtoms';
+import { SelectionControlExtraText, SelectionControlNativeInput } from '../_internal/InputAtoms';
 
 /** Переключатель между двумя равнозначными состояниями интерфейса. */
 export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
@@ -42,7 +42,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         $width={width}
         data-dimension={dimension}
       >
-        <NativeInput
+        <SelectionControlNativeInput
           ref={ref}
           type="checkbox"
           role="switch"

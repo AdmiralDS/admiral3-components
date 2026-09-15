@@ -8,7 +8,7 @@ import { CheckBox } from '@admiral-ds/admiral3-components';
 const Table = styled.table`
   width: min(100%, 760px);
   border: 1px solid var(--admiral-color-neutral-stroke-subtle-rest);
-  border-radius: var(--admiral-radius-by-base-4-medium);
+  border-radius: var(--admiral-radius-medium);
   border-spacing: 0;
   background: var(--admiral-color-neutral-base-1-rest);
   color: var(--admiral-color-neutral-text-1-rest);

@@ -4,7 +4,7 @@ import { CHECK_BOX_DIMENSION_PARAMETERS } from './constants';
 import type { StyledCheckBoxProps } from './types';
 import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
-import { NativeInput } from '../_internal/InputAtoms';
+import { SelectionControlNativeInput } from '../_internal/InputAtoms';
 
 const backgroundRest = cssToken('--admiral-color-neutral-base-1-rest', (theme) => theme.color.neutral.base._1.rest);
 const backgroundHover = cssToken('--admiral-color-neutral-base-1-hover', (theme) => theme.color.neutral.base._1.hover);
@@ -33,9 +33,7 @@ const iconColor = cssToken(
   '--admiral-color-neutral-text-static-white-1',
   (theme) => theme.color.neutral.text.staticWhite._1,
 );
-const borderRadius = cssToken('--admiral-radius-by-base-4-small', (theme) => theme.radius.byBase['4'].small);
-
-// TODO При разработке CheckBoxGroup рассмотреть возможность отказа от fieldset[data-dimension], fieldset:disabled стилизации
+const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 
 export const StyledCheckBox = styled.label.attrs<
   StyledCheckBoxProps & {
@@ -54,21 +52,14 @@ export const StyledCheckBox = styled.label.attrs<
   gap: ${CHECK_BOX_DIMENSION_PARAMETERS.m.gap}px;
   ${CHECK_BOX_DIMENSION_PARAMETERS.m.typography}
 
-  &[data-dimension='s'],
-  fieldset[data-dimension='s'] & {
+  &[data-dimension='s'] {
     gap: ${CHECK_BOX_DIMENSION_PARAMETERS.s.gap}px;
     ${CHECK_BOX_DIMENSION_PARAMETERS.s.typography}
   }
 
-  &[data-dimension='xs'],
-  fieldset[data-dimension='xs'] & {
+  &[data-dimension='xs'] {
     gap: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.gap}px;
     ${CHECK_BOX_DIMENSION_PARAMETERS.xs.typography}
-  }
-
-  fieldset:disabled & {
-    color: ${textDisabled};
-    cursor: not-allowed;
   }
 `;
 
@@ -91,15 +82,13 @@ export const Control = styled.span<{ $error: boolean }>`
   height: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlSize}px;
   margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.m.controlMarginBlock}px;
 
-  ${StyledCheckBox}[data-dimension='s'] &,
-  fieldset[data-dimension='s'] & {
+  ${StyledCheckBox}[data-dimension='s'] & {
     width: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlSize}px;
     height: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlSize}px;
     margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.s.controlMarginBlock}px;
   }
 
-  ${StyledCheckBox}[data-dimension='xs'] &,
-  fieldset[data-dimension='xs'] & {
+  ${StyledCheckBox}[data-dimension='xs'] & {
     width: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlSize}px;
     height: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlSize}px;
     margin-block: ${CHECK_BOX_DIMENSION_PARAMETERS.xs.controlMarginBlock}px;
@@ -111,8 +100,8 @@ export const Control = styled.span<{ $error: boolean }>`
     overflow: visible;
   }
 
-  ${NativeInput}:checked + &,
-  ${NativeInput}:indeterminate + & {
+  ${SelectionControlNativeInput}:checked + &,
+  ${SelectionControlNativeInput}:indeterminate + & {
     border-color: transparent;
     background: ${selectedRest};
 
@@ -121,33 +110,33 @@ export const Control = styled.span<{ $error: boolean }>`
     }
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):hover + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):hover + & {
     background: ${backgroundHover};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):hover + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):hover + & {
     background: ${selectedHover};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):active + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):active + & {
     background: ${backgroundPress};
   }
 
-  ${NativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):active + & {
+  ${SelectionControlNativeInput}:not(:disabled):not([data-read-only]):is(:checked, :indeterminate):active + & {
     background: ${selectedPress};
   }
 
-  ${NativeInput}:is(:disabled, [data-read-only]) + & {
+  ${SelectionControlNativeInput}:is(:disabled, [data-read-only]) + & {
     border-color: ${borderDisabled};
     background: ${backgroundDisabled};
   }
 
-  ${NativeInput}:is(:disabled, [data-read-only]):is(:checked, :indeterminate) + & {
+  ${SelectionControlNativeInput}:is(:disabled, [data-read-only]):is(:checked, :indeterminate) + & {
     border-color: transparent;
     background: ${selectedDisabled};
   }
 
-  ${NativeInput}:focus-visible + & {
+  ${SelectionControlNativeInput}:focus-visible + & {
     outline: 2px solid ${focusColor};
     outline-offset: 2px;
   }

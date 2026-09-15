@@ -34,9 +34,17 @@
       "types": "./dist/components/Divider/index.d.ts",
       "import": "./dist/components/Divider/index.js"
     },
+    "./field-set": {
+      "types": "./dist/components/FieldSet/index.d.ts",
+      "import": "./dist/components/FieldSet/index.js"
+    },
     "./helper-components": {
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
+    },
+    "./input": {
+      "types": "./dist/components/Input/index.d.ts",
+      "import": "./dist/components/Input/index.js"
     },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
@@ -45,6 +53,14 @@
     "./list": {
       "types": "./dist/components/List/index.d.ts",
       "import": "./dist/components/List/index.js"
+    },
+    "./progress-header": {
+      "types": "./dist/components/ProgressHeader/index.d.ts",
+      "import": "./dist/components/ProgressHeader/index.js"
+    },
+    "./progress-page": {
+      "types": "./dist/components/ProgressPage/index.d.ts",
+      "import": "./dist/components/ProgressPage/index.js"
     },
     "./pulse": {
       "types": "./dist/components/Pulse/index.d.ts",
@@ -113,22 +129,25 @@
   },
   "peerDependencies": {
     "@admiral-ds/admiral3-icons": "~0.0.3",
-    "@admiral-ds/admiral3-tokens": "~0.0.6",
+    "@admiral-ds/admiral3-tokens": "~0.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "styled-components": "^6.4.1"
   },
   "devDependencies": {
     "@admiral-ds/admiral3-icons": "~0.0.3",
-    "@admiral-ds/admiral3-tokens": "~0.0.6",
+    "@admiral-ds/admiral3-tokens": "~0.1.0",
     "@emnapi/core": "^1.10.0",
     "@emnapi/runtime": "^1.10.0",
     "@eslint/js": "^9.39.4",
+    "@maskito/core": "^5.4.0",
+    "@maskito/kit": "^5.4.0",
+    "@maskito/react": "^5.4.0",
     "@playwright/test": "^1.60.0",
-    "@storybook/addon-a11y": "^10.3.3",
-    "@storybook/addon-docs": "^10.3.3",
-    "@storybook/addon-themes": "^10.3.3",
-    "@storybook/react-vite": "^10.3.3",
+    "@storybook/addon-a11y": "^10.6.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/addon-themes": "^10.6.0",
+    "@storybook/react-vite": "^10.6.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^24.13.2",
@@ -143,14 +162,15 @@
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
-    "eslint-plugin-storybook": "^10.3.3",
+    "eslint-plugin-storybook": "^10.6.0",
     "generate-react-cli": "^11.0.4",
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
     "prettier": "3.8.1",
+    "react-hook-form": "^7.87.0",
     "serve": "^14.2.5",
     "standard-version": "^9.5.0",
-    "storybook": "^10.3.3",
+    "storybook": "^10.6.0",
     "styled-components": "^6.4.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",

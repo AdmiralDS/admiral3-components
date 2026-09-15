@@ -31,7 +31,9 @@ const getBaselineNames = (scenarioId: string, themeMode: string) => {
 
 const registerSnapshotTargets = async (page: Page, scenarioId: string, themeMode: string) => {
   const snapshotNames: string[] = [];
-  const sections = page.locator('.playground-preview section');
+  const sections = page.locator(
+    `.playground-preview section:not([data-visual-theme]), .playground-preview section[data-visual-theme~="${themeMode}"]`,
+  );
   const sectionCount = await sections.count();
 
   expect(sectionCount).toBeGreaterThan(0);

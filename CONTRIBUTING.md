@@ -79,8 +79,15 @@ Animation-токены с CSS custom property fallback собраны в `src/th
 меняются между интерактивными состояниями. При появлении других повторяющихся сочетаний duration и easing этот файл можно
 расширять новыми составными переменными по аналогии с `hoverPressLeaveTransition`.
 
+Для скруглений компонент выбирает только семантическую группу `theme.radius.small`, `theme.radius.medium` или
+`theme.radius.large` и matching CSS variable `--admiral-radius-small|medium|large`. Конкретную corner-radius base задаёт
+тема; прямое обращение компонента к `theme.radius.byBase` не используется.
+
 Общие внутренние styled-примитивы компонентов размещаются в `src/components/_internal`. Они импортируются только
 реализациями компонентов и не добавляются в component barrels, root API или `package.json#exports`.
+
+Для опциональных `ReactNode`-слотов не создавайте layout-обёртки под `false`, `true`, nullish-значения и пустую строку.
+При проверке содержимого сохраняйте валидные отображаемые значения, включая число `0` и непустые строки.
 
 Публичные вспомогательные компоненты размещаются в `src/components/HelperComponents`. `SelectionControlInformer`
 используется во внешней композиции sibling-элементом относительно `label`: его hover-зона не должна входить в область
@@ -300,6 +307,9 @@ npm run test:bundle
 Дефолтные DOM- и accessibility-атрибуты задавайте до spread пользовательских props, чтобы потребитель мог их
 переопределить. После `{...props}` оставляйте только внутренние props, изменение которых нарушит контракт или поведение
 компонента.
+
+Props внутренних интерактивных элементов ограничивайте безопасными для публичной настройки атрибутами. Не открывайте
+потребителю `type`, обработчик основного действия и содержимое элемента, если ими можно нарушить поведение компонента.
 
 Обязательный паттерн для boolean `data-*`-маркеров: добавляйте атрибут только для активного состояния,
 например `data-disabled={disabled ? '' : undefined}`. В стилях проверяйте его по наличию — `[data-disabled]`.
@@ -544,6 +554,7 @@ src/components/ComponentName/stories/ComponentNameDirty.template.tsx
 6. Не каждый `*.template.tsx` обязан попадать в Storybook. Internal-only templates допустимы, если они используются только в playground/e2e.
 7. Общие контейнеры и layout helpers для templates хранятся в `src/components/stories`. Используйте их, если layout должен одинаково работать в Storybook и internal playground.
 8. Глобальные decorators и styles в `.storybook` используются только для Storybook shell: theme, fonts, docs/canvas padding и базовое выравнивание. Layout, который является частью demo-кейса или e2e-сценария, должен оставаться внутри template/helper.
+9. Сквозные примеры с несколькими компонентами и внешними библиотеками размещаются в `src/integrations/<integration-name>` и используют верхнеуровневый Storybook-раздел `Integration`, а не раздел отдельного компонента.
 
 ### Правила для internal playground
 

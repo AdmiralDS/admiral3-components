@@ -19,12 +19,6 @@ export const RadioButtonStatesTemplate = (args: RadioButtonProps) => (
       <RadioButton {...args} name="radio-state-not-checked">
         Not checked
       </RadioButton>
-      <RadioButton {...args} name="radio-state-readonly-checked" defaultChecked readOnly>
-        Checked readonly
-      </RadioButton>
-      <RadioButton {...args} name="radio-state-readonly-not-checked" readOnly>
-        Not checked readonly
-      </RadioButton>
       <RadioButton {...args} name="radio-state-disabled-checked" defaultChecked disabled>
         Checked disabled
       </RadioButton>

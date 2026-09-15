@@ -4,7 +4,7 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('RadioButton playground', () => {
   test('activates the radio by clicking its label', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath('radio-button/fieldset'));
+    await page.goto(getPlaygroundScenarioPath('radio-group/sizes'));
 
     const fieldset = page.locator('fieldset').first();
     const first = fieldset.getByRole('radio', { name: 'Курьером' });
@@ -29,7 +29,7 @@ test.describe('RadioButton playground', () => {
   });
 
   test('inherits dimension and disabled state from fieldset', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath('radio-button/fieldset'));
+    await page.goto(getPlaygroundScenarioPath('radio-group/sizes'));
 
     const input = page.locator("fieldset[data-dimension='xs']").getByRole('radio', { name: 'Курьером' });
     const control = input.locator('xpath=following-sibling::span[1]');
@@ -42,7 +42,7 @@ test.describe('RadioButton playground', () => {
   });
 
   test('activates regular radios with arrow keys', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath('radio-button/fieldset'));
+    await page.goto(getPlaygroundScenarioPath('radio-group/sizes'));
 
     const fieldset = page.locator('fieldset').first();
     const first = fieldset.getByRole('radio', { name: 'Курьером' });
@@ -66,7 +66,7 @@ test.describe('RadioButton playground', () => {
   });
 
   test('navigates across a readOnly group without changing its value', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath('radio-button/readonly-fieldset'));
+    await page.goto(getPlaygroundScenarioPath('radio-group/readonly'));
 
     const first = page.getByRole('radio', { name: 'Курьером' });
     const second = page.getByRole('radio', { name: 'Самовывоз' });
@@ -91,7 +91,7 @@ test.describe('RadioButton playground', () => {
   });
 
   test('does not change a readOnly value after a mouse click', async ({ page }) => {
-    await page.goto(getPlaygroundScenarioPath('radio-button/readonly-fieldset'));
+    await page.goto(getPlaygroundScenarioPath('radio-group/readonly'));
 
     const first = page.getByRole('radio', { name: 'Курьером' });
     const second = page.getByRole('radio', { name: 'Самовывоз' });
@@ -106,7 +106,7 @@ test.describe('RadioButton playground', () => {
     await expect(secondLabel).toHaveCSS('cursor', 'default');
   });
 
-  test('renders error, disabled and readOnly visual states with theme tokens', async ({ page }) => {
+  test('renders error and disabled visual states with theme tokens', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('radio-button/states'));
 
     const backgroundRest = await resolveCssColorToken(page, '--admiral-color-neutral-base-1-rest');
@@ -121,17 +121,33 @@ test.describe('RadioButton playground', () => {
     const error = controlFor('Not checked error');
     await expect(error).toHaveCSS('box-shadow', new RegExp(errorColor.replace(/[()]/g, '\\$&')));
 
-    for (const name of ['Not checked disabled', 'Not checked readonly']) {
-      const control = controlFor(name);
-      await expect(control).toHaveCSS('background-color', backgroundDisabled);
-      await expect(control).toHaveCSS('box-shadow', new RegExp(borderDisabled.replace(/[()]/g, '\\$&')));
-    }
+    const uncheckedDisabled = controlFor('Not checked disabled');
+    await expect(uncheckedDisabled).toHaveCSS('background-color', backgroundDisabled);
+    await expect(uncheckedDisabled).toHaveCSS('box-shadow', new RegExp(borderDisabled.replace(/[()]/g, '\\$&')));
 
-    for (const name of ['Checked disabled', 'Checked readonly']) {
-      const control = controlFor(name);
-      await expect(control).toHaveCSS('background-color', backgroundRest);
-      await expect(control).toHaveCSS('box-shadow', new RegExp(selectedDisabled.replace(/[()]/g, '\\$&')));
-    }
+    const checkedDisabled = controlFor('Checked disabled');
+    await expect(checkedDisabled).toHaveCSS('background-color', backgroundRest);
+    await expect(checkedDisabled).toHaveCSS('box-shadow', new RegExp(selectedDisabled.replace(/[()]/g, '\\$&')));
+  });
+
+  test('renders readOnly group visual states with theme tokens', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('radio-group/readonly'));
+
+    const backgroundRest = await resolveCssColorToken(page, '--admiral-color-neutral-base-1-rest');
+    const backgroundDisabled = await resolveCssColorToken(page, '--admiral-color-neutral-base-opacity-rest');
+    const borderDisabled = await resolveCssColorToken(page, '--admiral-color-neutral-stroke-1-rest');
+    const selectedDisabled = await resolveCssColorToken(page, '--admiral-color-primary-base-1-disable');
+
+    const controlFor = (name: string) =>
+      page.getByRole('radio', { name, exact: true }).locator('xpath=following-sibling::span[1]');
+
+    const readOnlyUnchecked = controlFor('Самовывоз');
+    await expect(readOnlyUnchecked).toHaveCSS('background-color', backgroundDisabled);
+    await expect(readOnlyUnchecked).toHaveCSS('box-shadow', new RegExp(borderDisabled.replace(/[()]/g, '\\$&')));
+
+    const readOnlyChecked = controlFor('Курьером');
+    await expect(readOnlyChecked).toHaveCSS('background-color', backgroundRest);
+    await expect(readOnlyChecked).toHaveCSS('box-shadow', new RegExp(selectedDisabled.replace(/[()]/g, '\\$&')));
   });
 
   test('renders unlabeled table controls at the correct sizes', async ({ page }) => {

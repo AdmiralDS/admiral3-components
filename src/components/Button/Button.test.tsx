@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { themes } from '@admiral-ds/admiral3-tokens';
+import { buildTheme, themes } from '@admiral-ds/admiral3-tokens';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ExecutionContext } from 'styled-components';
 import { ThemeProvider } from 'styled-components';
@@ -134,6 +134,18 @@ describe('Button', () => {
     expect(screen.getByTestId('button')).toHaveStyle({
       backgroundColor: resolveToken(solidColors.neutral.background, themes.dark),
       color: resolveToken(solidColors.neutral.color, themes.dark),
+    });
+  });
+
+  it('uses the medium radius group from the current theme', () => {
+    render(
+      <ThemeProvider theme={buildTheme('light', { cornerRadius: '8' })}>
+        <Button data-testid="button">Button</Button>
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByTestId('button')).toHaveStyle({
+      borderRadius: 'var(--admiral-radius-medium, 8px)',
     });
   });
 
