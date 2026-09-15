@@ -14,7 +14,7 @@ export interface ChipsProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
   /** Вид чипса. */
   appearance?: ChipAppearance;
-  /** Цветовой режим. По умолчанию neutral для flat и colored для outlined. */
+  /** Цветовой режим. По умолчанию colored. */
   colorMode?: ChipColorMode;
   /** Выбранное состояние чипса */
   selected?: boolean;

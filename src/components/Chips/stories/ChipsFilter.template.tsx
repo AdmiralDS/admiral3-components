@@ -7,6 +7,10 @@ import { Chips, ListItem, UnorderedList, type ChipsProps } from '@admiral-ds/adm
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 
 const radioArray = ['Марс', 'Венера', 'Юпитер'];
+const DescriptionList = styled(UnorderedList)`
+  width: 100%;
+  max-width: 640px;
+`;
 const checkBoxArray = [
   { name: 'Марс', selected: false },
   { name: 'Венера', selected: false },
@@ -34,10 +38,10 @@ export const ChipsFilterTemplate = (args: ChipsProps) => {
         <br />
         Filter Chips могут работать в двух режимах:
       </StoryDemoDescription>
-      <UnorderedList style={{ width: '100%', maxWidth: '640px' }} dimension="s" styleType="bullet">
+      <DescriptionList dimension="s" styleType="bullet">
         <ListItem>режим чекбоксов, когда можно выбрать любое количество значений</ListItem>
         <ListItem>режим радио кнопок, когда можно выбрать только одно значение из списка</ListItem>
-      </UnorderedList>
+      </DescriptionList>
       <StoryDemoDescription>Checkbox</StoryDemoDescription>
       <WrapperFilterChips $dimension={args.dimension}>
         {checkBoxData.map((item) => (

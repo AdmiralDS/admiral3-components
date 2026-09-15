@@ -25,7 +25,7 @@ export const ChipsRemovableTemplate = (args: ChipsProps) => {
             key={item}
             {...args}
             onClose={
-              !args.disabled || !args.readOnly
+              !args.disabled && !args.readOnly
                 ? () => setData((prevState) => prevState.filter((elem) => elem !== item))
                 : undefined
             }

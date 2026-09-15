@@ -3,12 +3,12 @@ import { expect, test } from '@playwright/test';
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('Chips playground', () => {
-  for (const key of ['Delete', 'Backspace']) {
+  for (const key of ['Enter', 'Space']) {
     test(`removes a chip with ${key} from the main chip button`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('chips/removable'));
       const chip = page.getByTestId('chips').filter({ hasText: 'Марс' });
       const action = chip.getByRole('button', { name: 'Марс', exact: true });
-      const close = chip.getByRole('button', { name: '' });
+      const close = chip.getByRole('button', { name: '', exact: true });
       await action.focus();
       await expect(close).toHaveAttribute('tabindex', '-1');
       await page.keyboard.press('Tab');
@@ -78,7 +78,7 @@ test.describe('Chips playground', () => {
 
   test('removes only the chip whose close button was clicked', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('chips/removable'));
-    await page.getByTestId('chips').filter({ hasText: 'Марс' }).getByRole('button', { name: '' }).click();
+    await page.getByTestId('chips').filter({ hasText: 'Марс' }).getByRole('button', { name: '', exact: true }).click();
     await expect(page.getByTestId('chips')).toHaveCount(3);
     await expect(page.getByTestId('chips').filter({ hasText: 'Марс' })).toHaveCount(0);
   });
@@ -106,7 +106,7 @@ test.describe('Chips playground', () => {
   test('applies hover and press only to close when a close button is present', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('chips/removable'));
     const chip = page.getByTestId('chips').filter({ hasText: 'Марс' });
-    const close = chip.getByRole('button', { name: '' });
+    const close = chip.getByRole('button', { name: '', exact: true });
     const background = await resolveCssColorToken(page, '--admiral-color-primary-base-3-rest');
     const hoverColor = await resolveCssColorToken(page, '--admiral-color-primary-text-1-hover');
     const pressColor = await resolveCssColorToken(page, '--admiral-color-primary-text-1-press');
@@ -135,7 +135,7 @@ test.describe('Chips playground', () => {
     const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();
     const hoverBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-hover');
     const pressBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-press');
-    await expect(chip.getByRole('button', { name: '' })).toHaveCount(0);
+    await expect(chip.getByRole('button', { name: '', exact: true })).toHaveCount(0);
     await chip.hover();
     await expect(chip).toHaveCSS('background-color', hoverBackground);
     await page.mouse.down();

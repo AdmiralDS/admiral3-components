@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 
+import { hoverPressLeaveTransition } from '#src/theme/animation';
+
 import { CHIPS_DIMENSION_PARAMETERS } from './constants';
 import { CloseIconPlacementButton } from './IconPlacement';
 import type {
@@ -225,6 +227,9 @@ const actionsMixin = css<ChipActionsStyleProps>`
 `;
 
 const colorsBorderAndBackground = css<ChipColorsStyleProps>`
+  transition:
+    background-color ${hoverPressLeaveTransition},
+    border-color ${hoverPressLeaveTransition};
   border-radius: 16px;
   background-color: ${(props) => {
     const { $appearance, $selected, $disabled } = props;
@@ -250,7 +255,7 @@ const colorsBorderAndBackground = css<ChipColorsStyleProps>`
 
   ${(p) => p.$clickable && !p.$disabled && !p.$readOnly && !p.$withCloseIcon && actionsMixin}
 
-  &:focus-visible {
+  &:has(> :first-child:focus-visible) {
     outline: 0;
 
     &:before {
@@ -359,6 +364,9 @@ export const CloseIconButton = styled(CloseIconPlacementButton)<{
 }>`
   color: inherit;
   margin-inline: 0px;
+  & svg {
+    transition: color ${hoverPressLeaveTransition};
+  }
   &:not(:disabled):hover svg {
     color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Hover : textPrimary1Hover)(p)};
   }

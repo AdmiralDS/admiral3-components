@@ -2,6 +2,7 @@ import { forwardRef, useMemo, useRef } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 
 import { Badge, type BadgeAppearance } from '#src/components/Badge';
+import { hasSlotContent } from '#src/utils/hasSlotContent';
 import { refSetter } from '#src/utils/refSetter';
 
 import {
@@ -77,8 +78,8 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
           if (withCloseIcon) {
             onClose?.();
           } else {
-            //todo never or any
-            props.onClick?.(e as never);
+            //eslint-disable-next-line
+            props.onClick?.(e as any);
           }
         }
         onKeyDown?.(e);
@@ -113,19 +114,19 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             $selected={selected}
             $withCloseIcon={readOnly || withCloseIcon}
           >
-            {iconStart && (
+            {hasSlotContent(iconStart) && (
               <IconWrapperStyled aria-hidden $dimension={dimension}>
                 {iconStart}
               </IconWrapperStyled>
             )}
-            {avatar && <IconWrapperStyled $dimension={dimension}>{avatar}</IconWrapperStyled>}
+            {hasSlotContent(avatar) && <IconWrapperStyled $dimension={dimension}>{avatar}</IconWrapperStyled>}
             <ChipChildrenWrapperStyled ref={refItems}>{children}</ChipChildrenWrapperStyled>
             {typeof badge !== 'undefined' && (
               <Badge data-badge dimension={'s'} appearance={badgeAppearance}>
                 {badge}
               </Badge>
             )}
-            {!withCloseIcon && iconEnd && (
+            {!withCloseIcon && hasSlotContent(iconEnd) && (
               <IconWrapperStyled aria-hidden $dimension={dimension}>
                 {iconEnd}
               </IconWrapperStyled>

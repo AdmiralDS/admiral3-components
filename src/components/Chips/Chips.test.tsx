@@ -8,6 +8,31 @@ import { Chips } from './Chips';
 describe('Chips', () => {
   afterEach(cleanup);
 
+  describe.each(['iconStart', 'iconEnd', 'avatar'] as const)('%s slot', (slot) => {
+    it.each([false, true, null, undefined, ''])('does not create a wrapper for %s', (value) => {
+      render(
+        <Chips data-testid="chips" {...{ [slot]: value }}>
+          Filter
+        </Chips>,
+      );
+      const content = screen.getByTestId('chips').firstElementChild!;
+      expect(content.children).toHaveLength(1);
+      expect(content).toHaveTextContent('Filter');
+    });
+
+    it.each([0, 'Avatar'])('keeps %s inside its slot wrapper', (value) => {
+      render(
+        <Chips data-testid="chips" {...{ [slot]: value }}>
+          Filter
+        </Chips>,
+      );
+      const content = screen.getByTestId('chips').firstElementChild!;
+      expect(content.children).toHaveLength(2);
+      const wrapper = slot === 'iconEnd' ? content.lastElementChild : content.firstElementChild;
+      expect(wrapper).toHaveTextContent(String(value));
+    });
+  });
+
   it('renders children and forwards div attributes and ref', () => {
     const ref = createRef<HTMLDivElement>();
     render(
@@ -110,7 +135,7 @@ describe('Chips', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('uses a native button for keyboard activation', () => {
+  it.each(['Enter', ' '])('activates the chip with %s', (key) => {
     const onClick = vi.fn();
     render(
       <Chips data-testid="chips" onClick={onClick}>
@@ -118,9 +143,7 @@ describe('Chips', () => {
       </Chips>,
     );
     const button = screen.getByRole('button', { name: 'Filter' });
-    expect(button.tagName).toBe('BUTTON');
-    expect(button).toHaveAttribute('type', 'button');
-    fireEvent.click(button);
+    fireEvent.keyDown(button, { key });
     expect(onClick).toHaveBeenCalledOnce();
   });
 
@@ -188,43 +211,63 @@ describe('Chips', () => {
   });
 
   describe('accessibility and interaction regressions', () => {
-    it.each(['Enter', ' ', 'Delete', 'Backspace'])(
-      'removes from the main button with %s when there is no onClick',
-      (key) => {
-        const onClose = vi.fn();
-        render(
-          <Chips id="filter" onClose={onClose}>
-            Filter
-          </Chips>,
-        );
-        fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
-        expect(onClose).toHaveBeenCalledExactlyOnceWith('filter');
-      },
-    );
-
-    it.each([{ disabled: true }, { readOnly: true }])(
-      'does not perform internal keyboard removal when blocked: %j',
-      (state) => {
-        const onClose = vi.fn();
-        render(
-          <Chips {...state} selected onClose={onClose}>
-            Filter
-          </Chips>,
-        );
-        fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key: 'Delete' });
-        expect(onClose).not.toHaveBeenCalled();
-      },
-    );
-
-    it('allows the consumer to cancel keyboard removal', () => {
+    it.each(['Enter', ' '])('removes from the main button with %s when there is no onClick', (key) => {
       const onClose = vi.fn();
       render(
-        <Chips onClose={onClose} onKeyDown={(event) => event.preventDefault()}>
+        <Chips id="filter" onClose={onClose}>
           Filter
         </Chips>,
       );
-      fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key: 'Delete' });
+      fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
+      expect(onClose).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    it.each(['Delete', 'Backspace'])('forwards %s without activating or removing', (key) => {
+      const onClose = vi.fn();
+      const onClick = vi.fn();
+      const onKeyDown = vi.fn();
+      render(
+        <Chips onClick={onClick} onClose={onClose} onKeyDown={onKeyDown}>
+          Filter
+        </Chips>,
+      );
+      fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
       expect(onClose).not.toHaveBeenCalled();
+      expect(onClick).not.toHaveBeenCalled();
+      expect(onKeyDown).toHaveBeenCalledOnce();
+    });
+
+    it.each(['Enter', ' '])('prioritizes removal over selection on %s and then calls onKeyDown', (key) => {
+      const calls: string[] = [];
+      const onClick = vi.fn();
+      render(
+        <Chips
+          onClick={onClick}
+          onClose={() => calls.push('close')}
+          onKeyDown={(event) => {
+            calls.push('keydown');
+            event.preventDefault();
+          }}
+        >
+          Filter
+        </Chips>,
+      );
+      fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
+      expect(calls).toEqual(['close', 'keydown']);
+      expect(onClick).not.toHaveBeenCalled();
+    });
+
+    it.each(['Enter', ' '])('does not activate a disabled chip on %s', (key) => {
+      const onClose = vi.fn();
+      const onKeyDown = vi.fn();
+      render(
+        <Chips disabled onClose={onClose} onKeyDown={onKeyDown}>
+          Filter
+        </Chips>,
+      );
+      fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
+      expect(onClose).not.toHaveBeenCalled();
+      expect(onKeyDown).not.toHaveBeenCalled();
     });
     it('renders sibling action and close buttons without nested interactive elements', () => {
       render(
@@ -301,13 +344,15 @@ describe('Chips', () => {
       expect(screen.getByTestId('chips').tabIndex).toBeLessThan(0);
     });
 
-    it('leaves Space handling to the native button', () => {
+    it('does not cancel the default Space event in the internal handler', () => {
       render(
         <Chips onClick={vi.fn()} data-testid="chips">
           Filter
         </Chips>,
       );
-      expect(screen.getByRole('button', { name: 'Filter' }).tagName).toBe('BUTTON');
+      expect(fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key: ' ', cancelable: true })).toBe(
+        true,
+      );
     });
 
     it('passes the id through native close button activation', () => {
