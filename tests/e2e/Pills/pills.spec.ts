@@ -40,11 +40,12 @@ test.describe('Pills playground', () => {
     await expect(pills).toHaveCSS('background-color', expectedDarkBackgroundColor);
   });
 
-  test('allows a standalone Pill to receive focus through Tab', async ({ page }) => {
+  test('allows a standalone Pill to receive focus through Tab', async ({ page, browserName }) => {
+    const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
     await page.goto(getPlaygroundScenarioPath(infoScenarioId));
 
     await page.getByRole('navigation', { name: 'Playground scenarios' }).getByRole('link').last().focus();
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tabKey);
 
     await expect(page.getByTestId('pills')).toBeFocused();
   });
@@ -118,7 +119,8 @@ test.describe('Pills playground', () => {
     await expect(pills).toHaveAttribute('data-appearance', 'error1');
   });
 
-  test('uses one Tab stop and moves focus between segments with navigation keys', async ({ page }) => {
+  test('uses one Tab stop and moves focus between segments with navigation keys', async ({ page, browserName }) => {
+    const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
     await page.goto(getPlaygroundScenarioPath(keyboardNavigationScenarioId));
 
     const firstSegment = page.getByTestId('pills-segment-0');
@@ -126,10 +128,10 @@ test.describe('Pills playground', () => {
     const lastSegment = page.getByTestId('pills-segment-4');
 
     await page.getByTestId('before-pills-group').focus();
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tabKey);
     await expect(firstSegment).toBeFocused();
 
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tabKey);
     await expect(page.getByTestId('after-pills-group')).toBeFocused();
 
     await firstSegment.focus();
