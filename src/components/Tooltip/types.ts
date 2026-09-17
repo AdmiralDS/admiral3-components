@@ -1,9 +1,10 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import type { TOOLTIP_DIMENSIONS } from './constants';
+import type { TOOLTIP_DIMENSIONS, TOOLTIP_INTERNAL_POSITIONS, TOOLTIP_POSITIONS } from './constants';
 
 export type TooltipDimension = (typeof TOOLTIP_DIMENSIONS)[number];
-export type TooltipPosition = 'bottom' | 'top' | 'left' | 'right';
+export type TooltipPosition = (typeof TOOLTIP_POSITIONS)[number];
+export type TooltipInternalPosition = (typeof TOOLTIP_INTERNAL_POSITIONS)[number];
 
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */
@@ -14,13 +15,23 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   targetElement: Element | null;
   /** Предпочтительное направление открытия Tooltip. */
   tooltipPosition?: TooltipPosition;
-  /**
-   * Запасные направления открытия в порядке убывания приоритета.
-   * Если tooltipPosition не задан, первое подходящее направление из списка становится основным.
-   */
-  fallbackPositions?: readonly TooltipPosition[];
 }
 
 export interface StyledTooltipProps {
   $dimension: TooltipDimension;
 }
+
+/** Типы, используемые при расчёте и проверке позиции Tooltip. */
+export type PositionContext = {
+  spaceTop: number;
+  spaceRight: number;
+  spaceBottom: number;
+  spaceLeft: number;
+  viewportWidth: number;
+  anchorWidth: number;
+  anchorHeight: number;
+  tooltipWidth: number;
+  tooltipHeight: number;
+};
+
+export type PositionCheck = (context: PositionContext) => boolean;

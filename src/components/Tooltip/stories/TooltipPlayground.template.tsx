@@ -15,7 +15,6 @@ export const TooltipPlaygroundTemplate = (props: TooltipProps) => {
           targetElement={targetElement}
           renderContent={props.renderContent}
           tooltipPosition={props.tooltipPosition}
-          fallbackPositions={props.fallbackPositions}
           style={{ minWidth: '200px', maxWidth: '300px' }}
           id="test1"
         />

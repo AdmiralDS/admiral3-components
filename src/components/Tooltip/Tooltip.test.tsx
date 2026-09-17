@@ -4,9 +4,9 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TOOLTIP_DIMENSIONS, TOOLTIP_DIMENSION_PARAMETERS } from './constants';
+import { getTooltipDirection } from './getTooltipDirection';
 import { Tooltip } from './Tooltip';
-import type { InternalTooltipPositionType } from './utils';
-import { getTooltipDirection } from './utils';
+import type { TooltipInternalPosition } from './types';
 
 vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: () => 16 }));
 
@@ -19,7 +19,7 @@ vi.mock('../_internal/PositionedPortal', () => ({
   )),
 }));
 
-vi.mock('./utils', () => ({ getTooltipDirection: vi.fn(() => 'bottom') }));
+vi.mock('./getTooltipDirection', () => ({ getTooltipDirection: vi.fn(() => 'bottom') }));
 
 class ResizeObserverMock implements ResizeObserver {
   static instances: ResizeObserverMock[] = [];
@@ -114,22 +114,15 @@ describe('Tooltip', () => {
   });
 
   it('calculates direction on the next animation frame and cancels it on unmount', () => {
-    const fallbackPositions = ['left', 'top'] as const;
-    const { unmount } = renderTooltip({ tooltipPosition: 'right', fallbackPositions });
+    const { unmount } = renderTooltip({ tooltipPosition: 'right' });
     expect(getTooltipDirection).not.toHaveBeenCalled();
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(
-      targetElement,
-      expect.any(HTMLDivElement),
-      16,
-      'right',
-      fallbackPositions,
-    );
+    expect(getTooltipDirection).toHaveBeenCalledWith(targetElement, expect.any(HTMLDivElement), 16, 'right');
     unmount();
     expect(cancelAnimationFrame).toHaveBeenCalledWith(1);
   });
 
-  it.each<[InternalTooltipPositionType, string, string, boolean]>([
+  it.each<[TooltipInternalPosition, string, string, boolean]>([
     ['leftBottom', 'row-reverse', 'flex-start', false],
     ['leftTop', 'row-reverse', 'flex-end', false],
     ['left', 'row-reverse', 'center', false],

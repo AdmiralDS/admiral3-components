@@ -12,7 +12,7 @@ import { TooltipPlaygroundTemplate } from './TooltipPlayground.template';
 import tooltipPlaygroundTemplateRaw from './TooltipPlayground.template?raw';
 import { TooltipRefTemplate } from './TooltipRef.template';
 import tooltipRefTemplateRaw from './TooltipRef.template?raw';
-import { TOOLTIP_DIMENSIONS } from '../constants';
+import { TOOLTIP_DIMENSIONS, TOOLTIP_POSITIONS } from '../constants';
 
 const meta = {
   title: 'Components/Tooltip',
@@ -25,10 +25,7 @@ const meta = {
     },
     tooltipPosition: {
       control: { type: 'inline-radio' },
-      options: ['bottom', 'top', 'left', 'right'],
-    },
-    fallbackPositions: {
-      control: 'object',
+      options: TOOLTIP_POSITIONS,
     },
     targetElement: { control: false },
     renderContent: { control: false },
@@ -41,7 +38,6 @@ const defaultArgs: TooltipProps = {
   dimension: 'm',
   targetElement: null,
   tooltipPosition: 'bottom',
-  fallbackPositions: ['top', 'right', 'left'],
   renderContent: () =>
     'Tooltip остаётся открытым при переводе указателя с кнопки на его содержимое. Пользователь может выделить и скопировать этот текст.',
 };

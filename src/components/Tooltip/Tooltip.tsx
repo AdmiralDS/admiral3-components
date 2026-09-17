@@ -1,17 +1,16 @@
 import type { CSSProperties } from 'react';
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { getTooltipDirection } from './getTooltipDirection';
 import { FakeTarget, StyledPortal, TooltipContainer, TooltipWrapper } from './style';
-import type { TooltipProps } from './types';
-import type { InternalTooltipPositionType } from './utils';
-import { getTooltipDirection } from './utils';
+import type { TooltipInternalPosition, TooltipProps } from './types';
 import { getScrollbarSize } from '../../utils/getScrollbarSize';
 import { refSetter } from '../../utils/refSetter';
 
 export const TOOLTIP_DELAY = 1500;
 
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
-  ({ dimension = 'm', renderContent, targetElement, tooltipPosition, fallbackPositions, ...props }, ref) => {
+  ({ dimension = 'm', renderContent, targetElement, tooltipPosition, ...props }, ref) => {
     const tooltipElementRef = useRef<HTMLDivElement | null>(null);
     const tooltipHeight = useRef(0);
 
@@ -28,12 +27,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       (scrollbarSize: number) => {
         const target = targetElement;
         if (target && tooltipElementRef.current) {
-          const direction: InternalTooltipPositionType = getTooltipDirection(
+          const direction: TooltipInternalPosition = getTooltipDirection(
             target as HTMLElement,
             tooltipElementRef.current,
             scrollbarSize,
             tooltipPosition,
-            fallbackPositions,
           );
           const tooltip = tooltipElementRef.current;
           switch (direction) {
@@ -74,7 +72,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
           }
         }
       },
-      [fallbackPositions, targetElement, tooltipPosition],
+      [targetElement, tooltipPosition],
     );
 
     useEffect(() => {

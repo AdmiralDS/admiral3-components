@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 
-import { textStyles } from '@admiral-ds/admiral3-tokens';
+import { zIndex } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
-import { TOOLTIP_DIMENSION_PARAMETERS } from './constants';
+import { TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_WRAPPER_PADDING } from './constants';
 import type { StyledTooltipProps } from './types';
 import { cssToken } from '../../theme/cssToken';
 import { PositionedPortal } from '../_internal/PositionedPortal';
@@ -28,7 +28,7 @@ export const TooltipWrapper = styled.div`
   width: max-content;
   min-width: max-content;
   pointer-events: initial;
-  padding: 8px;
+  padding: ${TOOLTIP_WRAPPER_PADDING}px;
 `;
 
 export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-dimension': string }>((props) => ({
@@ -38,13 +38,13 @@ export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-di
   display: flex;
   align-items: center;
   min-height: ${({ $dimension }) => TOOLTIP_DIMENSION_PARAMETERS[$dimension].minHeight}px;
+  max-width: min(488px, calc(100vw - 16px));
   padding: ${({ $dimension }) => TOOLTIP_DIMENSION_PARAMETERS[$dimension].padding};
+  ${({ $dimension }) => TOOLTIP_DIMENSION_PARAMETERS[$dimension].typography}
   border-radius: ${borderRadius};
   background-color: ${backgroundColor};
   box-shadow: ${boxShadow};
   color: ${textColor};
-  ${({ $dimension }) => ($dimension === 'm' ? textStyles.body.body1Short : textStyles.body.body2Short)}
-  max-width: min(488px, calc(100vw - 16px));
   overflow-wrap: break-word;
 `;
 
@@ -59,5 +59,5 @@ export const StyledPortal = styled(PositionedPortal)<{ $flexDirection?: CSSPrope
   display: flex;
   flex-wrap: nowrap;
   ${({ $flexDirection }) => ($flexDirection ? `flex-direction: ${$flexDirection};` : '')}
-  z-index: var(--admiral-z-index-tooltip, 1600);
+  z-index: var(--admiral-z-index-tooltip, ${zIndex.tooltip});
 `;
