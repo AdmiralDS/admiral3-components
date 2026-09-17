@@ -108,11 +108,25 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const triggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const menuRef = useRef<HTMLDivElement>(null);
+  const toolbarWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (openMenuIndex !== null) {
       menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
     }
+  }, [openMenuIndex]);
+
+  useEffect(() => {
+    if (openMenuIndex === null) return;
+
+    const handleClickOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !toolbarWrapperRef.current?.contains(event.target)) {
+        setOpenMenuIndex(null);
+      }
+    };
+
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
   }, [openMenuIndex]);
 
   const closeMenu = (restoreFocus = true) => {
@@ -167,7 +181,7 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
         <BoundaryButton type="button" data-testid="before-pills-group">
           До группы
         </BoundaryButton>
-        <ToolbarWrapper>
+        <ToolbarWrapper ref={toolbarWrapperRef}>
           <Pills connected {...args} aria-label="Статусы" data-testid="pills-keyboard-group">
             {SEGMENTS.map(({ label, appearance, icon, hasMenu }, index) => {
               const menuId = hasMenu ? `pills-menu-${index}` : undefined;
@@ -185,7 +199,7 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
                   aria-controls={menuId}
                   data-testid={`pills-segment-${index}`}
                   onClick={() => {
-                    if (hasMenu) setOpenMenuIndex(index);
+                    if (hasMenu) setOpenMenuIndex((currentIndex) => (currentIndex === index ? null : index));
                   }}
                 >
                   {icon}
@@ -195,6 +209,7 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
               );
             })}
           </Pills>
+          {/* TODO: Заменить Menu на Admiral3 Menu после появления компонента. */}
           {openMenuIndex !== null && (
             <Menu ref={menuRef} id={`pills-menu-${openMenuIndex}`} role="menu" aria-label="Выбор статуса">
               {MENU_OPTIONS.map((option) => (

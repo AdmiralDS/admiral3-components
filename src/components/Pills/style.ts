@@ -105,4 +105,8 @@ export const StyledPills = styled.div<StyledPillsProps>`
   &[data-connected] > [data-pill]:last-child {
     border-radius: ${(props) => `0 ${pillBorderRadius(props)} ${pillBorderRadius(props)} 0`};
   }
+
+  &[data-connected] > [data-pill]:only-child {
+    border-radius: ${pillBorderRadius};
+  }
 `;

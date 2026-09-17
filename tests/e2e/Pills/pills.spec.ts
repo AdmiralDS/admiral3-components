@@ -197,4 +197,28 @@ test.describe('Pills playground', () => {
     await expect(page.getByRole('menu')).toHaveCount(0);
     await expect(menuSegment).toBeFocused();
   });
+
+  test('closes the segment menu after a pointer click outside', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(keyboardNavigationScenarioId));
+
+    await page.getByTestId('pills-segment-0').click();
+    await expect(page.getByRole('menu')).toBeVisible();
+
+    await page.getByTestId('before-pills-group').click();
+    await expect(page.getByRole('menu')).toHaveCount(0);
+  });
+
+  test('closes the segment menu after a second trigger click', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(keyboardNavigationScenarioId));
+
+    const menuSegment = page.getByTestId('pills-segment-0');
+
+    await menuSegment.click();
+    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(menuSegment).toHaveAttribute('aria-expanded', 'true');
+
+    await menuSegment.click();
+    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(menuSegment).toHaveAttribute('aria-expanded', 'false');
+  });
 });

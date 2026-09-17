@@ -1,5 +1,6 @@
 import { createRef } from 'react';
 
+import { themes } from '@admiral-ds/admiral3-tokens';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -41,6 +42,18 @@ describe('Pills', () => {
     expect(screen.getByTestId('pills')).toHaveAttribute('data-connected', '');
     expect(screen.getByTestId('pills')).not.toHaveAttribute('connected');
     expect(screen.getByTestId('pills')).toHaveStyle({ gap: '0px', flexWrap: 'nowrap' });
+  });
+
+  it('keeps all corners rounded for a single Pill in a connected group', () => {
+    render(
+      <Pills connected>
+        <Pill>Only</Pill>
+      </Pills>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Only' })).toHaveStyle({
+      borderRadius: `var(--admiral-radius-small, ${themes.light.radius.small})`,
+    });
   });
 
   it('uses separated wrapping layout by default', () => {
