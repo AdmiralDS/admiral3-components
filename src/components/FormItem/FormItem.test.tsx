@@ -1,12 +1,85 @@
 import { createRef } from 'react';
 
 import { render, screen } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
+import { ServerStyleSheet } from 'styled-components';
 import { describe, expect, it } from 'vitest';
 
 import { FormItem } from './FormItem';
 import { Input } from '../Input';
 
 describe('FormItem', () => {
+  it('renders on the server with a resolved required marker color', () => {
+    const sheet = new ServerStyleSheet();
+    try {
+      const markup = renderToString(
+        sheet.collectStyles(
+          <FormItem label="Server field" htmlFor="server-field" required>
+            <input id="server-field" required />
+          </FormItem>,
+        ),
+      );
+      expect(markup).toContain('for="server-field"');
+      expect(markup).toContain('id="server-field"');
+      expect(sheet.getStyleTags()).toMatch(/var\(--admiral-color-error-text-1-rest,\s*#D92020\)/);
+    } finally {
+      sheet.seal();
+    }
+  });
+
+  it.each([undefined, null, false, true, ''])('omits the label row for an empty label (%s)', (label) => {
+    const { container, unmount } = render(
+      <FormItem label={label} description="Explanation" required>
+        <input aria-label="Field without a visible label" />
+      </FormItem>,
+    );
+    const item = container.firstElementChild;
+    expect(item?.children).toHaveLength(2);
+    expect(item?.firstElementChild?.tagName).toBe('INPUT');
+    expect(item?.querySelector('label')).toBeNull();
+    unmount();
+  });
+
+  it('preserves a zero label and an additional label without a main label', () => {
+    const { container, rerender, unmount } = render(
+      <FormItem label={0}>
+        <input />
+      </FormItem>,
+    );
+    expect(container.querySelector('label')).toHaveTextContent('0');
+    rerender(
+      <FormItem additionalLabel="Additional label">
+        <input aria-label="Field without a visible label" />
+      </FormItem>,
+    );
+    expect(container.querySelector('label')).toBeNull();
+    expect(container.firstElementChild?.firstElementChild).toHaveTextContent('Additional label');
+    unmount();
+  });
+
+  it('marks disabled styling explicitly without changing the child control', () => {
+    const { container, rerender, unmount } = render(
+      <FormItem label="Name" htmlFor="disabled-field" disabled>
+        <Input id="disabled-field" />
+      </FormItem>,
+    );
+
+    const item = container.querySelector('[data-dimension]');
+    expect(item).toHaveAttribute('data-disabled', '');
+    expect(item).not.toHaveAttribute('disabled');
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
+
+    rerender(
+      <FormItem label="Name" htmlFor="disabled-field" disabled={false}>
+        <Input id="disabled-field" disabled />
+      </FormItem>,
+    );
+
+    expect(item).not.toHaveAttribute('data-disabled');
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+    unmount();
+  });
+
   it('renders the error in the description and connects the label explicitly', () => {
     const inputRef = createRef<HTMLInputElement>();
     render(

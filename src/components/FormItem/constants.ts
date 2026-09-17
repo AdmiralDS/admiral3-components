@@ -8,10 +8,10 @@ export const FORM_ITEM_STATUSES = BASE_INPUT_STATUSES;
 
 export const FORM_ITEM_DIMENSION_PARAMETERS: Record<
   (typeof FORM_ITEM_DIMENSIONS)[number],
-  { gap: number; typography: CSSObject }
+  { gap: number; labelGap: number; typography: CSSObject }
 > = {
-  l: { gap: 8, typography: textStyles.body.body2Short },
-  m: { gap: 8, typography: textStyles.body.body2Short },
-  s: { gap: 8, typography: textStyles.body.body2Short },
-  xs: { gap: 6, typography: textStyles.caption.caption1 },
+  l: { gap: 8, labelGap: 8, typography: textStyles.body.body2Short },
+  m: { gap: 8, labelGap: 8, typography: textStyles.body.body2Short },
+  s: { gap: 8, labelGap: 6, typography: textStyles.body.body2Short },
+  xs: { gap: 6, labelGap: 6, typography: textStyles.caption.caption1 },
 };

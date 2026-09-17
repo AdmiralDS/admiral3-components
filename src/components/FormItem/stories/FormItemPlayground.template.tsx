@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-components';
 
 import { cssToken } from '../../../theme/cssToken';
+import { hasSlotContent } from '../../../utils/hasSlotContent';
 
 const errorColor = cssToken('--admiral-color-error-text-1-rest', (theme) => theme.color.error.text._1.rest);
 
@@ -12,22 +13,26 @@ const CounterText = styled.span<{ $limitReached: boolean }>`
   color: ${({ $limitReached, theme }) => ($limitReached ? errorColor({ theme }) : 'inherit')};
 `;
 
-export const FormItemPlaygroundTemplate = (args: FormItemProps) => (
-  <FormItem
-    {...args}
-    htmlFor="form-item-playground-input"
-    description={args.description && <span id="form-item-playground-description">{args.description}</span>}
-  >
-    <Input
-      id="form-item-playground-input"
-      dimension={args.dimension}
-      placeholder="Введите значение"
-      status={args.status}
-      required={args.required}
-      aria-describedby={args.description ? 'form-item-playground-description' : undefined}
-    />
-  </FormItem>
-);
+export const FormItemPlaygroundTemplate = (args: FormItemProps) => {
+  const hasDescription = hasSlotContent(args.description);
+  return (
+    <FormItem
+      {...args}
+      htmlFor="form-item-playground-input"
+      description={hasDescription ? <span id="form-item-playground-description">{args.description}</span> : undefined}
+    >
+      <Input
+        id="form-item-playground-input"
+        dimension={args.dimension}
+        placeholder="Введите значение"
+        status={args.status}
+        required={args.required}
+        disabled={args.disabled}
+        aria-describedby={hasDescription ? 'form-item-playground-description' : undefined}
+      />
+    </FormItem>
+  );
+};
 
 export const FormItemErrorTemplate = () => (
   <FormItem
@@ -44,6 +49,7 @@ export const FormItemErrorTemplate = () => (
       status="error"
       defaultValue="invalid"
       aria-invalid
+      required
       aria-describedby="form-item-error-email-message"
     />
   </FormItem>
@@ -68,8 +74,19 @@ export const FormItemSuccessTemplate = () => (
 );
 
 export const FormItemXsTemplate = () => (
-  <FormItem dimension="xs" label="Электронная почта" htmlFor="form-item-xs-email" description="Укажите рабочий адрес">
-    <Input id="form-item-xs-email" dimension="xs" type="email" name="email" />
+  <FormItem
+    dimension="xs"
+    label="Электронная почта"
+    htmlFor="form-item-xs-email"
+    description={<span id="form-item-xs-description">Укажите рабочий адрес</span>}
+  >
+    <Input
+      id="form-item-xs-email"
+      dimension="xs"
+      type="email"
+      name="email"
+      aria-describedby="form-item-xs-description"
+    />
   </FormItem>
 );
 

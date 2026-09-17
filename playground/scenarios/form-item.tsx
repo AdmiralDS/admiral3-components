@@ -2,14 +2,28 @@ import { Input } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import {
+  FormItemDisabledStatesTemplate,
+  FormItemLongTextTemplate,
+  FormItemWithoutLabelTemplate,
+} from '../../src/components/FormItem/stories/FormItemEdgeCases.template';
+import {
   FormItemCounterTemplate,
   FormItemErrorTemplate,
   FormItemPlaygroundTemplate,
   FormItemSuccessTemplate,
   FormItemXsTemplate,
 } from '../../src/components/FormItem/stories/FormItemPlayground.template';
+import { FormItemSizesTemplate } from '../../src/components/FormItem/stories/FormItemSizes.template';
+import { FormItemStatesTemplate } from '../../src/components/FormItem/stories/FormItemStates.template';
 
 export const formItemScenarios: PlaygroundScenario[] = [
+  { id: 'form-item/long-text', title: 'FormItem Long Text', render: () => <FormItemLongTextTemplate /> },
+  { id: 'form-item/without-label', title: 'FormItem Without Label', render: () => <FormItemWithoutLabelTemplate /> },
+  {
+    id: 'form-item/disabled-states',
+    title: 'FormItem Disabled States',
+    render: () => <FormItemDisabledStatesTemplate />,
+  },
   {
     id: 'form-item/default',
     title: 'FormItem Default',
@@ -21,4 +35,28 @@ export const formItemScenarios: PlaygroundScenario[] = [
   { id: 'form-item/success', title: 'FormItem Success', render: () => <FormItemSuccessTemplate /> },
   { id: 'form-item/xs', title: 'FormItem XS', render: () => <FormItemXsTemplate /> },
   { id: 'form-item/counter', title: 'FormItem Counter', render: () => <FormItemCounterTemplate /> },
+  {
+    id: 'form-item/sizes',
+    title: 'FormItem Sizes',
+    render: () => (
+      <FormItemSizesTemplate
+        label="Подпись"
+        additionalLabel="Дополнение"
+        description="Пояснение"
+        children={<Input />}
+      />
+    ),
+  },
+  {
+    id: 'form-item/states',
+    title: 'FormItem States',
+    render: () => (
+      <FormItemStatesTemplate
+        label="Подпись"
+        additionalLabel="Дополнение"
+        description="Пояснение"
+        children={<Input />}
+      />
+    ),
+  },
 ];

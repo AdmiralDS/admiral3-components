@@ -2,6 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-components';
 
+import {
+  FormItemDisabledStatesTemplate,
+  FormItemLongTextTemplate,
+  FormItemWithoutLabelTemplate,
+} from './FormItemEdgeCases.template';
 import { FormItemCounterTemplate, FormItemPlaygroundTemplate } from './FormItemPlayground.template';
 import formItemPlaygroundTemplateRaw from './FormItemPlayground.template?raw';
 import { FormItemSizesTemplate } from './FormItemSizes.template';
@@ -17,6 +22,7 @@ const meta = {
   argTypes: {
     dimension: { control: { type: 'inline-radio' }, options: FORM_ITEM_DIMENSIONS },
     required: { control: { type: 'boolean' } },
+    disabled: { control: { type: 'boolean' } },
     label: { control: { type: 'text' } },
     additionalLabel: { control: { type: 'text' } },
     description: { control: { type: 'text' } },
@@ -38,7 +44,9 @@ export const Playground: StoryObj<FormItemProps> = {
   args: defaultArgs,
   render: FormItemPlaygroundTemplate,
   parameters: {
-    controls: { include: ['label', 'additionalLabel', 'description', 'status', 'counter', 'required', 'dimension'] },
+    controls: {
+      include: ['label', 'additionalLabel', 'description', 'status', 'counter', 'required', 'disabled', 'dimension'],
+    },
     docs: { source: { code: formItemPlaygroundTemplateRaw } },
   },
 };
@@ -70,5 +78,20 @@ export const AdditionalLabel: StoryObj<FormItemProps> = {
 export const Counter: StoryObj<FormItemProps> = {
   args: defaultArgs,
   render: FormItemCounterTemplate,
+  parameters: { controls: { disable: true } },
+};
+
+export const LongText: StoryObj<FormItemProps> = {
+  render: FormItemLongTextTemplate,
+  parameters: { controls: { disable: true } },
+};
+
+export const WithoutLabel: StoryObj<FormItemProps> = {
+  render: FormItemWithoutLabelTemplate,
+  parameters: { controls: { disable: true } },
+};
+
+export const DisabledStates: StoryObj<FormItemProps> = {
+  render: FormItemDisabledStatesTemplate,
   parameters: { controls: { disable: true } },
 };

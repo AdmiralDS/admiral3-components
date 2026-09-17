@@ -1,6 +1,113 @@
 import { expect, test } from '@playwright/test';
 
-import { getPlaygroundScenarioPath } from '../utils';
+import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
+
+test('FormItem keeps long labels and descriptions within a narrow container', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/long-text'));
+
+  for (const id of ['form-item-long-label', 'form-item-long-additional-label', 'form-item-long-description']) {
+    const item = page
+      .locator('div[data-dimension]')
+      .filter({ has: page.locator(`#${id}`) })
+      .first();
+    await expect(item).toHaveCSS('width', '240px');
+    await expect.poll(() => item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+  }
+
+  const label = page.locator('label[for="form-item-long-label"]');
+  await expect.poll(() => label.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(16);
+  await expect(label.locator('..').getByText('Дополнение')).toHaveCSS('height', '16px');
+  const description = page.locator('#form-item-long-description-message');
+  const counter = page.getByText('16 / 20');
+  const descriptionBox = await description.boundingBox();
+  const counterBox = await counter.boundingBox();
+  expect(descriptionBox).not.toBeNull();
+  expect(counterBox).not.toBeNull();
+  if (!descriptionBox || !counterBox) return;
+  expect(descriptionBox.x + descriptionBox.width).toBeLessThanOrEqual(counterBox.x);
+  await expect(counter).toHaveCSS('white-space', 'nowrap');
+  await expect(page.locator('#form-item-long-description')).toHaveAccessibleDescription(await description.innerText());
+});
+
+test('FormItem starts with the control when the label is omitted', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/without-label'));
+
+  const input = page.getByRole('textbox', { name: 'Название' });
+  const item = page.locator('div[data-dimension]').filter({ has: input }).first();
+  await expect(item.locator('label')).toHaveCount(0);
+  await expect(input).toHaveAccessibleDescription('Пояснение');
+  await expect(input).toHaveAttribute('required', '');
+  expect(
+    await item.evaluate(
+      (element) => element.firstElementChild!.getBoundingClientRect().top - element.getBoundingClientRect().top,
+    ),
+  ).toBe(0);
+});
+
+test('FormItem keeps disabled text colors with required and status combinations', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/disabled-states'));
+
+  const disabledColor = await resolveCssColorToken(page, '--admiral-color-neutral-text-disable-rest');
+  const errorColor = await resolveCssColorToken(page, '--admiral-color-error-text-1-rest');
+  for (const status of ['default', 'error', 'success']) {
+    const input = page.locator(`#form-item-disabled-${status}`);
+    const item = page.locator('div[data-disabled][data-dimension]').filter({ has: input });
+    const label = item.locator('label');
+    await expect(input).toBeDisabled();
+    await expect(input).toHaveAttribute('required', '');
+    await expect(input).toHaveAccessibleName('Подпись');
+    await expect(input).toHaveAccessibleDescription('Пояснение');
+    await expect(label).toHaveCSS('color', disabledColor);
+    await expect(item.getByText('Дополнение')).toHaveCSS('color', disabledColor);
+    await expect(item.getByText('Пояснение')).toHaveCSS('color', disabledColor);
+    await expect(item.getByText('16 / 20')).toHaveCSS('color', disabledColor);
+    await expect.poll(() => label.evaluate((element) => getComputedStyle(element, '::after').color)).toBe(errorColor);
+  }
+});
+
+test('FormItem renders the required marker with the Pixso error text token', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/states'));
+
+  const label = page.locator('label[for="form-item-state-required"]');
+  const errorColor = await resolveCssColorToken(page, '--admiral-color-error-text-1-rest');
+  const secondaryColor = await resolveCssColorToken(page, '--admiral-color-neutral-text-2-rest');
+  await expect(label).toHaveCSS('color', secondaryColor);
+  await expect.poll(() => label.evaluate((element) => getComputedStyle(element, '::after').color)).toBe(errorColor);
+  expect(await label.evaluate((element) => getComputedStyle(element, '::after').content)).toContain('*');
+  expect(
+    await page
+      .locator('label[for="form-item-state-default"]')
+      .evaluate((element) => getComputedStyle(element, '::after').content),
+  ).toBe('none');
+  await expect(page.locator('#form-item-state-required')).toHaveAccessibleName('Подпись');
+});
+
+test('FormItem uses the Pixso label row gaps for every dimension', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/sizes'));
+
+  for (const [dimension, gap] of [
+    ['l', '8px'],
+    ['m', '8px'],
+    ['s', '6px'],
+    ['xs', '6px'],
+  ]) {
+    const label = page.locator(`label[for="form-item-size-${dimension}"]`);
+    await expect(label.locator('..')).toHaveCSS('gap', gap);
+  }
+});
+
+test('FormItem uses the Pixso disabled text token for labels and description', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/states'));
+
+  const input = page.locator('#form-item-state-disabled');
+  const item = page.locator('div[data-disabled][data-dimension]').filter({ has: input });
+  const disabledColor = await resolveCssColorToken(page, '--admiral-color-neutral-text-disable-rest');
+  await expect(input).toBeDisabled();
+  await expect(item.locator('label')).toHaveCSS('color', disabledColor);
+  await expect(item.locator('label')).toHaveCSS('cursor', 'not-allowed');
+  await expect(item.getByText('Дополнение')).toHaveCSS('color', disabledColor);
+  await expect(item.getByText('Пояснение')).toHaveCSS('color', disabledColor);
+});
 
 test('FormItem links the label explicitly and leaves input attributes unchanged', async ({ page }) => {
   await page.goto(getPlaygroundScenarioPath('form-item/default'));
@@ -17,6 +124,7 @@ test('FormItem links the label explicitly and leaves input attributes unchanged'
   const errorInput = page.getByRole('textbox', { name: 'Электронная почта' });
   const error = page.getByText('Введите корректный адрес');
   await expect(errorInput).toHaveAttribute('aria-invalid', 'true');
+  await expect(errorInput).toHaveAttribute('required', '');
   await expect(error).toBeVisible();
   await expect(errorInput).toHaveAttribute('aria-describedby', 'form-item-error-email-message');
 
@@ -59,4 +167,5 @@ test('FormItem uses the master Input typography and spacing for m and xs', async
   await expect(xsItem).toHaveCSS('gap', '6px');
   await expect(xsItem.locator('label')).toHaveCSS('font-size', '12px');
   await expect(xsItem.locator('label')).toHaveCSS('line-height', '16px');
+  await expect(page.locator('#form-item-xs-email')).toHaveAccessibleDescription('Укажите рабочий адрес');
 });
