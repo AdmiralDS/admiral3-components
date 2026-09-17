@@ -9,6 +9,7 @@ import { fieldSetScenarios } from './field-set';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
+import { pillsScenarios } from './pills';
 import { progressHeaderScenarios } from './progress-header';
 import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
@@ -35,6 +36,7 @@ export const playgroundScenarios = [
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...pillsScenarios,
   ...progressHeaderScenarios,
   ...progressPageScenarios,
   ...pulseScenarios,
