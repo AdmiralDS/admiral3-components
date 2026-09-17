@@ -7,22 +7,22 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 22765
+      "rawBytes": 22771
     },
     "check-box": {
-      "rawBytes": 12000
+      "rawBytes": 12025
     },
     "divider": {
       "rawBytes": 1543
     },
     "field-set": {
-      "rawBytes": 1702
+      "rawBytes": 1719
     },
     "helper-components": {
       "rawBytes": 9721
     },
     "input": {
-      "rawBytes": 12516
+      "rawBytes": 12524
     },
     "link": {
       "rawBytes": 2676
@@ -43,16 +43,16 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 8987
+      "rawBytes": 9016
     },
     "skeleton": {
       "rawBytes": 1298
     },
     "spinner": {
-      "rawBytes": 6562
+      "rawBytes": 6566
     },
     "toggle": {
-      "rawBytes": 7679
+      "rawBytes": 7700
     }
   },
   "version": 1
