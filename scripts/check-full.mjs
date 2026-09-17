@@ -1,5 +1,6 @@
-import { spawnSync } from 'node:child_process';
 import { performance } from 'node:perf_hooks';
+
+import { spawnNpmSync } from './utils/run-npm.mjs';
 
 // Проверки перечислены в том же порядке, в котором они должны выполняться в полном прогоне.
 // Следующая проверка запускается только после успешного завершения предыдущей.
@@ -14,16 +15,15 @@ const checks = [
   'test:bundle',
 ];
 
-// В Windows npm запускается через npm.cmd, в остальных системах — через npm.
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-
 // Замер начинается перед первой проверкой и охватывает весь полный прогон.
 const startedAt = performance.now();
 let exitCode = 0;
 
 for (const check of checks) {
   // stdio: 'inherit' оставляет вывод каждой npm-команды доступным в текущем терминале.
-  const result = spawnSync(npmCommand, ['run', check], { stdio: 'inherit' });
+  const result = spawnNpmSync(['run', check], {
+    stdio: 'inherit',
+  });
 
   // result.error означает, что сам дочерний процесс не удалось запустить.
   if (result.error) {
