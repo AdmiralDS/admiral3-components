@@ -3,7 +3,28 @@ import { expect, test } from '@playwright/test';
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('Chips playground', () => {
-  for (const key of ['Enter', 'Space']) {
+  test('uses native titles only for overflowing content when tooltips are enabled', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('chips/tooltip'));
+    const auto = page.getByTestId('tooltip-auto');
+    const custom = page.getByTestId('tooltip-custom');
+    const disabled = page.getByTestId('tooltip-disabled');
+    const short = page.getByTestId('tooltip-short');
+    await expect(auto).not.toHaveAttribute('title');
+    await auto.hover();
+    await expect(auto).toHaveAttribute(
+      'title',
+      'Очень длинное название выбранного фильтра, которое не помещается в Chips',
+    );
+    await custom.hover();
+    await expect(auto).not.toHaveAttribute('title');
+    await expect(custom).toHaveAttribute('title', 'Собственное описание выбранного фильтра');
+    await disabled.hover();
+    await expect(custom).not.toHaveAttribute('title');
+    await expect(disabled).not.toHaveAttribute('title');
+    await short.hover();
+    await expect(short).not.toHaveAttribute('title');
+  });
+  for (const key of ['Enter', 'Space', 'Backspace']) {
     test(`removes a chip with ${key} from the main chip button`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('chips/removable'));
       const chip = page.getByTestId('chips').filter({ hasText: 'Марс' });
@@ -83,21 +104,25 @@ test.describe('Chips playground', () => {
     await expect(page.getByTestId('chips').filter({ hasText: 'Марс' })).toHaveCount(0);
   });
 
-  test('lets the consumer control activation for disabled and readOnly states', async ({ page }) => {
+  test('blocks activation internally for disabled and readOnly states', async ({ page }) => {
     for (const state of ['filter-disabled', 'filter-readonly', 'filter']) {
       await page.goto(getPlaygroundScenarioPath('chips/' + state));
-      const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();
+      const chip = page.getByTestId('chips');
+      const action = chip.getByRole('button', { name: 'Только избранное' });
       const background = await chip.evaluate((element) => getComputedStyle(element).backgroundColor);
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
       await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
       await page.mouse.move(0, 0);
       if (state === 'filter') {
+        await expect(action).toHaveAttribute('aria-pressed', 'true');
         await expect(chip).not.toHaveCSS('background-color', background);
       } else {
-        await chip.getByRole('button').focus();
+        await expect(action).toHaveAttribute('aria-disabled', 'true');
+        await action.focus();
         await page.keyboard.press('Enter');
         await page.keyboard.press('Space');
+        await expect(action).toHaveAttribute('aria-pressed', 'false');
         await expect(chip).toHaveCSS('background-color', background);
       }
     }
@@ -132,7 +157,7 @@ test.describe('Chips playground', () => {
 
   test('applies hover and press to the chip when there is no close button', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('chips/filter'));
-    const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();
+    const chip = page.getByTestId('chips');
     const hoverBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-hover');
     const pressBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-press');
     await expect(chip.getByRole('button', { name: '', exact: true })).toHaveCount(0);

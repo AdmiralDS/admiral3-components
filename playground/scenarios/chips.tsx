@@ -1,11 +1,11 @@
 import type { PlaygroundScenario } from './index';
 import type { ChipsProps } from '../../src/components/Chips';
 import { ChipsAppearancesTemplate } from '../../src/components/Chips/stories/ChipsAppearances.template';
-import { ChipsFilterTemplate } from '../../src/components/Chips/stories/ChipsFilter.template';
 import { ChipsPlaygroundTemplate } from '../../src/components/Chips/stories/ChipsPlayground.template';
 import { ChipsRemovableTemplate } from '../../src/components/Chips/stories/ChipsRemovable.template';
 import { ChipsSelectionTemplate } from '../../src/components/Chips/stories/ChipsSelection.template';
 import { ChipsSizesTemplate } from '../../src/components/Chips/stories/ChipsSizes.template';
+import { ChipsTooltipTemplate } from '../../src/components/Chips/stories/ChipsTooltip.template';
 
 const defaultArgs: ChipsProps = {
   children: 'Chips',
@@ -29,7 +29,7 @@ export const chipsScenarios: PlaygroundScenario[] = [
   ].map(({ id, props }) => ({
     id: `chips/${id}`,
     title: `Chips ${id}`,
-    render: () => <ChipsFilterTemplate {...props} appearance="flat" colorMode="colored" data-testid="chips" />,
+    render: () => <ChipsSelectionTemplate {...props} appearance="flat" colorMode="colored" data-testid="chips" />,
   })),
   {
     id: 'chips/removable',
@@ -47,5 +47,10 @@ export const chipsScenarios: PlaygroundScenario[] = [
     id: 'chips/sizes',
     title: 'Chips Sizes',
     render: () => <ChipsSizesTemplate data-testid="chips" />,
+  },
+  {
+    id: 'chips/tooltip',
+    title: 'Chips Tooltip',
+    render: () => <ChipsTooltipTemplate />,
   },
 ];

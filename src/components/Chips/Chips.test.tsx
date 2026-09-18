@@ -1,14 +1,195 @@
 import { createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import * as overflowUtils from '#src/utils/checkOverflow';
 
 import { Chips } from './Chips';
 
 describe('Chips', () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
 
-  describe.each(['iconStart', 'iconEnd', 'avatar'] as const)('%s slot', (slot) => {
+  describe('native tooltip', () => {
+    beforeEach(() => {
+      vi.spyOn(overflowUtils, 'checkOverflow').mockReturnValue(true);
+    });
+
+    it('shows string children only while hovered and overflowing', () => {
+      render(<Chips data-testid="chips">Long filter name</Chips>);
+      const chip = screen.getByTestId('chips');
+      expect(chip).not.toHaveAttribute('title');
+      fireEvent.mouseEnter(chip);
+      expect(chip).toHaveAttribute('title', 'Long filter name');
+      expect(overflowUtils.checkOverflow).toHaveBeenCalledWith(screen.getByText('Long filter name'));
+      fireEvent.mouseLeave(chip);
+      expect(chip).not.toHaveAttribute('title');
+    });
+
+    it('uses custom tooltip content for rich children', () => {
+      render(
+        <Chips data-testid="chips" renderContentTooltip={() => 'Custom tooltip'}>
+          <strong>Filter</strong>
+        </Chips>,
+      );
+      fireEvent.mouseEnter(screen.getByTestId('chips'));
+      expect(screen.getByTestId('chips')).toHaveAttribute('title', 'Custom tooltip');
+    });
+
+    it('prefers custom text over string children', () => {
+      render(
+        <Chips data-testid="chips" renderContentTooltip={() => 'Custom tooltip'}>
+          Filter
+        </Chips>,
+      );
+      fireEvent.mouseEnter(screen.getByTestId('chips'));
+      expect(screen.getByTestId('chips')).toHaveAttribute('title', 'Custom tooltip');
+    });
+
+    it('does not show a tooltip when the content fits, even with custom text', () => {
+      vi.mocked(overflowUtils.checkOverflow).mockReturnValue(false);
+      render(
+        <Chips data-testid="chips" renderContentTooltip={() => 'Custom tooltip'}>
+          Filter
+        </Chips>,
+      );
+      fireEvent.mouseEnter(screen.getByTestId('chips'));
+      expect(screen.getByTestId('chips')).not.toHaveAttribute('title');
+    });
+
+    it.each([
+      { name: 'rich content', children: <strong>Filter</strong> },
+      { name: 'number', children: 42 },
+      { name: 'empty string', children: '' },
+    ])('does not infer a tooltip from $name', ({ children }) => {
+      render(<Chips data-testid="chips">{children}</Chips>);
+      fireEvent.mouseEnter(screen.getByTestId('chips'));
+      expect(screen.getByTestId('chips')).not.toHaveAttribute('title');
+    });
+
+    it('skips overflow checks and hover listeners when disabledTooltip is set', () => {
+      render(
+        <Chips data-testid="chips" disabledTooltip renderContentTooltip={() => 'Custom tooltip'}>
+          Filter
+        </Chips>,
+      );
+      fireEvent.mouseEnter(screen.getByTestId('chips'));
+      expect(screen.getByTestId('chips')).not.toHaveAttribute('title');
+      expect(overflowUtils.checkOverflow).not.toHaveBeenCalled();
+    });
+
+    it('hides the tooltip when disabledTooltip changes and restores it when enabled', () => {
+      const { rerender } = render(<Chips data-testid="chips">Filter</Chips>);
+      const chip = screen.getByTestId('chips');
+      fireEvent.mouseEnter(chip);
+      expect(chip).toHaveAttribute('title', 'Filter');
+      rerender(
+        <Chips data-testid="chips" disabledTooltip>
+          Filter
+        </Chips>,
+      );
+      expect(chip).not.toHaveAttribute('title');
+      vi.mocked(overflowUtils.checkOverflow).mockClear();
+      fireEvent.mouseLeave(chip);
+      fireEvent.mouseEnter(chip);
+      expect(overflowUtils.checkOverflow).not.toHaveBeenCalled();
+      rerender(<Chips data-testid="chips">Filter</Chips>);
+      fireEvent.mouseLeave(chip);
+      fireEvent.mouseEnter(chip);
+      expect(chip).toHaveAttribute('title', 'Filter');
+    });
+
+    it('rechecks overflow on the next hover', () => {
+      render(<Chips data-testid="chips">Filter</Chips>);
+      const chip = screen.getByTestId('chips');
+      fireEvent.mouseEnter(chip);
+      expect(chip).toHaveAttribute('title', 'Filter');
+      fireEvent.mouseLeave(chip);
+      vi.mocked(overflowUtils.checkOverflow).mockReturnValue(false);
+      fireEvent.mouseEnter(chip);
+      expect(chip).not.toHaveAttribute('title');
+    });
+  });
+
+  describe.each([{ disabled: true }, { readOnly: true }, { disabled: true, readOnly: true }])(
+    'blocked events: %j',
+    (state) => {
+      it('blocks programmatic clicks on the wrapper and content and restores them when enabled', () => {
+        const onClick = vi.fn();
+        const { rerender } = render(
+          <Chips {...state} onClick={onClick} data-testid="chips">
+            Filter
+          </Chips>,
+        );
+        screen.getByTestId('chips').click();
+        screen.getByRole('button', { name: 'Filter' }).click();
+        expect(onClick).not.toHaveBeenCalled();
+
+        rerender(
+          <Chips onClick={onClick} data-testid="chips">
+            Filter
+          </Chips>,
+        );
+        screen.getByTestId('chips').click();
+        screen.getByRole('button', { name: 'Filter' }).click();
+        expect(onClick).toHaveBeenCalledTimes(2);
+      });
+
+      it.each(['Enter', ' ', 'Backspace'])('blocks removal with %s', (key) => {
+        const onClose = vi.fn();
+        const onKeyDown = vi.fn();
+        render(
+          <Chips {...state} selected={false} onClose={onClose} onKeyDown={onKeyDown}>
+            Filter
+          </Chips>,
+        );
+        fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
+        expect(onClose).not.toHaveBeenCalled();
+        expect(onKeyDown).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        ['onClick', 'click'],
+        ['onClickCapture', 'click'],
+        ['onDoubleClick', 'doubleClick'],
+        ['onMouseDown', 'mouseDown'],
+        ['onMouseEnter', 'mouseEnter'],
+        ['onPointerDown', 'pointerDown'],
+        ['onPointerDownCapture', 'pointerDown'],
+        ['onKeyDown', 'keyDown'],
+        ['onKeyDownCapture', 'keyDown'],
+        ['onKeyUp', 'keyUp'],
+        ['onFocus', 'focusIn'],
+        ['onBlur', 'focusOut'],
+        ['onTouchStart', 'touchStart'],
+        ['onContextMenu', 'contextMenu'],
+        ['onWheel', 'wheel'],
+      ] as const)('blocks %s and preserves other attributes', (handlerName, eventName) => {
+        const handler = vi.fn();
+        const { rerender } = render(
+          <Chips {...state} {...{ [handlerName]: handler }} data-testid="chips" lang="ru">
+            Filter
+          </Chips>,
+        );
+        const chip = screen.getByTestId('chips');
+        fireEvent[eventName](chip, { key: 'Enter' });
+        expect(handler).not.toHaveBeenCalled();
+        expect(chip).toHaveAttribute('lang', 'ru');
+        rerender(
+          <Chips {...{ [handlerName]: handler }} data-testid="chips" lang="ru">
+            Filter
+          </Chips>,
+        );
+        fireEvent[eventName](chip, { key: 'Enter' });
+        expect(handler).toHaveBeenCalledOnce();
+      });
+    },
+  );
+
+  describe.each(['iconBefore', 'iconAfter', 'avatar'] as const)('%s slot', (slot) => {
     it.each([false, true, null, undefined, ''])('does not create a wrapper for %s', (value) => {
       render(
         <Chips data-testid="chips" {...{ [slot]: value }}>
@@ -28,7 +209,7 @@ describe('Chips', () => {
       );
       const content = screen.getByTestId('chips').firstElementChild!;
       expect(content.children).toHaveLength(2);
-      const wrapper = slot === 'iconEnd' ? content.lastElementChild : content.firstElementChild;
+      const wrapper = slot === 'iconAfter' ? content.lastElementChild : content.firstElementChild;
       expect(wrapper).toHaveTextContent(String(value));
     });
   });
@@ -36,7 +217,7 @@ describe('Chips', () => {
   it('renders children and forwards div attributes and ref', () => {
     const ref = createRef<HTMLDivElement>();
     render(
-      <Chips ref={ref} data-testid="chips" id="filter" title="Filter" className="custom">
+      <Chips ref={ref} data-testid="chips" id="filter" lang="ru" className="custom">
         Content
       </Chips>,
     );
@@ -44,7 +225,7 @@ describe('Chips', () => {
     expect(ref.current).toBe(chip);
     expect(chip).toHaveTextContent('Content');
     expect(chip).toHaveAttribute('id', 'filter');
-    expect(chip).toHaveAttribute('title', 'Filter');
+    expect(chip).toHaveAttribute('lang', 'ru');
     expect(chip).toHaveClass('custom');
   });
 
@@ -77,8 +258,8 @@ describe('Chips', () => {
   it('renders start and end icons and an avatar', () => {
     render(
       <Chips
-        iconStart={<span data-testid="start" />}
-        iconEnd={<span data-testid="end" />}
+        iconBefore={<span data-testid="start" />}
+        iconAfter={<span data-testid="end" />}
         avatar={<span data-testid="avatar" />}
       >
         Filter
@@ -89,7 +270,7 @@ describe('Chips', () => {
 
   it('replaces the end icon with a close button when onClose is set', () => {
     render(
-      <Chips onClose={vi.fn()} iconEnd={<span data-testid="end" />}>
+      <Chips onClose={vi.fn()} iconAfter={<span data-testid="end" />}>
         Filter
       </Chips>,
     );
@@ -108,7 +289,7 @@ describe('Chips', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('calls onClose with the chip id without calling onClick', () => {
+  it('calls onClose without calling onClick', () => {
     const onClose = vi.fn();
     const onClick = vi.fn();
     render(
@@ -117,7 +298,7 @@ describe('Chips', () => {
       </Chips>,
     );
     fireEvent.click(screen.getByRole('button', { name: '' }));
-    expect(onClose).toHaveBeenCalledExactlyOnceWith('filter');
+    expect(onClose).toHaveBeenCalledExactlyOnceWith();
     expect(onClick).not.toHaveBeenCalled();
     expect(screen.getByText('Filter')).toBeInTheDocument();
   });
@@ -176,7 +357,7 @@ describe('Chips', () => {
     { disabled: true, readOnly: false },
     { disabled: false, readOnly: true },
     { disabled: true, readOnly: true },
-  ])('lets the consumer omit event handlers when disabled=$disabled and readOnly=$readOnly', (state) => {
+  ])('blocks handlers when disabled=$disabled and readOnly=$readOnly and restores them when enabled', (state) => {
     const onClick = vi.fn();
     const onClose = vi.fn();
     const onKeyDown = vi.fn();
@@ -185,9 +366,9 @@ describe('Chips', () => {
         data-testid="chips"
         disabled={disabled}
         readOnly={readOnly}
-        onClick={!disabled && !readOnly ? onClick : undefined}
-        onClose={!disabled && !readOnly ? onClose : undefined}
-        onKeyDown={!disabled && !readOnly ? onKeyDown : undefined}
+        onClick={onClick}
+        onClose={onClose}
+        onKeyDown={onKeyDown}
       >
         Filter
       </Chips>
@@ -199,8 +380,6 @@ describe('Chips', () => {
     expect(onClick).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
     expect(onKeyDown).not.toHaveBeenCalled();
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-
     rerender(renderChip({ disabled: false, readOnly: false }));
     fireEvent.click(screen.getByTestId('chips'));
     expect(onClick).toHaveBeenCalledOnce();
@@ -211,7 +390,7 @@ describe('Chips', () => {
   });
 
   describe('accessibility and interaction regressions', () => {
-    it.each(['Enter', ' '])('removes from the main button with %s when there is no onClick', (key) => {
+    it.each(['Enter', ' ', 'Backspace'])('removes from the main button with %s when there is no onClick', (key) => {
       const onClose = vi.fn();
       render(
         <Chips id="filter" onClose={onClose}>
@@ -222,7 +401,7 @@ describe('Chips', () => {
       expect(onClose).toHaveBeenCalledExactlyOnceWith();
     });
 
-    it.each(['Delete', 'Backspace'])('forwards %s without activating or removing', (key) => {
+    it.each(['Delete', 'Tab'])('forwards %s without activating or removing', (key) => {
       const onClose = vi.fn();
       const onClick = vi.fn();
       const onKeyDown = vi.fn();
@@ -301,7 +480,7 @@ describe('Chips', () => {
       expect(screen.getByRole('button', { name: 'Choose filter' })).toBeInTheDocument();
     });
 
-    it('keeps a readOnly action out of the tab order and hides close', () => {
+    it('announces readOnly and hides close', () => {
       render(
         <Chips selected readOnly onClose={vi.fn()}>
           Filter
@@ -309,12 +488,11 @@ describe('Chips', () => {
       );
       const action = screen.getByRole('button', { name: 'Filter' });
       expect(action).toHaveAttribute('aria-disabled', 'true');
-      expect(action.tabIndex).toBe(-1);
       expect(screen.queryByRole('button', { name: '' })).not.toBeInTheDocument();
     });
-    it('keeps a disabled chip out of the tab order even with tabIndex=0', () => {
+    it('keeps a disabled chip out of the tab order by default', () => {
       render(
-        <Chips disabled tabIndex={0} data-testid="chips" onClick={vi.fn()}>
+        <Chips disabled data-testid="chips" onClick={vi.fn()}>
           Filter
         </Chips>,
       );
@@ -339,23 +517,23 @@ describe('Chips', () => {
       expect(screen.getByRole('button', { name: 'Filter' })).toHaveAttribute('aria-pressed', 'true');
     });
 
-    it('does not put a non-interactive chip in the tab order', () => {
+    it('keeps the outer wrapper out of the tab order', () => {
       render(<Chips data-testid="chips">Filter</Chips>);
       expect(screen.getByTestId('chips').tabIndex).toBeLessThan(0);
     });
 
-    it('does not cancel the default Space event in the internal handler', () => {
+    it('prevents the default Space event during activation', () => {
       render(
         <Chips onClick={vi.fn()} data-testid="chips">
           Filter
         </Chips>,
       );
       expect(fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key: ' ', cancelable: true })).toBe(
-        true,
+        false,
       );
     });
 
-    it('passes the id through native close button activation', () => {
+    it('calls onClose through native close button activation', () => {
       const onClose = vi.fn();
       render(
         <Chips id="filter" onClose={onClose} data-testid="chips">
@@ -363,7 +541,7 @@ describe('Chips', () => {
         </Chips>,
       );
       screen.getByRole('button', { name: '' }).click();
-      expect(onClose).toHaveBeenCalledExactlyOnceWith('filter');
+      expect(onClose).toHaveBeenCalledExactlyOnceWith();
     });
   });
 });
