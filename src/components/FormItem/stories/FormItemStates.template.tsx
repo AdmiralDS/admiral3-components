@@ -63,6 +63,23 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         </FormItem>
       </StoryDemoItem>
       <StoryDemoItem>
+        <StoryDemoDescription>Только чтение</StoryDemoDescription>
+        <FormItem
+          {...args}
+          label="Номер договора"
+          htmlFor="form-item-state-readonly"
+          description={<span id="form-item-state-readonly-description">Значение можно выделить и скопировать</span>}
+        >
+          <Input
+            id="form-item-state-readonly"
+            dimension={args.dimension}
+            defaultValue="ADM-2026-001"
+            readOnly
+            aria-describedby="form-item-state-readonly-description"
+          />
+        </FormItem>
+      </StoryDemoItem>
+      <StoryDemoItem>
         <StoryDemoDescription>Ошибка</StoryDemoDescription>
         <FormItem
           {...args}

@@ -18,6 +18,7 @@ import {
 type FormValues = {
   name: string;
   password: string;
+  confirmPassword: string;
   email: string;
   website: string;
   delivery: string;
@@ -28,6 +29,7 @@ type FormValues = {
 const defaultValues: FormValues = {
   name: '',
   password: '',
+  confirmPassword: '',
   email: '',
   website: '',
   delivery: 'courier',
@@ -83,22 +85,35 @@ const ErrorText = styled.span`
   color: var(--admiral-color-error-text-1-rest);
 `;
 
+const SuccessText = styled.span`
+  ${textStyles.body.body2Long}
+  color: var(--admiral-color-success-text-1-rest);
+`;
+
 type InputFieldProps = {
   children: ReactNode;
   error?: string;
+  success?: string;
   id: string;
   label: string;
   withFormItem: boolean;
+  required?: boolean;
 };
 
-const InputField = ({ children, error, id, label, withFormItem }: InputFieldProps) =>
+const InputField = ({ children, error, success, id, label, withFormItem, required = true }: InputFieldProps) =>
   withFormItem ? (
     <FormItem
       label={label}
       htmlFor={id}
-      required
-      status={error ? 'error' : undefined}
-      description={error && <span id={`${id}-error`}>{error}</span>}
+      required={required}
+      status={error ? 'error' : success ? 'success' : undefined}
+      description={
+        error ? (
+          <span id={`${id}-error`}>{error}</span>
+        ) : success ? (
+          <span id={`${id}-success`}>{success}</span>
+        ) : undefined
+      }
     >
       {children}
     </FormItem>
@@ -106,7 +121,11 @@ const InputField = ({ children, error, id, label, withFormItem }: InputFieldProp
     <Field>
       <Label htmlFor={id}>{label}</Label>
       {children}
-      {error && <ErrorText id={`${id}-error`}>{error}</ErrorText>}
+      {error ? (
+        <ErrorText id={`${id}-error`}>{error}</ErrorText>
+      ) : success ? (
+        <SuccessText id={`${id}-success`}>{success}</SuccessText>
+      ) : null}
     </Field>
   );
 
@@ -131,6 +150,7 @@ const Result = styled.pre`
 export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: boolean }) => {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const form = useForm({
     defaultValues,
     onSubmit: ({ value }) => setSubmittedValues(value),
@@ -140,6 +160,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
     form.reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
+    setConfirmPasswordVisible(false);
   };
 
   return (
@@ -163,6 +184,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
             return (
               <InputField id="tanstack-name" label="Имя" error={error} withFormItem={withFormItem}>
                 <Input
+                  aria-required
                   id="tanstack-name"
                   name={field.name}
                   value={field.state.value}
@@ -190,9 +212,17 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
         >
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
+            const success = !error && field.state.value.length >= 8 ? 'Пароль соответствует требованиям' : undefined;
             return (
-              <InputField id="tanstack-password" label="Пароль" error={error} withFormItem={withFormItem}>
+              <InputField
+                id="tanstack-password"
+                label="Пароль"
+                error={error}
+                success={success}
+                withFormItem={withFormItem}
+              >
                 <Input
+                  aria-required
                   id="tanstack-password"
                   name={field.name}
                   value={field.state.value}
@@ -209,9 +239,70 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   }
                   placeholder="Не менее 8 символов"
                   autoComplete="new-password"
-                  status={error ? 'error' : undefined}
+                  status={error ? 'error' : success ? 'success' : undefined}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'tanstack-password-error' : undefined}
+                  aria-describedby={
+                    error ? 'tanstack-password-error' : success ? 'tanstack-password-success' : undefined
+                  }
+                />
+              </InputField>
+            );
+          }}
+        </form.Field>
+
+        <form.Field
+          name="confirmPassword"
+          validators={{
+            onChangeListenTo: ['password'],
+            onChange: ({ value, fieldApi }) =>
+              !value
+                ? 'Повторите пароль'
+                : value !== fieldApi.form.getFieldValue('password')
+                  ? 'Пароли не совпадают'
+                  : undefined,
+          }}
+        >
+          {(field) => {
+            const error = field.state.meta.isTouched ? field.state.meta.errors.join(', ') || undefined : undefined;
+            const success =
+              !error && field.state.value.length >= 8 && field.state.value === form.getFieldValue('password')
+                ? 'Пароли совпадают'
+                : undefined;
+            return (
+              <InputField
+                id="tanstack-confirm-password"
+                label="Повторите пароль"
+                error={error}
+                success={success}
+                withFormItem={withFormItem}
+              >
+                <Input
+                  aria-required
+                  id="tanstack-confirm-password"
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                  onBlur={field.handleBlur}
+                  type={confirmPasswordVisible ? 'text' : 'password'}
+                  showClearIcon
+                  iconsAfter={
+                    <InputIconPasswordButton
+                      visible={confirmPasswordVisible}
+                      onVisibleChange={setConfirmPasswordVisible}
+                      preventFocus={false}
+                    />
+                  }
+                  placeholder="Повторите пароль"
+                  autoComplete="new-password"
+                  status={error ? 'error' : success ? 'success' : undefined}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={
+                    error
+                      ? 'tanstack-confirm-password-error'
+                      : success
+                        ? 'tanstack-confirm-password-success'
+                        : undefined
+                  }
                 />
               </InputField>
             );
@@ -234,6 +325,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
             return (
               <InputField id="tanstack-email" label="Электронная почта" error={error} withFormItem={withFormItem}>
                 <Input
+                  aria-required
                   id="tanstack-email"
                   name={field.name}
                   value={field.state.value}
@@ -256,17 +348,13 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
           name="website"
           validators={{
             onChange: ({ value }) =>
-              !value
-                ? 'Введите адрес сайта'
-                : /^https?:\/\/.+/.test(value)
-                  ? undefined
-                  : 'Адрес должен начинаться с http:// или https://',
+              !value || /^https?:\/\/.+/.test(value) ? undefined : 'Адрес должен начинаться с http:// или https://',
           }}
         >
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <InputField id="tanstack-website" label="Сайт" error={error} withFormItem={withFormItem}>
+              <InputField id="tanstack-website" label="Сайт" required={false} error={error} withFormItem={withFormItem}>
                 <Input
                   id="tanstack-website"
                   name={field.name}

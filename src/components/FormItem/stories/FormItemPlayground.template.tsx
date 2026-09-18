@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -14,21 +14,24 @@ const CounterText = styled.span<{ $limitReached: boolean }>`
 `;
 
 export const FormItemPlaygroundTemplate = (args: FormItemProps) => {
+  const id = useId();
+  const descriptionId = `${id}-description`;
   const hasDescription = hasSlotContent(args.description);
   return (
     <FormItem
       {...args}
-      htmlFor="form-item-playground-input"
-      description={hasDescription ? <span id="form-item-playground-description">{args.description}</span> : undefined}
+      htmlFor={id}
+      description={hasDescription ? <span id={descriptionId}>{args.description}</span> : undefined}
     >
       <Input
-        id="form-item-playground-input"
+        id={id}
         dimension={args.dimension}
+        aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
         placeholder="Введите значение"
         status={args.status}
         required={args.required}
         disabled={args.disabled}
-        aria-describedby={hasDescription ? 'form-item-playground-description' : undefined}
+        aria-describedby={hasDescription ? descriptionId : undefined}
       />
     </FormItem>
   );
@@ -78,6 +81,7 @@ export const FormItemXsTemplate = () => (
     dimension="xs"
     label="Электронная почта"
     htmlFor="form-item-xs-email"
+    counter="16 / 20"
     description={<span id="form-item-xs-description">Укажите рабочий адрес</span>}
   >
     <Input
@@ -90,16 +94,17 @@ export const FormItemXsTemplate = () => (
   </FormItem>
 );
 
-export const FormItemCounterTemplate = () => {
+export const FormItemCounterTemplate = (args: FormItemProps) => {
+  const hasDescription = hasSlotContent(args.description);
   const maxLength = 20;
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('Пример названия №1');
   const count = value.length;
 
   return (
     <FormItem
-      label="Название"
+      {...args}
       htmlFor="form-item-counter-input"
-      description={<span id="form-item-counter-description">Не более 20 символов</span>}
+      description={hasDescription ? <span id="form-item-counter-description">{args.description}</span> : undefined}
       counter={
         count >= maxLength * 0.8 ? (
           <CounterText $limitReached={count >= maxLength}>
@@ -110,7 +115,13 @@ export const FormItemCounterTemplate = () => {
     >
       <Input
         id="form-item-counter-input"
-        aria-describedby="form-item-counter-description"
+        dimension={args.dimension}
+        status={args.status}
+        required={args.required}
+        disabled={args.disabled}
+        aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
+        aria-describedby={hasDescription ? 'form-item-counter-description' : undefined}
+        showClearIcon
         maxLength={maxLength}
         value={value}
         onChange={(event) => setValue(event.target.value)}

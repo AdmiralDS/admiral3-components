@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { FormItem, Input } from '@admiral-ds/admiral3-components';
+import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-components';
 
+import { hasSlotContent } from '../../../utils/hasSlotContent';
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 
 const NarrowFormItem = styled(FormItem)`
@@ -9,47 +10,52 @@ const NarrowFormItem = styled(FormItem)`
   max-width: 100%;
 `;
 
-export const FormItemLongTextTemplate = () => (
-  <StoryDemoContainer $direction="column" $gap="16px">
+export const FormItemLongTextTemplate = (args: FormItemProps) => {
+  const hasDescription = hasSlotContent(args.description);
+  return (
     <NarrowFormItem
-      label="ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов"
-      additionalLabel="Дополнение"
-      htmlFor="form-item-long-label"
+      {...args}
+      htmlFor="form-item-long-text"
+      description={hasDescription ? <span id="form-item-long-description-message">{args.description}</span> : undefined}
     >
-      <Input id="form-item-long-label" />
+      <Input
+        id="form-item-long-text"
+        dimension={args.dimension}
+        status={args.status}
+        required={args.required}
+        disabled={args.disabled}
+        aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
+        aria-describedby={hasDescription ? 'form-item-long-description-message' : undefined}
+        defaultValue="Очень длинное значение поля, которое целиком не помещается в доступную ширину"
+      />
     </NarrowFormItem>
-    <NarrowFormItem
-      label="Название"
-      additionalLabel="ОченьДлиннаяДополнительнаяПодписьБезПробелов"
-      htmlFor="form-item-long-additional-label"
-    >
-      <Input id="form-item-long-additional-label" />
-    </NarrowFormItem>
-    <NarrowFormItem
-      label="Название"
-      htmlFor="form-item-long-description"
-      description={
-        <span id="form-item-long-description-message">
-          https://example.org/very-long-address-without-spaces/very-long-address-without-spaces
-        </span>
-      }
-      counter="16 / 20"
-    >
-      <Input id="form-item-long-description" aria-describedby="form-item-long-description-message" />
-    </NarrowFormItem>
-  </StoryDemoContainer>
-);
+  );
+};
 
-export const FormItemWithoutLabelTemplate = () => (
-  <NarrowFormItem description={<span id="form-item-without-label-description">Пояснение</span>} required>
-    <Input
-      id="form-item-without-label"
-      aria-label="Название"
-      aria-describedby="form-item-without-label-description"
-      required
-    />
-  </NarrowFormItem>
-);
+export const FormItemWithoutLabelTemplate = (args: FormItemProps) => {
+  const hasDescription = hasSlotContent(args.description);
+  return (
+    <NarrowFormItem
+      {...args}
+      label={undefined}
+      additionalLabel={undefined}
+      description={
+        hasDescription ? <span id="form-item-without-label-description">{args.description}</span> : undefined
+      }
+    >
+      <Input
+        id="form-item-without-label"
+        aria-label="Название"
+        placeholder="Введите название"
+        dimension={args.dimension}
+        status={args.status}
+        required={args.required}
+        disabled={args.disabled}
+        aria-describedby={hasDescription ? 'form-item-without-label-description' : undefined}
+      />
+    </NarrowFormItem>
+  );
+};
 
 export const FormItemDisabledStatesTemplate = () => (
   <StoryDemoContainer $direction="column" $gap="16px">

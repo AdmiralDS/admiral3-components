@@ -7,8 +7,24 @@ import { describe, expect, it } from 'vitest';
 
 import { FormItem } from './FormItem';
 import { Input } from '../Input';
+import { FormItemPlaygroundTemplate } from './stories/FormItemPlayground.template';
 
 describe('FormItem', () => {
+  it('keeps labels and descriptions separate when the playground template is rendered twice', () => {
+    render(
+      <>
+        <FormItemPlaygroundTemplate label="First field" description="First hint" children={null} />
+        <FormItemPlaygroundTemplate label="Second field" description="Second hint" children={null} />
+      </>,
+    );
+
+    const first = screen.getByRole('textbox', { name: 'First field' });
+    const second = screen.getByRole('textbox', { name: 'Second field' });
+    expect(first.id).not.toBe(second.id);
+    expect(first).toHaveAccessibleDescription('First hint');
+    expect(second).toHaveAccessibleDescription('Second hint');
+  });
+
   it('renders on the server with a resolved required marker color', () => {
     const sheet = new ServerStyleSheet();
     try {

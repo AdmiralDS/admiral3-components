@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 
 import {
@@ -18,6 +18,7 @@ import {
 type FormValues = {
   name: string;
   password: string;
+  confirmPassword: string;
   email: string;
   website: string;
   delivery: string;
@@ -28,6 +29,7 @@ type FormValues = {
 const defaultValues: FormValues = {
   name: '',
   password: '',
+  confirmPassword: '',
   email: '',
   website: '',
   delivery: 'courier',
@@ -83,22 +85,35 @@ const ErrorText = styled.span`
   color: var(--admiral-color-error-text-1-rest);
 `;
 
+const SuccessText = styled.span`
+  ${textStyles.body.body2Long}
+  color: var(--admiral-color-success-text-1-rest);
+`;
+
 type InputFieldProps = {
   children: ReactNode;
   error?: string;
+  success?: string;
   id: string;
   label: string;
   withFormItem: boolean;
+  required?: boolean;
 };
 
-const InputField = ({ children, error, id, label, withFormItem }: InputFieldProps) =>
+const InputField = ({ children, error, success, id, label, withFormItem, required = true }: InputFieldProps) =>
   withFormItem ? (
     <FormItem
       label={label}
       htmlFor={id}
-      required
-      status={error ? 'error' : undefined}
-      description={error && <span id={`${id}-error`}>{error}</span>}
+      required={required}
+      status={error ? 'error' : success ? 'success' : undefined}
+      description={
+        error ? (
+          <span id={`${id}-error`}>{error}</span>
+        ) : success ? (
+          <span id={`${id}-success`}>{success}</span>
+        ) : undefined
+      }
     >
       {children}
     </FormItem>
@@ -106,7 +121,11 @@ const InputField = ({ children, error, id, label, withFormItem }: InputFieldProp
     <Field>
       <Label htmlFor={id}>{label}</Label>
       {children}
-      {error && <ErrorText id={`${id}-error`}>{error}</ErrorText>}
+      {error ? (
+        <ErrorText id={`${id}-error`}>{error}</ErrorText>
+      ) : success ? (
+        <SuccessText id={`${id}-success`}>{success}</SuccessText>
+      ) : null}
     </Field>
   );
 
@@ -131,18 +150,35 @@ const Result = styled.pre`
 export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?: boolean }) => {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const {
     control,
     formState: { errors },
     handleSubmit,
+    getValues,
+    getFieldState,
+    trigger,
     register,
     reset,
   } = useForm<FormValues>({ defaultValues });
+
+  const password = useWatch({ control, name: 'password' });
+  const confirmPassword = useWatch({ control, name: 'confirmPassword' });
+  const passwordSuccess = !errors.password && password.length >= 8 ? 'Пароль соответствует требованиям' : undefined;
+  const confirmationSuccess = passwordSuccess && confirmPassword === password ? 'Пароли совпадают' : undefined;
+
+  const handlePasswordChange = () => {
+    void trigger('password');
+    if (getValues('confirmPassword') || getFieldState('confirmPassword').isTouched || errors.confirmPassword) {
+      void trigger('confirmPassword');
+    }
+  };
 
   const handleReset = () => {
     reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
+    setConfirmPasswordVisible(false);
   };
 
   return (
@@ -156,6 +192,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
 
         <InputField id="rhf-name" label="Имя" error={errors.name?.message} withFormItem={withFormItem}>
           <Input
+            aria-required
             id="rhf-name"
             type="text"
             showClearIcon
@@ -168,8 +205,15 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
           />
         </InputField>
 
-        <InputField id="rhf-password" label="Пароль" error={errors.password?.message} withFormItem={withFormItem}>
+        <InputField
+          id="rhf-password"
+          label="Пароль"
+          error={errors.password?.message}
+          success={passwordSuccess}
+          withFormItem={withFormItem}
+        >
           <Input
+            aria-required
             id="rhf-password"
             type={passwordVisible ? 'text' : 'password'}
             showClearIcon
@@ -182,18 +226,62 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
             }
             placeholder="Не менее 8 символов"
             autoComplete="new-password"
-            status={errors.password ? 'error' : undefined}
+            status={errors.password ? 'error' : passwordSuccess ? 'success' : undefined}
             aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'rhf-password-error' : undefined}
+            aria-describedby={
+              errors.password ? 'rhf-password-error' : passwordSuccess ? 'rhf-password-success' : undefined
+            }
             {...register('password', {
               required: 'Введите пароль',
+              onChange: handlePasswordChange,
               minLength: { value: 8, message: 'Пароль должен содержать не менее 8 символов' },
+            })}
+          />
+        </InputField>
+
+        <InputField
+          id="rhf-confirm-password"
+          label="Повторите пароль"
+          error={errors.confirmPassword?.message}
+          success={confirmationSuccess}
+          withFormItem={withFormItem}
+        >
+          <Input
+            aria-required
+            id="rhf-confirm-password"
+            type={confirmPasswordVisible ? 'text' : 'password'}
+            showClearIcon
+            iconsAfter={
+              <InputIconPasswordButton
+                visible={confirmPasswordVisible}
+                onVisibleChange={setConfirmPasswordVisible}
+                preventFocus={false}
+              />
+            }
+            placeholder="Повторите пароль"
+            autoComplete="new-password"
+            status={errors.confirmPassword ? 'error' : confirmationSuccess ? 'success' : undefined}
+            aria-invalid={Boolean(errors.confirmPassword)}
+            aria-describedby={
+              errors.confirmPassword
+                ? 'rhf-confirm-password-error'
+                : confirmationSuccess
+                  ? 'rhf-confirm-password-success'
+                  : undefined
+            }
+            {...register('confirmPassword', {
+              required: 'Повторите пароль',
+              validate: (value) => value === getValues('password') || 'Пароли не совпадают',
+              onChange: () => {
+                void trigger('confirmPassword');
+              },
             })}
           />
         </InputField>
 
         <InputField id="rhf-email" label="Электронная почта" error={errors.email?.message} withFormItem={withFormItem}>
           <Input
+            aria-required
             id="rhf-email"
             type="email"
             showClearIcon
@@ -209,7 +297,13 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
           />
         </InputField>
 
-        <InputField id="rhf-website" label="Сайт" error={errors.website?.message} withFormItem={withFormItem}>
+        <InputField
+          id="rhf-website"
+          label="Сайт"
+          required={false}
+          error={errors.website?.message}
+          withFormItem={withFormItem}
+        >
           <Input
             id="rhf-website"
             type="url"
@@ -220,7 +314,6 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
             aria-invalid={Boolean(errors.website)}
             aria-describedby={errors.website ? 'rhf-website-error' : undefined}
             {...register('website', {
-              required: 'Введите адрес сайта',
               pattern: { value: /^https?:\/\/.+/, message: 'Адрес должен начинаться с http:// или https://' },
             })}
           />

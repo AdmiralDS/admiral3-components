@@ -17,8 +17,24 @@ import { FormItemSizesTemplate } from '../../src/components/FormItem/stories/For
 import { FormItemStatesTemplate } from '../../src/components/FormItem/stories/FormItemStates.template';
 
 export const formItemScenarios: PlaygroundScenario[] = [
-  { id: 'form-item/long-text', title: 'FormItem Long Text', render: () => <FormItemLongTextTemplate /> },
-  { id: 'form-item/without-label', title: 'FormItem Without Label', render: () => <FormItemWithoutLabelTemplate /> },
+  {
+    id: 'form-item/long-text',
+    title: 'FormItem Long Text',
+    render: () => (
+      <FormItemLongTextTemplate
+        label="ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов"
+        additionalLabel="ОченьДлиннаяДополнительнаяПодписьБезПробелов"
+        description="https://example.org/very-long-address-without-spaces/very-long-address-without-spaces"
+        counter="16 / 20"
+        children={<Input />}
+      />
+    ),
+  },
+  {
+    id: 'form-item/without-label',
+    title: 'FormItem Without Label',
+    render: () => <FormItemWithoutLabelTemplate description="Пояснение" required children={<Input />} />,
+  },
   {
     id: 'form-item/disabled-states',
     title: 'FormItem Disabled States',
@@ -34,7 +50,11 @@ export const formItemScenarios: PlaygroundScenario[] = [
   { id: 'form-item/error', title: 'FormItem Error', render: () => <FormItemErrorTemplate /> },
   { id: 'form-item/success', title: 'FormItem Success', render: () => <FormItemSuccessTemplate /> },
   { id: 'form-item/xs', title: 'FormItem XS', render: () => <FormItemXsTemplate /> },
-  { id: 'form-item/counter', title: 'FormItem Counter', render: () => <FormItemCounterTemplate /> },
+  {
+    id: 'form-item/counter',
+    title: 'FormItem Counter',
+    render: () => <FormItemCounterTemplate label="Название" description="Не более 20 символов" children={<Input />} />,
+  },
   {
     id: 'form-item/sizes',
     title: 'FormItem Sizes',

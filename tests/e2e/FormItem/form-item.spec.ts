@@ -5,18 +5,17 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 test('FormItem keeps long labels and descriptions within a narrow container', async ({ page }) => {
   await page.goto(getPlaygroundScenarioPath('form-item/long-text'));
 
-  for (const id of ['form-item-long-label', 'form-item-long-additional-label', 'form-item-long-description']) {
-    const item = page
-      .locator('div[data-dimension]')
-      .filter({ has: page.locator(`#${id}`) })
-      .first();
-    await expect(item).toHaveCSS('width', '240px');
-    await expect.poll(() => item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-  }
+  const input = page.locator('#form-item-long-text');
+  const item = page.locator('div[data-dimension]').filter({ has: input }).first();
+  await expect(item).toHaveCSS('width', '240px');
+  await expect.poll(() => item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
 
-  const label = page.locator('label[for="form-item-long-label"]');
+  const label = page.locator('label[for="form-item-long-text"]');
   await expect.poll(() => label.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(16);
-  await expect(label.locator('..').getByText('Дополнение')).toHaveCSS('height', '16px');
+  const additionalLabel = item.getByText('ОченьДлиннаяДополнительнаяПодписьБезПробелов');
+  await expect
+    .poll(() => additionalLabel.evaluate((element) => element.getBoundingClientRect().height))
+    .toBeGreaterThan(16);
   const description = page.locator('#form-item-long-description-message');
   const counter = page.getByText('16 / 20');
   const descriptionBox = await description.boundingBox();
@@ -26,7 +25,7 @@ test('FormItem keeps long labels and descriptions within a narrow container', as
   if (!descriptionBox || !counterBox) return;
   expect(descriptionBox.x + descriptionBox.width).toBeLessThanOrEqual(counterBox.x);
   await expect(counter).toHaveCSS('white-space', 'nowrap');
-  await expect(page.locator('#form-item-long-description')).toHaveAccessibleDescription(await description.innerText());
+  await expect(input).toHaveAccessibleDescription(await description.innerText());
 });
 
 test('FormItem starts with the control when the label is omitted', async ({ page }) => {
@@ -116,9 +115,13 @@ test('FormItem links the label explicitly and leaves input attributes unchanged'
   const description = page.getByText('Укажите рабочий адрес');
   await expect(input).toBeVisible();
   await expect(description).toBeVisible();
-  await expect(input).toHaveAttribute('id', 'form-item-playground-input');
-  await expect(page.locator('label[for="form-item-playground-input"]')).toBeVisible();
-  await expect(input).toHaveAttribute('aria-describedby', 'form-item-playground-description');
+  await expect(page.getByText('Электронная почта', { exact: true })).toHaveAttribute(
+    'for',
+    (await input.getAttribute('id'))!,
+  );
+  await expect(input).toHaveAttribute('aria-describedby', (await description.getAttribute('id'))!);
+  await page.getByText('Электронная почта', { exact: true }).click();
+  await expect(input).toBeFocused();
 
   await page.goto(getPlaygroundScenarioPath('form-item/error'));
   const errorInput = page.getByRole('textbox', { name: 'Электронная почта' });
@@ -141,6 +144,11 @@ test('FormItem places the counter below an input with a native character limit',
 
   const input = page.getByRole('textbox', { name: 'Название' });
   await expect(input).toHaveAttribute('maxlength', '20');
+  await expect(input).toHaveValue('Пример названия №1');
+  await expect(page.getByText('18 / 20')).toBeVisible();
+  await page.getByRole('button', { name: 'Очистить' }).click();
+  await expect(input).toHaveValue('');
+  await expect(page.getByText('18 / 20')).toHaveCount(0);
   await input.fill('123456789012345');
   await expect(page.getByText('15 / 20')).toHaveCount(0);
   await input.fill('1234567890123456');
@@ -165,6 +173,7 @@ test('FormItem uses the master Input typography and spacing for m and xs', async
     .filter({ has: page.getByRole('textbox', { name: 'Электронная почта' }) })
     .first();
   await expect(xsItem).toHaveCSS('gap', '6px');
+  await expect(xsItem.getByText('16 / 20').locator('..')).toHaveCSS('gap', '6px');
   await expect(xsItem.locator('label')).toHaveCSS('font-size', '12px');
   await expect(xsItem.locator('label')).toHaveCSS('line-height', '16px');
   await expect(page.locator('#form-item-xs-email')).toHaveAccessibleDescription('Укажите рабочий адрес');
