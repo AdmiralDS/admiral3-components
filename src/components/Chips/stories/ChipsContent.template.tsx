@@ -15,13 +15,13 @@ const Avatar = styled.div`
 export const ChipsContentTemplate = (args: ChipsProps) => (
   <StoryDemoContainer $withBackground={false} $direction="column" $gap="16px">
     <StoryDemoDescription>Иконки, аватар, бейдж.</StoryDemoDescription>
-    <Chips {...args} badge={5} iconStart={<SystemSearchOutline />} avatar={<Avatar />} onClose={() => null} />
+    <Chips {...args} badge={5} iconBefore={<SystemSearchOutline />} avatar={<Avatar />} onClose={() => null} />
     <Chips
       {...args}
       badge={5}
-      iconStart={<SystemSearchOutline />}
+      iconBefore={<SystemSearchOutline />}
       avatar={<Avatar />}
-      iconEnd={<ServiceCheckOutline />}
+      iconAfter={<ServiceCheckOutline />}
     />
   </StoryDemoContainer>
 );

@@ -3,6 +3,27 @@ import { expect, test } from '@playwright/test';
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('Chips playground', () => {
+  test('uses native titles only for overflowing content when tooltips are enabled', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('chips/tooltip'));
+    const auto = page.getByTestId('tooltip-auto');
+    const custom = page.getByTestId('tooltip-custom');
+    const disabled = page.getByTestId('tooltip-disabled');
+    const short = page.getByTestId('tooltip-short');
+    await expect(auto).not.toHaveAttribute('title');
+    await auto.hover();
+    await expect(auto).toHaveAttribute(
+      'title',
+      'Очень длинное название выбранного фильтра, которое не помещается в Chips',
+    );
+    await custom.hover();
+    await expect(auto).not.toHaveAttribute('title');
+    await expect(custom).toHaveAttribute('title', 'Собственное описание выбранного фильтра');
+    await disabled.hover();
+    await expect(custom).not.toHaveAttribute('title');
+    await expect(disabled).not.toHaveAttribute('title');
+    await short.hover();
+    await expect(short).not.toHaveAttribute('title');
+  });
   for (const key of ['Enter', 'Space']) {
     test(`removes a chip with ${key} from the main chip button`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('chips/removable'));
@@ -83,7 +104,7 @@ test.describe('Chips playground', () => {
     await expect(page.getByTestId('chips').filter({ hasText: 'Марс' })).toHaveCount(0);
   });
 
-  test('lets the consumer control activation for disabled and readOnly states', async ({ page }) => {
+  test('blocks activation internally for disabled and readOnly states', async ({ page }) => {
     for (const state of ['filter-disabled', 'filter-readonly', 'filter']) {
       await page.goto(getPlaygroundScenarioPath('chips/' + state));
       const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();

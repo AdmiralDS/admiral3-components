@@ -6,8 +6,6 @@ import { ChipsAppearancesTemplate } from './ChipsAppearances.template';
 import chipsAppearancesTemplateRaw from './ChipsAppearances.template?raw';
 import { ChipsContentTemplate } from './ChipsContent.template';
 import chipsContentTemplateRaw from './ChipsContent.template?raw';
-import { ChipsFilterTemplate } from './ChipsFilter.template';
-import chipsFilterTemplateRaw from './ChipsFilter.template?raw';
 import { ChipsPlaygroundTemplate } from './ChipsPlayground.template';
 import chipsPlaygroundTemplateRaw from './ChipsPlayground.template?raw';
 import { ChipsRemovableTemplate } from './ChipsRemovable.template';
@@ -16,12 +14,14 @@ import { ChipsSelectionTemplate } from './ChipsSelection.template';
 import chipsSelectionTemplateRaw from './ChipsSelection.template?raw';
 import { ChipsSizesTemplate } from './ChipsSizes.template';
 import chipsSizesTemplateRaw from './ChipsSizes.template?raw';
+import { ChipsTooltipTemplate } from './ChipsTooltip.template';
+import chipsTooltipTemplateRaw from './ChipsTooltip.template?raw';
 import { ChipsWithBadgeTemplate } from './ChipsWithBadge.template';
 import chipsWithBadgeTemplateRaw from './ChipsWithBadge.template?raw';
 import { CHIPS_DIMENSIONS } from '../constants';
 
 const meta = {
-  title: 'Components/Chips',
+  title: 'Components/Chips/Chips',
   component: Chips,
   tags: ['autodocs'],
   argTypes: {
@@ -81,7 +81,7 @@ export const Content: StoryObj<ChipsProps> = {
   args: defaultArgs,
   render: ChipsContentTemplate,
   parameters: {
-    controls: { exclude: ['children', 'iconStart', 'iconEnd', 'badge'] },
+    controls: { exclude: ['children', 'iconBefore', 'iconAfter', 'badge'] },
     docs: { source: { code: chipsContentTemplateRaw } },
   },
 };
@@ -95,19 +95,20 @@ export const Selection: StoryObj<ChipsProps> = {
   },
 };
 
-export const FilterChips: StoryObj<ChipsProps> = {
-  args: defaultArgs,
-  render: ChipsFilterTemplate,
-  parameters: {
-    docs: { source: { code: chipsFilterTemplateRaw } },
-  },
-};
-
 export const Removable: StoryObj<ChipsProps> = {
   args: defaultArgs,
   render: ChipsRemovableTemplate,
   parameters: {
     controls: { exclude: ['children', 'onClose'] },
     docs: { source: { code: chipsRemovableTemplateRaw } },
+  },
+};
+
+export const Tooltip: StoryObj<ChipsProps> = {
+  args: defaultArgs,
+  render: ChipsTooltipTemplate,
+  parameters: {
+    controls: { exclude: ['children', 'disabledTooltip', 'renderContentTooltip'] },
+    docs: { source: { code: chipsTooltipTemplateRaw } },
   },
 };

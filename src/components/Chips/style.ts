@@ -280,15 +280,17 @@ export const ChipComponentStyled = styled.div<StyledChipProps>`
   position: relative;
   max-width: 190px;
   user-select: none;
+  cursor: ${({ $defaultChip, $disabled, $withTooltip, $readOnly }) =>
+    ($defaultChip || $withTooltip) && !$disabled && !$readOnly ? 'pointer' : $disabled ? 'not-allowed' : 'default'};
+  padding-inline: ${(p) =>
+    CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
+
   & > * {
     pointer-events: ${({ $disabled, $readOnly }) => ($disabled || $readOnly ? 'none' : 'auto')};
   }
-  cursor: ${({ $defaultChip, $disabled, $withTooltip, $readOnly }) =>
-    ($defaultChip || $withTooltip) && !$disabled && !$readOnly ? 'pointer' : $disabled ? 'not-allowed' : 'default'};
+
   ${colorsBorderAndBackground}
   ${heights}
-  padding-inline: ${(p) =>
-    CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
   ${chipTypography}
 `;
 
@@ -299,26 +301,21 @@ const closeIconWrapperStyle = css`
 `;
 
 export const ChipContentWrapperStyled = styled.div<StyledChipContentProps>`
-  appearance: none;
   background: transparent;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  color: inherit;
-  font: inherit;
-  cursor: inherit;
-  min-width: 0;
-  &:focus-visible {
-    outline: none;
-  }
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 2px;
+
+  &:focus-visible {
+    outline: none;
+  }
+
   ${(p) => p.$withCloseIcon && closeIconWrapperStyle}
   ${(p) => (p.$withCloseIcon ? heights : heightText)}
+
   & svg {
     ${heightIcons}
     ${widthIcons}

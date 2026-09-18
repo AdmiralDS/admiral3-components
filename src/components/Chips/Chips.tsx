@@ -1,7 +1,8 @@
-import { forwardRef, useMemo, useRef } from 'react';
+import { forwardRef, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 
 import { Badge, type BadgeAppearance } from '#src/components/Badge';
+import { checkOverflow } from '#src/utils/checkOverflow';
 import { hasSlotContent } from '#src/utils/hasSlotContent';
 import { refSetter } from '#src/utils/refSetter';
 
@@ -24,14 +25,17 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       selected,
       onClose,
       children,
-      iconStart,
-      iconEnd,
+      iconBefore,
+      iconAfter,
       badge,
       readOnly,
       avatar,
       role,
       tabIndex,
       onKeyDown,
+      closeButtonProps,
+      renderContentTooltip,
+      disabledTooltip,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
       'aria-describedby': ariaDescribedBy,
@@ -41,6 +45,10 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
     },
     ref,
   ) => {
+    const eventsDisabled = disabled || readOnly;
+    const domProps = eventsDisabled
+      ? Object.fromEntries(Object.entries(props).filter(([name]) => !/^on[A-Z]/.test(name)))
+      : props;
     const defaultChip = selected !== undefined;
     const withCloseIcon = !!onClose;
     const withBadge = !!badge;
@@ -53,6 +61,11 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       'aria-pressed': ariaPressed ?? (actionable ? selected : undefined),
       'aria-disabled': ariaDisabled ?? (disabled || (actionable && readOnly) || undefined),
     };
+
+    const [overflow, setOverflow] = useState(false);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    //TODO добавить проверку на number при добавлении компонента Tooltip
+    const childrenIsPrimitive = typeof children === 'string';
 
     const chipRef = useRef<HTMLDivElement | null>(null);
     const refItems = useRef<HTMLSpanElement | null>(null);
@@ -69,12 +82,19 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
 
     const handleClickCloseIcon = (e: MouseEvent) => {
       e.stopPropagation();
-      onClose?.(props.id);
+      if (eventsDisabled) return;
+      onClose?.();
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-      if (!disabled) {
+      if (!eventsDisabled) {
+        if (e.key === 'Backspace' && withCloseIcon) {
+          e.preventDefault();
+          onClose?.();
+        }
         if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+
           if (withCloseIcon) {
             onClose?.();
           } else {
@@ -86,11 +106,49 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       }
     };
 
+    useEffect(() => {
+      if (disabledTooltip) return;
+
+      if (refItems.current && checkOverflow(refItems.current) !== overflow) {
+        setOverflow(checkOverflow(refItems.current));
+      }
+    }, [tooltipVisible, overflow, setOverflow, disabledTooltip]);
+
+    useLayoutEffect(() => {
+      if (disabledTooltip) return;
+
+      function show() {
+        setTooltipVisible(true);
+      }
+      function hide() {
+        setTooltipVisible(false);
+      }
+      const chip = chipRef.current;
+      if (chip) {
+        chip.addEventListener('mouseenter', show);
+        chip.addEventListener('mouseleave', hide);
+        chip.addEventListener('focus', show);
+        chip.addEventListener('blur', hide);
+        return () => {
+          chip.removeEventListener('mouseenter', show);
+          chip.removeEventListener('mouseleave', hide);
+          chip.removeEventListener('focus', show);
+          chip.removeEventListener('blur', hide);
+        };
+      }
+    }, [setTooltipVisible, disabledTooltip]);
+
+    const hasTooltipContent = renderContentTooltip || (childrenIsPrimitive && children);
+    const shouldRenderTooltip = !disabledTooltip && tooltipVisible && overflow && !!hasTooltipContent;
+    //TODO переделать проверку на рендер контента при добавлении компонента Tooltip
+    const tooltipContent = renderContentTooltip?.();
+    const tooltipRenderContent = tooltipContent ? tooltipContent : childrenIsPrimitive ? children : undefined;
+
     return (
       <>
         <ChipComponentStyled
           {...(!actionable ? accessibleProps : {})}
-          {...props}
+          {...domProps}
           onKeyDown={handleKeyDown}
           ref={refSetter(ref, chipRef)}
           $dimension={dimension}
@@ -103,10 +161,12 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
           $readOnly={readOnly}
           $withBadge={withBadge}
           $clickable={!!props.onClick}
+          $withTooltip={overflow}
+          title={shouldRenderTooltip ? tooltipRenderContent : undefined}
         >
           <ChipContentWrapperStyled
             {...(actionable ? accessibleProps : {})}
-            tabIndex={actionable ? (disabled || readOnly ? -1 : (tabIndex ?? 0)) : undefined}
+            tabIndex={tabIndex ?? (disabled ? -1 : 0)}
             $dimension={dimension}
             $disabled={disabled}
             $appearance={appearance}
@@ -114,9 +174,9 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             $selected={selected}
             $withCloseIcon={readOnly || withCloseIcon}
           >
-            {hasSlotContent(iconStart) && (
+            {hasSlotContent(iconBefore) && (
               <IconWrapperStyled aria-hidden $dimension={dimension}>
-                {iconStart}
+                {iconBefore}
               </IconWrapperStyled>
             )}
             {hasSlotContent(avatar) && <IconWrapperStyled $dimension={dimension}>{avatar}</IconWrapperStyled>}
@@ -126,14 +186,15 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
                 {badge}
               </Badge>
             )}
-            {!withCloseIcon && hasSlotContent(iconEnd) && (
+            {!withCloseIcon && hasSlotContent(iconAfter) && (
               <IconWrapperStyled aria-hidden $dimension={dimension}>
-                {iconEnd}
+                {iconAfter}
               </IconWrapperStyled>
             )}
           </ChipContentWrapperStyled>
           {!readOnly && withCloseIcon && (
             <CloseIconButton
+              {...closeButtonProps}
               dimension={dimension === 'l' ? 'mBig' : dimension === 'm' ? 'sMedium' : 'sSmall'}
               disableHighlighter
               onClick={handleClickCloseIcon}

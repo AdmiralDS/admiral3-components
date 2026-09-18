@@ -21,15 +21,7 @@ export const ChipsRemovableTemplate = (args: ChipsProps) => {
       <StoryDemoDescription>Крестик вызывает событие onClose.</StoryDemoDescription>
       <WrapperFilterChips $dimension={args.dimension}>
         {data.map((item) => (
-          <Chips
-            key={item}
-            {...args}
-            onClose={
-              !args.disabled && !args.readOnly
-                ? () => setData((prevState) => prevState.filter((elem) => elem !== item))
-                : undefined
-            }
-          >
+          <Chips key={item} {...args} onClose={() => setData((prevState) => prevState.filter((elem) => elem !== item))}>
             {item}
           </Chips>
         ))}
