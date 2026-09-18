@@ -1,12 +1,6 @@
 import styled, { css } from 'styled-components';
 
 import { FORM_ITEM_DIMENSION_PARAMETERS } from './constants';
-import type {
-  FormItemStatus,
-  StyledFormItemDescriptionProps,
-  StyledFormItemLabelProps,
-  StyledFormItemProps,
-} from './types';
 import { cssToken } from '../../theme/cssToken';
 
 const secondaryColor = cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest);
@@ -17,74 +11,98 @@ const disabledColor = cssToken(
 const errorColor = cssToken('--admiral-color-error-text-1-rest', (theme) => theme.color.error.text._1.rest);
 const successColor = cssToken('--admiral-color-success-text-1-rest', (theme) => theme.color.success.text._1.rest);
 
-const descriptionColors: Record<FormItemStatus, ReturnType<typeof cssToken>> = {
-  error: errorColor,
-  success: successColor,
-};
-
-export const StyledFormItem = styled.div<StyledFormItemProps>`
+export const StyledFormItem = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].gap}px;
+  gap: ${FORM_ITEM_DIMENSION_PARAMETERS.m.gap}px;
+
+  &[data-dimension='xs'] {
+    gap: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
+  }
 `;
 
-export const StyledLabelRow = styled.div<StyledFormItemProps>`
+const textStyles = css`
+  ${FORM_ITEM_DIMENSION_PARAMETERS.m.typography}
+  color: ${secondaryColor};
+
+  ${StyledFormItem}[data-dimension='xs'] > div > & {
+    ${FORM_ITEM_DIMENSION_PARAMETERS.xs.typography}
+  }
+
+  ${StyledFormItem}[data-disabled] > div > & {
+    color: ${disabledColor};
+  }
+`;
+
+export const StyledLabelRow = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].labelGap}px;
+  gap: ${FORM_ITEM_DIMENSION_PARAMETERS.m.labelGap}px;
+
+  ${StyledFormItem}[data-dimension='s'] > &,
+  ${StyledFormItem}[data-dimension='xs'] > & {
+    gap: ${FORM_ITEM_DIMENSION_PARAMETERS.s.labelGap}px;
+  }
 `;
 
-export const StyledLabel = styled.label<StyledFormItemLabelProps>`
-  ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].typography}
+export const StyledLabel = styled.label`
+  ${textStyles}
   flex: 1 1 auto;
   min-width: 0;
   overflow-wrap: anywhere;
-  color: ${({ $disabled, theme }) => ($disabled ? disabledColor : secondaryColor)({ theme })};
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  cursor: pointer;
 
-  ${({ $required }) =>
-    $required &&
-    css`
-      &::after {
-        content: ' *' / '';
-        color: ${errorColor};
-      }
-    `}
+  ${StyledFormItem}[data-disabled] > ${StyledLabelRow} > & {
+    cursor: not-allowed;
+  }
+
+  ${StyledFormItem}[data-required] > ${StyledLabelRow} > &::after {
+    content: ' *' / '';
+    color: ${errorColor};
+  }
 `;
 
-export const StyledAdditionalLabel = styled.span<StyledFormItemProps>`
-  ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].typography}
+export const StyledAdditionalLabel = styled.span`
+  ${textStyles}
   flex-shrink: 0;
   min-width: 0;
   max-width: 50%;
   overflow-wrap: anywhere;
-  color: ${({ $disabled, theme }) => ($disabled ? disabledColor : secondaryColor)({ theme })};
   cursor: default;
   margin-left: auto;
 `;
 
-export const StyledDescription = styled.span<StyledFormItemDescriptionProps>`
-  ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].typography}
+export const StyledDescription = styled.span`
+  ${textStyles}
   flex: 1 1 auto;
   min-width: 0;
   overflow-wrap: anywhere;
-  color: ${({ $disabled, $status, theme }) =>
-    ($disabled ? disabledColor : $status ? descriptionColors[$status] : secondaryColor)({ theme })};
+
+  ${StyledFormItem}[data-status='error']:not([data-disabled]) > div > & {
+    color: ${errorColor};
+  }
+
+  ${StyledFormItem}[data-status='success']:not([data-disabled]) > div > & {
+    color: ${successColor};
+  }
 `;
 
 export const StyledAdditionalText = styled.div`
   display: flex;
-  gap: 8px;
   justify-content: space-between;
   cursor: default;
+  gap: ${FORM_ITEM_DIMENSION_PARAMETERS.m.gap}px;
+
+  ${StyledFormItem}[data-dimension='xs'] > & {
+    gap: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
+  }
 `;
 
-export const StyledCounter = styled.span<StyledFormItemProps>`
-  ${({ $dimension }) => FORM_ITEM_DIMENSION_PARAMETERS[$dimension].typography}
+export const StyledCounter = styled.span`
+  ${textStyles}
   flex-shrink: 0;
-  color: ${({ $disabled, theme }) => ($disabled ? disabledColor : secondaryColor)({ theme })};
   margin-left: auto;
   white-space: nowrap;
 `;

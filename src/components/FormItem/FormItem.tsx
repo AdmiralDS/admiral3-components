@@ -38,39 +38,23 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
     return (
       <StyledFormItem
         ref={ref}
-        $dimension={dimension}
         data-dimension={dimension}
         data-status={status}
         data-disabled={disabled ? '' : undefined}
+        data-required={required ? '' : undefined}
         {...props}
       >
         {(hasLabel || hasAdditionalLabel) && (
-          <StyledLabelRow $dimension={dimension}>
-            {hasLabel && (
-              <StyledLabel htmlFor={htmlFor} $required={required} $dimension={dimension} $disabled={disabled}>
-                {label}
-              </StyledLabel>
-            )}
-            {hasAdditionalLabel && (
-              <StyledAdditionalLabel $dimension={dimension} $disabled={disabled}>
-                {additionalLabel}
-              </StyledAdditionalLabel>
-            )}
+          <StyledLabelRow>
+            {hasLabel && <StyledLabel htmlFor={htmlFor}>{label}</StyledLabel>}
+            {hasAdditionalLabel && <StyledAdditionalLabel>{additionalLabel}</StyledAdditionalLabel>}
           </StyledLabelRow>
         )}
         {children}
         {(hasDescription || hasCounter) && (
           <StyledAdditionalText>
-            {hasDescription && (
-              <StyledDescription $dimension={dimension} $status={status} $disabled={disabled}>
-                {description}
-              </StyledDescription>
-            )}
-            {hasCounter && (
-              <StyledCounter $dimension={dimension} $disabled={disabled}>
-                {counter}
-              </StyledCounter>
-            )}
+            {hasDescription && <StyledDescription>{description}</StyledDescription>}
+            {hasCounter && <StyledCounter>{counter}</StyledCounter>}
           </StyledAdditionalText>
         )}
       </StyledFormItem>
