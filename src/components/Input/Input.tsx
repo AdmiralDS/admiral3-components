@@ -89,8 +89,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }, [onCharacterCountChange]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      onCharacterCountChange?.(event.currentTarget.value.length);
       onChange?.(event);
+      if (value === undefined) {
+        onCharacterCountChange?.(event.currentTarget.value.length);
+      } else {
+        // После завершения события React синхронизирует controlled input с принятым значением.
+        queueMicrotask(reportCharacterCount);
+      }
     };
 
     // Синхронизация счётчика после монтирования и внешнего изменения controlled value:
@@ -120,8 +125,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       };
     }, [onCharacterCountChange, reportCharacterCount]);
 
-    // cleanup при отключении или размонтировании Input
-    useEffect(() => () => onCharacterCountChange?.(0), [onCharacterCountChange]);
+    // Layout cleanup старого Input выполняется до layout effect нового Input при его замене.
+    useLayoutEffect(() => () => onCharacterCountChange?.(0), [onCharacterCountChange]);
 
     const handleMouseEnter = (event: MouseEvent<HTMLInputElement>) => {
       // TODO: Replace the native title with Tooltip after the Tooltip component is implemented.

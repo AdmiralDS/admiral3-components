@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -290,6 +290,39 @@ describe('FormItem', () => {
     rerender(
       <FormItem maxLength={5} counterThreshold={0}>
         <Input aria-label="Code" value="1234" readOnly />
+      </FormItem>,
+    );
+
+    expect(screen.getByText('4 / 5')).toBeInTheDocument();
+  });
+
+  it('keeps the counter synchronized when a controlled Input rejects a change', async () => {
+    render(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input aria-label="Code" value="12" onChange={() => undefined} />
+      </FormItem>,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Code' });
+
+    await act(async () => {
+      fireEvent.change(input, { target: { value: '123' } });
+    });
+
+    expect(input).toHaveValue('12');
+    expect(screen.getByText('2 / 5')).toBeInTheDocument();
+  });
+
+  it('keeps the counter of a new Input when the previous Input is replaced', () => {
+    const { rerender } = render(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input key="first" aria-label="Code" defaultValue="12" />
+      </FormItem>,
+    );
+
+    rerender(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input key="second" aria-label="Code" defaultValue="1234" />
       </FormItem>,
     );
 
