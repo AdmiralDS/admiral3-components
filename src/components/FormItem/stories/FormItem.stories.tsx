@@ -25,7 +25,7 @@ const meta = {
 
 Свяжите htmlFor с уникальным id поля, а id элемента внутри description — с aria-describedby поля. Для повторяемых примеров используйте React.useId(). Без видимой подписи задайте полю aria-label или aria-labelledby; placeholder не заменяет подпись.
 
-required показывает только звёздочку: передайте required самому полю для нативной проверки либо aria-required при валидации библиотекой форм. disabled, dimension и status также передаются полю отдельно. Для нативного контрола с ошибкой задайте aria-invalid; Input устанавливает его при status="error". readOnly задаётся только полю.
+FormItem передаёт вложенному Input dimension, disabled, required и readOnly через контекст. Настройки обёртки приоритетнее пропсов Input, включая значения по умолчанию: m для размера и false для остальных настроек. Заданный на FormItem status также имеет приоритет; если он не задан, используется status инпута. required задаёт нативную обязательность; при библиотечной валидации можно использовать noValidate на форме. Нативным и сторонним контролам настройки передаются вручную; для ошибки укажите aria-invalid.
 
 counter — готовое содержимое, а не автоматический подсчёт. Порог появления и ограничение maxLength показаны в истории Counter. Для группы полей используйте FieldSet.
 
@@ -37,6 +37,7 @@ counter — готовое содержимое, а не автоматичес�
     dimension: { control: { type: 'inline-radio' }, options: FORM_ITEM_DIMENSIONS },
     required: { control: { type: 'boolean' } },
     disabled: { control: { type: 'boolean' } },
+    readOnly: { control: { type: 'boolean' } },
     label: { control: { type: 'text' } },
     additionalLabel: { control: { type: 'text' } },
     description: { control: { type: 'text' } },
@@ -59,7 +60,17 @@ export const Playground: StoryObj<FormItemProps> = {
   render: FormItemPlaygroundTemplate,
   parameters: {
     controls: {
-      include: ['label', 'additionalLabel', 'description', 'status', 'counter', 'required', 'disabled', 'dimension'],
+      include: [
+        'label',
+        'additionalLabel',
+        'description',
+        'status',
+        'counter',
+        'required',
+        'disabled',
+        'readOnly',
+        'dimension',
+      ],
     },
     docs: { source: { code: formItemPlaygroundTemplateRaw } },
   },
@@ -96,7 +107,9 @@ export const Counter: StoryObj<FormItemProps> = {
   args: { ...defaultArgs, label: 'Название', description: 'Не более 20 символов' },
   render: FormItemCounterTemplate,
   parameters: {
-    controls: { include: ['dimension', 'label', 'additionalLabel', 'description', 'required', 'disabled', 'status'] },
+    controls: {
+      include: ['dimension', 'label', 'additionalLabel', 'description', 'required', 'disabled', 'readOnly', 'status'],
+    },
     docs: { source: { code: formItemPlaygroundTemplateRaw } },
   },
 };
@@ -112,7 +125,17 @@ export const LongText: StoryObj<FormItemProps> = {
   render: FormItemLongTextTemplate,
   parameters: {
     controls: {
-      include: ['label', 'additionalLabel', 'description', 'counter', 'dimension', 'status', 'required', 'disabled'],
+      include: [
+        'label',
+        'additionalLabel',
+        'description',
+        'counter',
+        'dimension',
+        'status',
+        'required',
+        'disabled',
+        'readOnly',
+      ],
     },
     docs: { source: { code: formItemEdgeCasesTemplateRaw } },
   },
@@ -122,7 +145,7 @@ export const WithoutLabel: StoryObj<FormItemProps> = {
   args: { dimension: 'm', description: 'Пояснение', required: true, children: <Input /> },
   render: FormItemWithoutLabelTemplate,
   parameters: {
-    controls: { include: ['dimension', 'description', 'counter', 'status', 'required', 'disabled'] },
+    controls: { include: ['dimension', 'description', 'counter', 'status', 'required', 'disabled', 'readOnly'] },
     docs: { source: { code: formItemEdgeCasesTemplateRaw } },
   },
 };
@@ -137,7 +160,17 @@ export const NativeTextarea: StoryObj<FormItemProps> = {
   render: FormItemNativeTextareaTemplate,
   parameters: {
     controls: {
-      include: ['label', 'additionalLabel', 'description', 'counter', 'dimension', 'status', 'required', 'disabled'],
+      include: [
+        'label',
+        'additionalLabel',
+        'description',
+        'counter',
+        'dimension',
+        'status',
+        'required',
+        'disabled',
+        'readOnly',
+      ],
     },
     docs: { source: { code: formItemCompositionTemplateRaw } },
   },

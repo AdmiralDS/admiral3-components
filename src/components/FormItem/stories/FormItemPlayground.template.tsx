@@ -25,12 +25,8 @@ export const FormItemPlaygroundTemplate = (args: FormItemProps) => {
     >
       <Input
         id={id}
-        dimension={args.dimension}
         aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
         placeholder="Введите значение"
-        status={args.status}
-        required={args.required}
-        disabled={args.disabled}
         aria-describedby={hasDescription ? descriptionId : undefined}
       />
     </FormItem>
@@ -49,10 +45,7 @@ export const FormItemErrorTemplate = () => (
       id="form-item-error-email"
       type="email"
       name="email"
-      status="error"
       defaultValue="invalid"
-      aria-invalid
-      required
       aria-describedby="form-item-error-email-message"
     />
   </FormItem>
@@ -69,7 +62,6 @@ export const FormItemSuccessTemplate = () => (
       id="form-item-success-email"
       type="email"
       name="email"
-      status="success"
       defaultValue="name@example.com"
       aria-describedby="form-item-success-email-message"
     />
@@ -84,13 +76,7 @@ export const FormItemXsTemplate = () => (
     counter="16 / 20"
     description={<span id="form-item-xs-description">Укажите рабочий адрес</span>}
   >
-    <Input
-      id="form-item-xs-email"
-      dimension="xs"
-      type="email"
-      name="email"
-      aria-describedby="form-item-xs-description"
-    />
+    <Input id="form-item-xs-email" type="email" name="email" aria-describedby="form-item-xs-description" />
   </FormItem>
 );
 
@@ -115,10 +101,6 @@ export const FormItemCounterTemplate = (args: FormItemProps) => {
     >
       <Input
         id="form-item-counter-input"
-        dimension={args.dimension}
-        status={args.status}
-        required={args.required}
-        disabled={args.disabled}
         aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
         aria-describedby={hasDescription ? 'form-item-counter-description' : undefined}
         showClearIcon

@@ -178,3 +178,16 @@ test('FormItem uses the master Input typography and spacing for m and xs', async
   await expect(xsItem.locator('label')).toHaveCSS('line-height', '16px');
   await expect(page.locator('#form-item-xs-email')).toHaveAccessibleDescription('Укажите рабочий адрес');
 });
+
+test('FormItem passes readOnly to the input while keeping it focusable', async ({ page }) => {
+  await page.goto(getPlaygroundScenarioPath('form-item/states'));
+
+  const input = page.locator('#form-item-state-readonly');
+  await expect(input).toHaveAttribute('readonly', '');
+  await expect(input).toBeEnabled();
+  await input.focus();
+  await expect(input).toBeFocused();
+  await input.press('End');
+  await input.pressSequentially('changed');
+  await expect(input).toHaveValue('ADM-2026-001');
+});

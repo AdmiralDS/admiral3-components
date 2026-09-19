@@ -30,6 +30,7 @@ export const FormItemNativeTextareaTemplate = (args: FormItemProps) => {
         rows={3}
         required={args.required}
         disabled={args.disabled}
+        readOnly={args.readOnly}
         aria-invalid={args.status === 'error' || undefined}
         aria-label={hasSlotContent(args.label) ? undefined : 'Комментарий'}
         aria-describedby={hasDescription ? descriptionId : undefined}

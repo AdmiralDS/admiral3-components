@@ -22,11 +22,7 @@ export const FormItemSizesTemplate = (args: FormItemProps) => (
           >
             <Input
               id={id}
-              dimension={dimension}
               placeholder="Введите значение"
-              required={args.required}
-              disabled={args.disabled}
-              status={args.status}
               aria-describedby={hasSlotContent(args.description) ? `${id}-description` : undefined}
             />
           </FormItem>

@@ -18,7 +18,6 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         >
           <Input
             id="form-item-state-default"
-            dimension={args.dimension}
             placeholder="Введите значение"
             aria-describedby={hasDescription ? 'form-item-state-default-description' : undefined}
           />
@@ -36,9 +35,7 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         >
           <Input
             id="form-item-state-required"
-            dimension={args.dimension}
             placeholder="Введите значение"
-            required
             aria-describedby={hasDescription ? 'form-item-state-required-description' : undefined}
           />
         </FormItem>
@@ -55,9 +52,7 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         >
           <Input
             id="form-item-state-disabled"
-            dimension={args.dimension}
             placeholder="Введите значение"
-            disabled
             aria-describedby={hasDescription ? 'form-item-state-disabled-description' : undefined}
           />
         </FormItem>
@@ -68,13 +63,12 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
           {...args}
           label="Номер договора"
           htmlFor="form-item-state-readonly"
+          readOnly
           description={<span id="form-item-state-readonly-description">Значение можно выделить и скопировать</span>}
         >
           <Input
             id="form-item-state-readonly"
-            dimension={args.dimension}
             defaultValue="ADM-2026-001"
-            readOnly
             aria-describedby="form-item-state-readonly-description"
           />
         </FormItem>
@@ -89,10 +83,7 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         >
           <Input
             id="form-item-state-error"
-            dimension={args.dimension}
-            status="error"
             defaultValue="Неверное значение"
-            aria-invalid
             aria-describedby="form-item-state-error-message"
           />
         </FormItem>
@@ -107,8 +98,6 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
         >
           <Input
             id="form-item-state-success"
-            dimension={args.dimension}
-            status="success"
             defaultValue="Верное значение"
             aria-describedby="form-item-state-success-message"
           />

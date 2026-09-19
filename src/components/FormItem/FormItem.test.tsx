@@ -1,15 +1,17 @@
 import { createRef } from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { FormItem } from './FormItem';
 import { Input } from '../Input';
 import { FormItemPlaygroundTemplate } from './stories/FormItemPlayground.template';
 
 describe('FormItem', () => {
+  afterEach(cleanup);
+
   it('keeps labels and descriptions separate when the playground template is rendered twice', () => {
     render(
       <>
@@ -73,7 +75,7 @@ describe('FormItem', () => {
     unmount();
   });
 
-  it('marks disabled styling explicitly without changing the child control', () => {
+  it('prioritizes explicit disabled settings over the child control', () => {
     const { container, rerender, unmount } = render(
       <FormItem label="Name" htmlFor="disabled-field" disabled>
         <Input id="disabled-field" />
@@ -83,7 +85,7 @@ describe('FormItem', () => {
     const item = container.querySelector('[data-dimension]');
     expect(item).toHaveAttribute('data-disabled', '');
     expect(item).not.toHaveAttribute('disabled');
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
 
     rerender(
       <FormItem label="Name" htmlFor="disabled-field" disabled={false}>
@@ -92,8 +94,102 @@ describe('FormItem', () => {
     );
 
     expect(item).not.toHaveAttribute('data-disabled');
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
     unmount();
+  });
+
+  it('inherits size, status and required through an intermediate wrapper', () => {
+    render(
+      <FormItem dimension="xs" status="error" required>
+        <div>
+          <Input aria-label="Inherited" dimension="l" status="success" required={false} />
+        </div>
+      </FormItem>,
+    );
+    const input = screen.getByRole('textbox', { name: 'Inherited' });
+    expect(input.parentElement).toHaveAttribute('data-dimension', 'xs');
+    expect(input.parentElement).toHaveAttribute('data-status', 'error');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toBeRequired();
+  });
+
+  it('prioritizes FormItem defaults over input settings while preserving an unspecified status', () => {
+    const { rerender } = render(
+      <FormItem dimension="xs" disabled required readOnly>
+        <Input aria-label="Defaults" dimension="s" status="success" disabled required readOnly />
+      </FormItem>,
+    );
+    const input = screen.getByRole('textbox', { name: 'Defaults' });
+    expect(input.parentElement).toHaveAttribute('data-dimension', 'xs');
+    expect(input).toBeDisabled();
+    expect(input).toBeRequired();
+    expect(input).toHaveAttribute('readonly');
+
+    rerender(
+      <FormItem>
+        <Input aria-label="Defaults" dimension="s" status="success" disabled required readOnly />
+      </FormItem>,
+    );
+    expect(input.parentElement).toHaveAttribute('data-dimension', 'm');
+    expect(input.parentElement).toHaveAttribute('data-status', 'success');
+    expect(input).toBeEnabled();
+    expect(input).not.toBeRequired();
+    expect(input).not.toHaveAttribute('readonly');
+  });
+
+  it('prioritizes explicit false and updates inherited settings', () => {
+    const { rerender } = render(
+      <FormItem required={false} readOnly={false} disabled={false} status="success">
+        <Input aria-label="Overrides" required readOnly disabled status="error" showClearIcon defaultValue="Text" />
+      </FormItem>,
+    );
+    const input = screen.getByRole('textbox', { name: 'Overrides' });
+    expect(input).toBeEnabled();
+    expect(input).not.toBeRequired();
+    expect(input).not.toHaveAttribute('readonly');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input.parentElement).toHaveAttribute('data-status', 'success');
+    expect(screen.getByRole('button', { name: 'Очистить поле' })).toBeInTheDocument();
+
+    rerender(
+      <FormItem required readOnly status="error">
+        <Input aria-label="Overrides" required={false} readOnly={false} showClearIcon defaultValue="Text" />
+      </FormItem>,
+    );
+    expect(input).toBeEnabled();
+    expect(input).toBeRequired();
+    expect(input).toHaveAttribute('readonly');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
+  });
+
+  it('uses only the nearest FormItem settings', () => {
+    render(
+      <FormItem dimension="xs" status="error" disabled required readOnly>
+        <FormItem>
+          <Input aria-label="Nearest" />
+        </FormItem>
+      </FormItem>,
+    );
+    const input = screen.getByRole('textbox', { name: 'Nearest' });
+    expect(input.parentElement).toHaveAttribute('data-dimension', 'm');
+    expect(input.parentElement).not.toHaveAttribute('data-status');
+    expect(input).toBeEnabled();
+    expect(input).not.toBeRequired();
+    expect(input).not.toHaveAttribute('readonly');
+  });
+
+  it('does not modify native fields through context', () => {
+    render(
+      <FormItem disabled required readOnly status="error">
+        <input aria-label="Native" />
+      </FormItem>,
+    );
+    const input = screen.getByRole('textbox', { name: 'Native' });
+    expect(input).toBeEnabled();
+    expect(input).not.toBeRequired();
+    expect(input).not.toHaveAttribute('readonly');
+    expect(input).not.toHaveAttribute('aria-invalid');
   });
 
   it('renders the error in the description and connects the label explicitly', () => {

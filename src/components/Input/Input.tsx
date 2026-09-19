@@ -1,10 +1,11 @@
-import { forwardRef, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
+import { forwardRef, useContext, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { isOverflowed } from '../../utils/isOverflowed';
 import { refSetter } from '../../utils/refSetter';
+import { FormItemContext } from '../_internal/FormItemContext';
 import { ClearInputIconButton, clearNativeTextInput, StyledAffix, StyledInputDivider } from '../_internal/InputAtoms';
 
 /** Base text input component. */
@@ -12,10 +13,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       appearance = 'standard',
-      dimension = 'm',
-      disabled = false,
-      readOnly = false,
-      status,
+      dimension: dimensionProp = 'm',
+      disabled: disabledProp = false,
+      readOnly: readOnlyProp = false,
+      required: requiredProp = false,
+      status: statusProp,
       iconsBefore,
       iconsAfter,
       showClearIcon = false,
@@ -38,6 +40,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
+    const formItem = useContext(FormItemContext);
+    const dimension = formItem?.dimension ?? dimensionProp;
+    const status = formItem?.status ?? statusProp;
+    const disabled = formItem?.disabled ?? disabledProp;
+    const required = formItem?.required ?? requiredProp;
+    const readOnly = formItem?.readOnly ?? readOnlyProp;
     const inputRef = useRef<HTMLInputElement>(null);
     const [overflowTitle, setOverflowTitle] = useState<string>();
     const displayClearIcon = showClearIcon && !disabled && !readOnly;
@@ -130,6 +138,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={refSetter(inputRef, ref)}
           disabled={disabled}
           readOnly={readOnly}
+          required={required}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder ?? ' '}
