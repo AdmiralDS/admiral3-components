@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 
 import {
   StyledAdditionalLabel,
@@ -22,7 +22,8 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
       htmlFor,
       description,
       status,
-      counter,
+      maxLength,
+      counterThreshold = 0.8,
       required = false,
       disabled = false,
       dimension = 'm',
@@ -32,14 +33,24 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
     },
     ref,
   ) => {
+    const [characterCount, setCharacterCount] = useState(0);
     const contextValue = useMemo(
-      () => ({ dimension, status, disabled, required, readOnly }),
-      [dimension, status, disabled, required, readOnly],
+      () => ({
+        dimension,
+        status,
+        disabled,
+        required,
+        readOnly,
+        maxLength,
+        onCharacterCountChange: maxLength === undefined ? undefined : setCharacterCount,
+      }),
+      [dimension, status, disabled, required, readOnly, maxLength],
     );
     const hasLabel = hasSlotContent(label);
     const hasAdditionalLabel = hasSlotContent(additionalLabel);
     const hasDescription = hasSlotContent(description);
-    const hasCounter = hasSlotContent(counter);
+    const hasCounter = maxLength !== undefined && characterCount >= maxLength * counterThreshold;
+    const counterLimitReached = maxLength !== undefined && characterCount >= maxLength;
 
     return (
       <StyledFormItem
@@ -60,7 +71,11 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
         {(hasDescription || hasCounter) && (
           <StyledAdditionalText>
             {hasDescription && <StyledDescription>{description}</StyledDescription>}
-            {hasCounter && <StyledCounter>{counter}</StyledCounter>}
+            {hasCounter && (
+              <StyledCounter data-limit-reached={counterLimitReached ? '' : undefined}>
+                {characterCount} / {maxLength}
+              </StyledCounter>
+            )}
           </StyledAdditionalText>
         )}
       </StyledFormItem>

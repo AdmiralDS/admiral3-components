@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -237,25 +237,87 @@ describe('FormItem', () => {
     expect(screen.getByText('Your name').closest('[data-dimension]')).not.toHaveAttribute('data-status');
   });
 
-  it('places the counter outside the control next to the description', () => {
+  it('passes maxLength to Input and shows the counter at the configured threshold', () => {
     const { container } = render(
-      <FormItem label="Name" htmlFor="counter-field" description="Short name" counter="16 / 20">
-        <Input id="counter-field" maxLength={20} />
+      <FormItem label="Name" htmlFor="counter-field" description="Short name" maxLength={20}>
+        <Input id="counter-field" maxLength={30} defaultValue="123456789012345" />
       </FormItem>,
     );
 
-    const input = container.querySelector<HTMLInputElement>('#counter-field');
-    expect(input).toBeInTheDocument();
-    const counter = screen.getByText('16 / 20');
+    const input = screen.getByRole('textbox', { name: 'Name' });
     expect(input).toHaveAttribute('maxlength', '20');
+    expect(screen.queryByText('15 / 20')).not.toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: '1234567890123456' } });
+
+    const counter = screen.getByText('16 / 20');
     expect(input).not.toContainElement(counter);
     expect(counter.parentElement).toContainElement(screen.getByText('Short name'));
     expect(container.querySelector<HTMLLabelElement>('label')).not.toContainElement(input);
   });
 
+  it('shows the counter from the start when counterThreshold is zero and marks the reached limit', () => {
+    render(
+      <FormItem maxLength={3} counterThreshold={0}>
+        <Input aria-label="Code" defaultValue="123" />
+      </FormItem>,
+    );
+
+    expect(screen.getByText('3 / 3')).toHaveAttribute('data-limit-reached', '');
+  });
+
+  it('updates the counter when Input is cleared', () => {
+    render(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input aria-label="Code" defaultValue="123" showClearIcon />
+      </FormItem>,
+    );
+
+    expect(screen.getByText('3 / 5')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Очистить поле' }));
+    expect(screen.getByText('0 / 5')).toBeInTheDocument();
+  });
+
+  it('synchronizes the counter when a controlled value changes externally', () => {
+    const { rerender } = render(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input aria-label="Code" value="12" readOnly />
+      </FormItem>,
+    );
+
+    expect(screen.getByText('2 / 5')).toBeInTheDocument();
+
+    rerender(
+      <FormItem maxLength={5} counterThreshold={0}>
+        <Input aria-label="Code" value="1234" readOnly />
+      </FormItem>,
+    );
+
+    expect(screen.getByText('4 / 5')).toBeInTheDocument();
+  });
+
+  it('synchronizes the counter after a native form reset', async () => {
+    render(
+      <form>
+        <FormItem maxLength={5} counterThreshold={0}>
+          <Input aria-label="Code" defaultValue="12" />
+        </FormItem>
+        <button type="reset">Reset</button>
+      </form>,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Code' });
+    fireEvent.change(input, { target: { value: '1234' } });
+    expect(screen.getByText('4 / 5')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+
+    await waitFor(() => expect(screen.getByText('2 / 5')).toBeInTheDocument());
+  });
+
   it('skips empty optional slots and preserves zero', () => {
     const { container, rerender } = render(
-      <FormItem label="Name" additionalLabel={true} description={true} counter={true}>
+      <FormItem label="Name" additionalLabel={true} description={true}>
         <input />
       </FormItem>,
     );
@@ -263,12 +325,12 @@ describe('FormItem', () => {
     expect(container.querySelectorAll('span')).toHaveLength(0);
 
     rerender(
-      <FormItem label="Name" additionalLabel={0} description={0} counter={0}>
+      <FormItem label="Name" additionalLabel={0} description={0}>
         <input />
       </FormItem>,
     );
 
-    expect(Array.from(container.querySelectorAll('span'), (span) => span.textContent)).toEqual(['0', '0', '0']);
+    expect(Array.from(container.querySelectorAll('span'), (span) => span.textContent)).toEqual(['0', '0']);
   });
 
   it('places the additional label beside the field label without changing its accessible name', () => {

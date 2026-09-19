@@ -105,4 +105,8 @@ export const StyledCounter = styled.span`
   flex-shrink: 0;
   margin-left: auto;
   white-space: nowrap;
+
+  ${StyledFormItem}:not([data-disabled]) > div > &[data-limit-reached] {
+    color: ${errorColor};
+  }
 `;

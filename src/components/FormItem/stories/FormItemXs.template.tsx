@@ -5,9 +5,15 @@ export const FormItemXsTemplate = () => (
     dimension="xs"
     label="Электронная почта"
     htmlFor="form-item-xs-email"
-    counter="16 / 20"
+    maxLength={20}
     description={<span id="form-item-xs-description">Укажите рабочий адрес</span>}
   >
-    <Input id="form-item-xs-email" type="email" name="email" aria-describedby="form-item-xs-description" />
+    <Input
+      id="form-item-xs-email"
+      type="email"
+      name="email"
+      aria-describedby="form-item-xs-description"
+      defaultValue="example1@mail.ru"
+    />
   </FormItem>
 );

@@ -76,9 +76,9 @@ export const FormItemVisualTemplate = () => (
           <FormItem
             label="Подпись"
             description="https://example.org/very-long-address-without-spaces/very-long-address-without-spaces"
-            counter="16 / 20"
+            maxLength={20}
           >
-            <Input />
+            <Input defaultValue="Пример названия!" />
           </FormItem>
         </ContentSample>
         <ContentSample>
@@ -99,12 +99,12 @@ export const FormItemVisualTemplate = () => (
               label="Подпись"
               additionalLabel="Дополнение"
               description="Пояснение"
-              counter="16 / 20"
+              maxLength={20}
               status={status}
               required
               disabled
             >
-              <Input status={status} required disabled />
+              <Input status={status} required disabled defaultValue="Пример названия!" />
             </FormItem>
           </VisualSample>
         ))}

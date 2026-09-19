@@ -31,7 +31,7 @@ const meta = {
 
 FormItem передаёт вложенному Input dimension, disabled, required и readOnly через контекст. Настройки обёртки приоритетнее пропсов Input, включая значения по умолчанию: m для размера и false для остальных настроек. Заданный на FormItem status также имеет приоритет; если он не задан, используется status инпута. required задаёт нативную обязательность; при библиотечной валидации можно использовать noValidate на форме. Нативным и сторонним контролам настройки передаются вручную; для ошибки укажите aria-invalid.
 
-counter — готовое содержимое, а не автоматический подсчёт. Порог появления и ограничение maxLength показаны в истории Counter. Для группы полей используйте FieldSet.
+maxLength включает счётчик символов и передаёт ограничение вложенному Input. counterThreshold задаёт порог появления счётчика от 0 до 1 и по умолчанию равен 0.8. Для группы полей используйте FieldSet.
 
 Примеры библиотечной валидации находятся в Integration/React Hook Form и Integration/TanStack Form.`,
       },
@@ -46,7 +46,8 @@ counter — готовое содержимое, а не автоматичес�
     additionalLabel: { control: { type: 'text' } },
     description: { control: { type: 'text' } },
     status: { control: { type: 'inline-radio' }, options: FORM_ITEM_STATUSES },
-    counter: { control: { type: 'text' } },
+    maxLength: { control: { type: 'number', min: 0 } },
+    counterThreshold: { control: { type: 'number', min: 0, max: 1, step: 0.1 } },
     children: { control: false },
   },
 } satisfies Meta<typeof FormItem>;
@@ -69,19 +70,20 @@ export const Playground: StoryObj<FormItemProps> = {
         'additionalLabel',
         'description',
         'status',
-        'counter',
+        'maxLength',
+        'counterThreshold',
         'required',
         'disabled',
         'readOnly',
         'dimension',
       ],
     },
-    docs: { source: { code: formItemCounterTemplateRaw } },
+    docs: { source: { code: formItemPlaygroundTemplateRaw } },
   },
 };
 
 export const Sizes: StoryObj<FormItemProps> = {
-  args: { ...defaultArgs, additionalLabel: 'Необязательно', description: 'Пояснение', counter: '16 / 20' },
+  args: { ...defaultArgs, additionalLabel: 'Необязательно', description: 'Пояснение', maxLength: 20 },
   render: FormItemSizesTemplate,
   parameters: {
     controls: { disable: true },
@@ -108,13 +110,30 @@ export const AdditionalLabel: StoryObj<FormItemProps> = {
 };
 
 export const Counter: StoryObj<FormItemProps> = {
-  args: { ...defaultArgs, label: 'Название', description: 'Не более 20 символов' },
+  args: {
+    ...defaultArgs,
+    label: 'Название',
+    description: 'Не более 20 символов',
+    maxLength: 20,
+    counterThreshold: 0.8,
+  },
   render: FormItemCounterTemplate,
   parameters: {
     controls: {
-      include: ['dimension', 'label', 'additionalLabel', 'description', 'required', 'disabled', 'readOnly', 'status'],
+      include: [
+        'dimension',
+        'label',
+        'additionalLabel',
+        'description',
+        'maxLength',
+        'counterThreshold',
+        'required',
+        'disabled',
+        'readOnly',
+        'status',
+      ],
     },
-    docs: { source: { code: formItemPlaygroundTemplateRaw } },
+    docs: { source: { code: formItemCounterTemplateRaw } },
   },
 };
 
@@ -124,22 +143,11 @@ export const LongText: StoryObj<FormItemProps> = {
     label: 'ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов',
     additionalLabel: 'ОченьДлиннаяДополнительнаяПодписьБезПробелов',
     description: 'https://example.org/very-long-address-without-spaces/very-long-address-without-spaces',
-    counter: '16 / 20',
   },
   render: FormItemLongTextTemplate,
   parameters: {
     controls: {
-      include: [
-        'label',
-        'additionalLabel',
-        'description',
-        'counter',
-        'dimension',
-        'status',
-        'required',
-        'disabled',
-        'readOnly',
-      ],
+      include: ['label', 'additionalLabel', 'description', 'dimension', 'status', 'required', 'disabled', 'readOnly'],
     },
     docs: { source: { code: formItemLongTextTemplateRaw } },
   },
@@ -149,7 +157,7 @@ export const WithoutLabel: StoryObj<FormItemProps> = {
   args: { dimension: 'm', description: 'Пояснение', required: true, children: <Input /> },
   render: FormItemWithoutLabelTemplate,
   parameters: {
-    controls: { include: ['dimension', 'description', 'counter', 'status', 'required', 'disabled', 'readOnly'] },
+    controls: { include: ['dimension', 'description', 'maxLength', 'status', 'required', 'disabled', 'readOnly'] },
     docs: { source: { code: formItemWithoutLabelTemplateRaw } },
   },
 };
@@ -164,17 +172,7 @@ export const NativeTextarea: StoryObj<FormItemProps> = {
   render: FormItemNativeTextareaTemplate,
   parameters: {
     controls: {
-      include: [
-        'label',
-        'additionalLabel',
-        'description',
-        'counter',
-        'dimension',
-        'status',
-        'required',
-        'disabled',
-        'readOnly',
-      ],
+      include: ['label', 'additionalLabel', 'description', 'dimension', 'status', 'required', 'disabled', 'readOnly'],
     },
     docs: { source: { code: formItemCompositionTemplateRaw } },
   },

@@ -24,6 +24,7 @@ export const FormItemSizesTemplate = (args: FormItemProps) => (
               id={id}
               placeholder="Введите значение"
               aria-describedby={hasSlotContent(args.description) ? `${id}-description` : undefined}
+              defaultValue={args.maxLength === undefined ? undefined : 'Пример названия №1'}
             />
           </FormItem>
         </StoryDemoItem>

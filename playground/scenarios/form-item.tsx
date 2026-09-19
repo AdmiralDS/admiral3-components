@@ -21,7 +21,7 @@ export const formItemScenarios: PlaygroundScenario[] = [
         label="ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов"
         additionalLabel="ОченьДлиннаяДополнительнаяПодписьБезПробелов"
         description="https://example.org/very-long-address-without-spaces/very-long-address-without-spaces"
-        counter="16 / 20"
+        maxLength={20}
         children={<Input />}
       />
     ),
@@ -49,7 +49,15 @@ export const formItemScenarios: PlaygroundScenario[] = [
   {
     id: 'form-item/counter',
     title: 'FormItem Counter',
-    render: () => <FormItemCounterTemplate label="Название" description="Не более 20 символов" children={<Input />} />,
+    render: () => (
+      <FormItemCounterTemplate
+        label="Название"
+        description="Не более 20 символов"
+        maxLength={20}
+        counterThreshold={0.8}
+        children={<Input />}
+      />
+    ),
   },
   {
     id: 'form-item/sizes',
@@ -59,6 +67,7 @@ export const formItemScenarios: PlaygroundScenario[] = [
         label="Подпись"
         additionalLabel="Дополнение"
         description="Пояснение"
+        maxLength={20}
         children={<Input />}
       />
     ),

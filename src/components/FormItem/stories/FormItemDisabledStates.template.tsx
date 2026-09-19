@@ -20,12 +20,19 @@ export const FormItemDisabledStatesTemplate = () => (
           additionalLabel="Дополнение"
           htmlFor={id}
           description={<span id={`${id}-description`}>Пояснение</span>}
-          counter="16 / 20"
+          maxLength={20}
           status={status}
           disabled
           required
         >
-          <Input id={id} aria-describedby={`${id}-description`} status={status} disabled required />
+          <Input
+            id={id}
+            aria-describedby={`${id}-description`}
+            status={status}
+            disabled
+            required
+            defaultValue="Пример названия!"
+          />
         </NarrowFormItem>
       );
     })}

@@ -19,8 +19,10 @@ export interface FormItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   description?: ReactNode;
   /** Статус пояснения и вложенного Input. Имеет приоритет над status инпута; error задаёт ему aria-invalid. */
   status?: FormItemStatus;
-  /** Счётчик справа под полем. Значение, порог появления и maxLength поля задаются потребителем. */
-  counter?: ReactNode;
+  /** Максимальное количество символов. Передаётся вложенному Input и включает счётчик справа под полем. */
+  maxLength?: number;
+  /** Порог появления счётчика от 0 до 1. По умолчанию 0.8. */
+  counterThreshold?: number;
   /** Показывает звёздочку и задаёт required вложенному Input. По умолчанию false, включая вложенный Input. */
   required?: boolean;
   /** Оформляет тексты и задаёт disabled вложенному Input. По умолчанию false, включая вложенный Input. */
