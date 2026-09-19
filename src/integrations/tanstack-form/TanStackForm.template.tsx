@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { useForm } from '@tanstack/react-form';
@@ -148,6 +148,13 @@ const Result = styled.pre`
 `;
 
 export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: boolean }) => {
+  const idPrefix = useId();
+  const nameId = `${idPrefix}-tanstack-name`;
+  const passwordId = `${idPrefix}-tanstack-password`;
+  const confirmPasswordId = `${idPrefix}-tanstack-confirm-password`;
+  const emailId = `${idPrefix}-tanstack-email`;
+  const websiteId = `${idPrefix}-tanstack-website`;
+  const agreementErrorId = `${idPrefix}-tanstack-agreement-error`;
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -182,10 +189,10 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <InputField id="tanstack-name" label="Имя" error={error} withFormItem={withFormItem}>
+              <InputField id={nameId} label="Имя" error={error} withFormItem={withFormItem}>
                 <Input
                   aria-required
-                  id="tanstack-name"
+                  id={nameId}
                   name={field.name}
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
@@ -196,7 +203,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   autoComplete="name"
                   status={error ? 'error' : undefined}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'tanstack-name-error' : undefined}
+                  aria-describedby={error ? `${nameId}-error` : undefined}
                 />
               </InputField>
             );
@@ -214,16 +221,10 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
             const error = field.state.meta.errors.join(', ') || undefined;
             const success = !error && field.state.value.length >= 8 ? 'Пароль соответствует требованиям' : undefined;
             return (
-              <InputField
-                id="tanstack-password"
-                label="Пароль"
-                error={error}
-                success={success}
-                withFormItem={withFormItem}
-              >
+              <InputField id={passwordId} label="Пароль" error={error} success={success} withFormItem={withFormItem}>
                 <Input
                   aria-required
-                  id="tanstack-password"
+                  id={passwordId}
                   name={field.name}
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
@@ -241,9 +242,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   autoComplete="new-password"
                   status={error ? 'error' : success ? 'success' : undefined}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={
-                    error ? 'tanstack-password-error' : success ? 'tanstack-password-success' : undefined
-                  }
+                  aria-describedby={error ? `${passwordId}-error` : success ? `${passwordId}-success` : undefined}
                 />
               </InputField>
             );
@@ -270,7 +269,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                 : undefined;
             return (
               <InputField
-                id="tanstack-confirm-password"
+                id={confirmPasswordId}
                 label="Повторите пароль"
                 error={error}
                 success={success}
@@ -278,7 +277,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
               >
                 <Input
                   aria-required
-                  id="tanstack-confirm-password"
+                  id={confirmPasswordId}
                   name={field.name}
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
@@ -297,11 +296,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   status={error ? 'error' : success ? 'success' : undefined}
                   aria-invalid={Boolean(error)}
                   aria-describedby={
-                    error
-                      ? 'tanstack-confirm-password-error'
-                      : success
-                        ? 'tanstack-confirm-password-success'
-                        : undefined
+                    error ? `${confirmPasswordId}-error` : success ? `${confirmPasswordId}-success` : undefined
                   }
                 />
               </InputField>
@@ -323,10 +318,10 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <InputField id="tanstack-email" label="Электронная почта" error={error} withFormItem={withFormItem}>
+              <InputField id={emailId} label="Электронная почта" error={error} withFormItem={withFormItem}>
                 <Input
                   aria-required
-                  id="tanstack-email"
+                  id={emailId}
                   name={field.name}
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
@@ -337,7 +332,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   autoComplete="email"
                   status={error ? 'error' : undefined}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'tanstack-email-error' : undefined}
+                  aria-describedby={error ? `${emailId}-error` : undefined}
                 />
               </InputField>
             );
@@ -354,9 +349,9 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <InputField id="tanstack-website" label="Сайт" required={false} error={error} withFormItem={withFormItem}>
+              <InputField id={websiteId} label="Сайт" required={false} error={error} withFormItem={withFormItem}>
                 <Input
-                  id="tanstack-website"
+                  id={websiteId}
                   name={field.name}
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
@@ -367,7 +362,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   autoComplete="url"
                   status={error ? 'error' : undefined}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'tanstack-website-error' : undefined}
+                  aria-describedby={error ? `${websiteId}-error` : undefined}
                 />
               </InputField>
             );
@@ -404,11 +399,11 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
                   onBlur={field.handleBlur}
                   error={Boolean(error)}
                   aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'tanstack-agreement-error' : undefined}
+                  aria-describedby={error ? agreementErrorId : undefined}
                 >
                   Я принимаю условия использования
                 </CheckBox>
-                {error && <ErrorText id="tanstack-agreement-error">{error}</ErrorText>}
+                {error && <ErrorText id={agreementErrorId}>{error}</ErrorText>}
               </Field>
             );
           }}

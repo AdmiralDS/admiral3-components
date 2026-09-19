@@ -10,6 +10,37 @@ describe.each([
   ['React Hook Form', ReactHookFormTemplate],
   ['TanStack Form', TanStackFormTemplate],
 ] as const)('%s password confirmation', (_, Template) => {
+  it('keeps labels and descriptions scoped to each rendered form', async () => {
+    const { container } = render(
+      <>
+        <Template />
+        <Template withFormItem />
+      </>,
+    );
+    const nameFields = screen.getAllByLabelText('Имя', { exact: true });
+
+    expect(nameFields).toHaveLength(2);
+    expect(new Set(nameFields.map((field) => field.id)).size).toBe(2);
+
+    screen.getAllByRole('button', { name: 'Отправить' }).forEach((button) => fireEvent.click(button));
+
+    await waitFor(() => nameFields.forEach((field) => expect(field).toHaveAccessibleDescription('Введите имя')));
+
+    nameFields.forEach((field) => {
+      const descriptionId = field.getAttribute('aria-describedby');
+      const description = document.getElementById(descriptionId ?? '');
+
+      expect(descriptionId).not.toBeNull();
+      expect(description).toHaveTextContent('Введите имя');
+      expect(field.closest('form')).toContainElement(description);
+    });
+
+    const templateIds = Array.from(container.querySelectorAll('[id]'), (element) => element.id).filter(
+      (id) => id.includes('-rhf-') || id.includes('-tanstack-'),
+    );
+    expect(new Set(templateIds).size).toBe(templateIds.length);
+  });
+
   it.each([false, true])('updates messages and resets both fields withFormItem=%s', async (withFormItem) => {
     render(<Template withFormItem={withFormItem} />);
     const password = screen.getByLabelText('Пароль', { exact: true });

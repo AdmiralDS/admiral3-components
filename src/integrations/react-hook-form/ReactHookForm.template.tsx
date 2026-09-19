@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -148,6 +148,13 @@ const Result = styled.pre`
 `;
 
 export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?: boolean }) => {
+  const idPrefix = useId();
+  const nameId = `${idPrefix}-rhf-name`;
+  const passwordId = `${idPrefix}-rhf-password`;
+  const confirmPasswordId = `${idPrefix}-rhf-confirm-password`;
+  const emailId = `${idPrefix}-rhf-email`;
+  const websiteId = `${idPrefix}-rhf-website`;
+  const agreementErrorId = `${idPrefix}-rhf-agreement-error`;
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -190,23 +197,23 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
           через Controller.
         </Description>
 
-        <InputField id="rhf-name" label="Имя" error={errors.name?.message} withFormItem={withFormItem}>
+        <InputField id={nameId} label="Имя" error={errors.name?.message} withFormItem={withFormItem}>
           <Input
             aria-required
-            id="rhf-name"
+            id={nameId}
             type="text"
             showClearIcon
             placeholder="Иван Иванов"
             autoComplete="name"
             status={errors.name ? 'error' : undefined}
             aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? 'rhf-name-error' : undefined}
+            aria-describedby={errors.name ? `${nameId}-error` : undefined}
             {...register('name', { required: 'Введите имя' })}
           />
         </InputField>
 
         <InputField
-          id="rhf-password"
+          id={passwordId}
           label="Пароль"
           error={errors.password?.message}
           success={passwordSuccess}
@@ -214,7 +221,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
         >
           <Input
             aria-required
-            id="rhf-password"
+            id={passwordId}
             type={passwordVisible ? 'text' : 'password'}
             showClearIcon
             iconsAfter={
@@ -229,7 +236,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
             status={errors.password ? 'error' : passwordSuccess ? 'success' : undefined}
             aria-invalid={Boolean(errors.password)}
             aria-describedby={
-              errors.password ? 'rhf-password-error' : passwordSuccess ? 'rhf-password-success' : undefined
+              errors.password ? `${passwordId}-error` : passwordSuccess ? `${passwordId}-success` : undefined
             }
             {...register('password', {
               required: 'Введите пароль',
@@ -240,7 +247,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
         </InputField>
 
         <InputField
-          id="rhf-confirm-password"
+          id={confirmPasswordId}
           label="Повторите пароль"
           error={errors.confirmPassword?.message}
           success={confirmationSuccess}
@@ -248,7 +255,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
         >
           <Input
             aria-required
-            id="rhf-confirm-password"
+            id={confirmPasswordId}
             type={confirmPasswordVisible ? 'text' : 'password'}
             showClearIcon
             iconsAfter={
@@ -264,9 +271,9 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
             aria-invalid={Boolean(errors.confirmPassword)}
             aria-describedby={
               errors.confirmPassword
-                ? 'rhf-confirm-password-error'
+                ? `${confirmPasswordId}-error`
                 : confirmationSuccess
-                  ? 'rhf-confirm-password-success'
+                  ? `${confirmPasswordId}-success`
                   : undefined
             }
             {...register('confirmPassword', {
@@ -279,17 +286,17 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
           />
         </InputField>
 
-        <InputField id="rhf-email" label="Электронная почта" error={errors.email?.message} withFormItem={withFormItem}>
+        <InputField id={emailId} label="Электронная почта" error={errors.email?.message} withFormItem={withFormItem}>
           <Input
             aria-required
-            id="rhf-email"
+            id={emailId}
             type="email"
             showClearIcon
             placeholder="name@example.com"
             autoComplete="email"
             status={errors.email ? 'error' : undefined}
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'rhf-email-error' : undefined}
+            aria-describedby={errors.email ? `${emailId}-error` : undefined}
             {...register('email', {
               required: 'Введите электронную почту',
               pattern: { value: /^\S+@\S+\.\S+$/, message: 'Введите корректный адрес электронной почты' },
@@ -298,21 +305,21 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
         </InputField>
 
         <InputField
-          id="rhf-website"
+          id={websiteId}
           label="Сайт"
           required={false}
           error={errors.website?.message}
           withFormItem={withFormItem}
         >
           <Input
-            id="rhf-website"
+            id={websiteId}
             type="url"
             showClearIcon
             placeholder="https://example.com"
             autoComplete="url"
             status={errors.website ? 'error' : undefined}
             aria-invalid={Boolean(errors.website)}
-            aria-describedby={errors.website ? 'rhf-website-error' : undefined}
+            aria-describedby={errors.website ? `${websiteId}-error` : undefined}
             {...register('website', {
               pattern: { value: /^https?:\/\/.+/, message: 'Адрес должен начинаться с http:// или https://' },
             })}
@@ -352,11 +359,11 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 error={Boolean(errors.agreement)}
-                aria-describedby={errors.agreement ? 'rhf-agreement-error' : undefined}
+                aria-describedby={errors.agreement ? agreementErrorId : undefined}
               >
                 Я принимаю условия использования
               </CheckBox>
-              {errors.agreement && <ErrorText id="rhf-agreement-error">{errors.agreement.message}</ErrorText>}
+              {errors.agreement && <ErrorText id={agreementErrorId}>{errors.agreement.message}</ErrorText>}
             </Field>
           )}
         />

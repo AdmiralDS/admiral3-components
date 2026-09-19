@@ -4,14 +4,18 @@ import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-compon
 
 import { FormItemNativeTextareaTemplate } from './FormItemComposition.template';
 import formItemCompositionTemplateRaw from './FormItemComposition.template?raw';
-import { FormItemLongTextTemplate, FormItemWithoutLabelTemplate } from './FormItemEdgeCases.template';
-import formItemEdgeCasesTemplateRaw from './FormItemEdgeCases.template?raw';
-import { FormItemCounterTemplate, FormItemPlaygroundTemplate } from './FormItemPlayground.template';
+import { FormItemCounterTemplate } from './FormItemCounter.template';
+import formItemCounterTemplateRaw from './FormItemCounter.template?raw';
+import { FormItemLongTextTemplate } from './FormItemLongText.template';
+import formItemLongTextTemplateRaw from './FormItemLongText.template?raw';
+import { FormItemPlaygroundTemplate } from './FormItemPlayground.template';
 import formItemPlaygroundTemplateRaw from './FormItemPlayground.template?raw';
 import { FormItemSizesTemplate } from './FormItemSizes.template';
 import formItemSizesTemplateRaw from './FormItemSizes.template?raw';
 import { FormItemStatesTemplate } from './FormItemStates.template';
 import formItemStatesTemplateRaw from './FormItemStates.template?raw';
+import { FormItemWithoutLabelTemplate } from './FormItemWithoutLabel.template';
+import formItemWithoutLabelTemplateRaw from './FormItemWithoutLabel.template?raw';
 import { FORM_ITEM_DIMENSIONS, FORM_ITEM_STATUSES } from '../constants';
 
 const meta = {
@@ -72,7 +76,7 @@ export const Playground: StoryObj<FormItemProps> = {
         'dimension',
       ],
     },
-    docs: { source: { code: formItemPlaygroundTemplateRaw } },
+    docs: { source: { code: formItemCounterTemplateRaw } },
   },
 };
 
@@ -137,7 +141,7 @@ export const LongText: StoryObj<FormItemProps> = {
         'readOnly',
       ],
     },
-    docs: { source: { code: formItemEdgeCasesTemplateRaw } },
+    docs: { source: { code: formItemLongTextTemplateRaw } },
   },
 };
 
@@ -146,7 +150,7 @@ export const WithoutLabel: StoryObj<FormItemProps> = {
   render: FormItemWithoutLabelTemplate,
   parameters: {
     controls: { include: ['dimension', 'description', 'counter', 'status', 'required', 'disabled', 'readOnly'] },
-    docs: { source: { code: formItemEdgeCasesTemplateRaw } },
+    docs: { source: { code: formItemWithoutLabelTemplateRaw } },
   },
 };
 

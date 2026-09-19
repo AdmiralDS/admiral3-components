@@ -1,20 +1,16 @@
 import { Input } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
-import {
-  FormItemDisabledStatesTemplate,
-  FormItemLongTextTemplate,
-  FormItemWithoutLabelTemplate,
-} from '../../src/components/FormItem/stories/FormItemEdgeCases.template';
-import {
-  FormItemCounterTemplate,
-  FormItemErrorTemplate,
-  FormItemPlaygroundTemplate,
-  FormItemSuccessTemplate,
-  FormItemXsTemplate,
-} from '../../src/components/FormItem/stories/FormItemPlayground.template';
+import { FormItemCounterTemplate } from '../../src/components/FormItem/stories/FormItemCounter.template';
+import { FormItemDisabledStatesTemplate } from '../../src/components/FormItem/stories/FormItemDisabledStates.template';
+import { FormItemErrorTemplate } from '../../src/components/FormItem/stories/FormItemError.template';
+import { FormItemLongTextTemplate } from '../../src/components/FormItem/stories/FormItemLongText.template';
+import { FormItemPlaygroundTemplate } from '../../src/components/FormItem/stories/FormItemPlayground.template';
 import { FormItemSizesTemplate } from '../../src/components/FormItem/stories/FormItemSizes.template';
 import { FormItemStatesTemplate } from '../../src/components/FormItem/stories/FormItemStates.template';
+import { FormItemSuccessTemplate } from '../../src/components/FormItem/stories/FormItemSuccess.template';
+import { FormItemWithoutLabelTemplate } from '../../src/components/FormItem/stories/FormItemWithoutLabel.template';
+import { FormItemXsTemplate } from '../../src/components/FormItem/stories/FormItemXs.template';
 
 export const formItemScenarios: PlaygroundScenario[] = [
   {
