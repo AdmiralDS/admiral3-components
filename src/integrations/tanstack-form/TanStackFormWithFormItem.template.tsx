@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {
   Button,
   CheckBox,
+  FormItem,
   Input,
   InputIconPasswordButton,
   RadioButton,
@@ -76,19 +77,9 @@ const Field = styled.div`
   gap: 8px;
 `;
 
-const Label = styled.label`
-  ${textStyles.body.body2Long}
-  color: var(--admiral-color-neutral-text-1-rest);
-`;
-
 const ErrorText = styled.span`
   ${textStyles.body.body2Long}
   color: var(--admiral-color-error-text-1-rest);
-`;
-
-const SuccessText = styled.span`
-  ${textStyles.body.body2Long}
-  color: var(--admiral-color-success-text-1-rest);
 `;
 
 const Actions = styled.div`
@@ -109,7 +100,7 @@ const Result = styled.pre`
   background-color: var(--admiral-color-neutral-base-2-rest);
 `;
 
-export const TanStackFormTemplate = () => {
+export const TanStackFormWithFormItemTemplate = () => {
   const idPrefix = useId();
   const nameId = `${idPrefix}-tanstack-name`;
   const passwordId = `${idPrefix}-tanstack-password`;
@@ -145,15 +136,20 @@ export const TanStackFormTemplate = () => {
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с TanStack Form. Поля подключены через form.Field, значения и
-          обработчики передаются явно.
+          обработчики передаются явно, включая поле со счётчиком.
         </Description>
 
         <form.Field name="name" validators={{ onChange: ({ value }) => (value.trim() ? undefined : 'Введите имя') }}>
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <Field>
-                <Label htmlFor={nameId}>Имя</Label>
+              <FormItem
+                label="Имя"
+                htmlFor={nameId}
+                required
+                status={error ? 'error' : undefined}
+                description={error ? <span id={`${nameId}-error`}>{error}</span> : undefined}
+              >
                 <Input
                   aria-required
                   id={nameId}
@@ -169,8 +165,7 @@ export const TanStackFormTemplate = () => {
                   aria-invalid={Boolean(error)}
                   aria-describedby={error ? `${nameId}-error` : undefined}
                 />
-                {error && <ErrorText id={`${nameId}-error`}>{error}</ErrorText>}
-              </Field>
+              </FormItem>
             );
           }}
         </form.Field>
@@ -186,8 +181,19 @@ export const TanStackFormTemplate = () => {
             const error = field.state.meta.errors.join(', ') || undefined;
             const success = !error && field.state.value.length >= 8 ? 'Пароль соответствует требованиям' : undefined;
             return (
-              <Field>
-                <Label htmlFor={passwordId}>Пароль</Label>
+              <FormItem
+                label="Пароль"
+                htmlFor={passwordId}
+                required
+                status={error ? 'error' : success ? 'success' : undefined}
+                description={
+                  error ? (
+                    <span id={`${passwordId}-error`}>{error}</span>
+                  ) : success ? (
+                    <span id={`${passwordId}-success`}>{success}</span>
+                  ) : undefined
+                }
+              >
                 <Input
                   aria-required
                   id={passwordId}
@@ -210,12 +216,7 @@ export const TanStackFormTemplate = () => {
                   aria-invalid={Boolean(error)}
                   aria-describedby={error ? `${passwordId}-error` : success ? `${passwordId}-success` : undefined}
                 />
-                {error ? (
-                  <ErrorText id={`${passwordId}-error`}>{error}</ErrorText>
-                ) : success ? (
-                  <SuccessText id={`${passwordId}-success`}>{success}</SuccessText>
-                ) : null}
-              </Field>
+              </FormItem>
             );
           }}
         </form.Field>
@@ -239,8 +240,19 @@ export const TanStackFormTemplate = () => {
                 ? 'Пароли совпадают'
                 : undefined;
             return (
-              <Field>
-                <Label htmlFor={confirmPasswordId}>Повторите пароль</Label>
+              <FormItem
+                label="Повторите пароль"
+                htmlFor={confirmPasswordId}
+                required
+                status={error ? 'error' : success ? 'success' : undefined}
+                description={
+                  error ? (
+                    <span id={`${confirmPasswordId}-error`}>{error}</span>
+                  ) : success ? (
+                    <span id={`${confirmPasswordId}-success`}>{success}</span>
+                  ) : undefined
+                }
+              >
                 <Input
                   aria-required
                   id={confirmPasswordId}
@@ -265,12 +277,7 @@ export const TanStackFormTemplate = () => {
                     error ? `${confirmPasswordId}-error` : success ? `${confirmPasswordId}-success` : undefined
                   }
                 />
-                {error ? (
-                  <ErrorText id={`${confirmPasswordId}-error`}>{error}</ErrorText>
-                ) : success ? (
-                  <SuccessText id={`${confirmPasswordId}-success`}>{success}</SuccessText>
-                ) : null}
-              </Field>
+              </FormItem>
             );
           }}
         </form.Field>
@@ -289,8 +296,13 @@ export const TanStackFormTemplate = () => {
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <Field>
-                <Label htmlFor={emailId}>Электронная почта</Label>
+              <FormItem
+                label="Электронная почта"
+                htmlFor={emailId}
+                required
+                status={error ? 'error' : undefined}
+                description={error ? <span id={`${emailId}-error`}>{error}</span> : undefined}
+              >
                 <Input
                   aria-required
                   id={emailId}
@@ -306,8 +318,7 @@ export const TanStackFormTemplate = () => {
                   aria-invalid={Boolean(error)}
                   aria-describedby={error ? `${emailId}-error` : undefined}
                 />
-                {error && <ErrorText id={`${emailId}-error`}>{error}</ErrorText>}
-              </Field>
+              </FormItem>
             );
           }}
         </form.Field>
@@ -322,8 +333,12 @@ export const TanStackFormTemplate = () => {
           {(field) => {
             const error = field.state.meta.errors.join(', ') || undefined;
             return (
-              <Field>
-                <Label htmlFor={websiteId}>Сайт</Label>
+              <FormItem
+                label="Сайт"
+                htmlFor={websiteId}
+                status={error ? 'error' : undefined}
+                description={error ? <span id={`${websiteId}-error`}>{error}</span> : undefined}
+              >
                 <Input
                   id={websiteId}
                   name={field.name}
@@ -338,16 +353,14 @@ export const TanStackFormTemplate = () => {
                   aria-invalid={Boolean(error)}
                   aria-describedby={error ? `${websiteId}-error` : undefined}
                 />
-                {error && <ErrorText id={`${websiteId}-error`}>{error}</ErrorText>}
-              </Field>
+              </FormItem>
             );
           }}
         </form.Field>
 
         <form.Field name="comment">
           {(field) => (
-            <Field>
-              <Label htmlFor={commentId}>Комментарий</Label>
+            <FormItem label="Комментарий" htmlFor={commentId} maxLength={50} counterThreshold={0}>
               <Input
                 id={commentId}
                 name={field.name}
@@ -359,7 +372,7 @@ export const TanStackFormTemplate = () => {
                 showClearIcon
                 placeholder="Добавьте комментарий"
               />
-            </Field>
+            </FormItem>
           )}
         </form.Field>
 

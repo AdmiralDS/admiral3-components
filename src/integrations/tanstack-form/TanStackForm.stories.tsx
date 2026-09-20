@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { TanStackFormTemplate } from './TanStackForm.template';
 import tanStackFormTemplateRaw from './TanStackForm.template?raw';
+import { TanStackFormWithFormItemTemplate } from './TanStackFormWithFormItem.template';
+import tanStackFormWithFormItemTemplateRaw from './TanStackFormWithFormItem.template?raw';
 
 const meta = {
   title: 'Integration/TanStack Form',
@@ -24,11 +26,11 @@ type Story = StoryObj<typeof meta>;
 
 export const FormWithFormItem: Story = {
   name: 'С FormItem',
-  args: { withFormItem: true },
+  render: () => <TanStackFormWithFormItemTemplate />,
   parameters: {
     docs: {
       source: {
-        code: tanStackFormTemplateRaw,
+        code: tanStackFormWithFormItemTemplateRaw,
       },
     },
   },
@@ -36,7 +38,6 @@ export const FormWithFormItem: Story = {
 
 export const Form: Story = {
   name: 'Без FormItem',
-  args: { withFormItem: false },
   parameters: {
     docs: {
       source: {

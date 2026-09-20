@@ -2,19 +2,21 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ReactHookFormTemplate } from './react-hook-form/ReactHookForm.template';
+import { ReactHookFormWithFormItemTemplate } from './react-hook-form/ReactHookFormWithFormItem.template';
 import { TanStackFormTemplate } from './tanstack-form/TanStackForm.template';
+import { TanStackFormWithFormItemTemplate } from './tanstack-form/TanStackFormWithFormItem.template';
 
 afterEach(cleanup);
 
 describe.each([
-  ['React Hook Form', ReactHookFormTemplate],
-  ['TanStack Form', TanStackFormTemplate],
-] as const)('%s password confirmation', (_, Template) => {
+  ['React Hook Form', ReactHookFormTemplate, ReactHookFormWithFormItemTemplate],
+  ['TanStack Form', TanStackFormTemplate, TanStackFormWithFormItemTemplate],
+] as const)('%s password confirmation', (_, Template, TemplateWithFormItem) => {
   it('keeps labels and descriptions scoped to each rendered form', async () => {
     const { container } = render(
       <>
         <Template />
-        <Template withFormItem />
+        <TemplateWithFormItem />
       </>,
     );
     const nameFields = screen.getAllByLabelText('Имя', { exact: true });
@@ -41,8 +43,11 @@ describe.each([
     expect(new Set(templateIds).size).toBe(templateIds.length);
   });
 
-  it.each([false, true])('updates messages and resets both fields withFormItem=%s', async (withFormItem) => {
-    render(<Template withFormItem={withFormItem} />);
+  it.each([
+    ['without FormItem', Template],
+    ['with FormItem', TemplateWithFormItem],
+  ])('updates messages and resets both fields %s', async (_, TemplateVariant) => {
+    render(<TemplateVariant />);
     const password = screen.getByLabelText('Пароль', { exact: true });
     const confirmation = screen.getByLabelText('Повторите пароль', { exact: true });
     expect(password).not.toHaveAttribute('aria-describedby');
