@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Интеграция Input, RadioButton, CheckBox и Toggle с TanStack Form. Текстовые поля показаны с обычными подписями и в обёртке FormItem; оба варианта включают валидацию, отправку и сброс формы.',
+          'Интеграция Input, RadioButton, CheckBox и Toggle с TanStack Form. Текстовые поля показаны с обычными подписями и в обёртке FormItem; пример с FormItem также демонстрирует управляемое поле со счётчиком. Оба варианта включают валидацию, отправку и сброс формы.',
       },
     },
   },
@@ -22,9 +22,9 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Form: Story = {
-  name: 'Без FormItem',
-  args: { withFormItem: false },
+export const FormWithFormItem: Story = {
+  name: 'С FormItem',
+  args: { withFormItem: true },
   parameters: {
     docs: {
       source: {
@@ -34,9 +34,9 @@ export const Form: Story = {
   },
 };
 
-export const FormWithFormItem: Story = {
-  name: 'С FormItem',
-  args: { withFormItem: true },
+export const Form: Story = {
+  name: 'Без FormItem',
+  args: { withFormItem: false },
   parameters: {
     docs: {
       source: {

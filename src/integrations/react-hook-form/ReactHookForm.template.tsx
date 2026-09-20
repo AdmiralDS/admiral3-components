@@ -21,6 +21,7 @@ type FormValues = {
   confirmPassword: string;
   email: string;
   website: string;
+  comment: string;
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -32,6 +33,7 @@ const defaultValues: FormValues = {
   confirmPassword: '',
   email: '',
   website: '',
+  comment: '',
   delivery: 'courier',
   agreement: false,
   notifications: true,
@@ -98,14 +100,28 @@ type InputFieldProps = {
   label: string;
   withFormItem: boolean;
   required?: boolean;
+  maxLength?: number;
+  counterThreshold?: number;
 };
 
-const InputField = ({ children, error, success, id, label, withFormItem, required = true }: InputFieldProps) =>
+const InputField = ({
+  children,
+  error,
+  success,
+  id,
+  label,
+  withFormItem,
+  required = true,
+  maxLength,
+  counterThreshold,
+}: InputFieldProps) =>
   withFormItem ? (
     <FormItem
       label={label}
       htmlFor={id}
       required={required}
+      maxLength={maxLength}
+      counterThreshold={counterThreshold}
       status={error ? 'error' : success ? 'success' : undefined}
       description={
         error ? (
@@ -154,6 +170,7 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
   const confirmPasswordId = `${idPrefix}-rhf-confirm-password`;
   const emailId = `${idPrefix}-rhf-email`;
   const websiteId = `${idPrefix}-rhf-website`;
+  const commentId = `${idPrefix}-rhf-comment`;
   const agreementErrorId = `${idPrefix}-rhf-agreement-error`;
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -193,8 +210,8 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
       <Form noValidate onSubmit={handleSubmit(setSubmittedValues)}>
         <Title>Регистрационная форма</Title>
         <Description>
-          Пример интеграции компонентов Admiral 3 с React Hook Form. Input подключены через register, составные поля —
-          через Controller.
+          Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
+          со счётчиком и составные поля — через Controller.
         </Description>
 
         <InputField id={nameId} label="Имя" error={errors.name?.message} withFormItem={withFormItem}>
@@ -325,6 +342,30 @@ export const ReactHookFormTemplate = ({ withFormItem = false }: { withFormItem?:
             })}
           />
         </InputField>
+
+        <Controller
+          name="comment"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              id={commentId}
+              label="Комментарий"
+              required={false}
+              maxLength={50}
+              counterThreshold={0}
+              withFormItem={withFormItem}
+            >
+              <Input
+                {...field}
+                id={commentId}
+                type="text"
+                maxLength={50}
+                showClearIcon
+                placeholder="Добавьте комментарий"
+              />
+            </InputField>
+          )}
+        />
 
         <Controller
           name="delivery"

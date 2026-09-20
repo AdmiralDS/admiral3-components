@@ -21,6 +21,7 @@ type FormValues = {
   confirmPassword: string;
   email: string;
   website: string;
+  comment: string;
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -32,6 +33,7 @@ const defaultValues: FormValues = {
   confirmPassword: '',
   email: '',
   website: '',
+  comment: '',
   delivery: 'courier',
   agreement: false,
   notifications: true,
@@ -98,14 +100,28 @@ type InputFieldProps = {
   label: string;
   withFormItem: boolean;
   required?: boolean;
+  maxLength?: number;
+  counterThreshold?: number;
 };
 
-const InputField = ({ children, error, success, id, label, withFormItem, required = true }: InputFieldProps) =>
+const InputField = ({
+  children,
+  error,
+  success,
+  id,
+  label,
+  withFormItem,
+  required = true,
+  maxLength,
+  counterThreshold,
+}: InputFieldProps) =>
   withFormItem ? (
     <FormItem
       label={label}
       htmlFor={id}
       required={required}
+      maxLength={maxLength}
+      counterThreshold={counterThreshold}
       status={error ? 'error' : success ? 'success' : undefined}
       description={
         error ? (
@@ -154,6 +170,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
   const confirmPasswordId = `${idPrefix}-tanstack-confirm-password`;
   const emailId = `${idPrefix}-tanstack-email`;
   const websiteId = `${idPrefix}-tanstack-website`;
+  const commentId = `${idPrefix}-tanstack-comment`;
   const agreementErrorId = `${idPrefix}-tanstack-agreement-error`;
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -182,7 +199,7 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с TanStack Form. Поля подключены через form.Field, значения и
-          обработчики передаются явно.
+          обработчики передаются явно, включая поле со счётчиком.
         </Description>
 
         <form.Field name="name" validators={{ onChange: ({ value }) => (value.trim() ? undefined : 'Введите имя') }}>
@@ -367,6 +384,31 @@ export const TanStackFormTemplate = ({ withFormItem = false }: { withFormItem?: 
               </InputField>
             );
           }}
+        </form.Field>
+
+        <form.Field name="comment">
+          {(field) => (
+            <InputField
+              id={commentId}
+              label="Комментарий"
+              required={false}
+              maxLength={50}
+              counterThreshold={0}
+              withFormItem={withFormItem}
+            >
+              <Input
+                id={commentId}
+                name={field.name}
+                value={field.state.value}
+                onChange={(event) => field.handleChange(event.target.value)}
+                onBlur={field.handleBlur}
+                type="text"
+                maxLength={50}
+                showClearIcon
+                placeholder="Добавьте комментарий"
+              />
+            </InputField>
+          )}
         </form.Field>
 
         <form.Field name="delivery">
