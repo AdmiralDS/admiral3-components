@@ -104,10 +104,38 @@ export const FormItemVisualTemplate = () => (
               required
               disabled
             >
-              <Input status={status} required disabled defaultValue="Пример названия!" />
+              <Input
+                status={status}
+                required
+                disabled
+                defaultValue={status === 'error' ? 'Пример названия!1234' : 'Пример названия!'}
+              />
             </FormItem>
           </VisualSample>
         ))}
+      </VisualSamples>
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>Counter and readOnly</VisualTitle>
+      <VisualSamples>
+        <VisualSample>
+          <VisualLabel>limit reached</VisualLabel>
+          <FormItem label="Подпись" description="Пояснение" maxLength={20}>
+            <Input defaultValue="Пример названия!1234" />
+          </FormItem>
+        </VisualSample>
+        <VisualSample>
+          <VisualLabel>xs counter without description</VisualLabel>
+          <FormItem dimension="xs" label="Подпись" maxLength={20} counterThreshold={0}>
+            <Input defaultValue="Текст" />
+          </FormItem>
+        </VisualSample>
+        <VisualSample>
+          <VisualLabel>readOnly composition</VisualLabel>
+          <FormItem label="Подпись" description="Пояснение" readOnly>
+            <Input defaultValue="Значение только для чтения" />
+          </FormItem>
+        </VisualSample>
       </VisualSamples>
     </VisualSection>
   </VisualLayout>
