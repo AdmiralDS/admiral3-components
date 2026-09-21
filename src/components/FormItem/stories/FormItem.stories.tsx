@@ -8,7 +8,7 @@ import { FormItemCounterTemplate } from './FormItemCounter.template';
 import formItemCounterTemplateRaw from './FormItemCounter.template?raw';
 import { FormItemLongTextTemplate } from './FormItemLongText.template';
 import formItemLongTextTemplateRaw from './FormItemLongText.template?raw';
-import { FormItemPlaygroundTemplate } from './FormItemPlayground.template';
+import { FormItemAdditionalLabelTemplate, FormItemPlaygroundTemplate } from './FormItemPlayground.template';
 import formItemPlaygroundTemplateRaw from './FormItemPlayground.template?raw';
 import { FormItemSizesTemplate } from './FormItemSizes.template';
 import formItemSizesTemplateRaw from './FormItemSizes.template?raw';
@@ -22,23 +22,6 @@ const meta = {
   title: 'Components/FormItem',
   component: FormItem,
   tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component: `FormItem оформляет подпись, пояснение и счётчик одного поля. Значением и валидацией управляет само поле или библиотека форм.
-
-Свяжите htmlFor с уникальным id поля, а id элемента внутри description — с aria-describedby поля. Для повторяемых примеров используйте React.useId(). Без видимой подписи задайте полю aria-label или aria-labelledby; placeholder не заменяет подпись.
-
-FormItem передаёт вложенному Input dimension, disabled, required и readOnly через контекст. Настройки обёртки приоритетнее пропсов Input, включая значения по умолчанию: m для размера и false для остальных настроек. Заданный на FormItem status также имеет приоритет; если он не задан, используется status инпута. required задаёт нативную обязательность; при библиотечной валидации можно использовать noValidate на форме. Нативным и сторонним контролам настройки передаются вручную; для ошибки укажите aria-invalid.
-
-maxLength включает счётчик символов и передаёт ограничение вложенному Input. counterThreshold задаёт порог появления счётчика от 0 до 1 и по умолчанию равен 0.8. Для группы полей используйте FieldSet.
-
-labelCssMixins позволяет переопределить стили основной и дополнительной подписей и описания. visibleLabelTooltips включает подсказку с полным строковым текстом только при его переполнении.
-
-Примеры библиотечной валидации находятся в Integration/React Hook Form и Integration/TanStack Form.`,
-      },
-    },
-  },
   argTypes: {
     dimension: { control: { type: 'inline-radio' }, options: FORM_ITEM_DIMENSIONS },
     required: { control: { type: 'boolean' } },
@@ -104,7 +87,7 @@ export const States: StoryObj<FormItemProps> = {
 
 export const AdditionalLabel: StoryObj<FormItemProps> = {
   args: { ...defaultArgs, label: 'Название', additionalLabel: 'Необязательно', description: 'Дополнительный текст' },
-  render: FormItemPlaygroundTemplate,
+  render: FormItemAdditionalLabelTemplate,
   parameters: {
     controls: { include: ['label', 'additionalLabel', 'description', 'dimension'] },
     docs: { source: { code: formItemPlaygroundTemplateRaw } },

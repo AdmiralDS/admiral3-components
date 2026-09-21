@@ -7,6 +7,11 @@ export const FormItemStatesTemplate = (args: FormItemProps) => {
   const hasDescription = hasSlotContent(args.description);
   return (
     <StoryDemoContainer $direction="column" $gap="16px">
+      <StoryDemoDescription>
+        Заданный на FormItem <code>status</code> имеет приоритет; если он не задан, используется <code>status</code>{' '}
+        инпута. <code>required</code> задаёт нативную обязательность; при библиотечной валидации можно использовать{' '}
+        <code>noValidate</code> на форме.
+      </StoryDemoDescription>
       <StoryDemoItem>
         <StoryDemoDescription>Обычное поле</StoryDemoDescription>
         <FormItem
