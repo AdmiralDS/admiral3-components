@@ -21,12 +21,18 @@ export interface InputProps extends Omit<
 > {
   /** Поддерживаемый нативный тип поля. Значение по умолчанию 'text'. */
   type?: InputType;
-  /** Размер компонента. Значение по умолчанию 'm'. */
+  /** Размер компонента. dimension у FormItem имеет приоритет, в том числе значение по умолчанию. Значение по умолчанию 'm'. */
   dimension?: InputDimension;
   /** Внешний вид поля. Значение по умолчанию 'standard'. */
   appearance?: InputAppearance;
-  /** Статус поля. */
+  /** Статус поля. Явный status у FormItem имеет приоритет. */
   status?: InputStatus;
+  /** Недоступность поля. disabled у FormItem имеет приоритет, в том числе значение по умолчанию false. */
+  disabled?: boolean;
+  /** Нативная обязательность поля. required у FormItem имеет приоритет, в том числе значение по умолчанию false. */
+  required?: boolean;
+  /** Режим чтения. readOnly у FormItem имеет приоритет, в том числе значение по умолчанию false. */
+  readOnly?: boolean;
   /**
    * Пользовательское содержимое перед нативным полем ввода. Input не управляет его видимостью, интерактивностью и
    * участием в Tab-порядке в состояниях disabled и readOnly. Потребитель должен явно передать disabled, tabIndex или

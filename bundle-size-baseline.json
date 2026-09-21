@@ -18,11 +18,14 @@
     "field-set": {
       "rawBytes": 1719
     },
+    "form-item": {
+      "rawBytes": 3402
+    },
     "helper-components": {
       "rawBytes": 9721
     },
     "input": {
-      "rawBytes": 12524
+      "rawBytes": 13230
     },
     "link": {
       "rawBytes": 2676

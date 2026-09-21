@@ -34,6 +34,10 @@
       "types": "./dist/components/FieldSet/index.d.ts",
       "import": "./dist/components/FieldSet/index.js"
     },
+    "./form-item": {
+      "types": "./dist/components/FormItem/index.d.ts",
+      "import": "./dist/components/FormItem/index.js"
+    },
     "./helper-components": {
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
@@ -148,6 +152,7 @@
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/addon-themes": "^10.6.0",
     "@storybook/react-vite": "^10.6.0",
+    "@tanstack/react-form": "^1.33.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^24.13.2",

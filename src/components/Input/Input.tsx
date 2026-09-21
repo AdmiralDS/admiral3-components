@@ -1,10 +1,22 @@
-import { forwardRef, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type MouseEvent,
+  type PointerEvent,
+} from 'react';
 
 import { NativeInput, StyledBaseInputBorder, StyledBaseInputContainer, StyledIconPanel } from './style';
 import type { InputProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { isOverflowed } from '../../utils/isOverflowed';
 import { refSetter } from '../../utils/refSetter';
+import { FormItemContext } from '../_internal/FormItemContext';
 import { ClearInputIconButton, clearNativeTextInput, StyledAffix, StyledInputDivider } from '../_internal/InputAtoms';
 
 /** Base text input component. */
@@ -12,10 +24,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       appearance = 'standard',
-      dimension = 'm',
-      disabled = false,
-      readOnly = false,
-      status,
+      dimension: dimensionProp = 'm',
+      disabled: disabledProp = false,
+      readOnly: readOnlyProp = false,
+      required: requiredProp = false,
+      status: statusProp,
       iconsBefore,
       iconsAfter,
       showClearIcon = false,
@@ -29,7 +42,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       containerRef,
       value,
       defaultValue,
+      maxLength: maxLengthProp,
       placeholder,
+      onChange,
       onMouseEnter,
       onMouseLeave,
       title,
@@ -38,6 +53,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
+    const formItem = useContext(FormItemContext);
+    const dimension = formItem?.dimension ?? dimensionProp;
+    const status = formItem?.status ?? statusProp;
+    const disabled = formItem?.disabled ?? disabledProp;
+    const required = formItem?.required ?? requiredProp;
+    const readOnly = formItem?.readOnly ?? readOnlyProp;
+    const maxLength = formItem?.maxLength ?? maxLengthProp;
+    const onCharacterCountChange = formItem?.onCharacterCountChange;
     const inputRef = useRef<HTMLInputElement>(null);
     const [overflowTitle, setOverflowTitle] = useState<string>();
     const displayClearIcon = showClearIcon && !disabled && !readOnly;
@@ -58,6 +81,52 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       clearNativeTextInput(input);
       onClear?.();
     };
+    // читает фактическое значение из нативного <input> и передаёт в FormItem только его длину.
+    // useCallback нужен, потому что функция используется в зависимостях следующих effects.
+    const reportCharacterCount = useCallback(() => {
+      const input = inputRef.current;
+      if (input) onCharacterCountChange?.(input.value.length);
+    }, [onCharacterCountChange]);
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+      onChange?.(event);
+      if (value === undefined) {
+        onCharacterCountChange?.(event.currentTarget.value.length);
+      } else {
+        // После завершения события React синхронизирует controlled input с принятым значением.
+        queueMicrotask(reportCharacterCount);
+      }
+    };
+
+    // Синхронизация счётчика после монтирования и внешнего изменения controlled value:
+    // в случаях, когда пользовательский onChange не вызывается.
+    // - начальное значение задано через defaultValue;
+    // - controlled value изменился извне, например после загрузки данных;
+    // - компонент подключился к FormItem уже с заполненным значением.
+    useLayoutEffect(() => {
+      reportCharacterCount();
+    }, [reportCharacterCount, value]);
+
+    // Нативный reset сначала отправляет событие и только затем восстанавливает defaultValue поля.
+    // Откладываем чтение значения, чтобы FormItem получил длину уже сброшенного значения.
+    useEffect(() => {
+      const form = inputRef.current?.form;
+      if (!form || !onCharacterCountChange) return;
+
+      let resetTimer: ReturnType<typeof setTimeout> | undefined;
+      const handleReset = () => {
+        resetTimer = setTimeout(reportCharacterCount);
+      };
+
+      form.addEventListener('reset', handleReset);
+      return () => {
+        form.removeEventListener('reset', handleReset);
+        if (resetTimer !== undefined) clearTimeout(resetTimer);
+      };
+    }, [onCharacterCountChange, reportCharacterCount]);
+
+    // Layout cleanup старого Input выполняется до layout effect нового Input при его замене.
+    useLayoutEffect(() => () => onCharacterCountChange?.(0), [onCharacterCountChange]);
 
     const handleMouseEnter = (event: MouseEvent<HTMLInputElement>) => {
       // TODO: Replace the native title with Tooltip after the Tooltip component is implemented.
@@ -130,9 +199,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={refSetter(inputRef, ref)}
           disabled={disabled}
           readOnly={readOnly}
+          required={required}
           value={value}
           defaultValue={defaultValue}
+          maxLength={maxLength}
           placeholder={placeholder ?? ' '}
+          onChange={handleChange}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           aria-invalid={status === 'error' || ariaInvalid || undefined}
