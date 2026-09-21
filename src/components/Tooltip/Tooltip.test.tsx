@@ -33,15 +33,19 @@ class ResizeObserverMock implements ResizeObserver {
     ResizeObserverMock.instances.push(this);
   }
 
-  emit(height: number) {
-    this.callback([{ contentRect: { height } } as ResizeObserverEntry], this);
+  emit(height: number, width: number) {
+    this.callback([{ contentRect: { height, width } } as ResizeObserverEntry], this);
   }
 }
 
 const targetElement = document.createElement('button');
 type TooltipTestProps = Partial<React.ComponentProps<typeof Tooltip>> & { 'data-testid'?: string };
 const renderTooltip = (props: TooltipTestProps = {}) =>
-  render(<Tooltip targetElement={targetElement} renderContent={() => 'Content'} {...props} />);
+  render(
+    <Tooltip targetElement={targetElement} {...props}>
+      {props.children ?? 'Content'}
+    </Tooltip>,
+  );
 
 describe('Tooltip', () => {
   let animationFrameCallback: FrameRequestCallback | undefined;
@@ -66,7 +70,7 @@ describe('Tooltip', () => {
     vi.clearAllMocks();
   });
 
-  it('renders content returned by renderContent in an accessible tooltip', () => {
+  it('renders children in an accessible tooltip', () => {
     renderTooltip();
     expect(screen.getByRole('tooltip')).toHaveTextContent('Content');
   });
@@ -76,13 +80,14 @@ describe('Tooltip', () => {
     [undefined, 'undefined'],
     [null, 'null'],
     [false, 'false'],
+    [true, 'true'],
   ])('renders nothing for %s content', (content, _description) => {
-    render(<Tooltip targetElement={targetElement} renderContent={() => content} />);
+    render(<Tooltip targetElement={targetElement}>{content}</Tooltip>);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
   it.each([0, <span key="node">Node content</span>])('renders valid falsy or React node content', (content) => {
-    render(<Tooltip targetElement={targetElement} renderContent={() => content} />);
+    render(<Tooltip targetElement={targetElement}>{content}</Tooltip>);
     expect(screen.getByRole('tooltip')).toHaveTextContent(content === 0 ? '0' : 'Node content');
   });
 
@@ -152,17 +157,26 @@ describe('Tooltip', () => {
     expect(screen.getByTestId('tooltip').parentElement).toHaveStyle({ opacity: '1' });
   });
 
-  it('observes size, recalculates only after a height change, and disconnects on unmount', () => {
+  it('observes size, recalculates after a width or height change, and disconnects on unmount', () => {
     const { unmount } = renderTooltip();
     const observer = ResizeObserverMock.instances[0];
     expect(observer.observe).toHaveBeenCalledWith(expect.any(HTMLDivElement));
-    act(() => observer.emit(20));
+    act(() => observer.emit(20, 100));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
-    act(() => observer.emit(20));
+    act(() => observer.emit(20, 100));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
-    act(() => observer.emit(30));
+    act(() => observer.emit(20, 120));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(2);
+    act(() => animationFrameCallback?.(0));
+    act(() => observer.emit(30, 120));
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(3);
     unmount();
     expect(observer.disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('renders nothing without a target element', () => {
+    render(<Tooltip targetElement={null}>Content</Tooltip>);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
   });
 });

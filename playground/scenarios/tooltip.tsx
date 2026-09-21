@@ -4,7 +4,7 @@ import { TooltipPlaygroundTemplate } from '../../src/components/Tooltip/stories/
 
 const defaultArgs: TooltipProps = {
   targetElement: null,
-  renderContent: () => 'Tooltip',
+  children: 'Tooltip',
 };
 
 export const tooltipScenarios: PlaygroundScenario[] = [

@@ -2,20 +2,23 @@ import { COMPATIBLE_POSITIONS, DEFAULT_TOOLTIP_POSITION, POSITION_PRIORITY } fro
 import type { PositionCheck, PositionContext, TooltipInternalPosition, TooltipPosition } from './types';
 
 export function getTooltipDirection(
-  anchorElement: HTMLElement,
-  tooltipElement: HTMLElement,
+  anchorElement: Element,
+  tooltipElement: Element,
   scrollbarSize: number,
   tooltipPosition?: TooltipPosition,
 ): TooltipInternalPosition {
   const anchorElementRect: DOMRect = anchorElement.getBoundingClientRect();
   const tooltipRect: DOMRect = tooltipElement.getBoundingClientRect();
+  const targetWindow = anchorElement.ownerDocument.defaultView;
+  const viewportWidth = targetWindow?.innerWidth ?? 0;
+  const viewportHeight = targetWindow?.innerHeight ?? 0;
 
   const positionContext: PositionContext = {
     spaceTop: anchorElementRect.top,
-    spaceRight: globalThis.innerWidth - anchorElementRect.right - scrollbarSize,
-    spaceBottom: globalThis.innerHeight - anchorElementRect.bottom - scrollbarSize,
+    spaceRight: viewportWidth - anchorElementRect.right - scrollbarSize,
+    spaceBottom: viewportHeight - anchorElementRect.bottom - scrollbarSize,
     spaceLeft: anchorElementRect.left,
-    viewportWidth: globalThis.innerWidth - scrollbarSize,
+    viewportWidth: viewportWidth - scrollbarSize,
     anchorWidth: anchorElementRect.width,
     anchorHeight: anchorElementRect.height,
     tooltipWidth: tooltipRect.width,

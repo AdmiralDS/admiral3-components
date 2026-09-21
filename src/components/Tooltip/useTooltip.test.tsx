@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TOOLTIP_DELAY } from './constants';
 import { useTooltip } from './useTooltip';
 
 describe('useTooltip', () => {
@@ -34,8 +35,8 @@ describe('useTooltip', () => {
     Reflect.deleteProperty(document, 'elementFromPoint');
   });
 
-  const setup = (openDelay = 0) => {
-    const hook = renderHook(() => useTooltip<HTMLButtonElement>({ openDelay }));
+  const setup = (withDelay = false) => {
+    const hook = renderHook(() => useTooltip<HTMLButtonElement>({ withDelay }));
     act(() => {
       hook.result.current.targetRef(target);
       hook.result.current.tooltipRef(tooltip);
@@ -48,6 +49,16 @@ describe('useTooltip', () => {
     expect(result.current.targetElement).toBe(target);
     act(() => result.current.targetRef(null));
     expect(result.current.targetElement).toBeNull();
+  });
+
+  it('provides linked accessibility props for the target and tooltip', () => {
+    const { result } = setup();
+    expect(result.current.tooltipProps.id).toBeTruthy();
+    expect(result.current.targetProps['aria-describedby']).toBeUndefined();
+    act(() => result.current.showTooltip());
+    expect(result.current.targetProps['aria-describedby']).toBe(result.current.tooltipProps.id);
+    act(() => result.current.hideTooltip());
+    expect(result.current.targetProps['aria-describedby']).toBeUndefined();
   });
 
   it('shows and hides through the imperative callbacks', () => {
@@ -64,13 +75,13 @@ describe('useTooltip', () => {
     expect(result.current.isVisible).toBe(true);
   });
 
-  it('waits for openDelay and restarts the delay when show is requested again', () => {
+  it('waits for the design-system delay and restarts it when show is requested again', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    const { result } = setup(500);
+    const { result } = setup(true);
     act(() => result.current.showTooltip());
     act(() => vi.advanceTimersByTime(300));
     act(() => result.current.showTooltip());
-    act(() => vi.advanceTimersByTime(499));
+    act(() => vi.advanceTimersByTime(TOOLTIP_DELAY - 1));
     expect(result.current.isVisible).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.isVisible).toBe(true);
@@ -78,7 +89,7 @@ describe('useTooltip', () => {
 
   it('cancels a delayed opening when hidden or when entering the tooltip', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    const { result } = setup(500);
+    const { result } = setup(true);
     act(() => result.current.showTooltip());
     act(() => result.current.hideTooltip());
     act(() => vi.runAllTimers());
@@ -191,7 +202,7 @@ describe('useTooltip', () => {
   it('cleans up a pending timer and animation frame on unmount', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
-    const { result, unmount } = setup(500);
+    const { result, unmount } = setup(true);
     act(() => result.current.showTooltip());
     fireEvent.mouseLeave(target, { relatedTarget: null });
     unmount();

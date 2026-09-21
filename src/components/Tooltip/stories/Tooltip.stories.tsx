@@ -28,7 +28,7 @@ const meta = {
       options: TOOLTIP_POSITIONS,
     },
     targetElement: { control: false },
-    renderContent: { control: false },
+    children: { control: false },
   },
 } satisfies Meta<typeof Tooltip>;
 
@@ -38,7 +38,7 @@ const defaultArgs: TooltipProps = {
   dimension: 'm',
   targetElement: null,
   tooltipPosition: 'bottom',
-  renderContent: () =>
+  children:
     'Tooltip остаётся открытым при переводе указателя с кнопки на его содержимое. Пользователь может выделить и скопировать этот текст.',
 };
 

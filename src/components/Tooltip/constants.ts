@@ -1,9 +1,12 @@
+import type { CSSProperties } from 'react';
+
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 
 export const TOOLTIP_DIMENSIONS = ['m', 's'] as const;
 export const TOOLTIP_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
 
 export const TOOLTIP_WRAPPER_PADDING = 8;
+export const TOOLTIP_DELAY = 1500;
 
 export const TOOLTIP_DIMENSION_PARAMETERS = {
   m: { minHeight: 24, padding: '4px 8px', typography: textStyles.body.body2Short },
@@ -53,3 +56,27 @@ export const POSITION_PRIORITY = [
   'bottomPageCenter',
   'topPageCenter',
 ] as const satisfies readonly (typeof TOOLTIP_INTERNAL_POSITIONS)[number][];
+
+type TooltipLayout = {
+  flexDirection: CSSProperties['flexDirection'];
+  alignSelf: CSSProperties['alignSelf'];
+  fullWidth: boolean;
+};
+
+/** Параметры flex-разметки портала и выравнивания Tooltip для каждой рассчитанной позиции. */
+export const TOOLTIP_LAYOUTS = {
+  leftBottom: { flexDirection: 'row-reverse', alignSelf: 'flex-start', fullWidth: false },
+  leftTop: { flexDirection: 'row-reverse', alignSelf: 'flex-end', fullWidth: false },
+  left: { flexDirection: 'row-reverse', alignSelf: 'center', fullWidth: false },
+  rightBottom: { flexDirection: 'row', alignSelf: 'flex-start', fullWidth: false },
+  rightTop: { flexDirection: 'row', alignSelf: 'flex-end', fullWidth: false },
+  right: { flexDirection: 'row', alignSelf: 'center', fullWidth: false },
+  topPageCenter: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: true },
+  topLeft: { flexDirection: 'column-reverse', alignSelf: 'flex-end', fullWidth: false },
+  topRight: { flexDirection: 'column-reverse', alignSelf: 'flex-start', fullWidth: false },
+  top: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: false },
+  bottomPageCenter: { flexDirection: 'column', alignSelf: 'center', fullWidth: true },
+  bottomLeft: { flexDirection: 'column', alignSelf: 'flex-end', fullWidth: false },
+  bottomRight: { flexDirection: 'column', alignSelf: 'flex-start', fullWidth: false },
+  bottom: { flexDirection: 'column', alignSelf: 'center', fullWidth: false },
+} satisfies Record<(typeof TOOLTIP_INTERNAL_POSITIONS)[number], TooltipLayout>;

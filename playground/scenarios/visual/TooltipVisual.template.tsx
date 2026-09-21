@@ -37,12 +37,9 @@ const TooltipSample = ({ props }: { props: VisualVariant['props'] }) => {
     <>
       <button ref={setTargetElement}>Anchor</button>
       {targetElement && (
-        <Tooltip
-          {...props}
-          targetElement={targetElement}
-          renderContent={() => 'Tooltip'}
-          fallbackPositions={['top', 'right', 'left']}
-        />
+        <Tooltip {...props} targetElement={targetElement}>
+          Tooltip
+        </Tooltip>
       )}
     </>
   );

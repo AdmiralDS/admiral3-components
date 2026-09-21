@@ -9,8 +9,8 @@ export type TooltipInternalPosition = (typeof TOOLTIP_INTERNAL_POSITIONS)[number
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */
   dimension?: TooltipDimension;
-  /** Функция рендера содержимого Tooltip. */
-  renderContent: () => ReactNode;
+  /** Содержимое Tooltip. */
+  children?: ReactNode;
   /** Элемент, относительно которого позиционируется Tooltip. */
   targetElement: Element | null;
   /** Предпочтительное направление открытия Tooltip. */

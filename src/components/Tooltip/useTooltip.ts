@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { AriaAttributes, RefCallback } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+
+import { TOOLTIP_DELAY } from './constants';
 
 const isElementInside = (container: Element | null, element: EventTarget | null) =>
   element instanceof Node && Boolean(container?.contains(element));
 
 export interface UseTooltipOptions {
-  /** Задержка перед открытием Tooltip в миллисекундах. Значение по умолчанию 0. */
-  openDelay?: number;
+  /** Открытие Tooltip с задержкой, заданной дизайн-системой. */
+  withDelay?: boolean;
 }
 
 export interface UseTooltipResult<T extends HTMLElement> {
@@ -20,10 +23,20 @@ export interface UseTooltipResult<T extends HTMLElement> {
   tooltipRef: (element: HTMLDivElement | null) => void;
   /** Признак видимости Tooltip. */
   isVisible: boolean;
-  /** Показывает Tooltip с учётом openDelay. */
+  /** Показывает Tooltip с учётом withDelay. */
   showTooltip: () => void;
   /** Немедленно скрывает Tooltip. */
   hideTooltip: () => void;
+  /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
+  targetProps: {
+    ref: RefCallback<T>;
+    'aria-describedby': AriaAttributes['aria-describedby'];
+  };
+  /** Готовые свойства, связывающие Tooltip с целевым элементом. */
+  tooltipProps: {
+    ref: RefCallback<HTMLDivElement>;
+    id: string;
+  };
 }
 
 /**
@@ -31,11 +44,12 @@ export interface UseTooltipResult<T extends HTMLElement> {
  * мост между якорем и Tooltip и закрывает Tooltip по Escape.
  */
 export const useTooltip = <T extends HTMLElement = HTMLElement>({
-  openDelay = 0,
+  withDelay = false,
 }: UseTooltipOptions = {}): UseTooltipResult<T> => {
   const [targetElement, setTargetElement] = useState<T | null>(null);
   const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
   const [isVisible, setVisible] = useState(false);
+  const tooltipId = useId();
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerCheckFrameRef = useRef<number | null>(null);
   const interactionInProgressRef = useRef(false);
@@ -47,15 +61,15 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
 
   const showTooltip = useCallback(() => {
     cancelOpening();
-    if (openDelay > 0) {
+    if (withDelay) {
       openTimerRef.current = setTimeout(() => {
         openTimerRef.current = null;
         setVisible(true);
-      }, openDelay);
+      }, TOOLTIP_DELAY);
     } else {
       setVisible(true);
     }
-  }, [cancelOpening, openDelay]);
+  }, [cancelOpening, withDelay]);
 
   const hideTooltip = useCallback(() => {
     cancelOpening();
@@ -210,6 +224,12 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
     [cancelOpening, cancelPointerCheck],
   );
 
+  const targetProps = useMemo(
+    () => ({ ref: setTargetElement, 'aria-describedby': isVisible ? tooltipId : undefined }),
+    [isVisible, tooltipId],
+  );
+  const tooltipProps = useMemo(() => ({ ref: setTooltipElement, id: tooltipId }), [tooltipId]);
+
   return {
     targetElement,
     targetRef: setTargetElement,
@@ -217,5 +237,7 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
     isVisible,
     showTooltip,
     hideTooltip,
+    targetProps,
+    tooltipProps,
   };
 };

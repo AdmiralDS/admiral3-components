@@ -6,22 +6,22 @@ const TOOLTIP_TEXT =
   'Tooltip показывает поясняющий текст для элемента интерфейса. Его содержимое можно выделить и скопировать.';
 
 export const TooltipBaseTemplate = (props: TooltipProps) => {
-  const { targetElement, targetRef, tooltipRef, isVisible } = useTooltip<HTMLButtonElement>();
+  const { targetElement, targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
     <>
-      <Button ref={targetRef} dimension="m" square aria-label="Удалить" aria-describedby="tooltip-base">
+      <Button {...targetProps} dimension="m" square aria-label="Удалить">
         <SystemDeleteOutline aria-hidden />
       </Button>
       {isVisible && (
         <Tooltip
           {...props}
-          ref={tooltipRef}
+          {...tooltipProps}
           targetElement={targetElement}
-          renderContent={() => TOOLTIP_TEXT}
-          id="tooltip-base"
           style={{ minWidth: '200px', maxWidth: '300px' }}
-        />
+        >
+          {TOOLTIP_TEXT}
+        </Tooltip>
       )}
     </>
   );

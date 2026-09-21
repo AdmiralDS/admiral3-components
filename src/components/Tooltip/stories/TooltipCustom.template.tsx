@@ -20,26 +20,20 @@ const Position = styled.span<{ $dimension: TooltipDimension }>`
 
 export const TooltipCustomTemplate = (props: TooltipProps) => {
   const dimension = props.dimension ?? 'm';
-  const { targetElement, targetRef, tooltipRef, isVisible } = useTooltip<HTMLButtonElement>();
+  const { targetElement, targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
     <>
-      <Button ref={targetRef} dimension="m" square aria-label="Профиль" aria-describedby="tooltip-custom">
+      <Button {...targetProps} dimension="m" square aria-label="Профиль">
         <CategoryVIPOutline aria-hidden />
       </Button>
       {isVisible && (
-        <Tooltip
-          {...props}
-          ref={tooltipRef}
-          targetElement={targetElement}
-          renderContent={() => (
-            <CustomContent>
-              <Name $dimension={dimension}>Фамилия Имя Отчество</Name>
-              <Position $dimension={dimension}>Старший дизайнер</Position>
-            </CustomContent>
-          )}
-          id="tooltip-custom"
-        />
+        <Tooltip {...props} {...tooltipProps} targetElement={targetElement}>
+          <CustomContent>
+            <Name $dimension={dimension}>Фамилия Имя Отчество</Name>
+            <Position $dimension={dimension}>Старший дизайнер</Position>
+          </CustomContent>
+        </Tooltip>
       )}
     </>
   );

@@ -1,97 +1,58 @@
 import type { CSSProperties } from 'react';
-import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { TOOLTIP_LAYOUTS } from './constants';
 import { getTooltipDirection } from './getTooltipDirection';
 import { FakeTarget, StyledPortal, TooltipContainer, TooltipWrapper } from './style';
-import type { TooltipInternalPosition, TooltipProps } from './types';
+import type { TooltipProps } from './types';
 import { getScrollbarSize } from '../../utils/getScrollbarSize';
+import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 
-export const TOOLTIP_DELAY = 1500;
-
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
-  ({ dimension = 'm', renderContent, targetElement, tooltipPosition, ...props }, ref) => {
+  ({ children, dimension = 'm', targetElement, tooltipPosition, ...props }, ref) => {
     const tooltipElementRef = useRef<HTMLDivElement | null>(null);
-    const tooltipHeight = useRef(0);
-
-    // Пустая строка, undefined, null и false не будут отображены
-    const content = renderContent();
-    const emptyContent = !content && content !== 0;
+    const tooltipSize = useRef<{ width: number; height: number } | undefined>(undefined);
 
     const [portalFlexDirection, setPortalFlexDirection] = useState<CSSProperties['flexDirection']>();
     const [portalFullWidth, setPortalFullWidth] = useState(false);
-    const [recalculation, startRecalculation] = useState({});
+    const [recalculationKey, setRecalculationKey] = useState(0);
+
+    const emptyContent = !hasSlotContent(children);
     const targetDocument = targetElement?.ownerDocument;
+    const mergedRef = useMemo(() => refSetter(ref, tooltipElementRef), [ref]);
 
     const manageTooltip = useCallback(
       (scrollbarSize: number) => {
-        const target = targetElement;
-        if (target && tooltipElementRef.current) {
-          const direction: TooltipInternalPosition = getTooltipDirection(
-            target as HTMLElement,
-            tooltipElementRef.current,
-            scrollbarSize,
-            tooltipPosition,
-          );
-          const tooltip = tooltipElementRef.current;
-          switch (direction) {
-            case 'leftBottom':
-            case 'leftTop':
-            case 'left':
-              setPortalFlexDirection('row-reverse');
-              setPortalFullWidth(false);
-              tooltip.style.alignSelf =
-                direction === 'leftBottom' ? 'flex-start' : direction === 'leftTop' ? 'flex-end' : 'center';
-              break;
-            case 'rightBottom':
-            case 'rightTop':
-            case 'right':
-              setPortalFlexDirection('row');
-              setPortalFullWidth(false);
-              tooltip.style.alignSelf =
-                direction === 'rightBottom' ? 'flex-start' : direction === 'rightTop' ? 'flex-end' : 'center';
-              break;
-            case 'topPageCenter':
-            case 'topLeft':
-            case 'topRight':
-            case 'top':
-              setPortalFlexDirection('column-reverse');
-              setPortalFullWidth(direction === 'topPageCenter' ? true : false);
-              tooltip.style.alignSelf =
-                direction === 'topLeft' ? 'flex-end' : direction === 'topRight' ? 'flex-start' : 'center';
-              break;
-            case 'bottomPageCenter':
-            case 'bottomLeft':
-            case 'bottomRight':
-            case 'bottom':
-            default:
-              setPortalFlexDirection('column');
-              setPortalFullWidth(direction === 'bottomPageCenter' ? true : false);
-              tooltip.style.alignSelf =
-                direction === 'bottomLeft' ? 'flex-end' : direction === 'bottomRight' ? 'flex-start' : 'center';
-          }
+        const tooltip = tooltipElementRef.current;
+        if (targetElement && tooltip) {
+          const direction = getTooltipDirection(targetElement, tooltip, scrollbarSize, tooltipPosition);
+          const layout = TOOLTIP_LAYOUTS[direction];
+          setPortalFlexDirection(layout.flexDirection);
+          setPortalFullWidth(layout.fullWidth);
+          tooltip.style.alignSelf = layout.alignSelf;
         }
       },
       [targetElement, tooltipPosition],
     );
 
     useEffect(() => {
+      if (!targetElement || !tooltipElementRef.current || emptyContent) return;
+
       const scrollbarSize = getScrollbarSize(targetDocument);
       const animationFrame = requestAnimationFrame(() => manageTooltip(scrollbarSize));
       return () => cancelAnimationFrame(animationFrame);
-    }, [content, manageTooltip, recalculation, targetDocument]);
+    }, [children, emptyContent, manageTooltip, recalculationKey, targetDocument, targetElement]);
 
-    // During fonts loading tooltip size can be changed and tooltip direction should be recalculated
     useLayoutEffect(() => {
       if (tooltipElementRef.current && !emptyContent) {
         const resizeObserver = new ResizeObserver((entries) => {
           entries.forEach((entry) => {
-            if (tooltipHeight.current === 0) {
-              // don't recalculate tooltip direction on its mount
-              tooltipHeight.current = entry.contentRect.height;
-            } else if (tooltipHeight.current !== entry.contentRect.height) {
-              tooltipHeight.current = entry.contentRect.height;
-              startRecalculation({});
+            const { width, height } = entry.contentRect;
+            const previousSize = tooltipSize.current;
+            tooltipSize.current = { width, height };
+            if (previousSize && (previousSize.width !== width || previousSize.height !== height)) {
+              setRecalculationKey((value) => value + 1);
             }
           });
         });
@@ -108,18 +69,18 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       if (tooltipElementRef.current && !emptyContent) {
         tooltipElementRef.current.style.opacity = '1';
       }
-    }, [emptyContent]);
+    }, [children, emptyContent]);
 
-    return emptyContent ? null : (
+    return emptyContent || !targetElement ? null : (
       <StyledPortal
         targetElement={targetElement}
         $flexDirection={portalFlexDirection}
         fullContainerWidth={portalFullWidth}
       >
         <FakeTarget />
-        <TooltipWrapper ref={refSetter(ref, tooltipElementRef)}>
+        <TooltipWrapper ref={mergedRef}>
           <TooltipContainer role="tooltip" $dimension={dimension} {...props}>
-            {content}
+            {children}
           </TooltipContainer>
         </TooltipWrapper>
       </StyledPortal>
