@@ -47,7 +47,7 @@ export const StyledLabelRow = styled.div`
   }
 `;
 
-export const StyledLabel = styled.label`
+export const StyledLabel = styled.label<{ $cssMixin?: ReturnType<typeof css> }>`
   ${textStyles}
   flex: 1 1 auto;
   min-width: 0;
@@ -62,9 +62,13 @@ export const StyledLabel = styled.label`
     content: ' *' / '';
     color: ${errorColor};
   }
+
+  &&&& {
+    ${(p) => p.$cssMixin}
+  }
 `;
 
-export const StyledAdditionalLabel = styled.span`
+export const StyledAdditionalLabel = styled.span<{ $cssMixin?: ReturnType<typeof css> }>`
   ${textStyles}
   flex-shrink: 0;
   min-width: 0;
@@ -72,9 +76,13 @@ export const StyledAdditionalLabel = styled.span`
   overflow-wrap: anywhere;
   cursor: default;
   margin-left: auto;
+
+  &&&& {
+    ${(p) => p.$cssMixin}
+  }
 `;
 
-export const StyledDescription = styled.span`
+export const StyledDescription = styled.span<{ $cssMixin?: ReturnType<typeof css> }>`
   ${textStyles}
   flex: 1 1 auto;
   min-width: 0;
@@ -86,6 +94,10 @@ export const StyledDescription = styled.span`
 
   ${StyledFormItem}[data-status='success']:not([data-disabled]) > div > & {
     color: ${successColor};
+  }
+
+  &&&& {
+    ${(p) => p.$cssMixin}
   }
 `;
 

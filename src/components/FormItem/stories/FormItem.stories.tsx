@@ -33,6 +33,8 @@ FormItem передаёт вложенному Input dimension, disabled, requir
 
 maxLength включает счётчик символов и передаёт ограничение вложенному Input. counterThreshold задаёт порог появления счётчика от 0 до 1 и по умолчанию равен 0.8. Для группы полей используйте FieldSet.
 
+labelCssMixins позволяет переопределить стили основной и дополнительной подписей и описания. visibleLabelTooltips включает подсказку с полным строковым текстом только при его переполнении.
+
 Примеры библиотечной валидации находятся в Integration/React Hook Form и Integration/TanStack Form.`,
       },
     },

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-components';
 
@@ -9,6 +9,13 @@ const NarrowFormItem = styled(FormItem)`
   max-width: 100%;
 `;
 
+const compactText = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-wrap: normal;
+`;
+
 export const FormItemLongTextTemplate = (args: FormItemProps) => {
   const hasDescription = hasSlotContent(args.description);
   return (
@@ -16,6 +23,18 @@ export const FormItemLongTextTemplate = (args: FormItemProps) => {
       {...args}
       htmlFor="form-item-long-text"
       description={hasDescription ? <span id="form-item-long-description-message">{args.description}</span> : undefined}
+      labelCssMixins={{
+        label: css`
+          ${compactText}
+          flex: 0 1 65%;
+        `,
+        additionalLabel: css`
+          ${compactText}
+          flex: 0 1 35%;
+        `,
+        description: compactText,
+      }}
+      visibleLabelTooltips={{ label: true, additionalLabel: true }}
     >
       <Input
         id="form-item-long-text"

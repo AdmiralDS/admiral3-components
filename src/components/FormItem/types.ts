@@ -1,5 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
+import type { css } from 'styled-components';
+
 import type { FORM_ITEM_DIMENSIONS, FORM_ITEM_STATUSES } from './constants';
 
 export type FormItemDimension = (typeof FORM_ITEM_DIMENSIONS)[number];
@@ -10,6 +12,24 @@ export interface FormItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   label?: ReactNode;
   /** Дополнительный текст справа от подписи. Не входит в доступное имя поля. */
   additionalLabel?: ReactNode;
+  /** CSS-миксины для переопределения стилей подписей и описания. */
+  labelCssMixins?: {
+    /** CSS-миксин основной подписи. */
+    label?: ReturnType<typeof css>;
+    /** CSS-миксин дополнительной подписи. */
+    additionalLabel?: ReturnType<typeof css>;
+    /** CSS-миксин описания под полем. */
+    description?: ReturnType<typeof css>;
+  };
+  /** Включает нативную подсказку с полным строковым текстом при его переполнении. */
+  visibleLabelTooltips?: {
+    /** Включает подсказку основной подписи. */
+    label?: boolean;
+    /** Включает подсказку дополнительной подписи. */
+    additionalLabel?: boolean;
+    /** Включает подсказку описания под полем. */
+    description?: boolean;
+  };
   /** Должен совпадать с id нативного поля для связи с подписью. id поля задаётся отдельно. */
   htmlFor?: string;
   /**
