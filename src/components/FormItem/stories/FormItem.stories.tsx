@@ -140,14 +140,27 @@ export const Counter: StoryObj<FormItemProps> = {
 export const LongText: StoryObj<FormItemProps> = {
   args: {
     ...defaultArgs,
-    label: 'ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов',
-    additionalLabel: 'ОченьДлиннаяДополнительнаяПодписьБезПробелов',
-    description: 'https://example.org/very-long-address-without-spaces/very-long-address-without-spaces',
+    label: 'Очень Длинное Название Поля Очень Длинное Название Поля',
+    additionalLabel: 'Очень Длинная Дополнительная Подпись',
+    description: 'Очень Длинная Дополнительная Подпись Внизу',
+    maxLength: 77,
+    counterThreshold: 0.8,
   },
   render: FormItemLongTextTemplate,
   parameters: {
     controls: {
-      include: ['label', 'additionalLabel', 'description', 'dimension', 'status', 'required', 'disabled', 'readOnly'],
+      include: [
+        'label',
+        'additionalLabel',
+        'description',
+        'maxLength',
+        'counterThreshold',
+        'dimension',
+        'status',
+        'required',
+        'disabled',
+        'readOnly',
+      ],
     },
     docs: { source: { code: formItemLongTextTemplateRaw } },
   },

@@ -25,11 +25,7 @@ export const FormItemLongTextTemplate = (args: FormItemProps) => {
         disabled={args.disabled}
         aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
         aria-describedby={hasDescription ? 'form-item-long-description-message' : undefined}
-        defaultValue={
-          args.maxLength === undefined
-            ? 'Очень длинное значение поля, которое целиком не помещается в доступную ширину'
-            : 'Пример названия!'
-        }
+        defaultValue="Очень длинное значение поля, которое целиком не помещается в доступную ширину"
       />
     </NarrowFormItem>
   );
