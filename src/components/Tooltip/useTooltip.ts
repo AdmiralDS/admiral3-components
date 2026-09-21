@@ -1,50 +1,16 @@
-import type { AriaAttributes, RefCallback } from 'react';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { TOOLTIP_DELAY } from './constants';
+import type { UseTooltipOptions, UseTooltipResult } from './types';
 
 const isElementInside = (container: Element | null, element: EventTarget | null) =>
-  element instanceof Node && Boolean(container?.contains(element));
-
-export interface UseTooltipOptions {
-  /** Открытие Tooltip с задержкой, заданной дизайн-системой. */
-  withDelay?: boolean;
-}
-
-export interface UseTooltipResult<T extends HTMLElement> {
-  /** Элемент, относительно которого позиционируется Tooltip. */
-  targetElement: T | null;
-  /** Callback ref для якорного элемента. */
-  targetRef: (element: T | null) => void;
-  /**
-   * Callback ref для Tooltip. Внешняя обёртка Tooltip имеет прозрачный padding,
-   * который образует интерактивный мост до якоря.
-   */
-  tooltipRef: (element: HTMLDivElement | null) => void;
-  /** Признак видимости Tooltip. */
-  isVisible: boolean;
-  /** Показывает Tooltip с учётом withDelay. */
-  showTooltip: () => void;
-  /** Немедленно скрывает Tooltip. */
-  hideTooltip: () => void;
-  /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
-  targetProps: {
-    ref: RefCallback<T>;
-    'aria-describedby': AriaAttributes['aria-describedby'];
-  };
-  /** Готовые свойства, связывающие Tooltip с целевым элементом. */
-  tooltipProps: {
-    ref: RefCallback<HTMLDivElement>;
-    id: string;
-  };
-}
+  Boolean(container && element && 'nodeType' in element && container.contains(element as Node));
 
 /**
- * Управляет показом Tooltip по hover и focus, использует невидимый интерактивный
- * мост между якорем и Tooltip и закрывает Tooltip по Escape.
+ * Предоставляет свойства для target-элемента и Tooltip и управляет его открытием при наведении
+ * или получении фокуса. Поддерживает отложенное открытие и закрытие по Escape.
  */
 export const useTooltip = <T extends HTMLElement = HTMLElement>({
-  withDelay = false,
+  delay = 0,
 }: UseTooltipOptions = {}): UseTooltipResult<T> => {
   const [targetElement, setTargetElement] = useState<T | null>(null);
   const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
@@ -53,6 +19,13 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerCheckFrameRef = useRef<number | null>(null);
   const interactionInProgressRef = useRef(false);
+  const ownerDocument = targetElement?.ownerDocument ?? tooltipElement?.ownerDocument;
+
+  const isInsideTooltipArea = useCallback(
+    (element: EventTarget | null) =>
+      isElementInside(targetElement, element) || isElementInside(tooltipElement, element),
+    [targetElement, tooltipElement],
+  );
 
   const cancelOpening = useCallback(() => {
     if (openTimerRef.current) clearTimeout(openTimerRef.current);
@@ -61,15 +34,21 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
 
   const showTooltip = useCallback(() => {
     cancelOpening();
-    if (withDelay) {
-      openTimerRef.current = setTimeout(() => {
-        openTimerRef.current = null;
-        setVisible(true);
-      }, TOOLTIP_DELAY);
-    } else {
+    setVisible(true);
+  }, [cancelOpening]);
+
+  const showTooltipOnHover = useCallback(() => {
+    cancelOpening();
+    if (delay <= 0) {
       setVisible(true);
+      return;
     }
-  }, [cancelOpening, withDelay]);
+
+    openTimerRef.current = setTimeout(() => {
+      openTimerRef.current = null;
+      setVisible(true);
+    }, delay);
+  }, [cancelOpening, delay]);
 
   const hideTooltip = useCallback(() => {
     cancelOpening();
@@ -88,11 +67,7 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
 
       // relatedTarget позволяет не закрывать Tooltip при переходе между якорем
       // и прозрачной областью внешней обёртки Tooltip.
-      if (
-        isElementInside(targetElement, relatedTarget) ||
-        isElementInside(tooltipElement, relatedTarget) ||
-        interactionInProgressRef.current
-      ) {
+      if (isInsideTooltipArea(relatedTarget) || interactionInProgressRef.current) {
         return;
       }
 
@@ -108,60 +83,46 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
       cancelPointerCheck();
       pointerCheckFrameRef.current = requestAnimationFrame(() => {
         pointerCheckFrameRef.current = null;
-        const hoveredElement = document.elementFromPoint(clientX, clientY);
-        if (
-          !interactionInProgressRef.current &&
-          !isElementInside(targetElement, hoveredElement) &&
-          !isElementInside(tooltipElement, hoveredElement)
-        ) {
+        const hoveredElement = ownerDocument?.elementFromPoint(clientX, clientY) ?? null;
+        if (!interactionInProgressRef.current && !isInsideTooltipArea(hoveredElement)) {
           hideTooltip();
         }
       });
     },
-    [cancelPointerCheck, hideTooltip, targetElement, tooltipElement],
+    [cancelPointerCheck, hideTooltip, isInsideTooltipArea, ownerDocument],
+  );
+
+  const hideIfFocusOutside = useCallback(
+    (event: FocusEvent) => {
+      // При pointerdown внутри Tooltip blur якоря может прийти с relatedTarget=null.
+      // Не закрываем Tooltip до завершения клика или выделения текста.
+      if (!interactionInProgressRef.current && !isInsideTooltipArea(event.relatedTarget)) {
+        hideTooltip();
+      }
+    },
+    [hideTooltip, isInsideTooltipArea],
   );
 
   useEffect(() => {
     if (!targetElement) return;
 
-    const handleBlur = (event: FocusEvent) => {
-      // При pointerdown внутри Tooltip blur якоря может прийти с relatedTarget=null.
-      // Не закрываем Tooltip до завершения клика или выделения текста.
-      if (
-        !interactionInProgressRef.current &&
-        !isElementInside(tooltipElement, event.relatedTarget) &&
-        !isElementInside(targetElement, event.relatedTarget)
-      ) {
-        hideTooltip();
-      }
-    };
-
     // Нативные события корректно обрабатывают переход с disabled-элемента на якорь.
-    targetElement.addEventListener('mouseenter', showTooltip);
+    targetElement.addEventListener('mouseenter', showTooltipOnHover);
     targetElement.addEventListener('focus', showTooltip);
     targetElement.addEventListener('mouseleave', hideIfPointerOutside);
-    targetElement.addEventListener('blur', handleBlur);
+    targetElement.addEventListener('blur', hideIfFocusOutside);
 
     return () => {
-      targetElement.removeEventListener('mouseenter', showTooltip);
+      targetElement.removeEventListener('mouseenter', showTooltipOnHover);
       targetElement.removeEventListener('focus', showTooltip);
       targetElement.removeEventListener('mouseleave', hideIfPointerOutside);
-      targetElement.removeEventListener('blur', handleBlur);
+      targetElement.removeEventListener('blur', hideIfFocusOutside);
     };
-  }, [hideIfPointerOutside, hideTooltip, showTooltip, targetElement, tooltipElement]);
+  }, [hideIfFocusOutside, hideIfPointerOutside, showTooltip, showTooltipOnHover, targetElement]);
 
   useEffect(() => {
     if (!tooltipElement) return;
 
-    const handleFocusOut = (event: FocusEvent) => {
-      if (
-        !interactionInProgressRef.current &&
-        !isElementInside(tooltipElement, event.relatedTarget) &&
-        !isElementInside(targetElement, event.relatedTarget)
-      ) {
-        hideTooltip();
-      }
-    };
     const handlePointerDown = () => {
       // Пока пользователь нажимает кнопку мыши или выделяет текст внутри Tooltip,
       // mouseleave/blur не должны размонтировать элемент под указателем.
@@ -171,50 +132,52 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
     tooltipElement.addEventListener('mouseenter', cancelOpening);
     tooltipElement.addEventListener('mouseleave', hideIfPointerOutside);
     tooltipElement.addEventListener('focusin', cancelOpening);
-    tooltipElement.addEventListener('focusout', handleFocusOut);
+    tooltipElement.addEventListener('focusout', hideIfFocusOutside);
     tooltipElement.addEventListener('pointerdown', handlePointerDown);
 
     return () => {
       tooltipElement.removeEventListener('mouseenter', cancelOpening);
       tooltipElement.removeEventListener('mouseleave', hideIfPointerOutside);
       tooltipElement.removeEventListener('focusin', cancelOpening);
-      tooltipElement.removeEventListener('focusout', handleFocusOut);
+      tooltipElement.removeEventListener('focusout', hideIfFocusOutside);
       tooltipElement.removeEventListener('pointerdown', handlePointerDown);
     };
-  }, [cancelOpening, hideIfPointerOutside, hideTooltip, targetElement, tooltipElement]);
+  }, [cancelOpening, hideIfFocusOutside, hideIfPointerOutside, tooltipElement]);
 
   useEffect(() => {
+    if (!ownerDocument) return;
+
     const handlePointerEnd = (event: PointerEvent) => {
       if (!interactionInProgressRef.current) return;
 
       interactionInProgressRef.current = false;
-      const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+      const hoveredElement = ownerDocument.elementFromPoint(event.clientX, event.clientY);
 
       // Если пользователь закончил выделение за пределами обеих интерактивных
       // областей, закрываем Tooltip сразу после завершения взаимодействия.
-      if (!isElementInside(targetElement, hoveredElement) && !isElementInside(tooltipElement, hoveredElement)) {
+      if (!isInsideTooltipArea(hoveredElement)) {
         hideTooltip();
       }
     };
 
-    document.addEventListener('pointerup', handlePointerEnd);
-    document.addEventListener('pointercancel', handlePointerEnd);
+    ownerDocument.addEventListener('pointerup', handlePointerEnd);
+    ownerDocument.addEventListener('pointercancel', handlePointerEnd);
     return () => {
-      document.removeEventListener('pointerup', handlePointerEnd);
-      document.removeEventListener('pointercancel', handlePointerEnd);
+      ownerDocument.removeEventListener('pointerup', handlePointerEnd);
+      ownerDocument.removeEventListener('pointercancel', handlePointerEnd);
     };
-  }, [hideTooltip, targetElement, tooltipElement]);
+  }, [hideTooltip, isInsideTooltipArea, ownerDocument]);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!ownerDocument) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') hideTooltip();
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [hideTooltip, isVisible]);
+    ownerDocument.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => ownerDocument.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [hideTooltip, ownerDocument]);
 
   useEffect(
     () => () => {
@@ -228,15 +191,13 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
     () => ({ ref: setTargetElement, 'aria-describedby': isVisible ? tooltipId : undefined }),
     [isVisible, tooltipId],
   );
-  const tooltipProps = useMemo(() => ({ ref: setTooltipElement, id: tooltipId }), [tooltipId]);
+  const tooltipProps = useMemo(
+    () => ({ ref: setTooltipElement, id: tooltipId, targetElement }),
+    [targetElement, tooltipId],
+  );
 
   return {
-    targetElement,
-    targetRef: setTargetElement,
-    tooltipRef: setTooltipElement,
     isVisible,
-    showTooltip,
-    hideTooltip,
     targetProps,
     tooltipProps,
   };

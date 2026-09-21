@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { AriaAttributes, HTMLAttributes, ReactNode, RefCallback } from 'react';
 
 import type { TOOLTIP_DIMENSIONS, TOOLTIP_INTERNAL_POSITIONS, TOOLTIP_POSITIONS } from './constants';
 
@@ -15,6 +15,27 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   targetElement: Element | null;
   /** Предпочтительное направление открытия Tooltip. */
   tooltipPosition?: TooltipPosition;
+}
+
+export interface UseTooltipOptions {
+  /** Задержка открытия Tooltip при наведении в миллисекундах. Рекомендуемое значение — TOOLTIP_DELAY. */
+  delay?: number;
+}
+
+export interface UseTooltipResult<T extends HTMLElement> {
+  /** Признак видимости Tooltip. */
+  isVisible: boolean;
+  /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
+  targetProps: {
+    ref: RefCallback<T>;
+    'aria-describedby': AriaAttributes['aria-describedby'];
+  };
+  /** Готовые свойства, связывающие Tooltip с целевым элементом. */
+  tooltipProps: {
+    ref: RefCallback<HTMLDivElement>;
+    id: string;
+    targetElement: T | null;
+  };
 }
 
 export interface StyledTooltipProps {

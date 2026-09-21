@@ -35,38 +35,30 @@ describe('useTooltip', () => {
     Reflect.deleteProperty(document, 'elementFromPoint');
   });
 
-  const setup = (withDelay = false) => {
-    const hook = renderHook(() => useTooltip<HTMLButtonElement>({ withDelay }));
+  const setup = (delay = 0) => {
+    const hook = renderHook(() => useTooltip<HTMLButtonElement>({ delay }));
     act(() => {
-      hook.result.current.targetRef(target);
-      hook.result.current.tooltipRef(tooltip);
+      hook.result.current.targetProps.ref(target);
+      hook.result.current.tooltipProps.ref(tooltip);
     });
     return hook;
   };
 
-  it('exposes callback refs and their current elements', () => {
+  it('provides the target element to the tooltip props', () => {
     const { result } = setup();
-    expect(result.current.targetElement).toBe(target);
-    act(() => result.current.targetRef(null));
-    expect(result.current.targetElement).toBeNull();
+    expect(result.current.tooltipProps.targetElement).toBe(target);
+    act(() => result.current.targetProps.ref(null));
+    expect(result.current.tooltipProps.targetElement).toBeNull();
   });
 
   it('provides linked accessibility props for the target and tooltip', () => {
     const { result } = setup();
     expect(result.current.tooltipProps.id).toBeTruthy();
     expect(result.current.targetProps['aria-describedby']).toBeUndefined();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     expect(result.current.targetProps['aria-describedby']).toBe(result.current.tooltipProps.id);
-    act(() => result.current.hideTooltip());
+    fireEvent.mouseLeave(target, { relatedTarget: document.body });
     expect(result.current.targetProps['aria-describedby']).toBeUndefined();
-  });
-
-  it('shows and hides through the imperative callbacks', () => {
-    const { result } = setup();
-    act(() => result.current.showTooltip());
-    expect(result.current.isVisible).toBe(true);
-    act(() => result.current.hideTooltip());
-    expect(result.current.isVisible).toBe(false);
   });
 
   it.each(['mouseenter', 'focus'] as const)('shows on target %s', (eventName) => {
@@ -75,26 +67,34 @@ describe('useTooltip', () => {
     expect(result.current.isVisible).toBe(true);
   });
 
-  it('waits for the design-system delay and restarts it when show is requested again', () => {
+  it('waits for the design-system delay and restarts it when hover is requested again', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    const { result } = setup(true);
-    act(() => result.current.showTooltip());
+    const { result } = setup(TOOLTIP_DELAY);
+    fireEvent.mouseEnter(target);
     act(() => vi.advanceTimersByTime(300));
-    act(() => result.current.showTooltip());
+    act(() => target.dispatchEvent(new Event('mouseenter')));
     act(() => vi.advanceTimersByTime(TOOLTIP_DELAY - 1));
     expect(result.current.isVisible).toBe(false);
     act(() => vi.advanceTimersByTime(1));
     expect(result.current.isVisible).toBe(true);
   });
 
+  it('shows immediately on focus even when hover delay is enabled', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const { result } = setup(TOOLTIP_DELAY);
+    fireEvent.focus(target);
+    expect(result.current.isVisible).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('cancels a delayed opening when hidden or when entering the tooltip', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    const { result } = setup(true);
-    act(() => result.current.showTooltip());
-    act(() => result.current.hideTooltip());
+    const { result } = setup(TOOLTIP_DELAY);
+    fireEvent.mouseEnter(target);
+    fireEvent.mouseLeave(target, { relatedTarget: document.body });
     act(() => vi.runAllTimers());
     expect(result.current.isVisible).toBe(false);
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.mouseEnter(tooltip);
     act(() => vi.runAllTimers());
     expect(result.current.isVisible).toBe(false);
@@ -106,7 +106,7 @@ describe('useTooltip', () => {
     target.append(targetChild);
     tooltip.append(tooltipChild);
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.mouseLeave(target, { relatedTarget: tooltipChild });
     expect(result.current.isVisible).toBe(true);
     fireEvent.mouseLeave(tooltip, { relatedTarget: targetChild });
@@ -117,20 +117,20 @@ describe('useTooltip', () => {
     const outside = document.createElement('div');
     document.body.append(outside);
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.mouseLeave(target, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.blur(target, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.focusOut(tooltip, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
   });
 
   it('keeps focus transitions between target and tooltip open', () => {
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.blur(target, { relatedTarget: tooltip });
     fireEvent.focusOut(tooltip, { relatedTarget: target });
     expect(result.current.isVisible).toBe(true);
@@ -138,7 +138,7 @@ describe('useTooltip', () => {
 
   it('checks the hovered element on the next frame when relatedTarget is absent', () => {
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     vi.mocked(document.elementFromPoint).mockReturnValue(tooltip);
     fireEvent.mouseLeave(target, { clientX: 10, clientY: 20, relatedTarget: null });
     act(() => animationFrameCallback?.(0));
@@ -151,8 +151,8 @@ describe('useTooltip', () => {
   });
 
   it('cancels an earlier pending pointer check before scheduling another', () => {
-    const { result } = setup();
-    act(() => result.current.showTooltip());
+    setup();
+    fireEvent.mouseEnter(target);
     fireEvent.mouseLeave(target, { relatedTarget: null });
     fireEvent.mouseLeave(target, { relatedTarget: null });
     expect(cancelAnimationFrame).toHaveBeenCalledWith(42);
@@ -161,7 +161,7 @@ describe('useTooltip', () => {
 
   it('does not hide during pointer interaction and evaluates position on pointerup', () => {
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.pointerDown(tooltip);
     fireEvent.mouseLeave(tooltip, { relatedTarget: null });
     fireEvent.blur(target, { relatedTarget: null });
@@ -172,7 +172,7 @@ describe('useTooltip', () => {
 
   it.each(['pointerUp', 'pointerCancel'] as const)('stays open after %s inside an interactive area', (eventName) => {
     const { result } = setup();
-    act(() => result.current.showTooltip());
+    fireEvent.mouseEnter(target);
     fireEvent.pointerDown(tooltip);
     vi.mocked(document.elementFromPoint).mockReturnValue(target);
     fireEvent[eventName](document);
@@ -181,18 +181,55 @@ describe('useTooltip', () => {
 
   it('hides a visible tooltip on Escape but ignores other keys', () => {
     const { result } = setup();
-    act(() => result.current.showTooltip());
-    fireEvent.keyDown(document, { key: 'Enter' });
+    fireEvent.mouseEnter(target);
+    fireEvent.keyDown(target, { key: 'Enter' });
     expect(result.current.isVisible).toBe(true);
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(target, { key: 'Escape' });
     expect(result.current.isVisible).toBe(false);
+  });
+
+  it('hides on Escape when the target stops event propagation', () => {
+    const { result } = setup();
+    target.addEventListener('keydown', (event) => event.stopPropagation());
+    fireEvent.focus(target);
+
+    fireEvent.keyDown(target, { key: 'Escape' });
+
+    expect(result.current.isVisible).toBe(false);
+  });
+
+  it('cancels delayed opening on Escape', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const { result } = setup(TOOLTIP_DELAY);
+    fireEvent.mouseEnter(target);
+
+    fireEvent.keyDown(target, { key: 'Escape' });
+    act(() => vi.runAllTimers());
+
+    expect(result.current.isVisible).toBe(false);
+  });
+
+  it('listens for dismissal events in the target owner document', () => {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const ownerDocument = iframe.contentDocument!;
+    target = ownerDocument.createElement('button');
+    tooltip = ownerDocument.createElement('div');
+    ownerDocument.body.append(target, tooltip);
+    const { result } = setup();
+
+    fireEvent.focus(target);
+    expect(result.current.isVisible).toBe(true);
+    fireEvent.keyDown(target, { key: 'Escape' });
+    expect(result.current.isVisible).toBe(false);
+    iframe.remove();
   });
 
   it('removes listeners when refs change', () => {
     const { result } = setup();
     act(() => {
-      result.current.targetRef(null);
-      result.current.tooltipRef(null);
+      result.current.targetProps.ref(null);
+      result.current.tooltipProps.ref(null);
     });
     fireEvent.mouseEnter(target);
     fireEvent.focusIn(tooltip);
@@ -202,8 +239,8 @@ describe('useTooltip', () => {
   it('cleans up a pending timer and animation frame on unmount', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
-    const { result, unmount } = setup(true);
-    act(() => result.current.showTooltip());
+    const { unmount } = setup(TOOLTIP_DELAY);
+    fireEvent.mouseEnter(target);
     fireEvent.mouseLeave(target, { relatedTarget: null });
     unmount();
     expect(clearTimeoutSpy).toHaveBeenCalled();
