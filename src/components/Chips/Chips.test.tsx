@@ -189,10 +189,10 @@ describe('Chips', () => {
     },
   );
 
-  describe.each(['iconBefore', 'iconAfter', 'avatar'] as const)('%s slot', (slot) => {
+  describe('iconsBefore slot', () => {
     it.each([false, true, null, undefined, ''])('does not create a wrapper for %s', (value) => {
       render(
-        <Chips data-testid="chips" {...{ [slot]: value }}>
+        <Chips data-testid="chips" iconsBefore={value}>
           Filter
         </Chips>,
       );
@@ -201,15 +201,15 @@ describe('Chips', () => {
       expect(content).toHaveTextContent('Filter');
     });
 
-    it.each([0, 'Avatar'])('keeps %s inside its slot wrapper', (value) => {
+    it.each([0, 'Icon'])('keeps %s inside its slot wrapper', (value) => {
       render(
-        <Chips data-testid="chips" {...{ [slot]: value }}>
+        <Chips data-testid="chips" iconsBefore={value}>
           Filter
         </Chips>,
       );
       const content = screen.getByTestId('chips').firstElementChild!;
       expect(content.children).toHaveLength(2);
-      const wrapper = slot === 'iconAfter' ? content.lastElementChild : content.firstElementChild;
+      const wrapper = content.firstElementChild;
       expect(wrapper).toHaveTextContent(String(value));
     });
   });
@@ -255,26 +255,36 @@ describe('Chips', () => {
     expect(screen.getByText(String(badge))).toBeVisible();
   });
 
-  it('renders start and end icons and an avatar', () => {
+  it('renders multiple decorative elements before the text without forwarding iconsBefore to the DOM', () => {
     render(
       <Chips
-        iconBefore={<span data-testid="start" />}
-        iconAfter={<span data-testid="end" />}
-        avatar={<span data-testid="avatar" />}
+        data-testid="chips"
+        iconsBefore={
+          <>
+            <svg data-testid="first-icon" />
+            <svg data-testid="second-icon" />
+          </>
+        }
       >
         Filter
       </Chips>,
     );
-    for (const id of ['start', 'end', 'avatar']) expect(screen.getByTestId(id)).toBeInTheDocument();
+    const content = screen.getByTestId('chips').firstElementChild!;
+    const wrapper = content.firstElementChild!;
+    expect(wrapper).toContainElement(screen.getByTestId('first-icon'));
+    expect(wrapper).toContainElement(screen.getByTestId('second-icon'));
+    expect(wrapper).toHaveAttribute('aria-hidden', 'true');
+    expect(wrapper.nextElementSibling).toHaveTextContent('Filter');
+    expect(screen.getByTestId('chips')).not.toHaveAttribute('iconsBefore');
   });
 
-  it('replaces the end icon with a close button when onClose is set', () => {
+  it('keeps iconsBefore when a close button is present', () => {
     render(
-      <Chips onClose={vi.fn()} iconAfter={<span data-testid="end" />}>
+      <Chips onClose={vi.fn()} iconsBefore={<svg data-testid="before" />}>
         Filter
       </Chips>,
     );
-    expect(screen.queryByTestId('end')).not.toBeInTheDocument();
+    expect(screen.getByTestId('before')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '' })).toBeInTheDocument();
   });
 

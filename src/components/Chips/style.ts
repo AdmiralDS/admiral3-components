@@ -347,10 +347,9 @@ export const ChipChildrenWrapperStyled = styled.span`
   padding-inline: 4px;
 `;
 
-export const IconWrapperStyled = styled.span<{ $dimension: ChipDimension }>`
+export const IconsWrapperStyled = styled.span<{ $dimension: ChipDimension }>`
   ${heightIcons}
-  ${widthIcons}
-    & > svg {
+  & > svg {
     ${heightIcons}
     ${widthIcons}
   }

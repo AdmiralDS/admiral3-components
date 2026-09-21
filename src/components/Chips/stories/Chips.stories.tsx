@@ -81,7 +81,7 @@ export const Content: StoryObj<ChipsProps> = {
   args: defaultArgs,
   render: ChipsContentTemplate,
   parameters: {
-    controls: { exclude: ['children', 'iconBefore', 'iconAfter', 'badge'] },
+    controls: { exclude: ['children', 'iconsBefore', 'badge'] },
     docs: { source: { code: chipsContentTemplateRaw } },
   },
 };

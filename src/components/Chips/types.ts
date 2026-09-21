@@ -20,16 +20,12 @@ export interface ChipsProps extends HTMLAttributes<HTMLDivElement> {
   selected?: boolean;
   /** Добавляет иконку для удаления чипса. */
   onClose?: () => void;
-  /** Иконка перед текстом Chips. */
-  iconBefore?: ReactNode;
-  /** Иконка после текста Chips. Отображается, если не передано событие onClose. */
-  iconAfter?: ReactNode;
+  /** Иконки или другие декоративные элементы перед текстом Chips. Содержимое слота скрыто от скринридера. */
+  iconsBefore?: ReactNode;
   /** Число, которое будет отображено в компоненте Badge справа от контента. */
   badge?: number;
   /** Только для чтения. Блокирует переданные Chips обработчики событий и скрывает кнопку удаления. */
   readOnly?: boolean;
-  /** Аватар перед текстом Chips. Если задан iconStart, отображается после него. Содержимое и оформление аватара задаёт потребитель. */
-  avatar?: ReactNode;
   /** HTML-атрибуты кнопки закрытия. */
   closeButtonProps?: IconPlacementProps;
   //TODO поправить описание при добавлении компонента Tooltip

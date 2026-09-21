@@ -11,7 +11,7 @@ import {
   ChipComponentStyled,
   ChipContentWrapperStyled,
   CloseIconButton,
-  IconWrapperStyled,
+  IconsWrapperStyled,
 } from './style';
 import type { ChipsProps } from './types';
 
@@ -25,11 +25,9 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       selected,
       onClose,
       children,
-      iconBefore,
-      iconAfter,
+      iconsBefore,
       badge,
       readOnly,
-      avatar,
       role,
       tabIndex,
       onKeyDown,
@@ -174,22 +172,16 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             $selected={selected}
             $withCloseIcon={readOnly || withCloseIcon}
           >
-            {hasSlotContent(iconBefore) && (
-              <IconWrapperStyled aria-hidden $dimension={dimension}>
-                {iconBefore}
-              </IconWrapperStyled>
+            {hasSlotContent(iconsBefore) && (
+              <IconsWrapperStyled aria-hidden $dimension={dimension}>
+                {iconsBefore}
+              </IconsWrapperStyled>
             )}
-            {hasSlotContent(avatar) && <IconWrapperStyled $dimension={dimension}>{avatar}</IconWrapperStyled>}
             <ChipChildrenWrapperStyled ref={refItems}>{children}</ChipChildrenWrapperStyled>
             {typeof badge !== 'undefined' && (
               <Badge data-badge dimension={'s'} appearance={badgeAppearance}>
                 {badge}
               </Badge>
-            )}
-            {!withCloseIcon && hasSlotContent(iconAfter) && (
-              <IconWrapperStyled aria-hidden $dimension={dimension}>
-                {iconAfter}
-              </IconWrapperStyled>
             )}
           </ChipContentWrapperStyled>
           {!readOnly && withCloseIcon && (
