@@ -1,3 +1,4 @@
+import { textStyles } from '@admiral-ds/admiral3-tokens';
 import styled, { css } from 'styled-components';
 
 import { FormItem, Input, type FormItemProps } from '@admiral-ds/admiral3-components';
@@ -10,11 +11,16 @@ const NarrowFormItem = styled(FormItem)`
   max-width: 100%;
 `;
 
-const compactText = css`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow-wrap: normal;
+const Example = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const ExampleTitle = styled.h3`
+  ${textStyles.subtitle.subtitle3}
+  margin: 0;
+  color: var(--admiral-color-neutral-text-1-rest);
 `;
 
 export const FormItemLongTextTemplate = (args: FormItemProps) => {
@@ -22,39 +28,59 @@ export const FormItemLongTextTemplate = (args: FormItemProps) => {
   return (
     <StoryDemoContainer $direction="column" $gap="24px">
       <StoryDemoDescription>
-        <code>labelCssMixins</code> позволяет переопределить стили основной и дополнительной подписей и описания.{' '}
-        <code>visibleLabelTooltips</code> включает подсказку с полным строковым текстом только при его переполнении.
+        По умолчанию длинные подписи переносятся на несколько строк. <code>labelCssMixins</code> позволяет изменить
+        распределение ширины между основной и дополнительной подписями.
       </StoryDemoDescription>
-      <NarrowFormItem
-        {...args}
-        htmlFor="form-item-long-text"
-        description={
-          hasDescription ? <span id="form-item-long-description-message">{args.description}</span> : undefined
-        }
-        labelCssMixins={{
-          label: css`
-            ${compactText}
-            flex: 0 1 65%;
-          `,
-          additionalLabel: css`
-            ${compactText}
-            flex: 0 1 35%;
-          `,
-          description: compactText,
-        }}
-        visibleLabelTooltips={{ label: true, additionalLabel: true }}
-      >
-        <Input
-          id="form-item-long-text"
-          dimension={args.dimension}
-          status={args.status}
-          required={args.required}
-          disabled={args.disabled}
-          aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
-          aria-describedby={hasDescription ? 'form-item-long-description-message' : undefined}
-          defaultValue="Очень длинное значение поля, которое целиком не помещается в доступную ширину"
-        />
-      </NarrowFormItem>
+      <Example>
+        <ExampleTitle>Стандартное распределение</ExampleTitle>
+        <NarrowFormItem
+          {...args}
+          htmlFor="form-item-long-text-default"
+          description={
+            hasDescription ? <span id="form-item-long-description-default">{args.description}</span> : undefined
+          }
+        >
+          <Input
+            id="form-item-long-text-default"
+            dimension={args.dimension}
+            status={args.status}
+            required={args.required}
+            disabled={args.disabled}
+            aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
+            aria-describedby={hasDescription ? 'form-item-long-description-default' : undefined}
+            defaultValue="Длинное значение поля со стандартным распределением ширины между подписями"
+          />
+        </NarrowFormItem>
+      </Example>
+      <Example>
+        <ExampleTitle>Кастомное распределение</ExampleTitle>
+        <NarrowFormItem
+          {...args}
+          htmlFor="form-item-long-text-custom"
+          description={
+            hasDescription ? <span id="form-item-long-description-custom">{args.description}</span> : undefined
+          }
+          labelCssMixins={{
+            label: css`
+              flex: 0 1 65%;
+            `,
+            additionalLabel: css`
+              flex: 0 1 35%;
+            `,
+          }}
+        >
+          <Input
+            id="form-item-long-text-custom"
+            dimension={args.dimension}
+            status={args.status}
+            required={args.required}
+            disabled={args.disabled}
+            aria-label={hasSlotContent(args.label) ? undefined : 'Название'}
+            aria-describedby={hasDescription ? 'form-item-long-description-custom' : undefined}
+            defaultValue="Длинное значение поля с кастомным распределением ширины между подписями"
+          />
+        </NarrowFormItem>
+      </Example>
     </StoryDemoContainer>
   );
 };

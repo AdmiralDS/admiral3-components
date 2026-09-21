@@ -21,7 +21,8 @@ export const formItemScenarios: PlaygroundScenario[] = [
         label="ОченьДлинноеНазваниеПоляБезПробеловОченьДлинноеНазваниеПоляБезПробелов"
         additionalLabel="ОченьДлиннаяДополнительнаяПодписьБезПробелов"
         description="https://example.org/very-long-address-without-spaces/very-long-address-without-spaces"
-        maxLength={20}
+        maxLength={100}
+        counterThreshold={0.7}
         children={<Input />}
       />
     ),

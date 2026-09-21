@@ -386,12 +386,6 @@ describe('FormItem', () => {
   });
 
   it('applies CSS mixins to the label, additional label and description', () => {
-    const compactText = css`
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    `;
-
     render(
       <FormItem
         label="Name"
@@ -405,7 +399,9 @@ describe('FormItem', () => {
             flex: 0 0 calc(30% - 8px);
             max-width: none;
           `,
-          description: compactText,
+          description: css`
+            text-align: right;
+          `,
         }}
       >
         <Input />
@@ -414,68 +410,7 @@ describe('FormItem', () => {
 
     expect(screen.getByText('Name')).toHaveStyle({ flex: '0 0 70%' });
     expect(screen.getByText('Optional')).toHaveStyle({ flex: '0 0 calc(30% - 8px)', maxWidth: 'none' });
-    expect(screen.getByText('Description')).toHaveStyle({
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    });
-  });
-
-  it('shows native titles only for enabled overflowing string labels', () => {
-    render(
-      <FormItem
-        label="Name"
-        additionalLabel="Optional"
-        description="Description"
-        visibleLabelTooltips={{ label: true, additionalLabel: true, description: true }}
-      >
-        <Input />
-      </FormItem>,
-    );
-
-    const label = screen.getByText('Name');
-    const additionalLabel = screen.getByText('Optional');
-    const description = screen.getByText('Description');
-
-    for (const element of [label, additionalLabel, description]) {
-      Object.defineProperties(element, {
-        clientWidth: { configurable: true, value: 100 },
-        scrollWidth: { configurable: true, value: 200 },
-      });
-      fireEvent.mouseEnter(element);
-      expect(element).toHaveAttribute('title', element.textContent ?? '');
-      fireEvent.mouseLeave(element);
-      expect(element).not.toHaveAttribute('title');
-    }
-  });
-
-  it('does not show native titles when tooltips are disabled or text fits', () => {
-    const { rerender } = render(
-      <FormItem label="Name">
-        <Input />
-      </FormItem>,
-    );
-    const label = screen.getByText('Name');
-
-    Object.defineProperties(label, {
-      clientWidth: { configurable: true, value: 100 },
-      scrollWidth: { configurable: true, value: 200 },
-    });
-    fireEvent.mouseEnter(label);
-    expect(label).not.toHaveAttribute('title');
-
-    rerender(
-      <FormItem label="Name" visibleLabelTooltips={{ label: true }}>
-        <Input />
-      </FormItem>,
-    );
-    const fittingLabel = screen.getByText('Name');
-    Object.defineProperties(fittingLabel, {
-      clientWidth: { configurable: true, value: 200 },
-      scrollWidth: { configurable: true, value: 100 },
-    });
-    fireEvent.mouseEnter(fittingLabel);
-    expect(fittingLabel).not.toHaveAttribute('title');
+    expect(screen.getByText('Description')).toHaveStyle({ textAlign: 'right' });
   });
 
   it('uses m by default and accepts xs for a matching input', () => {

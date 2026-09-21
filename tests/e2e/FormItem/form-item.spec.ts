@@ -5,27 +5,41 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 test('FormItem keeps long labels and descriptions within a narrow container', async ({ page }) => {
   await page.goto(getPlaygroundScenarioPath('form-item/long-text'));
 
-  const input = page.locator('#form-item-long-text');
-  const item = page.locator('div[data-dimension]').filter({ has: input }).first();
-  await expect(item).toHaveCSS('width', '240px');
-  await expect.poll(() => item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+  for (const [variant, characterCount] of [
+    ['default', 74],
+    ['custom', 71],
+  ] as const) {
+    const input = page.locator(`#form-item-long-text-${variant}`);
+    const item = page.locator('div[data-dimension]').filter({ has: input }).first();
+    await expect(item).toHaveCSS('width', '240px');
+    await expect.poll(() => item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
 
-  const label = page.locator('label[for="form-item-long-text"]');
-  await expect.poll(() => label.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(16);
-  const additionalLabel = item.getByText('ОченьДлиннаяДополнительнаяПодписьБезПробелов');
-  await expect
-    .poll(() => additionalLabel.evaluate((element) => element.getBoundingClientRect().height))
-    .toBeGreaterThan(16);
-  const description = page.locator('#form-item-long-description-message');
-  const counter = page.getByText('16 / 20');
-  const descriptionBox = await description.boundingBox();
-  const counterBox = await counter.boundingBox();
-  expect(descriptionBox).not.toBeNull();
-  expect(counterBox).not.toBeNull();
-  if (!descriptionBox || !counterBox) return;
-  expect(descriptionBox.x + descriptionBox.width).toBeLessThanOrEqual(counterBox.x);
-  await expect(counter).toHaveCSS('white-space', 'nowrap');
-  await expect(input).toHaveAccessibleDescription(await description.innerText());
+    const label = page.locator(`label[for="form-item-long-text-${variant}"]`);
+    await expect.poll(() => label.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(16);
+    const additionalLabel = item.getByText('ОченьДлиннаяДополнительнаяПодписьБезПробелов');
+    await expect
+      .poll(() => additionalLabel.evaluate((element) => element.getBoundingClientRect().height))
+      .toBeGreaterThan(16);
+
+    const description = page.locator(`#form-item-long-description-${variant}`);
+    const counter = item.getByText(`${characterCount} / 100`);
+    const descriptionBox = await description.boundingBox();
+    const counterBox = await counter.boundingBox();
+    expect(descriptionBox).not.toBeNull();
+    expect(counterBox).not.toBeNull();
+    if (!descriptionBox || !counterBox) return;
+    expect(descriptionBox.x + descriptionBox.width).toBeLessThanOrEqual(counterBox.x);
+    await expect(counter).toHaveCSS('white-space', 'nowrap');
+    await expect(input).toHaveAccessibleDescription(await description.innerText());
+  }
+
+  await expect(page.locator('label[for="form-item-long-text-custom"]')).toHaveCSS('flex', '0 1 65%');
+  await expect(
+    page
+      .locator('div[data-dimension]')
+      .filter({ has: page.locator('#form-item-long-text-custom') })
+      .getByText('ОченьДлиннаяДополнительнаяПодписьБезПробелов'),
+  ).toHaveCSS('flex', '0 1 35%');
 });
 
 test('FormItem starts with the control when the label is omitted', async ({ page }) => {

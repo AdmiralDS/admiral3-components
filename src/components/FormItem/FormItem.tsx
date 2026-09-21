@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 
 import {
   StyledAdditionalLabel,
@@ -11,22 +11,7 @@ import {
 } from './style';
 import type { FormItemProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
-import { isOverflowed } from '../../utils/isOverflowed';
 import { FormItemContext } from '../_internal/FormItemContext';
-
-function useOverflowTitle<T extends HTMLElement>(content: ReactNode, enabled = false) {
-  const ref = useRef<T>(null);
-  const [title, setTitle] = useState<string>();
-
-  const handleMouseEnter = () => {
-    // TODO: Replace the native title with Tooltip after the Tooltip component is implemented.
-    setTitle(enabled && typeof content === 'string' && isOverflowed(ref.current) ? content : undefined);
-  };
-
-  const handleMouseLeave = () => setTitle(undefined);
-
-  return { ref, title, onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave };
-}
 
 /** Подпись и сообщения для одного поля без управления его значением или валидацией. */
 export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
@@ -35,7 +20,6 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
       label,
       additionalLabel,
       labelCssMixins,
-      visibleLabelTooltips,
       htmlFor,
       description,
       status,
@@ -68,15 +52,6 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
     const hasDescription = hasSlotContent(description);
     const hasCounter = maxLength !== undefined && characterCount >= maxLength * counterThreshold;
     const counterLimitReached = maxLength !== undefined && characterCount >= maxLength;
-    const labelOverflowTitleProps = useOverflowTitle<HTMLLabelElement>(label, visibleLabelTooltips?.label);
-    const additionalLabelOverflowTitleProps = useOverflowTitle<HTMLSpanElement>(
-      additionalLabel,
-      visibleLabelTooltips?.additionalLabel,
-    );
-    const descriptionOverflowTitleProps = useOverflowTitle<HTMLSpanElement>(
-      description,
-      visibleLabelTooltips?.description,
-    );
 
     return (
       <StyledFormItem
@@ -90,12 +65,12 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
         {(hasLabel || hasAdditionalLabel) && (
           <StyledLabelRow>
             {hasLabel && (
-              <StyledLabel htmlFor={htmlFor} $cssMixin={labelCssMixins?.label} {...labelOverflowTitleProps}>
+              <StyledLabel htmlFor={htmlFor} $cssMixin={labelCssMixins?.label}>
                 {label}
               </StyledLabel>
             )}
             {hasAdditionalLabel && (
-              <StyledAdditionalLabel $cssMixin={labelCssMixins?.additionalLabel} {...additionalLabelOverflowTitleProps}>
+              <StyledAdditionalLabel $cssMixin={labelCssMixins?.additionalLabel}>
                 {additionalLabel}
               </StyledAdditionalLabel>
             )}
@@ -105,9 +80,7 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
         {(hasDescription || hasCounter) && (
           <StyledAdditionalText>
             {hasDescription && (
-              <StyledDescription $cssMixin={labelCssMixins?.description} {...descriptionOverflowTitleProps}>
-                {description}
-              </StyledDescription>
+              <StyledDescription $cssMixin={labelCssMixins?.description}>{description}</StyledDescription>
             )}
             {hasCounter && (
               <StyledCounter data-limit-reached={counterLimitReached ? '' : undefined}>
