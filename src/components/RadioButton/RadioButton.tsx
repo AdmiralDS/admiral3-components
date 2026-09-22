@@ -83,7 +83,6 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
           required={required}
           disabled={disabled}
           readOnly={readOnly}
-          aria-readonly={readOnly || undefined}
           aria-invalid={error || ariaInvalid || undefined}
           onChange={handleChange}
           onClick={handleClick}

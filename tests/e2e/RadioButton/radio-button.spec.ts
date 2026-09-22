@@ -71,10 +71,15 @@ test.describe('RadioButton playground', () => {
     const first = page.getByRole('radio', { name: 'Курьером' });
     const second = page.getByRole('radio', { name: 'Самовывоз' });
     const third = page.getByRole('radio', { name: 'Почтой' });
+    const group = page.getByRole('radiogroup', { name: 'Выберите способ доставки' });
 
-    await expect(first).toHaveAttribute('aria-readonly', 'true');
-    await expect(second).toHaveAttribute('aria-readonly', 'true');
-    await expect(third).toHaveAttribute('aria-readonly', 'true');
+    await expect(group).toHaveAttribute('aria-readonly', 'true');
+    await expect(first).toHaveAttribute('readonly');
+    await expect(second).toHaveAttribute('readonly');
+    await expect(third).toHaveAttribute('readonly');
+    await expect(first).not.toHaveAttribute('aria-readonly');
+    await expect(second).not.toHaveAttribute('aria-readonly');
+    await expect(third).not.toHaveAttribute('aria-readonly');
 
     await first.focus();
     await expect(first).toBeFocused();
