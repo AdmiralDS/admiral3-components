@@ -11,14 +11,13 @@ describe('SelectionControlInformer', () => {
 
   it.each(SELECTION_CONTROL_INFORMER_DIMENSIONS)('renders %s dimension with a native title', (dimension) => {
     render(
-      <SelectionControlInformer $dimension={dimension} title="Hint text" aria-label="Hint text">
+      <SelectionControlInformer $dimension={dimension} title="Hint text">
         <ServiceInfoSolid />
       </SelectionControlInformer>,
     );
 
     const informer = screen.getByTitle('Hint text');
 
-    expect(informer).toHaveAttribute('aria-label', 'Hint text');
     expect(informer).toHaveStyle({
       width: `${SELECTION_CONTROL_INFORMER_SIZES[dimension]}px`,
     });
