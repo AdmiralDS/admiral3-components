@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Button, Tooltip, type TooltipDimension, type TooltipProps, useTooltip } from '@admiral-ds/admiral3-components';
 
+import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
+
 const CustomContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,7 +25,11 @@ export const TooltipCustomTemplate = (props: TooltipProps) => {
   const { targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
-    <>
+    <StoryDemoContainer $direction="column" $gap="20px">
+      <StoryDemoDescription>
+        <code>children</code> принимает ReactNode, поэтому внутри Tooltip можно использовать собственную разметку и
+        типографику.
+      </StoryDemoDescription>
       <Button {...targetProps} dimension="m" square aria-label="Профиль">
         <CategoryVIPOutline aria-hidden />
       </Button>
@@ -35,6 +41,6 @@ export const TooltipCustomTemplate = (props: TooltipProps) => {
           </CustomContent>
         </Tooltip>
       )}
-    </>
+    </StoryDemoContainer>
   );
 };
