@@ -26,6 +26,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       onClose,
       children,
       iconsBefore,
+      avatar,
       badge,
       readOnly,
       role,
@@ -43,20 +44,21 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
     },
     ref,
   ) => {
+    const withCloseIcon = !!onClose;
+    const innerSelected = withCloseIcon ? undefined : selected;
     const eventsDisabled = disabled || readOnly;
     const domProps = eventsDisabled
       ? Object.fromEntries(Object.entries(props).filter(([name]) => !/^on[A-Z]/.test(name)))
       : props;
-    const defaultChip = selected !== undefined;
-    const withCloseIcon = !!onClose;
+    const defaultChip = innerSelected !== undefined;
     const withBadge = !!badge;
-    const actionable = !!props.onClick || selected !== undefined || (withCloseIcon && !readOnly);
+    const actionable = !!props.onClick || defaultChip || (withCloseIcon && !readOnly);
     const accessibleProps = {
       role: role ?? (actionable ? 'button' : undefined),
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
       'aria-describedby': ariaDescribedBy,
-      'aria-pressed': ariaPressed ?? (actionable ? selected : undefined),
+      'aria-pressed': ariaPressed ?? (actionable ? innerSelected : undefined),
       'aria-disabled': ariaDisabled ?? (disabled || (actionable && readOnly) || undefined),
     };
 
@@ -69,14 +71,14 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
     const refItems = useRef<HTMLSpanElement | null>(null);
 
     const badgeAppearance: BadgeAppearance = useMemo(() => {
-      if (selected && !disabled) return colorMode === 'neutral' ? 'neutral1' : 'whiteStatic';
+      if (innerSelected && !disabled) return colorMode === 'neutral' ? 'neutral1' : 'whiteStatic';
       if (disabled) {
-        if (selected) return 'neutral1Disable';
+        if (innerSelected) return 'neutral1Disable';
         return 'neutral2Disable';
       }
       if (colorMode === 'neutral') return 'neutral3';
       return 'info';
-    }, [colorMode, selected, disabled]);
+    }, [colorMode, innerSelected, disabled]);
 
     const handleClickCloseIcon = (e: MouseEvent) => {
       e.stopPropagation();
@@ -121,7 +123,9 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       function hide() {
         setTooltipVisible(false);
       }
+
       const chip = chipRef.current;
+
       if (chip) {
         chip.addEventListener('mouseenter', show);
         chip.addEventListener('mouseleave', hide);
@@ -153,7 +157,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
           $disabled={disabled}
           $appearance={appearance}
           $colorMode={colorMode}
-          $selected={selected}
+          $selected={innerSelected}
           $defaultChip={defaultChip}
           $withCloseIcon={withCloseIcon}
           $readOnly={readOnly}
@@ -169,7 +173,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             $disabled={disabled}
             $appearance={appearance}
             $colorMode={colorMode}
-            $selected={selected}
+            $selected={innerSelected}
             $withCloseIcon={readOnly || withCloseIcon}
           >
             {hasSlotContent(iconsBefore) && (
@@ -177,6 +181,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
                 {iconsBefore}
               </IconsWrapperStyled>
             )}
+            {hasSlotContent(avatar) && <IconsWrapperStyled $dimension={dimension}>{avatar}</IconsWrapperStyled>}
             <ChipChildrenWrapperStyled ref={refItems}>{children}</ChipChildrenWrapperStyled>
             {typeof badge !== 'undefined' && (
               <Badge data-badge dimension={'s'} appearance={badgeAppearance}>

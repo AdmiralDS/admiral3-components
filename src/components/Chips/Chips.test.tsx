@@ -146,7 +146,7 @@ describe('Chips', () => {
             Filter
           </Chips>,
         );
-        fireEvent.keyDown(screen.getByRole('button', { name: 'Filter' }), { key });
+        fireEvent.keyDown(screen.getByText('Filter'), { key });
         expect(onClose).not.toHaveBeenCalled();
         expect(onKeyDown).not.toHaveBeenCalled();
       });
@@ -189,10 +189,10 @@ describe('Chips', () => {
     },
   );
 
-  describe('iconsBefore slot', () => {
+  describe.each(['iconsBefore', 'avatar'] as const)('%s slot', (slot) => {
     it.each([false, true, null, undefined, ''])('does not create a wrapper for %s', (value) => {
       render(
-        <Chips data-testid="chips" iconsBefore={value}>
+        <Chips data-testid="chips" {...{ [slot]: value }}>
           Filter
         </Chips>,
       );
@@ -203,7 +203,7 @@ describe('Chips', () => {
 
     it.each([0, 'Icon'])('keeps %s inside its slot wrapper', (value) => {
       render(
-        <Chips data-testid="chips" iconsBefore={value}>
+        <Chips data-testid="chips" {...{ [slot]: value }}>
           Filter
         </Chips>,
       );
@@ -286,6 +286,31 @@ describe('Chips', () => {
     );
     expect(screen.getByTestId('before')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '' })).toBeInTheDocument();
+  });
+
+  it('renders avatar after iconsBefore without hiding its accessible content', () => {
+    render(
+      <Chips data-testid="chips" iconsBefore={<svg data-testid="icon" />} avatar={<img alt="User" />}>
+        Filter
+      </Chips>,
+    );
+    const iconWrapper = screen.getByTestId('icon').parentElement!;
+    const avatarWrapper = screen.getByRole('img', { name: 'User' }).parentElement!;
+    expect(iconWrapper.nextElementSibling).toBe(avatarWrapper);
+    expect(avatarWrapper).not.toHaveAttribute('aria-hidden');
+    expect(avatarWrapper.nextElementSibling).toHaveTextContent('Filter');
+    expect(screen.getByTestId('chips')).not.toHaveAttribute('avatar');
+  });
+
+  it.each([true, false])('ignores selected=%s with onClose and restores it when onClose is removed', (selected) => {
+    const { rerender } = render(
+      <Chips selected={selected} onClose={vi.fn()}>
+        Filter
+      </Chips>,
+    );
+    expect(screen.getByRole('button', { name: 'Filter' })).not.toHaveAttribute('aria-pressed');
+    rerender(<Chips selected={selected}>Filter</Chips>);
+    expect(screen.getByRole('button', { name: 'Filter' })).toHaveAttribute('aria-pressed', String(selected));
   });
 
   it('does not render a close button without onClose or in readOnly mode', () => {
@@ -468,7 +493,7 @@ describe('Chips', () => {
       const close = screen.getByRole('button', { name: '' });
       expect(action.contains(close)).toBe(false);
       expect(action.parentElement).toBe(close.parentElement);
-      expect(action).toHaveAttribute('aria-pressed', 'false');
+      expect(action).not.toHaveAttribute('aria-pressed');
       expect(close.tabIndex).toBe(-1);
     });
 
@@ -492,7 +517,7 @@ describe('Chips', () => {
 
     it('announces readOnly and hides close', () => {
       render(
-        <Chips selected readOnly onClose={vi.fn()}>
+        <Chips selected readOnly onClick={vi.fn()} onClose={vi.fn()}>
           Filter
         </Chips>,
       );

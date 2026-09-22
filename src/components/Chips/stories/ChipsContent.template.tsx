@@ -5,15 +5,11 @@ import { Chips, type ChipsProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 
-const Wrapper = styled.div`
-  display: flex;
-  gap: 2px;
-`;
-
+//TODO Поменять на компонент Avatar при его реализации
 const Avatar = styled.div<{ $dimension: ChipsProps['dimension'] }>`
   background-color: red;
   width: ${(p) => (p.$dimension === 'l' ? '20px' : '16px')};
-  height: ${(p) => (p.$dimension === 'l' ? '20px' : '16px')};
+  height: 100%;
   border-radius: 50%;
 `;
 
@@ -23,12 +19,8 @@ export const ChipsContentTemplate = (args: ChipsProps) => (
     <Chips
       {...args}
       badge={5}
-      iconsBefore={
-        <Wrapper>
-          <SystemSearchOutline />
-          <Avatar $dimension={args.dimension} />
-        </Wrapper>
-      }
+      iconsBefore={<SystemSearchOutline />}
+      avatar={<Avatar $dimension={args.dimension} />}
       onClose={() => null}
     />
   </StoryDemoContainer>
