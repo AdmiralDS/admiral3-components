@@ -1,5 +1,7 @@
-import { useState } from 'react';
 import type { ComponentProps } from 'react';
+import { useState } from 'react';
+
+import styled from 'styled-components';
 
 import { Tooltip } from '@admiral-ds/admiral3-components';
 
@@ -19,41 +21,63 @@ import { TOOLTIP_DIMENSIONS } from '../../../src/components/Tooltip/constants';
 type VisualVariant = {
   label: string;
   props: Partial<ComponentProps<typeof Tooltip>>;
+  content?: string;
 };
 
-// Add every supported appearance alongside the generated dimension matrix.
 const VARIANTS: VisualVariant[] = TOOLTIP_DIMENSIONS.map((dimension) => ({
   label: `size ${dimension}`,
   props: { dimension },
 }));
 
-// Add every visually distinct interactive and disabled state.
-const STATES: VisualVariant[] = [{ label: 'default', props: {} }];
+const POSITIONS: VisualVariant[] = [
+  { label: 'bottom', props: { tooltipPosition: 'bottom' } },
+  { label: 'top', props: { tooltipPosition: 'top' } },
+  { label: 'left', props: { tooltipPosition: 'left' } },
+  { label: 'right', props: { tooltipPosition: 'right' } },
+];
 
-const TooltipSample = ({ props }: { props: VisualVariant['props'] }) => {
+const CONTENT: VisualVariant[] = [
+  { label: 'short content', props: {}, content: 'Tooltip' },
+  {
+    label: 'multiline content',
+    props: { style: { width: '240px' } },
+    content: 'A tooltip can contain a longer explanation that wraps across multiple lines.',
+  },
+];
+
+const SampleCanvas = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 360px;
+  height: 140px;
+`;
+
+const TooltipSample = ({ props, content = 'Tooltip' }: Pick<VisualVariant, 'props' | 'content'>) => {
   const [targetElement, setTargetElement] = useState<HTMLButtonElement | null>(null);
 
   return (
-    <>
+    <SampleCanvas>
       <button ref={setTargetElement}>Anchor</button>
       {targetElement && (
         <Tooltip {...props} targetElement={targetElement}>
-          Tooltip
+          {content}
         </Tooltip>
       )}
-    </>
+    </SampleCanvas>
   );
 };
 
 const renderMatrix = (items: VisualVariant[]) => (
   <VisualGroups>
-    {items.map(({ label, props }) => (
+    {items.map(({ label, props, content }) => (
       <VisualGroup key={label}>
         <VisualGroupTitle>{label}</VisualGroupTitle>
         <VisualSamples>
           <VisualSample>
             <VisualLabel>{label}</VisualLabel>
-            <TooltipSample props={props} />
+            <TooltipSample props={props} content={content} />
           </VisualSample>
         </VisualSamples>
       </VisualGroup>
@@ -68,8 +92,12 @@ export const TooltipVisualTemplate = () => (
       {renderMatrix(VARIANTS)}
     </VisualSection>
     <VisualSection>
-      <VisualTitle>States</VisualTitle>
-      {renderMatrix(STATES)}
+      <VisualTitle>Preferred positions</VisualTitle>
+      {renderMatrix(POSITIONS)}
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>Content</VisualTitle>
+      {renderMatrix(CONTENT)}
     </VisualSection>
   </VisualLayout>
 );

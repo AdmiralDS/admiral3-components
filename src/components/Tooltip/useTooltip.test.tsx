@@ -1,8 +1,7 @@
 import { act, cleanup, fireEvent, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TOOLTIP_DELAY } from './constants';
-import { useTooltip } from './useTooltip';
+import { TOOLTIP_DELAY, useTooltip } from './useTooltip';
 
 describe('useTooltip', () => {
   let target: HTMLButtonElement;

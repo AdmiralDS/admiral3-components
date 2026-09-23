@@ -5,6 +5,9 @@ import type { UseTooltipOptions, UseTooltipResult } from './types';
 const isElementInside = (container: Element | null, element: EventTarget | null) =>
   Boolean(container && element && 'nodeType' in element && container.contains(element as Node));
 
+/** Рекомендуемая задержка открытия Tooltip при наведении в миллисекундах. */
+export const TOOLTIP_DELAY = 1500;
+
 /**
  * Предоставляет свойства для target-элемента и Tooltip и управляет его открытием при наведении
  * или получении фокуса. Поддерживает отложенное открытие и закрытие по Escape.

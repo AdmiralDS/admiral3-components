@@ -6,8 +6,6 @@ export const TOOLTIP_DIMENSIONS = ['m', 's'] as const;
 export const TOOLTIP_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
 
 export const TOOLTIP_WRAPPER_PADDING = 8;
-/** Рекомендуемая задержка открытия Tooltip при наведении в миллисекундах. */
-export const TOOLTIP_DELAY = 1500;
 
 export const TOOLTIP_DIMENSION_PARAMETERS = {
   m: { minHeight: 24, padding: '4px 8px', typography: textStyles.body.body2Short },

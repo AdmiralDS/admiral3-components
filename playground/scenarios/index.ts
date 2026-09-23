@@ -14,8 +14,8 @@ import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
 import { toggleScenarios } from './toggle';
-import { visualScenarios } from './visual';
 import { tooltipScenarios } from './tooltip';
+import { visualScenarios } from './visual';
 
 export type PlaygroundScenario = {
   id: string;
