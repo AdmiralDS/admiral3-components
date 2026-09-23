@@ -22,7 +22,7 @@ export interface UseTooltipOptions {
   delay?: number;
 }
 
-export interface UseTooltipResult<T extends HTMLElement> {
+export interface UseTooltipResult<T extends HTMLElement = HTMLElement> {
   /** Признак видимости Tooltip. */
   isVisible: boolean;
   /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
