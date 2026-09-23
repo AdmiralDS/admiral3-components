@@ -50,6 +50,18 @@
       "types": "./dist/components/List/index.d.ts",
       "import": "./dist/components/List/index.js"
     },
+    "./pills": {
+      "types": "./dist/components/Pills/index.d.ts",
+      "import": "./dist/components/Pills/index.js"
+    },
+    "./progress-header": {
+      "types": "./dist/components/ProgressHeader/index.d.ts",
+      "import": "./dist/components/ProgressHeader/index.js"
+    },
+    "./progress-page": {
+      "types": "./dist/components/ProgressPage/index.d.ts",
+      "import": "./dist/components/ProgressPage/index.js"
+    },
     "./pulse": {
       "types": "./dist/components/Pulse/index.d.ts",
       "import": "./dist/components/Pulse/index.js"
@@ -92,8 +104,8 @@
   "scripts": {
     "check:fix": "npm run format && npm run lint:fix",
     "check:full": "node scripts/check-full.mjs",
-    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all'",
-    "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host -v \"${PWD}:/app\" -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc 'npm ci && npm run playground:build && npm run test:visual:run'",
+    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all\"",
+    "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run\"",
     "test:visual:report": "playwright show-report playwright-visual-report",
     "storybook": "storybook dev -p 6006",
     "playground": "vite --config vite.playground.config.ts",
@@ -120,14 +132,14 @@
     "dev": "vite"
   },
   "peerDependencies": {
-    "@admiral-ds/admiral3-icons": "~0.0.3",
+    "@admiral-ds/admiral3-icons": "~0.0.4",
     "@admiral-ds/admiral3-tokens": "~0.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "styled-components": "^6.4.1"
   },
   "devDependencies": {
-    "@admiral-ds/admiral3-icons": "~0.0.3",
+    "@admiral-ds/admiral3-icons": "~0.0.4",
     "@admiral-ds/admiral3-tokens": "~0.1.0",
     "@emnapi/core": "^1.10.0",
     "@emnapi/runtime": "^1.10.0",
