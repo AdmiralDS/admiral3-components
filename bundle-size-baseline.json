@@ -53,6 +53,9 @@
     },
     "toggle": {
       "rawBytes": 7700
+    },
+    "tooltip": {
+      "rawBytes": 7953
     }
   },
   "version": 1
