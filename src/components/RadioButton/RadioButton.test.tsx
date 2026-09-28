@@ -97,12 +97,12 @@ describe('RadioButton components', () => {
           <RadioButton value="pickup">Pickup</RadioButton>
         </RadioGroup>,
       );
-      expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute('data-dimension', 's');
+      expect(screen.getByRole('radiogroup', { name: 'Delivery' })).toHaveAttribute('data-dimension', 's');
       screen.getAllByRole('radio').forEach((radio) => {
         expect(radio).toHaveAttribute('name', 'delivery');
         expect(radio).toBeRequired();
       });
-      expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute('aria-invalid', 'true');
+      expect(screen.getByRole('radiogroup', { name: 'Delivery' })).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('generates a stable unique name when name is omitted', () => {
@@ -259,7 +259,9 @@ describe('RadioButton components', () => {
       fireEvent.click(radio);
       expect(radio).not.toBeChecked();
       expect(radio).not.toBeDisabled();
-      expect(radio).toHaveAttribute('aria-readonly', 'true');
+      expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-readonly', 'true');
+      expect(radio).toHaveAttribute('readonly');
+      expect(radio).not.toHaveAttribute('aria-readonly');
       expect(onChange).not.toHaveBeenCalled();
     });
 
@@ -280,7 +282,7 @@ describe('RadioButton components', () => {
           <RadioButton value="yes">Yes</RadioButton>
         </RadioGroup>,
       );
-      expect(ref.current).toBe(screen.getByRole('group', { name: 'Answer' }));
+      expect(ref.current).toBe(screen.getByRole('radiogroup', { name: 'Answer' }));
     });
   });
 });

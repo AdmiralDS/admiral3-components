@@ -62,13 +62,7 @@ export const CheckBoxGroup = forwardRef<HTMLFieldSetElement, CheckBoxGroupProps>
 
     return (
       <CheckBoxGroupContext.Provider value={contextValue}>
-        <FieldSet
-          ref={refSetter(fieldSetRef, ref)}
-          aria-readonly={readOnly || undefined}
-          dimension={dimension}
-          disabled={disabled}
-          {...props}
-        >
+        <FieldSet ref={refSetter(fieldSetRef, ref)} dimension={dimension} disabled={disabled} {...props}>
           {children}
         </FieldSet>
       </CheckBoxGroupContext.Provider>
