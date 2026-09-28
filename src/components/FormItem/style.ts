@@ -49,7 +49,7 @@ export const StyledLabelRow = styled.div`
 
 export const StyledLabel = styled.label<{ $cssMixin?: ReturnType<typeof css> }>`
   ${textStyles}
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   overflow-wrap: anywhere;
   cursor: pointer;

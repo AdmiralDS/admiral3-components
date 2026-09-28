@@ -380,6 +380,7 @@ describe('FormItem', () => {
     expect(additionalLabel).not.toBeNull();
     if (!label || !additionalLabel) return;
     expect(label).toHaveAttribute('for', 'additional-label-field');
+    expect(label).toHaveStyle({ flex: '0 1 auto' });
     expect(label.parentElement).toContainElement(additionalLabel);
     expect(label).not.toContainElement(additionalLabel);
     expect(input).toHaveAccessibleName('Name');
