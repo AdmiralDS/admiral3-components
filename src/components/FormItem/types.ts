@@ -2,15 +2,18 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { css } from 'styled-components';
 
-import type { FORM_ITEM_DIMENSIONS, FORM_ITEM_STATUSES } from './constants';
+import type { FORM_ITEM_DIMENSIONS, FORM_ITEM_LABEL_POSITIONS, FORM_ITEM_STATUSES } from './constants';
 
 export type FormItemDimension = (typeof FORM_ITEM_DIMENSIONS)[number];
 export type FormItemStatus = (typeof FORM_ITEM_STATUSES)[number];
+export type FormItemLabelPosition = (typeof FORM_ITEM_LABEL_POSITIONS)[number];
 
 export interface FormItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Подпись одиночного поля. Без подписи доступное имя задаётся на самом поле, например через aria-label. */
   label?: ReactNode;
-  /** Дополнительный текст справа от подписи. Не входит в доступное имя поля. */
+  /** Положение основной подписи относительно поля. По умолчанию 'top'. */
+  labelPosition?: FormItemLabelPosition;
+  /** Дополнительный текст справа от подписи; при labelPosition='left' — над полем. Не входит в доступное имя поля. */
   additionalLabel?: ReactNode;
   /** CSS-миксины для переопределения стилей подписей и описания. */
   labelCssMixins?: {

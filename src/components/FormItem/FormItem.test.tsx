@@ -45,7 +45,7 @@ describe('FormItem', () => {
     }
   });
 
-  it.each([undefined, null, false, true, ''])('omits the label row for an empty label (%s)', (label) => {
+  it.each([undefined, null, false, true, ''])('omits an empty label (%s)', (label) => {
     const { container, unmount } = render(
       <FormItem label={label} description="Explanation" required>
         <input aria-label="Field without a visible label" />
@@ -53,7 +53,7 @@ describe('FormItem', () => {
     );
     const item = container.firstElementChild;
     expect(item?.children).toHaveLength(2);
-    expect(item?.firstElementChild?.tagName).toBe('INPUT');
+    expect(item?.firstElementChild).toContainElement(screen.getByRole('textbox'));
     expect(item?.querySelector('label')).toBeNull();
     unmount();
   });
@@ -412,6 +412,56 @@ describe('FormItem', () => {
     expect(screen.getByText('Name')).toHaveStyle({ flex: '0 0 70%' });
     expect(screen.getByText('Optional')).toHaveStyle({ flex: '0 0 calc(30% - 8px)', maxWidth: 'none' });
     expect(screen.getByText('Description')).toHaveStyle({ textAlign: 'right' });
+  });
+
+  it('keeps label CSS mixins available when the label is on the left', () => {
+    const { container } = render(
+      <FormItem
+        label="Name"
+        labelPosition="left"
+        additionalLabel="Optional"
+        labelCssMixins={{
+          label: css`
+            text-align: right;
+          `,
+          additionalLabel: css`
+            justify-self: start;
+          `,
+        }}
+      >
+        <Input />
+      </FormItem>,
+    );
+
+    const item = container.firstElementChild;
+    expect(screen.getByText('Name').parentElement).toBe(item);
+    expect(screen.getByText('Optional').parentElement).toBe(item);
+    expect(screen.getByText('Name')).toHaveStyle({ textAlign: 'right' });
+    expect(screen.getByText('Optional')).toHaveStyle({ justifySelf: 'start' });
+  });
+
+  it('uses dimension gap for the left label layout and does not enable it without a label', () => {
+    const { container, rerender } = render(
+      <FormItem label="Name" labelPosition="left">
+        <Input />
+      </FormItem>,
+    );
+
+    expect(container.firstElementChild).toHaveStyle({ columnGap: '8px' });
+
+    rerender(
+      <FormItem label="Name" labelPosition="left" dimension="xs">
+        <Input />
+      </FormItem>,
+    );
+    expect(container.firstElementChild).toHaveStyle({ columnGap: '6px' });
+
+    rerender(
+      <FormItem labelPosition="left">
+        <Input />
+      </FormItem>,
+    );
+    expect(container.firstElementChild).not.toHaveAttribute('data-label-position');
   });
 
   it('uses m by default and accepts xs for a matching input', () => {

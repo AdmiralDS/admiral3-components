@@ -5,6 +5,7 @@ import { BASE_INPUT_DIMENSIONS, BASE_INPUT_STATUSES } from '../_internal/InputAt
 
 export const FORM_ITEM_DIMENSIONS = BASE_INPUT_DIMENSIONS;
 export const FORM_ITEM_STATUSES = BASE_INPUT_STATUSES;
+export const FORM_ITEM_LABEL_POSITIONS = ['top', 'left'] as const;
 
 export const FORM_ITEM_DIMENSION_PARAMETERS: Record<
   (typeof FORM_ITEM_DIMENSIONS)[number],

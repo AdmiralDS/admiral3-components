@@ -6,6 +6,7 @@ import {
   StyledCounter,
   StyledDescription,
   StyledFormItem,
+  StyledInputWrapper,
   StyledLabel,
   StyledLabelRow,
 } from './style';
@@ -18,6 +19,7 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
   (
     {
       label,
+      labelPosition = 'top',
       additionalLabel,
       labelCssMixins,
       htmlFor,
@@ -48,35 +50,46 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
       [dimension, status, disabled, required, readOnly, maxLength],
     );
     const hasLabel = hasSlotContent(label);
+    const isLabelLeft = labelPosition === 'left' && hasLabel;
     const hasAdditionalLabel = hasSlotContent(additionalLabel);
     const hasDescription = hasSlotContent(description);
     const hasCounter = maxLength !== undefined && characterCount >= maxLength * counterThreshold;
     const counterLimitReached = maxLength !== undefined && characterCount >= maxLength;
+    const labelNode = hasLabel ? (
+      <StyledLabel htmlFor={htmlFor} $cssMixin={labelCssMixins?.label}>
+        {label}
+      </StyledLabel>
+    ) : null;
+    const additionalLabelNode = hasAdditionalLabel ? (
+      <StyledAdditionalLabel $cssMixin={labelCssMixins?.additionalLabel}>{additionalLabel}</StyledAdditionalLabel>
+    ) : null;
 
     return (
       <StyledFormItem
         ref={ref}
         data-dimension={dimension}
+        data-label-position={isLabelLeft ? 'left' : undefined}
         data-status={status}
         data-disabled={disabled ? '' : undefined}
         data-required={required ? '' : undefined}
         {...props}
       >
-        {(hasLabel || hasAdditionalLabel) && (
-          <StyledLabelRow>
-            {hasLabel && (
-              <StyledLabel htmlFor={htmlFor} $cssMixin={labelCssMixins?.label}>
-                {label}
-              </StyledLabel>
-            )}
-            {hasAdditionalLabel && (
-              <StyledAdditionalLabel $cssMixin={labelCssMixins?.additionalLabel}>
-                {additionalLabel}
-              </StyledAdditionalLabel>
-            )}
-          </StyledLabelRow>
+        {isLabelLeft ? (
+          <>
+            {labelNode}
+            {additionalLabelNode}
+          </>
+        ) : (
+          (labelNode || additionalLabelNode) && (
+            <StyledLabelRow>
+              {labelNode}
+              {additionalLabelNode}
+            </StyledLabelRow>
+          )
         )}
-        <FormItemContext.Provider value={contextValue}>{children}</FormItemContext.Provider>
+        <StyledInputWrapper>
+          <FormItemContext.Provider value={contextValue}>{children}</FormItemContext.Provider>
+        </StyledInputWrapper>
         {(hasDescription || hasCounter) && (
           <StyledAdditionalText>
             {hasDescription && (

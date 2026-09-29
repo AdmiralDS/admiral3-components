@@ -20,16 +20,29 @@ export const StyledFormItem = styled.div`
   &[data-dimension='xs'] {
     gap: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
   }
+
+  &[data-label-position='left'] {
+    display: grid;
+    grid-template-columns: fit-content(50%) minmax(0, 1fr);
+    column-gap: ${FORM_ITEM_DIMENSION_PARAMETERS.m.gap}px;
+    row-gap: 0;
+  }
+
+  &[data-label-position='left'][data-dimension='xs'] {
+    column-gap: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
+  }
 `;
 
 const textStyles = css`
   ${FORM_ITEM_DIMENSION_PARAMETERS.m.typography}
   color: ${secondaryColor};
 
+  ${StyledFormItem}[data-dimension='xs'] > &,
   ${StyledFormItem}[data-dimension='xs'] > div > & {
     ${FORM_ITEM_DIMENSION_PARAMETERS.xs.typography}
   }
 
+  ${StyledFormItem}[data-disabled] > &,
   ${StyledFormItem}[data-disabled] > div > & {
     color: ${disabledColor};
   }
@@ -47,6 +60,16 @@ export const StyledLabelRow = styled.div`
   }
 `;
 
+export const StyledInputWrapper = styled.div`
+  min-width: 0;
+
+  ${StyledFormItem}[data-label-position='left'] > & {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+  }
+`;
+
 export const StyledLabel = styled.label<{ $cssMixin?: ReturnType<typeof css> }>`
   ${textStyles}
   flex: 0 1 auto;
@@ -54,11 +77,19 @@ export const StyledLabel = styled.label<{ $cssMixin?: ReturnType<typeof css> }>`
   overflow-wrap: anywhere;
   cursor: pointer;
 
-  ${StyledFormItem}[data-disabled] > ${StyledLabelRow} > & {
+  ${StyledFormItem}[data-label-position='left'] > & {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+  }
+
+  ${StyledFormItem}[data-disabled] > ${StyledLabelRow} > &,
+  ${StyledFormItem}[data-disabled] > & {
     cursor: not-allowed;
   }
 
-  ${StyledFormItem}[data-required] > ${StyledLabelRow} > &::after {
+  ${StyledFormItem}[data-required] > ${StyledLabelRow} > &::after,
+  ${StyledFormItem}[data-required] > &::after {
     content: ' *' / '';
     color: ${errorColor};
   }
@@ -76,6 +107,17 @@ export const StyledAdditionalLabel = styled.span<{ $cssMixin?: ReturnType<typeof
   overflow-wrap: anywhere;
   cursor: default;
   margin-left: auto;
+
+  ${StyledFormItem}[data-label-position='left'] > & {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: 100%;
+    margin-bottom: ${FORM_ITEM_DIMENSION_PARAMETERS.m.gap}px;
+  }
+
+  ${StyledFormItem}[data-label-position='left'][data-dimension='xs'] > & {
+    margin-bottom: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
+  }
 
   &&&& {
     ${(p) => p.$cssMixin}
@@ -109,6 +151,16 @@ export const StyledAdditionalText = styled.div`
 
   ${StyledFormItem}[data-dimension='xs'] > & {
     gap: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
+  }
+
+  ${StyledFormItem}[data-label-position='left'] > & {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: ${FORM_ITEM_DIMENSION_PARAMETERS.m.gap}px;
+  }
+
+  ${StyledFormItem}[data-label-position='left'][data-dimension='xs'] > & {
+    margin-top: ${FORM_ITEM_DIMENSION_PARAMETERS.xs.gap}px;
   }
 `;
 

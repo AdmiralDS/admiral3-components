@@ -6,6 +6,8 @@ import { FormItemNativeTextareaTemplate } from './FormItemComposition.template';
 import formItemCompositionTemplateRaw from './FormItemComposition.template?raw';
 import { FormItemCounterTemplate } from './FormItemCounter.template';
 import formItemCounterTemplateRaw from './FormItemCounter.template?raw';
+import { FormItemLabelLeftTemplate } from './FormItemLabelLeft.template';
+import formItemLabelLeftTemplateRaw from './FormItemLabelLeft.template?raw';
 import { FormItemLongTextTemplate } from './FormItemLongText.template';
 import formItemLongTextTemplateRaw from './FormItemLongText.template?raw';
 import { FormItemAdditionalLabelTemplate, FormItemPlaygroundTemplate } from './FormItemPlayground.template';
@@ -16,7 +18,7 @@ import { FormItemStatesTemplate } from './FormItemStates.template';
 import formItemStatesTemplateRaw from './FormItemStates.template?raw';
 import { FormItemWithoutLabelTemplate } from './FormItemWithoutLabel.template';
 import formItemWithoutLabelTemplateRaw from './FormItemWithoutLabel.template?raw';
-import { FORM_ITEM_DIMENSIONS, FORM_ITEM_STATUSES } from '../constants';
+import { FORM_ITEM_DIMENSIONS, FORM_ITEM_LABEL_POSITIONS, FORM_ITEM_STATUSES } from '../constants';
 
 const meta = {
   title: 'Components/FormItem',
@@ -24,6 +26,7 @@ const meta = {
   tags: ['autodocs'],
   argTypes: {
     dimension: { control: { type: 'inline-radio' }, options: FORM_ITEM_DIMENSIONS },
+    labelPosition: { control: { type: 'inline-radio' }, options: FORM_ITEM_LABEL_POSITIONS },
     required: { control: { type: 'boolean' } },
     disabled: { control: { type: 'boolean' } },
     readOnly: { control: { type: 'boolean' } },
@@ -52,6 +55,7 @@ export const Playground: StoryObj<FormItemProps> = {
     controls: {
       include: [
         'label',
+        'labelPosition',
         'additionalLabel',
         'description',
         'status',
@@ -85,11 +89,20 @@ export const States: StoryObj<FormItemProps> = {
   },
 };
 
+export const LabelLeft: StoryObj<FormItemProps> = {
+  args: defaultArgs,
+  render: FormItemLabelLeftTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: { source: { code: formItemLabelLeftTemplateRaw } },
+  },
+};
+
 export const AdditionalLabel: StoryObj<FormItemProps> = {
   args: { ...defaultArgs, label: 'Название', additionalLabel: 'Необязательно', description: 'Дополнительный текст' },
   render: FormItemAdditionalLabelTemplate,
   parameters: {
-    controls: { include: ['label', 'additionalLabel', 'description', 'dimension'] },
+    controls: { include: ['label', 'labelPosition', 'additionalLabel', 'description', 'dimension'] },
     docs: { source: { code: formItemPlaygroundTemplateRaw } },
   },
 };
@@ -108,6 +121,7 @@ export const Counter: StoryObj<FormItemProps> = {
       include: [
         'dimension',
         'label',
+        'labelPosition',
         'additionalLabel',
         'description',
         'maxLength',
@@ -136,6 +150,7 @@ export const LongText: StoryObj<FormItemProps> = {
     controls: {
       include: [
         'label',
+        'labelPosition',
         'additionalLabel',
         'description',
         'maxLength',
@@ -170,7 +185,17 @@ export const NativeTextarea: StoryObj<FormItemProps> = {
   render: FormItemNativeTextareaTemplate,
   parameters: {
     controls: {
-      include: ['label', 'additionalLabel', 'description', 'dimension', 'status', 'required', 'disabled', 'readOnly'],
+      include: [
+        'label',
+        'labelPosition',
+        'additionalLabel',
+        'description',
+        'dimension',
+        'status',
+        'required',
+        'disabled',
+        'readOnly',
+      ],
     },
     docs: { source: { code: formItemCompositionTemplateRaw } },
   },

@@ -1,2 +1,2 @@
 export { FormItem } from './FormItem';
-export type { FormItemDimension, FormItemProps, FormItemStatus } from './types';
+export type { FormItemDimension, FormItemLabelPosition, FormItemProps, FormItemStatus } from './types';

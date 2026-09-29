@@ -10,6 +10,11 @@ const ContentSample = styled(VisualSample)`
   align-items: stretch;
 `;
 
+const InlineSample = styled(VisualSample)`
+  width: 440px;
+  align-items: stretch;
+`;
+
 export const FormItemVisualTemplate = () => (
   <VisualLayout>
     <VisualSection>
@@ -136,6 +141,30 @@ export const FormItemVisualTemplate = () => (
             <Input defaultValue="Значение только для чтения" />
           </FormItem>
         </VisualSample>
+      </VisualSamples>
+    </VisualSection>
+    <VisualSection>
+      <VisualTitle>Label left</VisualTitle>
+      <VisualSamples>
+        <InlineSample>
+          <VisualLabel>m with additional texts and counter</VisualLabel>
+          <FormItem
+            labelPosition="left"
+            label="Подпись"
+            additionalLabel="Дополнение"
+            description="Пояснение"
+            maxLength={20}
+            counterThreshold={0}
+          >
+            <Input defaultValue="Пример" />
+          </FormItem>
+        </InlineSample>
+        <InlineSample>
+          <VisualLabel>xs required</VisualLabel>
+          <FormItem labelPosition="left" dimension="xs" label="Подпись" required>
+            <Input placeholder="Введите значение" />
+          </FormItem>
+        </InlineSample>
       </VisualSamples>
     </VisualSection>
   </VisualLayout>
