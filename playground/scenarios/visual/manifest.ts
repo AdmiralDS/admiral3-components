@@ -6,6 +6,7 @@ export const VISUAL_SCENARIO_IDS = {
   chips: 'visual/chips',
   divider: 'visual/divider',
   fieldSet: 'visual/field-set',
+  filterChips: 'visual/filter-chips',
   input: 'visual/input',
   link: 'visual/link',
   list: 'visual/list',

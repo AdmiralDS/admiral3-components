@@ -108,20 +108,86 @@ test.describe('Chips playground', () => {
     for (const state of ['filter-disabled', 'filter-readonly', 'filter']) {
       await page.goto(getPlaygroundScenarioPath('chips/' + state));
       const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();
-      const background = await chip.evaluate((element) => getComputedStyle(element).backgroundColor);
+      const action = chip.getByRole('button', { name: 'Марс' });
+      await expect(action).toHaveAttribute('aria-pressed', 'true');
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
       await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
       await page.mouse.move(0, 0);
       if (state === 'filter') {
-        await expect(chip).not.toHaveCSS('background-color', background);
+        await expect(action).toHaveAttribute('aria-pressed', 'false');
       } else {
-        await chip.getByRole('button').focus();
+        await action.focus();
         await page.keyboard.press('Enter');
         await page.keyboard.press('Space');
-        await expect(chip).toHaveCSS('background-color', background);
+        await expect(action).toHaveAttribute('aria-pressed', 'true');
       }
     }
+  });
+
+  test('keeps multiple and exclusive FilterChips selections independent', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('chips/filter'));
+    const multiple = page.getByRole('group', { name: 'Планеты: множественный выбор' });
+    const exclusive = page.getByRole('group', { name: 'Планеты: одиночный выбор' });
+    const multipleMars = multiple.getByRole('button', { name: 'Марс' });
+    const exclusiveMars = exclusive.getByRole('button', { name: 'Марс' });
+
+    await expect(multipleMars).toHaveAttribute('aria-pressed', 'true');
+    await expect(exclusiveMars).toHaveAttribute('aria-pressed', 'true');
+    await multipleMars.click();
+    await expect(multipleMars).toHaveAttribute('aria-pressed', 'false');
+    await expect(exclusiveMars).toHaveAttribute('aria-pressed', 'true');
+
+    await exclusiveMars.focus();
+    await page.keyboard.press('Space');
+    await expect(exclusiveMars).toHaveAttribute('aria-pressed', 'false');
+    await expect(multipleMars).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('keeps one Tab stop per FilterChips group and selects only with Space', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('chips/filter'));
+    const multiple = page.getByRole('group', { name: 'Планеты: множественный выбор' });
+    const first = multiple.getByRole('button', { name: 'Марс' });
+    const second = multiple.getByRole('button', { name: 'Венера' });
+    const last = multiple.getByRole('button', { name: 'Юпитер' });
+
+    await page.getByRole('button', { name: 'Hide menu' }).click();
+    await page.getByRole('button', { name: 'Show menu' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(first).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
+    await expect(last).toBeFocused();
+    await page.keyboard.press('Home');
+    await expect(first).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(second).toBeFocused();
+    await expect(second).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('Enter');
+    await expect(second).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('Space');
+    await expect(second).toHaveAttribute('aria-pressed', 'false');
+    await page.keyboard.press('Tab');
+    await expect(
+      page.getByRole('group', { name: 'Планеты: одиночный выбор' }).getByRole('button', { name: 'Марс' }),
+    ).toBeFocused();
+  });
+
+  test('keeps ordinary Chips independent from FilterChips.Item navigation', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('chips/filter-regular-chips'));
+    const group = page.getByRole('group', { name: 'Планеты: самостоятельное управление' });
+    const mars = group.getByRole('button', { name: 'Марс' });
+    const venus = group.getByRole('button', { name: 'Венера' });
+
+    await expect(mars).toHaveAttribute('aria-pressed', 'true');
+    await expect(mars).toHaveAttribute('tabindex', '0');
+    await expect(venus).toHaveAttribute('tabindex', '0');
+    await mars.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(mars).toBeFocused();
+    await page.keyboard.press('Space');
+    await expect(mars).toHaveAttribute('aria-pressed', 'false');
+    await page.keyboard.press('Tab');
+    await expect(venus).toBeFocused();
   });
 
   test('applies hover and press only to close when a close button is present', async ({ page }) => {
@@ -153,7 +219,7 @@ test.describe('Chips playground', () => {
 
   test('applies hover and press to the chip when there is no close button', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('chips/filter'));
-    const chip = page.getByTestId('chips').filter({ hasText: 'Марс' }).first();
+    const chip = page.getByTestId('chips').filter({ hasText: 'Юпитер' }).first();
     const hoverBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-hover');
     const pressBackground = await resolveCssColorToken(page, '--admiral-color-primary-base-3-press');
     await expect(chip.getByRole('button', { name: '', exact: true })).toHaveCount(0);
