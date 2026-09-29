@@ -21,7 +21,7 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
       label,
       labelPosition = 'top',
       additionalLabel,
-      labelCssMixins,
+      labelStyles,
       htmlFor,
       description,
       status,
@@ -56,12 +56,23 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
     const hasCounter = maxLength !== undefined && characterCount >= maxLength * counterThreshold;
     const counterLimitReached = maxLength !== undefined && characterCount >= maxLength;
     const labelNode = hasLabel ? (
-      <StyledLabel htmlFor={htmlFor} $cssMixin={labelCssMixins?.label}>
+      <StyledLabel
+        htmlFor={htmlFor}
+        className={labelStyles?.label?.className}
+        style={labelStyles?.label?.style}
+        $cssMixin={labelStyles?.label?.cssMixin}
+      >
         {label}
       </StyledLabel>
     ) : null;
     const additionalLabelNode = hasAdditionalLabel ? (
-      <StyledAdditionalLabel $cssMixin={labelCssMixins?.additionalLabel}>{additionalLabel}</StyledAdditionalLabel>
+      <StyledAdditionalLabel
+        className={labelStyles?.additionalLabel?.className}
+        style={labelStyles?.additionalLabel?.style}
+        $cssMixin={labelStyles?.additionalLabel?.cssMixin}
+      >
+        {additionalLabel}
+      </StyledAdditionalLabel>
     ) : null;
 
     return (
@@ -93,7 +104,13 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
         {(hasDescription || hasCounter) && (
           <StyledAdditionalText>
             {hasDescription && (
-              <StyledDescription $cssMixin={labelCssMixins?.description}>{description}</StyledDescription>
+              <StyledDescription
+                className={labelStyles?.description?.className}
+                style={labelStyles?.description?.style}
+                $cssMixin={labelStyles?.description?.cssMixin}
+              >
+                {description}
+              </StyledDescription>
             )}
             {hasCounter && (
               <StyledCounter data-limit-reached={counterLimitReached ? '' : undefined}>

@@ -1,8 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import type { css } from 'styled-components';
-
 import type { FORM_ITEM_DIMENSIONS, FORM_ITEM_LABEL_POSITIONS, FORM_ITEM_STATUSES } from './constants';
+import type { ComponentStyleConfig } from '../../types';
 
 export type FormItemDimension = (typeof FORM_ITEM_DIMENSIONS)[number];
 export type FormItemStatus = (typeof FORM_ITEM_STATUSES)[number];
@@ -15,14 +14,14 @@ export interface FormItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   labelPosition?: FormItemLabelPosition;
   /** Дополнительный текст справа от подписи; при labelPosition='left' — над полем. Не входит в доступное имя поля. */
   additionalLabel?: ReactNode;
-  /** CSS-миксины для переопределения стилей подписей и описания. */
-  labelCssMixins?: {
-    /** CSS-миксин основной подписи. */
-    label?: ReturnType<typeof css>;
-    /** CSS-миксин дополнительной подписи. */
-    additionalLabel?: ReturnType<typeof css>;
-    /** CSS-миксин описания под полем. */
-    description?: ReturnType<typeof css>;
+  /** Пользовательские стили подписей и описания. */
+  labelStyles?: {
+    /** Стили основной подписи. */
+    label?: ComponentStyleConfig;
+    /** Стили дополнительной подписи. */
+    additionalLabel?: ComponentStyleConfig;
+    /** Стили описания под полем. */
+    description?: ComponentStyleConfig;
   };
   /** Должен совпадать с id нативного поля для связи с подписью. id поля задаётся отдельно. */
   htmlFor?: string;

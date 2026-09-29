@@ -386,47 +386,82 @@ describe('FormItem', () => {
     expect(input).toHaveAccessibleName('Name');
   });
 
-  it('applies CSS mixins to the label, additional label and description', () => {
+  it('applies custom styles to the label, additional label and description', () => {
     render(
-      <FormItem
-        label="Name"
-        additionalLabel="Optional"
-        description="Description"
-        labelCssMixins={{
-          label: css`
-            flex: 0 0 70%;
-          `,
-          additionalLabel: css`
-            flex: 0 0 calc(30% - 8px);
-            max-width: none;
-          `,
-          description: css`
-            text-align: right;
-          `,
-        }}
-      >
-        <Input />
-      </FormItem>,
+      <>
+        <style>{`
+          .custom-label { letter-spacing: 1px; }
+          .custom-additional-label { text-transform: uppercase; }
+          .custom-description { text-decoration-line: underline; }
+        `}</style>
+        <FormItem
+          label="Name"
+          additionalLabel="Optional"
+          description="Description"
+          labelStyles={{
+            label: {
+              className: 'custom-label',
+              style: { textAlign: 'right' },
+              cssMixin: css`
+                flex: 0 0 70%;
+              `,
+            },
+            additionalLabel: {
+              className: 'custom-additional-label',
+              style: { whiteSpace: 'nowrap' },
+              cssMixin: css`
+                flex: 0 0 calc(30% - 8px);
+                max-width: none;
+              `,
+            },
+            description: {
+              className: 'custom-description',
+              style: { fontStyle: 'italic' },
+              cssMixin: css`
+                text-align: right;
+              `,
+            },
+          }}
+        >
+          <Input />
+        </FormItem>
+      </>,
     );
 
-    expect(screen.getByText('Name')).toHaveStyle({ flex: '0 0 70%' });
-    expect(screen.getByText('Optional')).toHaveStyle({ flex: '0 0 calc(30% - 8px)', maxWidth: 'none' });
-    expect(screen.getByText('Description')).toHaveStyle({ textAlign: 'right' });
+    expect(screen.getByText('Name')).toHaveClass('custom-label');
+    expect(screen.getByText('Name')).toHaveStyle({ flex: '0 0 70%', textAlign: 'right', letterSpacing: '1px' });
+    expect(screen.getByText('Optional')).toHaveClass('custom-additional-label');
+    expect(screen.getByText('Optional')).toHaveStyle({
+      flex: '0 0 calc(30% - 8px)',
+      maxWidth: 'none',
+      whiteSpace: 'nowrap',
+      textTransform: 'uppercase',
+    });
+    expect(screen.getByText('Description')).toHaveClass('custom-description');
+    expect(screen.getByText('Description')).toHaveStyle({
+      textAlign: 'right',
+      fontStyle: 'italic',
+      textDecorationLine: 'underline',
+    });
   });
 
-  it('keeps label CSS mixins available when the label is on the left', () => {
+  it('keeps custom text styles available when the label is on the left', () => {
     const { container } = render(
       <FormItem
         label="Name"
         labelPosition="left"
         additionalLabel="Optional"
-        labelCssMixins={{
-          label: css`
-            text-align: right;
-          `,
-          additionalLabel: css`
-            justify-self: start;
-          `,
+        labelStyles={{
+          label: {
+            cssMixin: css`
+              text-align: right;
+            `,
+          },
+          additionalLabel: {
+            cssMixin: css`
+              justify-self: start;
+            `,
+          },
         }}
       >
         <Input />

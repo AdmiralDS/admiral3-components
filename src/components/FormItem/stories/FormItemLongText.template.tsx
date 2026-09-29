@@ -28,7 +28,7 @@ export const FormItemLongTextTemplate = (args: FormItemProps) => {
   return (
     <StoryDemoContainer $direction="column" $gap="24px">
       <StoryDemoDescription>
-        По умолчанию длинные подписи переносятся на несколько строк. <code>labelCssMixins</code> позволяет изменить
+        По умолчанию длинные подписи переносятся на несколько строк. <code>labelStyles</code> позволяет изменить
         распределение ширины между основной и дополнительной подписями.
       </StoryDemoDescription>
       <Example>
@@ -60,13 +60,17 @@ export const FormItemLongTextTemplate = (args: FormItemProps) => {
           description={
             hasDescription ? <span id="form-item-long-description-custom">{args.description}</span> : undefined
           }
-          labelCssMixins={{
-            label: css`
-              flex: 0 1 65%;
-            `,
-            additionalLabel: css`
-              flex: 0 1 35%;
-            `,
+          labelStyles={{
+            label: {
+              cssMixin: css`
+                flex: 0 1 65%;
+              `,
+            },
+            additionalLabel: {
+              cssMixin: css`
+                flex: 0 1 35%;
+              `,
+            },
           }}
         >
           <Input
