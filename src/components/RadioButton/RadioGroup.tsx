@@ -71,6 +71,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       <RadioGroupContext.Provider value={contextValue}>
         <FieldSet
           ref={refSetter(fieldSetRef, ref)}
+          role="radiogroup"
           aria-readonly={readOnly || undefined}
           dimension={dimension}
           disabled={disabled}
