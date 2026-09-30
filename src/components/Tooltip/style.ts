@@ -16,7 +16,7 @@ const textColor = cssToken(
   '--admiral-color-neutral-text-inverted-rest',
   (theme) => theme.color.neutral.text.inverted.rest,
 );
-const borderRadius = cssToken('--admiral-radius-medium', (theme) => theme.radius.medium);
+const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 const boxShadow = cssToken('--admiral-shadow-shadow04', (theme) => theme.shadow.shadow04);
 
 export const TooltipWrapper = styled.div`
