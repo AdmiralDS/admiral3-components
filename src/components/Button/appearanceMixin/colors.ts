@@ -60,8 +60,8 @@ const flatWithColoredMode: Record<FlatColorSet, CssToken> = {
   backgroundHover: cssToken('--admiral-color-primary-base-3-hover', (theme) => theme.color.primary.base._3.hover),
   backgroundPress: cssToken('--admiral-color-primary-base-3-press', (theme) => theme.color.primary.base._3.press),
   backgroundDisabled: cssToken(
-    '--admiral-color-neutral-base-invisible-rest',
-    (theme) => theme.color.neutral.base.invisible.rest,
+    '--admiral-color-neutral-base-opacity-rest',
+    (theme) => theme.color.neutral.base.opacity.rest,
   ),
   color: cssToken('--admiral-color-primary-text-1-rest', (theme) => theme.color.primary.text._1.rest),
   colorDisabled: cssToken(
@@ -82,8 +82,8 @@ const flatWithNeutralMode: Record<FlatColorSet, CssToken> = {
     (theme) => theme.color.neutral.base.opacity.press,
   ),
   backgroundDisabled: cssToken(
-    '--admiral-color-neutral-base-invisible-rest',
-    (theme) => theme.color.neutral.base.invisible.rest,
+    '--admiral-color-neutral-base-opacity-rest',
+    (theme) => theme.color.neutral.base.opacity.rest,
   ),
   color: cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest),
   colorDisabled: cssToken(
