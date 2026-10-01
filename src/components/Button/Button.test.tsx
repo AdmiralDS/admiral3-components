@@ -246,6 +246,7 @@ describe('Button', () => {
     );
 
     expect(screen.getByTestId('button')).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByTestId('button')).toHaveAttribute('data-button-skeleton', '');
   });
 
   it.each([undefined, 'start', 'end'] as const)(

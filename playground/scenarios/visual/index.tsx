@@ -1,6 +1,7 @@
 import type { PlaygroundScenario } from '../index';
 import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
+import { ButtonGroupVisualTemplate } from './ButtonGroupVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
@@ -27,6 +28,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <BadgeDotVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.button, title: 'Visual / Button', visual: true, render: () => <ButtonVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.buttonGroup,
+    title: 'Visual / ButtonGroup',
+    visual: true,
+    render: () => <ButtonGroupVisualTemplate />,
+  },
   {
     id: VISUAL_SCENARIO_IDS.checkBox,
     title: 'Visual / CheckBox',
