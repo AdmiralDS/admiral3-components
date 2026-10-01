@@ -249,6 +249,7 @@ describe('Button', () => {
     const button = screen.getByTestId('button');
 
     expect(button).toHaveAttribute('tabindex', '-1');
+    expect(button).toHaveAttribute('data-button-skeleton', '');
     expect(button).toHaveAttribute('aria-hidden', 'true');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
