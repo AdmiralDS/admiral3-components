@@ -5,6 +5,7 @@ import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
+import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
@@ -39,6 +40,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / FieldSet',
     visual: true,
     render: () => <FieldSetVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.formItem,
+    title: 'Visual / FormItem',
+    visual: true,
+    render: () => <FormItemVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.input, title: 'Visual / Input', visual: true, render: () => <InputVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },

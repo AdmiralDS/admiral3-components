@@ -1,0 +1,92 @@
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
+
+import { ReactHookFormTemplate } from './react-hook-form/ReactHookForm.template';
+import { ReactHookFormWithFormItemTemplate } from './react-hook-form/ReactHookFormWithFormItem.template';
+import { TanStackFormTemplate } from './tanstack-form/TanStackForm.template';
+import { TanStackFormWithFormItemTemplate } from './tanstack-form/TanStackFormWithFormItem.template';
+
+afterEach(cleanup);
+
+describe.each([
+  ['React Hook Form', ReactHookFormTemplate, ReactHookFormWithFormItemTemplate],
+  ['TanStack Form', TanStackFormTemplate, TanStackFormWithFormItemTemplate],
+] as const)('%s password confirmation', (_, Template, TemplateWithFormItem) => {
+  it('keeps labels and descriptions scoped to each rendered form', async () => {
+    const { container } = render(
+      <>
+        <Template />
+        <TemplateWithFormItem />
+      </>,
+    );
+    const nameFields = screen.getAllByLabelText('Имя', { exact: true });
+
+    expect(nameFields).toHaveLength(2);
+    expect(new Set(nameFields.map((field) => field.id)).size).toBe(2);
+
+    screen.getAllByRole('button', { name: 'Отправить' }).forEach((button) => fireEvent.click(button));
+
+    await waitFor(() => nameFields.forEach((field) => expect(field).toHaveAccessibleDescription('Введите имя')));
+
+    nameFields.forEach((field) => {
+      const descriptionId = field.getAttribute('aria-describedby');
+      const description = document.getElementById(descriptionId ?? '');
+
+      expect(descriptionId).not.toBeNull();
+      expect(description).toHaveTextContent('Введите имя');
+      expect(field.closest('form')).toContainElement(description);
+    });
+
+    const templateIds = Array.from(container.querySelectorAll('[id]'), (element) => element.id).filter(
+      (id) => id.includes('-rhf-') || id.includes('-tanstack-'),
+    );
+    expect(new Set(templateIds).size).toBe(templateIds.length);
+  });
+
+  it.each([
+    ['without FormItem', Template],
+    ['with FormItem', TemplateWithFormItem],
+  ])('updates messages and resets both fields %s', async (_, TemplateVariant) => {
+    render(<TemplateVariant />);
+    const password = screen.getByLabelText('Пароль', { exact: true });
+    const confirmation = screen.getByLabelText('Повторите пароль', { exact: true });
+    expect(password).not.toHaveAttribute('aria-describedby');
+    expect(confirmation).not.toHaveAttribute('aria-describedby');
+
+    fireEvent.change(password, { target: { value: 'password1' } });
+    await waitFor(() => expect(password).toHaveAccessibleDescription('Пароль соответствует требованиям'));
+    expect(confirmation).not.toHaveAttribute('aria-describedby');
+
+    fireEvent.change(confirmation, { target: { value: 'different' } });
+    await waitFor(() => expect(confirmation).toHaveAccessibleDescription('Пароли не совпадают'));
+    expect(confirmation).toHaveAttribute('aria-invalid', 'true');
+
+    fireEvent.change(confirmation, { target: { value: 'password1' } });
+    await waitFor(() => expect(confirmation).toHaveAccessibleDescription('Пароли совпадают'));
+    expect(confirmation.closest('[data-status]')).toHaveAttribute('data-status', 'success');
+
+    fireEvent.change(password, { target: { value: 'password2' } });
+    await waitFor(() => expect(confirmation).toHaveAccessibleDescription('Пароли не совпадают'));
+    expect(confirmation.closest('[data-status]')).toHaveAttribute('data-status', 'error');
+
+    fireEvent.change(password, { target: { value: 'password1' } });
+    await waitFor(() => expect(confirmation).toHaveAccessibleDescription('Пароли совпадают'));
+
+    fireEvent.change(password, { target: { value: 'short' } });
+    fireEvent.change(confirmation, { target: { value: 'short' } });
+    await waitFor(() => expect(password).toHaveAccessibleDescription('Пароль должен содержать не менее 8 символов'));
+    await waitFor(() => expect(confirmation).not.toHaveAttribute('aria-describedby'));
+    expect(screen.queryByText('Пароли совпадают')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Сбросить' }));
+    await waitFor(() => {
+      expect(password).toHaveValue('');
+      expect(confirmation).toHaveValue('');
+      expect(password).not.toHaveAttribute('aria-describedby');
+      expect(confirmation).not.toHaveAttribute('aria-describedby');
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Отправить' }));
+    await waitFor(() => expect(confirmation).toHaveAccessibleDescription('Повторите пароль'));
+  });
+});

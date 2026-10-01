@@ -6,3 +6,4 @@ export { InputIconPasswordButton } from './InputIconPasswordButton';
 export type { InputIconPasswordButtonProps } from './InputIconPasswordButton';
 export { SelectionControlInformer } from './SelectionControlInformer';
 export { SelectionControlLayout } from './SelectionControlLayout';
+export type { ComponentStyleConfig } from '../../types';

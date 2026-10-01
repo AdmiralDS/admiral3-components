@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {
   Button,
   CheckBox,
+  FormItem,
   Input,
   InputIconPasswordButton,
   RadioButton,
@@ -76,19 +77,9 @@ const Field = styled.div`
   gap: 8px;
 `;
 
-const Label = styled.label`
-  ${textStyles.body.body2Long}
-  color: var(--admiral-color-neutral-text-1-rest);
-`;
-
 const ErrorText = styled.span`
   ${textStyles.body.body2Long}
   color: var(--admiral-color-error-text-1-rest);
-`;
-
-const SuccessText = styled.span`
-  ${textStyles.body.body2Long}
-  color: var(--admiral-color-success-text-1-rest);
 `;
 
 const Actions = styled.div`
@@ -109,7 +100,7 @@ const Result = styled.pre`
   background-color: var(--admiral-color-neutral-base-2-rest);
 `;
 
-export const ReactHookFormTemplate = () => {
+export const ReactHookFormWithFormItemTemplate = () => {
   const idPrefix = useId();
   const nameId = `${idPrefix}-rhf-name`;
   const passwordId = `${idPrefix}-rhf-password`;
@@ -157,11 +148,16 @@ export const ReactHookFormTemplate = () => {
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
-          комментария и составные поля — через Controller.
+          со счётчиком и составные поля — через Controller.
         </Description>
 
-        <Field>
-          <Label htmlFor={nameId}>Имя</Label>
+        <FormItem
+          label="Имя"
+          htmlFor={nameId}
+          required
+          status={errors.name ? 'error' : undefined}
+          description={errors.name ? <span id={`${nameId}-error`}>{errors.name.message}</span> : undefined}
+        >
           <Input
             aria-required
             id={nameId}
@@ -174,11 +170,21 @@ export const ReactHookFormTemplate = () => {
             aria-describedby={errors.name ? `${nameId}-error` : undefined}
             {...register('name', { required: 'Введите имя' })}
           />
-          {errors.name && <ErrorText id={`${nameId}-error`}>{errors.name.message}</ErrorText>}
-        </Field>
+        </FormItem>
 
-        <Field>
-          <Label htmlFor={passwordId}>Пароль</Label>
+        <FormItem
+          label="Пароль"
+          htmlFor={passwordId}
+          required
+          status={errors.password ? 'error' : passwordSuccess ? 'success' : undefined}
+          description={
+            errors.password ? (
+              <span id={`${passwordId}-error`}>{errors.password.message}</span>
+            ) : passwordSuccess ? (
+              <span id={`${passwordId}-success`}>{passwordSuccess}</span>
+            ) : undefined
+          }
+        >
           <Input
             aria-required
             id={passwordId}
@@ -204,15 +210,21 @@ export const ReactHookFormTemplate = () => {
               minLength: { value: 8, message: 'Пароль должен содержать не менее 8 символов' },
             })}
           />
-          {errors.password ? (
-            <ErrorText id={`${passwordId}-error`}>{errors.password.message}</ErrorText>
-          ) : passwordSuccess ? (
-            <SuccessText id={`${passwordId}-success`}>{passwordSuccess}</SuccessText>
-          ) : null}
-        </Field>
+        </FormItem>
 
-        <Field>
-          <Label htmlFor={confirmPasswordId}>Повторите пароль</Label>
+        <FormItem
+          label="Повторите пароль"
+          htmlFor={confirmPasswordId}
+          required
+          status={errors.confirmPassword ? 'error' : confirmationSuccess ? 'success' : undefined}
+          description={
+            errors.confirmPassword ? (
+              <span id={`${confirmPasswordId}-error`}>{errors.confirmPassword.message}</span>
+            ) : confirmationSuccess ? (
+              <span id={`${confirmPasswordId}-success`}>{confirmationSuccess}</span>
+            ) : undefined
+          }
+        >
           <Input
             aria-required
             id={confirmPasswordId}
@@ -244,15 +256,15 @@ export const ReactHookFormTemplate = () => {
               },
             })}
           />
-          {errors.confirmPassword ? (
-            <ErrorText id={`${confirmPasswordId}-error`}>{errors.confirmPassword.message}</ErrorText>
-          ) : confirmationSuccess ? (
-            <SuccessText id={`${confirmPasswordId}-success`}>{confirmationSuccess}</SuccessText>
-          ) : null}
-        </Field>
+        </FormItem>
 
-        <Field>
-          <Label htmlFor={emailId}>Электронная почта</Label>
+        <FormItem
+          label="Электронная почта"
+          htmlFor={emailId}
+          required
+          status={errors.email ? 'error' : undefined}
+          description={errors.email ? <span id={`${emailId}-error`}>{errors.email.message}</span> : undefined}
+        >
           <Input
             aria-required
             id={emailId}
@@ -268,11 +280,14 @@ export const ReactHookFormTemplate = () => {
               pattern: { value: /^\S+@\S+\.\S+$/, message: 'Введите корректный адрес электронной почты' },
             })}
           />
-          {errors.email && <ErrorText id={`${emailId}-error`}>{errors.email.message}</ErrorText>}
-        </Field>
+        </FormItem>
 
-        <Field>
-          <Label htmlFor={websiteId}>Сайт</Label>
+        <FormItem
+          label="Сайт"
+          htmlFor={websiteId}
+          status={errors.website ? 'error' : undefined}
+          description={errors.website ? <span id={`${websiteId}-error`}>{errors.website.message}</span> : undefined}
+        >
           <Input
             id={websiteId}
             type="url"
@@ -286,15 +301,13 @@ export const ReactHookFormTemplate = () => {
               pattern: { value: /^https?:\/\/.+/, message: 'Адрес должен начинаться с http:// или https://' },
             })}
           />
-          {errors.website && <ErrorText id={`${websiteId}-error`}>{errors.website.message}</ErrorText>}
-        </Field>
+        </FormItem>
 
         <Controller
           name="comment"
           control={control}
           render={({ field }) => (
-            <Field>
-              <Label htmlFor={commentId}>Комментарий</Label>
+            <FormItem label="Комментарий" htmlFor={commentId} maxLength={50} counterThreshold={0}>
               <Input
                 {...field}
                 id={commentId}
@@ -303,7 +316,7 @@ export const ReactHookFormTemplate = () => {
                 showClearIcon
                 placeholder="Добавьте комментарий"
               />
-            </Field>
+            </FormItem>
           )}
         />
 
