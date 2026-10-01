@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react';
 
 import type { BUTTON_GROUP_APPEARANCES, BUTTON_GROUP_COLOR_MODES, BUTTON_GROUP_DIMENSIONS } from './constants';
+import type { ButtonColorConfig } from '../Button/types';
 
 /** Цветовой вариант ButtonGroup. */
 export type ButtonGroupAppearance = (typeof BUTTON_GROUP_APPEARANCES)[number];
@@ -10,6 +11,9 @@ export type ButtonGroupColorMode = (typeof BUTTON_GROUP_COLOR_MODES)[number];
 
 /** Размер ButtonGroup. */
 export type ButtonGroupDimension = (typeof BUTTON_GROUP_DIMENSIONS)[number];
+
+/** Пользовательские цвета всех Button внутри ButtonGroup. */
+export type ButtonGroupColorConfig = ButtonColorConfig;
 
 /**
  * Группа связанных действий с горизонтальной клавиатурной навигацией.
@@ -23,6 +27,11 @@ export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   colorMode?: ButtonGroupColorMode;
   /** Размер всех Button в группе. Значение по умолчанию 'm'. */
   dimension?: ButtonGroupDimension;
+  /**
+   * Пользовательские цвета всех Button в группе.
+   * Настройка отдельной Button игнорируется, пока она находится внутри ButtonGroup.
+   */
+  colorConfig?: ButtonGroupColorConfig;
 }
 
 export interface StyledButtonGroupProps {

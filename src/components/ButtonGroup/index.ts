@@ -1,2 +1,8 @@
 export { ButtonGroup } from './ButtonGroup';
-export type { ButtonGroupAppearance, ButtonGroupColorMode, ButtonGroupDimension, ButtonGroupProps } from './types';
+export type {
+  ButtonGroupAppearance,
+  ButtonGroupColorConfig,
+  ButtonGroupColorMode,
+  ButtonGroupDimension,
+  ButtonGroupProps,
+} from './types';

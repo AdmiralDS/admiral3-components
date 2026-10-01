@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import type { StyledButtonGroupProps } from './types';
 import { cssToken } from '../../theme/cssToken';
@@ -13,9 +13,13 @@ export const StyledButtonGroup = styled.div<StyledButtonGroupProps>`
   gap: ${({ $appearance }) => ($appearance === 'outline' ? 0 : 1)}px;
   white-space: nowrap;
 
-  &[data-appearance='outline'] > button:not(:first-child) {
-    margin-left: -1px;
-  }
+  ${({ $appearance }) =>
+    $appearance === 'outline' &&
+    css`
+      & > button:not(:first-child) {
+        margin-left: -1px;
+      }
+    `}
 
   & > button {
     border-radius: 0;

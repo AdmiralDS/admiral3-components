@@ -4,10 +4,14 @@ import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 const defaultScenarioId = 'button-group/default';
 const outlineScenarioId = 'button-group/styling/outline';
+const customColorsScenarioId = 'button-group/styling/custom-colors';
 const dimensionsScenarioId = 'button-group/styling/dimensions';
 const statesScenarioId = 'button-group/states';
 const keyboardScenarioId = 'button-group/keyboard-navigation';
 const solidBackgroundColorToken = '--admiral-color-primary-base-1-rest';
+const invisibleBackgroundColorToken = '--admiral-color-neutral-base-invisible-rest';
+const customTextColorToken = '--admiral-color-error-text-1-rest';
+const customBorderColorToken = '--admiral-color-error-stroke-1-rest';
 const dimensions = { l: 48, m: 40, s: 32, xs: 24 } as const;
 
 test.describe('ButtonGroup playground', () => {
@@ -64,6 +68,24 @@ test.describe('ButtonGroup playground', () => {
 
     await page.keyboard.press('End');
     await expect(last).toBeFocused();
+  });
+
+  test('applies the wrapper color config to every Button', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(customColorsScenarioId));
+
+    const group = page.getByTestId('button-group');
+    const buttons = group.getByRole('button');
+    const expectedBackgroundColor = await resolveCssColorToken(page, invisibleBackgroundColorToken);
+    const expectedTextColor = await resolveCssColorToken(page, customTextColorToken);
+    const expectedBorderColor = await resolveCssColorToken(page, customBorderColorToken);
+
+    await expect(group).toHaveAttribute('data-appearance', 'custom');
+    for (const button of await buttons.all()) {
+      await expect(button).toHaveAttribute('data-appearance', 'custom');
+      await expect(button).toHaveCSS('background-color', expectedBackgroundColor);
+      await expect(button).toHaveCSS('color', expectedTextColor);
+      await expect(button).toHaveCSS('box-shadow', `${expectedBorderColor} 0px 0px 0px 1px inset`);
+    }
   });
 
   test('keeps native Enter and Space activation', async ({ page }) => {

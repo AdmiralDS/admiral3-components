@@ -41,6 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const dimension = buttonGroup?.dimension ?? userDimension ?? 'm';
     const appearance = buttonGroup?.appearance ?? userAppearance ?? DEFAULT_APPEARANCE;
     const userColorMode = buttonGroup?.colorMode ?? userColorModeProp ?? DEFAULT_COLOR_MODE;
+    const resolvedColorConfig = buttonGroup ? buttonGroup.colorConfig : colorConfig;
 
     /** Использование fallback-значения при невалидной комбинации пропсов */
     const colorMode =
@@ -75,7 +76,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         $dimension={dimension}
         $appearance={appearance}
-        $colorConfig={colorConfig}
+        $colorConfig={resolvedColorConfig}
         $colorMode={colorMode}
         $loading={loading}
         $loadingPosition={loadingPosition}

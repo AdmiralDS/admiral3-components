@@ -4,6 +4,8 @@ import { ButtonGroup, type ButtonGroupProps } from '@admiral-ds/admiral3-compone
 
 import { ButtonGroupAppearancesTemplate } from './ButtonGroupAppearances.template';
 import buttonGroupAppearancesTemplateRaw from './ButtonGroupAppearances.template?raw';
+import { ButtonGroupCustomColorTemplate } from './ButtonGroupCustomColor.template';
+import buttonGroupCustomColorTemplateRaw from './ButtonGroupCustomColor.template?raw';
 import { ButtonGroupDimensionsTemplate } from './ButtonGroupDimensions.template';
 import buttonGroupDimensionsTemplateRaw from './ButtonGroupDimensions.template?raw';
 import { ButtonGroupIconBadgeTemplate } from './ButtonGroupIconBadge.template';
@@ -67,6 +69,21 @@ export const AppearancesAndColorModes: StoryObj<ButtonGroupProps> = {
     docs: {
       source: {
         code: buttonGroupAppearancesTemplateRaw,
+      },
+    },
+  },
+};
+
+export const CustomColor: StoryObj<ButtonGroupProps> = {
+  args: defaultArgs,
+  render: ButtonGroupCustomColorTemplate,
+  parameters: {
+    controls: {
+      exclude: ['appearance', 'colorMode', 'colorConfig'],
+    },
+    docs: {
+      source: {
+        code: buttonGroupCustomColorTemplateRaw,
       },
     },
   },

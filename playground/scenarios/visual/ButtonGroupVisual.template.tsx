@@ -1,6 +1,6 @@
 import { ServiceCheckOutline, ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 
-import { Badge, Button, ButtonGroup } from '@admiral-ds/admiral3-components';
+import { Badge, Button, ButtonGroup, type ButtonGroupColorConfig } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -26,6 +26,11 @@ const renderButtons = () => (
     <Button>Третий</Button>
   </>
 );
+
+const CUSTOM_COLOR_CONFIG: ButtonGroupColorConfig = {
+  borderColor: 'var(--admiral-color-error-stroke-1-rest)',
+  textColor: 'var(--admiral-color-error-text-1-rest)',
+};
 
 const renderAppearanceMatrix = () =>
   BUTTON_GROUP_APPEARANCES.flatMap((appearance) =>
@@ -190,6 +195,16 @@ export const ButtonGroupVisualTemplate = () => (
                 <Button>Сохранить документ</Button>
                 <Button>Скопировать ссылку</Button>
                 <Button>Удалить документ</Button>
+              </ButtonGroup>
+            </VisualSample>
+          </VisualSamples>
+        </VisualGroup>
+        <VisualGroup>
+          <VisualGroupTitle>Custom colors</VisualGroupTitle>
+          <VisualSamples>
+            <VisualSample>
+              <ButtonGroup appearance="outline" colorConfig={CUSTOM_COLOR_CONFIG} aria-label="Custom colors">
+                {renderButtons()}
               </ButtonGroup>
             </VisualSample>
           </VisualSamples>

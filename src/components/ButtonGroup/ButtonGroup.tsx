@@ -34,10 +34,25 @@ const getEventButton = (container: HTMLDivElement | null, target: EventTarget | 
 
 /** ButtonGroup объединяет связанные Button и управляет фокусом между ними. */
 export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
-  ({ children, appearance = 'solid', colorMode = 'colored', dimension = 'm', onFocus, onKeyDown, ...props }, ref) => {
+  (
+    {
+      children,
+      appearance = 'solid',
+      colorMode = 'colored',
+      dimension = 'm',
+      colorConfig,
+      onFocus,
+      onKeyDown,
+      ...props
+    },
+    ref,
+  ) => {
     const groupRef = useRef<HTMLDivElement | null>(null);
     const activeButtonRef = useRef<HTMLButtonElement | null>(null);
-    const contextValue = useMemo(() => ({ appearance, colorMode, dimension }), [appearance, colorMode, dimension]);
+    const contextValue = useMemo(
+      () => ({ appearance, colorMode, dimension, colorConfig }),
+      [appearance, colorMode, dimension, colorConfig],
+    );
 
     useLayoutEffect(() => {
       const buttons = getEnabledButtonElements(groupRef.current);
@@ -48,7 +63,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
 
       activeButtonRef.current = activeButton ?? null;
       setActiveButton(groupRef.current, activeButton);
-    }, [children, appearance, colorMode, dimension]);
+    }, [children, appearance, colorMode, dimension, colorConfig]);
 
     const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
       onFocus?.(event);
@@ -106,7 +121,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           role="toolbar"
           aria-orientation="horizontal"
           $appearance={appearance}
-          data-appearance={appearance}
+          data-appearance={colorConfig ? 'custom' : appearance}
           data-color-mode={colorMode}
           data-dimension={dimension}
           onFocus={handleFocus}

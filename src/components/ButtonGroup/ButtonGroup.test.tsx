@@ -77,7 +77,12 @@ describe('ButtonGroup', () => {
   it('overrides conflicting visual props on child Buttons without forwarding group props to the DOM', () => {
     render(
       <ButtonGroup aria-label="Actions" appearance="flat" colorMode="neutral" dimension="xs" data-testid="button-group">
-        <Button appearance="outline" colorMode="staticWhite" dimension="l">
+        <Button
+          appearance="outline"
+          colorMode="staticWhite"
+          dimension="l"
+          colorConfig={{ textColor: 'var(--child-button-text)' }}
+        >
           Action
         </Button>
       </ButtonGroup>,
@@ -92,6 +97,51 @@ describe('ButtonGroup', () => {
     expect(button).toHaveAttribute('data-appearance', 'flat');
     expect(button).toHaveAttribute('data-color-mode', 'neutral');
     expect(button).toHaveAttribute('data-dimension', 'xs');
+  });
+
+  it('applies the group color config to every Button and ignores a child color config', () => {
+    render(
+      <ButtonGroup
+        aria-label="Actions"
+        appearance="outline"
+        colorConfig={{
+          borderColor: 'var(--group-button-border)',
+          textColor: 'var(--group-button-text)',
+        }}
+        data-testid="button-group"
+      >
+        <Button colorConfig={{ textColor: 'var(--child-button-text)' }}>First</Button>
+        <Button>Second</Button>
+      </ButtonGroup>,
+    );
+
+    expect(screen.getByTestId('button-group')).toHaveAttribute('data-appearance', 'custom');
+    screen.getAllByRole('button').forEach((button) => {
+      expect(button).toHaveAttribute('data-appearance', 'custom');
+      expect(button).toHaveStyle({
+        color: 'var(--group-button-text)',
+        boxShadow: 'inset 0 0 0 1px var(--group-button-border)',
+      });
+    });
+  });
+
+  it('keeps one Tab stop when the group color config changes', () => {
+    const { rerender } = render(
+      <ButtonGroup aria-label="Actions">
+        <Button>First</Button>
+        <Button>Second</Button>
+      </ButtonGroup>,
+    );
+
+    rerender(
+      <ButtonGroup aria-label="Actions" colorConfig={{ textColor: 'var(--group-button-text)' }}>
+        <Button>First</Button>
+        <Button>Second</Button>
+      </ButtonGroup>,
+    );
+
+    expect(screen.getByRole('button', { name: 'First' })).toHaveAttribute('tabindex', '0');
+    expect(screen.getByRole('button', { name: 'Second' })).toHaveAttribute('tabindex', '-1');
   });
 
   it('keeps only the first enabled Button in the Tab sequence', () => {
