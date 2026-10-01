@@ -24,12 +24,21 @@ export const RadioButtonInformerTemplate = (args: RadioButtonProps) => (
     <RadioButtonList>
       {RADIO_BUTTON_DIMENSIONS.map((dimension) => (
         <SelectionControlLayout key={dimension}>
-          <RadioButton {...args} name={`radio-informer-${dimension}`} dimension={dimension} extraText="Add text">
+          <RadioButton
+            {...args}
+            name={`radio-informer-${dimension}`}
+            dimension={dimension}
+            extraText="Add text"
+            aria-describedby={`radio-hint-${dimension}`}
+          >
             Dimension — {dimension}
           </RadioButton>
           {/* TODO: в дальнейшем заменить title на Hint. */}
-          <SelectionControlInformer $dimension={dimension} title={INFORMER_TEXT} aria-label={INFORMER_TEXT}>
+          <SelectionControlInformer $dimension={dimension} title={INFORMER_TEXT}>
             <ServiceInfoSolid />
+            <span id={`radio-hint-${dimension}`} hidden>
+              {INFORMER_TEXT}
+            </span>
           </SelectionControlInformer>
         </SelectionControlLayout>
       ))}

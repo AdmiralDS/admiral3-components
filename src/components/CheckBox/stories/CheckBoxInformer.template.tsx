@@ -25,12 +25,20 @@ export const CheckBoxInformerTemplate = (args: CheckBoxProps) => (
     <CheckBoxList>
       {CHECK_BOX_DIMENSIONS.map((dimension) => (
         <SelectionControlLayout key={dimension}>
-          <CheckBox {...args} dimension={dimension} extraText="Дополнительный текст">
+          <CheckBox
+            {...args}
+            dimension={dimension}
+            extraText="Дополнительный текст"
+            aria-describedby={`checkbox-hint-${dimension}`}
+          >
             Размер {dimension.toUpperCase()}
           </CheckBox>
           {/* TODO: в дальнейшем заменить title на Hint. */}
-          <SelectionControlInformer $dimension={dimension} title={INFORMER_TEXT} aria-label={INFORMER_TEXT}>
+          <SelectionControlInformer $dimension={dimension} title={INFORMER_TEXT}>
             <ServiceInfoSolid />
+            <span id={`checkbox-hint-${dimension}`} hidden>
+              {INFORMER_TEXT}
+            </span>
           </SelectionControlInformer>
         </SelectionControlLayout>
       ))}

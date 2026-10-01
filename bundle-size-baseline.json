@@ -7,13 +7,13 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 22916
+      "rawBytes": 22942
     },
     "button-group": {
       "rawBytes": 2512
     },
     "check-box": {
-      "rawBytes": 11996
+      "rawBytes": 11970
     },
     "divider": {
       "rawBytes": 1543
@@ -46,7 +46,7 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 8983
+      "rawBytes": 8975
     },
     "skeleton": {
       "rawBytes": 1298

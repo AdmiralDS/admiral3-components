@@ -55,6 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const hasAccessibleName = props['aria-label'] !== undefined || props['aria-labelledby'] !== undefined;
     const ariaLabel = hasAccessibleName || !loading ? undefined : 'Загрузка...';
     const ariaDisabled = inactive || loading ? 'true' : undefined;
+    const ariaHidden = skeleton ? true : undefined;
     const tabIndex = disabled || skeleton ? -1 : 0;
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,6 +84,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         $square={square}
         aria-label={ariaLabel}
         aria-disabled={ariaDisabled}
+        aria-hidden={ariaHidden}
         tabIndex={tabIndex}
         onClick={handleClick}
         {...props}
