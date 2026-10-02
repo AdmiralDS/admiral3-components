@@ -15,6 +15,7 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
+      shouldRemoveUndefinedFromOptional: true,
       tsconfigPath: storybookTsconfigPath,
       include: ['src/**/*.tsx', '.storybook/**/*.tsx'],
       exclude: ['**/*.stories.tsx'],
