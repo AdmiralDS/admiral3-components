@@ -20,6 +20,7 @@ import { spinnerScenarios } from './spinner';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
+import { textAreaScenarios } from './text-area';
 
 export type PlaygroundScenario = {
   id: string;
@@ -46,6 +47,7 @@ export const playgroundScenarios = [
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
+  ...textAreaScenarios,
   ...toggleScenarios,
   ...tooltipScenarios,
   ...visualScenarios,
