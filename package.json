@@ -42,6 +42,10 @@
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
     },
+    "./hint": {
+      "types": "./dist/components/Hint/index.d.ts",
+      "import": "./dist/components/Hint/index.js"
+    },
     "./input": {
       "types": "./dist/components/Input/index.d.ts",
       "import": "./dist/components/Input/index.js"

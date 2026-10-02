@@ -20,6 +20,7 @@ import { spinnerScenarios } from './spinner';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
+import { hintScenarios } from './hint';
 
 export type PlaygroundScenario = {
   id: string;
@@ -36,6 +37,7 @@ export const playgroundScenarios = [
   ...dividerScenarios,
   ...fieldSetScenarios,
   ...formItemScenarios,
+  ...hintScenarios,
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
