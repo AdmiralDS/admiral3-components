@@ -113,15 +113,19 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       const textarea = textareaRef.current;
       if (!textarea || !autoHeight) return;
       let previousWidth = textarea.getBoundingClientRect().width;
+      let timer: ReturnType<typeof setTimeout> | undefined;
       const observer = new ResizeObserver(() => {
         const width = textarea.getBoundingClientRect().width;
         if (width !== previousWidth) {
           previousWidth = width;
-          updateHeight();
+          clearTimeout(timer);
+          // Меняем высоту вне текущего цикла уведомлений ResizeObserver.
+          timer = setTimeout(updateHeight, 0);
         }
       });
       observer.observe(textarea);
       return () => {
+        clearTimeout(timer);
         observer.disconnect();
         textarea.style.removeProperty('height');
       };
