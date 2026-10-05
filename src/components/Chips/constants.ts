@@ -9,21 +9,18 @@ export const CHIPS_DIMENSION_PARAMETERS = {
   s: {
     height: 20,
     iconSize: 16,
-    textHeight: 16,
     contentPadding: 2,
     typography: textStyles.caption.caption1,
   },
   m: {
     height: 24,
     iconSize: 16,
-    textHeight: 16,
     contentPadding: 4,
     typography: textStyles.caption.caption1,
   },
   l: {
     height: 32,
     iconSize: 20,
-    textHeight: 20,
     contentPadding: 6,
     typography: textStyles.body.body2Long,
   },

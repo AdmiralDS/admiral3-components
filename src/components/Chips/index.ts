@@ -1,2 +1,10 @@
-export { Chips } from './Chips';
-export type { ChipAppearance, ChipColorMode, ChipDimension, ChipsProps } from './types';
+export { SelectableChip } from './SelectableChip';
+export { RemovableChip } from './RemovableChip';
+export type {
+  SelectableChipProps,
+  ChipAppearance,
+  ChipBaseProps,
+  ChipColorMode,
+  ChipDimension,
+  RemovableChipProps,
+} from './types';

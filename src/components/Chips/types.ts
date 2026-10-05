@@ -1,35 +1,27 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { CHIPS_APPEARANCES, CHIPS_COLOR_MODES, CHIPS_DIMENSIONS } from './constants';
-import type { IconPlacementAppearance, IconPlacementDimension, IconPlacementProps } from './IconPlacement';
+import type { IconPlacementProps } from './IconPlacement';
 
 export type ChipDimension = (typeof CHIPS_DIMENSIONS)[number];
 export type ChipAppearance = (typeof CHIPS_APPEARANCES)[number];
 export type ChipColorMode = (typeof CHIPS_COLOR_MODES)[number];
 
-export interface ChipsProps extends HTMLAttributes<HTMLDivElement> {
-  /** Размер компонента. Значение по умолчанию 'm'. */
+export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
+  /** Размер компонента. По умолчанию 'm'. */
   dimension?: ChipDimension;
-  /** Отключённое состояние. Блокирует переданные Chips обработчики событий и удаление. */
-  disabled?: boolean;
-  /** Вид чипса. По умолчанию outlined. */
+  /** Вид чипса. По умолчанию 'outlined'. */
   appearance?: ChipAppearance;
-  /** Цветовой режим. По умолчанию colored. */
+  /** Цветовой режим. По умолчанию 'colored'. */
   colorMode?: ChipColorMode;
-  /** Выбранное состояние чипса. Игнорируется, если передан onClose. */
-  selected?: boolean;
-  /** Обработчик удаления. Добавляет кнопку закрытия и отключает режим selected. */
-  onClose?: () => void;
-  /** Иконки или другие декоративные элементы перед текстом Chips. Содержимое слота скрыто от скринридера. */
+  /** Иконки или другие декоративные элементы перед контентом чипса. */
   iconsBefore?: ReactNode;
-  /** Аватар перед текстом Chips. Если задан iconsBefore, отображается после него. */
+  /** Аватар перед текстом чипса. Если задан iconsBefore, отображается после него. */
   avatar?: ReactNode;
   /** Число, которое будет отображено в компоненте Badge справа от контента. */
   badge?: number;
-  /** Только для чтения. Блокирует переданные Chips обработчики событий и скрывает кнопку удаления. */
+  /** Только для чтения. Блокирует переданные обработчики событий; у RemovableChip скрывает кнопку удаления. */
   readOnly?: boolean;
-  /** Props кнопки закрытия. */
-  closeButtonProps?: IconPlacementProps;
   //TODO поправить описание при добавлении компонента Tooltip
   /** Функция, которая возвращает реакт-компонент с контентом tooltip, сейчас используется нативный title в качестве tooltip, поэтому функция должна возвращать string. Если этому компоненту нужны props, используйте замыкание */
   renderContentTooltip?: () => string;
@@ -46,55 +38,47 @@ export interface ChipsProps extends HTMLAttributes<HTMLDivElement> {
   disabledTooltip?: boolean;
 }
 
-export interface StyledChipProps {
+export interface SelectableChipProps extends ChipBaseProps {
+  /** Выбранное состояние чипса. */
+  selected?: boolean;
+  /** Отключённое состояние. Блокирует обработчики событий onClick и onKeyDown, остальные обработчики событий блокируются на строне пользователя. */
+  disabled?: boolean;
+  /** Только для чтения. Блокирует переданные обработчики событий */
+  readOnly?: boolean;
+  /** Иконки или другие декоративные элементы после контента чипса. */
+  iconsAfter?: ReactNode;
+}
+
+export interface RemovableChipProps extends ChipBaseProps {
+  /** Обработчик удаления. */
+  onClose: () => void;
+  /** Отключённое состояние. Блокирует обработчики событий onClose и onKeyDown. */
+  disabled?: boolean;
+  /** Props кнопки закрытия. */
+  closeButtonProps?: IconPlacementProps;
+  /** Только для чтения. Блокирует переданные обработчики событий и скрывает кнопку удаления. */
+  readOnly?: boolean;
+}
+
+export interface StyledBaseChipProps {
   $colorMode: ChipColorMode;
   $disabled?: boolean;
   $dimension: ChipDimension;
   $appearance?: ChipAppearance;
-  $selected?: boolean;
-  $defaultChip?: boolean;
-  $withCloseIcon?: boolean;
-  $withBadge?: boolean;
-  $withTooltip?: boolean;
-  $clickable: boolean;
   $readOnly?: boolean;
 }
 
-export type ChipDimensionStyleProps = Pick<StyledChipProps, '$dimension'>;
-export type ChipTypographyStyleProps = Pick<
-  StyledChipProps,
-  '$colorMode' | '$appearance' | '$dimension' | '$disabled' | '$selected'
->;
-export type ChipActionsStyleProps = Pick<
-  StyledChipProps,
-  '$colorMode' | '$appearance' | '$selected' | '$withCloseIcon'
->;
-export type ChipColorsStyleProps = Pick<
-  StyledChipProps,
-  | '$colorMode'
-  | '$appearance'
-  | '$clickable'
-  | '$dimension'
-  | '$disabled'
-  | '$selected'
-  | '$readOnly'
-  | '$withCloseIcon'
->;
-
-export interface StyledChipContentProps {
-  $colorMode: ChipColorMode;
-  $appearance?: ChipAppearance;
-  $disabled?: boolean;
+export interface StyledSelectableChipProps extends StyledBaseChipProps {
   $selected?: boolean;
-  $dimension: ChipDimension;
-  $withCloseIcon?: boolean;
 }
 
-export interface StyledIconWrapperProps {
-  $dimension: ChipDimension;
-}
-
-export interface StyledCloseIconButtonProps {
-  dimension: IconPlacementDimension;
-  appearance: IconPlacementAppearance;
-}
+export type ChipDimensionStyleProps = Pick<StyledBaseChipProps, '$dimension'>;
+export type ChipTypographyStyleProps = Pick<
+  StyledBaseChipProps,
+  '$colorMode' | '$appearance' | '$dimension' | '$disabled'
+>;
+export type ChipActionsStyleProps = Pick<StyledSelectableChipProps, '$colorMode' | '$appearance' | '$selected'>;
+export type ChipColorsStyleProps = Pick<
+  StyledBaseChipProps,
+  '$colorMode' | '$appearance' | '$dimension' | '$disabled' | '$readOnly'
+>;

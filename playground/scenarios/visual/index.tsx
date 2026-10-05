@@ -3,7 +3,6 @@ import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
-import { ChipsVisualTemplate } from './ChipsVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
@@ -14,6 +13,8 @@ import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
 import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
+import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
+import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
@@ -33,7 +34,6 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <CheckBoxVisualTemplate />,
   },
-  { id: VISUAL_SCENARIO_IDS.chips, title: 'Visual / Chips', visual: true, render: () => <ChipsVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.fieldSet,
@@ -62,6 +62,18 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / RadioButton',
     visual: true,
     render: () => <RadioButtonVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.removableChip,
+    title: 'Visual / RemovableChip',
+    visual: true,
+    render: () => <RemovableChipVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.selectableChip,
+    title: 'Visual / SelectableChip',
+    visual: true,
+    render: () => <SelectableChipVisualTemplate />,
   },
   {
     id: VISUAL_SCENARIO_IDS.skeleton,

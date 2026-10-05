@@ -11,8 +11,8 @@ import type {
   ChipDimension,
   ChipDimensionStyleProps,
   ChipTypographyStyleProps,
-  StyledChipContentProps,
-  StyledChipProps,
+  StyledBaseChipProps,
+  StyledSelectableChipProps,
 } from './types';
 import { cssToken } from '../../theme/cssToken';
 
@@ -141,10 +141,6 @@ const heightIcons = css<ChipDimensionStyleProps>`
   height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
 `;
 
-const heightText = css<ChipDimensionStyleProps>`
-  height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].textHeight}px;
-`;
-
 const widthIcons = css<ChipDimensionStyleProps>`
   width: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
 `;
@@ -152,10 +148,7 @@ const widthIcons = css<ChipDimensionStyleProps>`
 const chipTypographyHover = css<ChipTypographyStyleProps>`
   &:hover {
     color: ${(props) => {
-      const { $colorMode, $selected } = props;
-      if ($selected) {
-        return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
-      }
+      const { $colorMode } = props;
 
       if ($colorMode === 'neutral') {
         return textNeutral1Rest(props);
@@ -169,16 +162,9 @@ const chipTypographyHover = css<ChipTypographyStyleProps>`
 const chipTypography = css<ChipTypographyStyleProps>`
   ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].typography}
   color: ${(props) => {
-    const { $colorMode, $disabled, $selected } = props;
-    if ($disabled && !$selected) {
+    const { $colorMode, $disabled } = props;
+    if ($disabled) {
       return textNeutralDisabledRest(props);
-    }
-
-    if ($selected) {
-      if ($disabled) {
-        return ($colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
-      }
-      return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
     }
 
     return $colorMode === 'neutral' ? textNeutral1Rest(props) : textPrimary1Rest(props);
@@ -190,13 +176,13 @@ const chipTypography = css<ChipTypographyStyleProps>`
 const actionsMixin = css<ChipActionsStyleProps>`
   &:hover {
     ${(props) => {
-      const { $appearance, $selected, $withCloseIcon } = props;
+      const { $appearance, $selected } = props;
       if ($selected) {
         return `background-color: ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedHover : backgroundPrimary1Hover)(props)};`;
       }
       if ($appearance === 'flat') {
         return `background-color: ${(props.$colorMode === 'colored' ? backgroundPrimary3Hover : backgroundNeutralOpacityHover)(props)};`;
-      } else if (!$withCloseIcon) {
+      } else {
         return `background-color: ${backgroundNeutralInvisibleHover(props)};`;
       }
     }};
@@ -208,13 +194,13 @@ const actionsMixin = css<ChipActionsStyleProps>`
   }
   &:active {
     ${(props) => {
-      const { $appearance, $selected, $withCloseIcon } = props;
+      const { $appearance, $selected } = props;
       if ($selected) {
         return `background-color: ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedPress : backgroundPrimary1Press)(props)};`;
       }
       if ($appearance === 'flat') {
         return `background-color: ${(props.$colorMode === 'colored' ? backgroundPrimary3Press : backgroundNeutralOpacityPress)(props)};`;
-      } else if (!$withCloseIcon) {
+      } else {
         return `background-color: ${backgroundNeutralInvisiblePress(props)};`;
       }
     }};
@@ -230,12 +216,9 @@ const colorsBorderAndBackground = css<ChipColorsStyleProps>`
   transition:
     background-color ${hoverPressLeaveTransition},
     border-color ${hoverPressLeaveTransition};
-  border-radius: 16px;
+  border-radius: 1000px;
   background-color: ${(props) => {
-    const { $appearance, $selected, $disabled } = props;
-    if ($selected) {
-      return (props.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : backgroundPrimary1Rest)(props);
-    }
+    const { $appearance, $disabled } = props;
     return $appearance === 'flat'
       ? (props.$colorMode === 'colored' && !$disabled ? backgroundPrimary3Rest : backgroundNeutralOpacityRest)(props)
       : 'transparent';
@@ -244,93 +227,67 @@ const colorsBorderAndBackground = css<ChipColorsStyleProps>`
   border: ${(props) => {
     const { $appearance, $disabled } = props;
     if ($appearance === 'flat') return 'none';
-    if (props.$selected) {
-      return `1px solid ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : borderPrimary1Rest)(props)}`;
-    } else if ($disabled) {
+    if ($disabled) {
       return `1px solid ${borderNeutralDisabled(props)}`;
     } else {
       return `1px solid ${(props.$colorMode === 'neutral' ? borderNeutral2Rest : borderPrimary1Rest)(props)}`;
     }
   }};
 
-  ${(p) => p.$clickable && !p.$disabled && !p.$readOnly && !p.$withCloseIcon && actionsMixin}
-
   &:has(> :first-child:focus-visible) {
-    outline: 0;
-
-    &:before {
-      border: 2px solid ${borderPrimary1Rest};
-      border-radius: 20px;
-      content: '';
-      display: block;
-      position: absolute;
-      top: -4px;
-      left: -4px;
-      right: -4px;
-      bottom: -4px;
-      pointer-events: none;
-    }
+    outline: 2px solid ${borderPrimary1Rest};
+    outline-offset: 2px;
   }
 `;
-export const ChipComponentStyled = styled.div<StyledChipProps>`
+
+const ChipButtonBase = styled.div.attrs<
+  StyledBaseChipProps & {
+    'data-dimension': string;
+    'data-appearance': string;
+    'data-color-mode': string;
+  }
+>((props) => ({
+  'data-dimension': props.$dimension,
+  'data-appearance': props.$appearance,
+  'data-color-mode': props.$colorMode,
+}))<StyledBaseChipProps>`
   display: inline-flex;
-  column-gap: ${({ $withCloseIcon, $readOnly }) => ($withCloseIcon && !$readOnly ? '2px' : '0')};
   align-items: center;
   box-sizing: border-box;
-  position: relative;
   max-width: 190px;
-  user-select: none;
-  cursor: ${({ $defaultChip, $disabled, $withTooltip, $readOnly }) =>
-    ($defaultChip || $withTooltip) && !$disabled && !$readOnly ? 'pointer' : $disabled ? 'not-allowed' : 'default'};
+  min-width: 0;
+  user-select: ${(p) => (p.$readOnly ? 'text' : 'none')};
+  cursor: default;
   padding-inline: ${(p) =>
     CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
 
+  pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
   & > * {
-    pointer-events: ${({ $disabled, $readOnly }) => ($disabled || $readOnly ? 'none' : 'auto')};
+    pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
+  }
+
+  & svg [fill^='#'] {
+    fill: currentColor;
   }
 
   ${colorsBorderAndBackground}
   ${heights}
   ${chipTypography}
-`;
-
-const closeIconWrapperStyle = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ChipContentWrapperStyled = styled.div<StyledChipContentProps>`
-  background: transparent;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
 
   &:focus-visible {
-    outline: none;
+    outline: 2px solid ${borderPrimary1Rest};
+    outline-offset: 2px;
   }
-
-  ${(p) => p.$withCloseIcon && closeIconWrapperStyle}
-  ${(p) => (p.$withCloseIcon ? heights : heightText)}
 
   & svg {
     ${heightIcons}
     ${widthIcons}
     & *[fill^='#'] {
       fill: ${(props) => {
-        const { $appearance, $disabled, $selected } = props;
-        if ($selected) {
-          if ($disabled) {
-            return (props.$colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
-          }
-          return (props.$colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
-        }
+        const { $appearance, $disabled, $colorMode } = props;
         return $disabled
           ? textNeutralDisabledRest(props)
-          : props.$colorMode === 'colored'
+          : $colorMode === 'colored'
             ? textPrimary1Rest(props)
             : $appearance === 'flat'
               ? textNeutral2Rest(props)
@@ -339,11 +296,68 @@ export const ChipContentWrapperStyled = styled.div<StyledChipContentProps>`
     }
   }
 `;
+
+export const SelectableChipStyled = styled(ChipButtonBase)<StyledSelectableChipProps>`
+  cursor: ${(p) => (p.$disabled ? 'not-allowed' : 'pointer')};
+  border: ${(props) => {
+    const { $appearance } = props;
+
+    if (props.$selected && $appearance !== 'flat') {
+      return `1px solid ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : borderPrimary1Rest)(props)}`;
+    }
+  }};
+  color: ${(props) => {
+    const { $colorMode, $disabled, $selected } = props;
+
+    if ($selected) {
+      if ($disabled) {
+        return ($colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
+      }
+      return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+    }
+  }};
+
+  ${(p) => !p.$disabled && !p.$readOnly && actionsMixin}
+  background-color: ${(p) => {
+    if (p.$selected) {
+      return (p.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : backgroundPrimary1Rest)(p);
+    }
+  }};
+
+  & svg {
+    & *[fill^='#'] {
+      fill: ${(props) => {
+        const { $disabled, $selected, $colorMode } = props;
+        if ($selected) {
+          if ($disabled) {
+            return ($colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
+          }
+          return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+        }
+      }};
+    }
+  }
+
+  &:hover {
+    color: ${(props) => {
+      const { $colorMode, $selected, $disabled } = props;
+      if ($selected && !$disabled) {
+        return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+      }
+    }};
+  }
+`;
+
+export const RemovableChipStyled = styled(ChipButtonBase)<StyledBaseChipProps>`
+  gap: 2px;
+`;
+
 export const ChipChildrenWrapperStyled = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+  min-width: 0;
   padding-inline: 4px;
 `;
 
