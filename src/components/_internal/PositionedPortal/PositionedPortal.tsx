@@ -63,8 +63,7 @@ export const PositionedPortal = forwardRef<HTMLDivElement, PositionedPortalProps
       }
     }, [targetElement, fullContainerWidth]);
 
-    const portalRoot =
-      container ?? targetElement?.ownerDocument.body ?? (typeof document === 'undefined' ? null : document.body);
+    const portalRoot = container ?? targetElement?.ownerDocument.body;
 
     if (!portalRoot) return null;
 

@@ -56,6 +56,7 @@ const rectChanged = (previousRect: Rect | undefined, nextRect: Rect) =>
  * during cleanup.
  */
 export function observeRect(node: Element, callback: (rect: Rect) => void): RectObserver {
+  const targetWindow = node.ownerDocument.defaultView;
   // ID of the requested RAF callback that has not run yet
   let animationFrameId: number | undefined;
   // Last measured Rect passed to the callback
@@ -64,8 +65,8 @@ export function observeRect(node: Element, callback: (rect: Rect) => void): Rect
   let isObserving = false;
 
   const requestNextFrame = () => {
-    if (animationFrameId === undefined) {
-      animationFrameId = requestAnimationFrame(checkRect);
+    if (targetWindow && animationFrameId === undefined) {
+      animationFrameId = targetWindow.requestAnimationFrame(checkRect);
     }
   };
 
@@ -96,8 +97,8 @@ export function observeRect(node: Element, callback: (rect: Rect) => void): Rect
     unobserve() {
       isObserving = false;
 
-      if (animationFrameId !== undefined) {
-        cancelAnimationFrame(animationFrameId);
+      if (targetWindow && animationFrameId !== undefined) {
+        targetWindow.cancelAnimationFrame(animationFrameId);
         animationFrameId = undefined;
       }
     },

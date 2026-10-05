@@ -106,6 +106,24 @@ describe('observeRect', () => {
     expect(callback).not.toHaveBeenCalled();
   });
 
+  it('uses the observed node owner window for animation frames', () => {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const targetWindow = iframe.contentWindow!;
+    const node = iframe.contentDocument!.createElement('div');
+    const requestAnimationFrameSpy = vi.spyOn(targetWindow, 'requestAnimationFrame').mockReturnValue(7);
+    const cancelAnimationFrameSpy = vi.spyOn(targetWindow, 'cancelAnimationFrame');
+    const observer = observeRect(node, vi.fn());
+
+    observer.observe();
+    expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
+
+    observer.unobserve();
+    expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(7);
+    iframe.remove();
+  });
+
   it('does not schedule another frame when the callback stops observing', () => {
     const node = document.createElement('div');
     vi.spyOn(node, 'getBoundingClientRect').mockReturnValue(DEFAULT_RECT);
