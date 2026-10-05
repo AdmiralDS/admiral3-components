@@ -6,6 +6,8 @@ import { TooltipCustomTemplate } from './TooltipCustom.template';
 import tooltipCustomTemplateRaw from './TooltipCustom.template?raw';
 import { TooltipDelayTemplate } from './TooltipDelay.template';
 import tooltipDelayTemplateRaw from './TooltipDelay.template?raw';
+import { TooltipIframeTemplate } from './TooltipIframe.template';
+import tooltipIframeTemplateRaw from './TooltipIframe.template?raw';
 import { TooltipPlaygroundTemplate } from './TooltipPlayground.template';
 import tooltipPlaygroundTemplateRaw from './TooltipPlayground.template?raw';
 import { TooltipPositionTemplate } from './TooltipPosition.template';
@@ -129,4 +131,15 @@ export const CustomContent: StoryObj<TooltipProps> = {
     },
   },
   name: 'Пример с кастомным наполнением тултипа',
+};
+
+export const IFrame: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipIframeTemplate,
+  parameters: {
+    docs: {
+      source: { code: tooltipIframeTemplateRaw },
+    },
+  },
+  name: 'Пример использования тултипа внутри iframe',
 };

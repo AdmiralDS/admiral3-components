@@ -19,7 +19,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     const [recalculationKey, setRecalculationKey] = useState(0);
 
     const emptyContent = !hasSlotContent(children);
-    const targetDocument = targetElement?.ownerDocument;
     const mergedRef = useMemo(() => refSetter(ref, tooltipElementRef), [ref]);
 
     const manageTooltip = useCallback(
@@ -39,14 +38,21 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     useEffect(() => {
       if (!targetElement || !tooltipElementRef.current || emptyContent) return;
 
+      const targetDocument = targetElement.ownerDocument;
+      const targetWindow = targetDocument.defaultView;
+      if (!targetWindow) return;
+
       const scrollbarSize = getScrollbarSize(targetDocument);
-      const animationFrame = requestAnimationFrame(() => manageTooltip(scrollbarSize));
-      return () => cancelAnimationFrame(animationFrame);
-    }, [children, emptyContent, manageTooltip, recalculationKey, targetDocument, targetElement]);
+      const animationFrame = targetWindow.requestAnimationFrame(() => manageTooltip(scrollbarSize));
+      return () => targetWindow.cancelAnimationFrame(animationFrame);
+    }, [children, emptyContent, manageTooltip, recalculationKey, targetElement]);
 
     useLayoutEffect(() => {
-      if (tooltipElementRef.current && !emptyContent) {
-        const resizeObserver = new ResizeObserver((entries) => {
+      const tooltipElement = tooltipElementRef.current;
+      const ResizeObserverConstructor = tooltipElement?.ownerDocument.defaultView?.ResizeObserver;
+
+      if (tooltipElement && ResizeObserverConstructor && !emptyContent) {
+        const resizeObserver = new ResizeObserverConstructor((entries) => {
           entries.forEach((entry) => {
             const { width, height } = entry.contentRect;
             const previousSize = tooltipSize.current;
@@ -56,7 +62,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             }
           });
         });
-        resizeObserver.observe(tooltipElementRef.current);
+        resizeObserver.observe(tooltipElement);
         return () => {
           resizeObserver.disconnect();
         };

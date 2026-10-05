@@ -21,6 +21,7 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
   const tooltipId = useId();
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerCheckFrameRef = useRef<number | null>(null);
+  const pointerCheckWindowRef = useRef<Window | null>(null);
   const interactionInProgressRef = useRef(false);
   const ownerDocument = targetElement?.ownerDocument ?? tooltipElement?.ownerDocument;
 
@@ -60,8 +61,11 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
   }, [cancelOpening]);
 
   const cancelPointerCheck = useCallback(() => {
-    if (pointerCheckFrameRef.current !== null) cancelAnimationFrame(pointerCheckFrameRef.current);
+    if (pointerCheckFrameRef.current !== null) {
+      pointerCheckWindowRef.current?.cancelAnimationFrame(pointerCheckFrameRef.current);
+    }
     pointerCheckFrameRef.current = null;
+    pointerCheckWindowRef.current = null;
   }, []);
 
   const hideIfPointerOutside = useCallback(
@@ -84,8 +88,16 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
       // На следующем кадре проверяем фактический элемент под указателем.
       const { clientX, clientY } = event;
       cancelPointerCheck();
-      pointerCheckFrameRef.current = requestAnimationFrame(() => {
+      const ownerWindow = ownerDocument?.defaultView;
+      if (!ownerWindow) {
+        hideTooltip();
+        return;
+      }
+
+      pointerCheckWindowRef.current = ownerWindow;
+      pointerCheckFrameRef.current = ownerWindow.requestAnimationFrame(() => {
         pointerCheckFrameRef.current = null;
+        pointerCheckWindowRef.current = null;
         const hoveredElement = ownerDocument?.elementFromPoint(clientX, clientY) ?? null;
         if (!interactionInProgressRef.current && !isInsideTooltipArea(hoveredElement)) {
           hideTooltip();
