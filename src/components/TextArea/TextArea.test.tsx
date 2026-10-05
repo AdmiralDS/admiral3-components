@@ -67,6 +67,31 @@ describe('TextArea', () => {
     },
   );
 
+  it.each(['showClearIcon', 'showCopyIcon'] as const)(
+    'recalculates autoHeight when %s is enabled and disabled',
+    (iconProp) => {
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          disconnect() {}
+        },
+      );
+      vi.spyOn(HTMLTextAreaElement.prototype, 'scrollHeight', 'get').mockImplementation(function (
+        this: HTMLTextAreaElement,
+      ) {
+        return this.parentElement?.hasAttribute('data-action') ? 160 : 136;
+      });
+      const { rerender } = render(<TextArea aria-label="Text" defaultValue="Filled text" autoHeight />);
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toHaveStyle({ height: '136px' });
+      rerender(<TextArea aria-label="Text" defaultValue="Filled text" autoHeight {...{ [iconProp]: true }} />);
+      expect(textarea).toHaveStyle({ height: '160px' });
+      rerender(<TextArea aria-label="Text" defaultValue="Filled text" autoHeight {...{ [iconProp]: false }} />);
+      expect(textarea).toHaveStyle({ height: '136px' });
+    },
+  );
+
   it('forwards ref and native attributes to textarea, and container props to its container', () => {
     const ref = createRef<HTMLTextAreaElement>();
     const containerRef = createRef<HTMLDivElement>();

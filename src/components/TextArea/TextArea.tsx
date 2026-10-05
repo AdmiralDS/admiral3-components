@@ -89,7 +89,17 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     useLayoutEffect(() => {
       reportCharacterCount();
       updateHeight();
-    }, [reportCharacterCount, updateHeight, value, minimumRows, maximumRows, dimension, placeholder]);
+    }, [
+      reportCharacterCount,
+      updateHeight,
+      value,
+      minimumRows,
+      maximumRows,
+      dimension,
+      placeholder,
+      copyVisible,
+      clearVisible,
+    ]);
 
     // clean up on unmounting
     useLayoutEffect(() => {
@@ -148,7 +158,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       const textarea = textareaRef.current;
       if (button && textarea) {
         event.preventDefault();
-        if (textarea.ownerDocument.activeElement !== textarea) textarea.focus({ preventScroll: true });
+        const activeElement = textarea.ownerDocument.activeElement;
+        if (activeElement !== textarea && !(copyVisible && activeElement === button)) {
+          textarea.focus({ preventScroll: true });
+        }
       }
       onPointerDown?.(event);
     };

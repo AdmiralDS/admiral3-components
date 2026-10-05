@@ -86,26 +86,35 @@ test.describe('TextArea playground', () => {
     await expect(page.getByText('0 / 100', { exact: true })).toBeVisible();
   });
 
-  test('copies readOnly text and shows success for two seconds using Tooltip', async ({ page }) => {
-    await page.addInitScript(() => {
-      Object.defineProperty(navigator, 'clipboard', {
-        value: {
-          writeText: async (text: string) => {
-            document.documentElement.dataset.copiedText = text;
+  for (const activation of ['keyboard', 'click'] as const) {
+    test(`copies readOnly text and shows success for two seconds using Tooltip via ${activation}`, async ({
+      page,
+      browserName,
+    }) => {
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          value: {
+            writeText: async (text: string) => {
+              document.documentElement.dataset.copiedText = text;
+            },
           },
-        },
+        });
       });
+      await page.goto(getPlaygroundScenarioPath('text-area/copy'));
+      const copy = page.getByRole('button', { name: 'Копировать текст' });
+      await page.getByRole('textbox').focus();
+      await page.getByRole('textbox').press(getTabKey(browserName));
+      await expect(copy).toBeFocused();
+      await expect(page.getByRole('tooltip')).toHaveText('Копировать текст');
+      if (activation === 'keyboard') await copy.press('Enter');
+      else await copy.click();
+      await expect(copy).toBeFocused();
+      await expect(page.getByRole('tooltip')).toHaveText('Скопировано');
+      await expect(page.locator('html')).toHaveAttribute('data-copied-text', 'Текст для копирования');
+      await expect(page.getByRole('textbox')).toHaveValue('Текст для копирования');
+      await expect(page.getByRole('tooltip')).toHaveText('Копировать текст', { timeout: 4000 });
+      await copy.press('Escape');
+      await expect(page.getByRole('tooltip')).toBeHidden();
     });
-    await page.goto(getPlaygroundScenarioPath('text-area/copy'));
-    const copy = page.getByRole('button', { name: 'Копировать текст' });
-    await copy.focus();
-    await expect(page.getByRole('tooltip')).toHaveText('Копировать текст');
-    await copy.press('Enter');
-    await expect(page.getByRole('tooltip')).toHaveText('Скопировано');
-    await expect(page.locator('html')).toHaveAttribute('data-copied-text', 'Текст для копирования');
-    await expect(page.getByRole('textbox')).toHaveValue('Текст для копирования');
-    await expect(page.getByRole('tooltip')).toHaveText('Копировать текст', { timeout: 4000 });
-    await copy.press('Escape');
-    await expect(page.getByRole('tooltip')).toBeHidden();
-  });
+  }
 });
