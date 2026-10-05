@@ -17,10 +17,10 @@ import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
-import { textAreaScenarios } from './text-area';
 
 export type PlaygroundScenario = {
   id: string;
