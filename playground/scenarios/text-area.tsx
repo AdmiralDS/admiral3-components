@@ -13,6 +13,17 @@ export const textAreaScenarios: PlaygroundScenario[] = [
     render: () => <TextAreaPlaygroundTemplate data-testid="text-area" placeholder="Введите текст" showClearIcon />,
   },
   {
+    id: 'text-area/focus',
+    title: 'TextArea Focus',
+    render: () => (
+      <>
+        <TextAreaPlaygroundTemplate aria-label="Без статуса" />
+        <TextAreaPlaygroundTemplate aria-label="Ошибка" status="error" />
+        <TextAreaPlaygroundTemplate aria-label="Успех" status="success" />
+      </>
+    ),
+  },
+  {
     id: 'text-area/auto-height',
     title: 'TextArea Auto height',
     render: () => <TextAreaAutoHeightTemplate autoHeight minRows={2} maxRows={4} showClearIcon />,

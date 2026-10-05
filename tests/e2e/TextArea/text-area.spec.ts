@@ -1,8 +1,31 @@
 import { expect, test } from '@playwright/test';
 
-import { getTabKey, getPlaygroundScenarioPath } from '../utils';
+import { getTabKey, getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('TextArea playground', () => {
+  for (const { name, label, token } of [
+    { name: 'default', label: 'Без статуса', token: '--admiral-color-neutral-stroke-2-focus' },
+    { name: 'error', label: 'Ошибка', token: '--admiral-color-error-stroke-1-rest' },
+    { name: 'success', label: 'Успех', token: '--admiral-color-success-stroke-1-rest' },
+  ]) {
+    test(`shows the focus border for ${name} status and restores its width on blur`, async ({ page }) => {
+      await page.goto(getPlaygroundScenarioPath('text-area/focus'));
+      const control = page.getByRole('textbox', { name: label, exact: true });
+      const border = control.locator('..').locator('[data-role="input-border"]');
+      const expectedColor = await resolveCssColorToken(page, token);
+
+      await expect(border).toHaveCSS('border-top-width', '1px');
+      await control.click();
+      await expect(control).toBeFocused();
+      await expect(border).toHaveCSS('border-top-width', '2px');
+      await expect(border).toHaveCSS('border-top-color', expectedColor);
+
+      await control.blur();
+      await expect(control).not.toBeFocused();
+      await expect(border).toHaveCSS('border-top-width', '1px');
+    });
+  }
+
   test('uses a native textarea and clears with keyboard, restoring focus', async ({ page, browserName }) => {
     await page.goto(getPlaygroundScenarioPath('text-area/default'));
     const control = page.getByRole('textbox', { name: 'Текст', exact: true });
