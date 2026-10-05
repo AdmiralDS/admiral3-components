@@ -133,10 +133,13 @@ export const CustomContent: StoryObj<TooltipProps> = {
   name: 'Пример с кастомным наполнением тултипа',
 };
 
-export const IFrame: StoryObj<TooltipProps> = {
-  args: defaultArgs,
+export const IFrame: StoryObj = {
   render: TooltipIframeTemplate,
   parameters: {
+    // axe-core must be injected into every iframe to test its content. This example intentionally omits that
+    // infrastructure to keep the focus on redirecting application styles into iframe documents.
+    a11y: { options: { rules: { 'frame-tested': { enabled: false } } } },
+    controls: { disable: true },
     docs: {
       source: { code: tooltipIframeTemplateRaw },
     },
