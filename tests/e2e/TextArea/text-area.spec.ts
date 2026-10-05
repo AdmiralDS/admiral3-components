@@ -1,16 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-import { getPlaygroundScenarioPath } from '../utils';
+import { getTabKey, getPlaygroundScenarioPath } from '../utils';
 
 test.describe('TextArea playground', () => {
-  test('uses a native textarea and clears with keyboard, restoring focus', async ({ page }) => {
+  test('uses a native textarea and clears with keyboard, restoring focus', async ({ page, browserName }) => {
     await page.goto(getPlaygroundScenarioPath('text-area/default'));
     const control = page.getByRole('textbox', { name: 'Текст', exact: true });
     const clear = page.getByRole('button', { name: 'Очистить поле' });
     await expect(control).toHaveJSProperty('tagName', 'TEXTAREA');
     await expect(clear).toBeHidden();
     await control.fill('First\nSecond');
-    await control.press('Tab');
+    await control.press(getTabKey(browserName));
     await expect(clear).toBeFocused();
     await clear.press('Enter');
     await expect(control).toHaveValue('');
