@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { CHIPS_APPEARANCES, CHIPS_COLOR_MODES, CHIPS_DIMENSIONS } from './constants';
-import type { IconPlacementProps } from './IconPlacement';
+import type { IconPlacementProps } from '../_internal/IconPlacement';
 
 export type ChipDimension = (typeof CHIPS_DIMENSIONS)[number];
 export type ChipAppearance = (typeof CHIPS_APPEARANCES)[number];

@@ -3,9 +3,10 @@ import { forwardRef, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { refSetter } from '#src/utils/refSetter';
 
 import { ChipContent } from './ChipContent';
-import { CloseIconButton, RemovableChipStyled } from './style';
+import { RemovableChipStyled } from './style';
 import type { RemovableChipProps } from './types';
 import { useChipTooltip } from './useChipTooltip';
+import { CloseIconPlacementButton } from '../_internal/IconPlacement';
 
 export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
   (
@@ -79,15 +80,13 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
           contentRef={tooltip.contentRef}
         />
         {!readOnly && (
-          <CloseIconButton
+          <CloseIconPlacementButton
             {...closeButtonProps}
-            dimension={dimension === 'l' ? 'mBig' : dimension === 'm' ? 'sMedium' : 'sSmall'}
-            disableHighlighter
+            dimension={dimension === 'l' ? 'm' : 's'}
             onClick={handleClickCloseIcon}
             disabled={disabled}
             tabIndex={-1}
-            appearance={colorMode === 'colored' ? 'primary' : 'secondary'}
-            $colorMode={colorMode}
+            colorMode={colorMode}
           />
         )}
       </RemovableChipStyled>
