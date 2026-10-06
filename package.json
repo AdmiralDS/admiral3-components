@@ -38,6 +38,10 @@
       "types": "./dist/components/FieldSet/index.d.ts",
       "import": "./dist/components/FieldSet/index.js"
     },
+    "./form-item": {
+      "types": "./dist/components/FormItem/index.d.ts",
+      "import": "./dist/components/FormItem/index.js"
+    },
     "./helper-components": {
       "types": "./dist/components/HelperComponents/index.d.ts",
       "import": "./dist/components/HelperComponents/index.js"
@@ -85,6 +89,10 @@
     "./toggle": {
       "types": "./dist/components/Toggle/index.d.ts",
       "import": "./dist/components/Toggle/index.js"
+    },
+    "./tooltip": {
+      "types": "./dist/components/Tooltip/index.d.ts",
+      "import": "./dist/components/Tooltip/index.js"
     }
   },
   "keywords": [
@@ -133,14 +141,14 @@
   },
   "peerDependencies": {
     "@admiral-ds/admiral3-icons": "~0.0.4",
-    "@admiral-ds/admiral3-tokens": "~0.1.0",
+    "@admiral-ds/admiral3-tokens": "~0.1.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "styled-components": "^6.4.1"
   },
   "devDependencies": {
     "@admiral-ds/admiral3-icons": "~0.0.4",
-    "@admiral-ds/admiral3-tokens": "~0.1.0",
+    "@admiral-ds/admiral3-tokens": "~0.1.1",
     "@emnapi/core": "^1.10.0",
     "@emnapi/runtime": "^1.10.0",
     "@eslint/js": "^9.39.4",
@@ -152,6 +160,7 @@
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/addon-themes": "^10.6.0",
     "@storybook/react-vite": "^10.6.0",
+    "@tanstack/react-form": "^1.33.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^24.13.2",

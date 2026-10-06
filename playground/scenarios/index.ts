@@ -7,6 +7,7 @@ import { buttonGroupScenarios } from './button-group';
 import { checkBoxScenarios } from './check-box';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
+import { formItemScenarios } from './form-item';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
@@ -18,6 +19,7 @@ import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
 import { toggleScenarios } from './toggle';
+import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
 
 export type PlaygroundScenario = {
@@ -35,6 +37,7 @@ export const playgroundScenarios = [
   ...checkBoxScenarios,
   ...dividerScenarios,
   ...fieldSetScenarios,
+  ...formItemScenarios,
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
@@ -46,5 +49,6 @@ export const playgroundScenarios = [
   ...skeletonScenarios,
   ...spinnerScenarios,
   ...toggleScenarios,
+  ...tooltipScenarios,
   ...visualScenarios,
 ];

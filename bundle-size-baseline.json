@@ -7,7 +7,7 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 23427
+      "rawBytes": 23419
     },
     "button-group": {
       "rawBytes": 3609
@@ -21,11 +21,14 @@
     "field-set": {
       "rawBytes": 1702
     },
+    "form-item": {
+      "rawBytes": 4829
+    },
     "helper-components": {
       "rawBytes": 9721
     },
     "input": {
-      "rawBytes": 12516
+      "rawBytes": 13216
     },
     "link": {
       "rawBytes": 2676
@@ -56,6 +59,9 @@
     },
     "toggle": {
       "rawBytes": 7679
+    },
+    "tooltip": {
+      "rawBytes": 7951
     }
   },
   "version": 1

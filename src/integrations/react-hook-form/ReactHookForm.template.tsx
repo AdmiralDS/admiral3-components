@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 
 import {
@@ -17,8 +17,10 @@ import {
 type FormValues = {
   name: string;
   password: string;
+  confirmPassword: string;
   email: string;
   website: string;
+  comment: string;
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -27,8 +29,10 @@ type FormValues = {
 const defaultValues: FormValues = {
   name: '',
   password: '',
+  confirmPassword: '',
   email: '',
   website: '',
+  comment: '',
   delivery: 'courier',
   agreement: false,
   notifications: true,
@@ -82,6 +86,11 @@ const ErrorText = styled.span`
   color: var(--admiral-color-error-text-1-rest);
 `;
 
+const SuccessText = styled.span`
+  ${textStyles.body.body2Long}
+  color: var(--admiral-color-success-text-1-rest);
+`;
+
 const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -101,20 +110,45 @@ const Result = styled.pre`
 `;
 
 export const ReactHookFormTemplate = () => {
+  const idPrefix = useId();
+  const nameId = `${idPrefix}-rhf-name`;
+  const passwordId = `${idPrefix}-rhf-password`;
+  const confirmPasswordId = `${idPrefix}-rhf-confirm-password`;
+  const emailId = `${idPrefix}-rhf-email`;
+  const websiteId = `${idPrefix}-rhf-website`;
+  const commentId = `${idPrefix}-rhf-comment`;
+  const agreementErrorId = `${idPrefix}-rhf-agreement-error`;
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const {
     control,
     formState: { errors },
     handleSubmit,
+    getValues,
+    getFieldState,
+    trigger,
     register,
     reset,
   } = useForm<FormValues>({ defaultValues });
+
+  const password = useWatch({ control, name: 'password' });
+  const confirmPassword = useWatch({ control, name: 'confirmPassword' });
+  const passwordSuccess = !errors.password && password.length >= 8 ? 'Пароль соответствует требованиям' : undefined;
+  const confirmationSuccess = passwordSuccess && confirmPassword === password ? 'Пароли совпадают' : undefined;
+
+  const handlePasswordChange = () => {
+    void trigger('password');
+    if (getValues('confirmPassword') || getFieldState('confirmPassword').isTouched || errors.confirmPassword) {
+      void trigger('confirmPassword');
+    }
+  };
 
   const handleReset = () => {
     reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
+    setConfirmPasswordVisible(false);
   };
 
   return (
@@ -122,30 +156,32 @@ export const ReactHookFormTemplate = () => {
       <Form noValidate onSubmit={handleSubmit(setSubmittedValues)}>
         <Title>Регистрационная форма</Title>
         <Description>
-          Пример интеграции компонентов Admiral 3 с React Hook Form. Input подключены через register, составные поля —
-          через Controller.
+          Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
+          комментария и составные поля — через Controller.
         </Description>
 
         <Field>
-          <Label htmlFor="rhf-name">Имя</Label>
+          <Label htmlFor={nameId}>Имя</Label>
           <Input
-            id="rhf-name"
+            aria-required
+            id={nameId}
             type="text"
             showClearIcon
             placeholder="Иван Иванов"
             autoComplete="name"
             status={errors.name ? 'error' : undefined}
             aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? 'rhf-name-error' : undefined}
+            aria-describedby={errors.name ? `${nameId}-error` : undefined}
             {...register('name', { required: 'Введите имя' })}
           />
-          {errors.name && <ErrorText id="rhf-name-error">{errors.name.message}</ErrorText>}
+          {errors.name && <ErrorText id={`${nameId}-error`}>{errors.name.message}</ErrorText>}
         </Field>
 
         <Field>
-          <Label htmlFor="rhf-password">Пароль</Label>
+          <Label htmlFor={passwordId}>Пароль</Label>
           <Input
-            id="rhf-password"
+            aria-required
+            id={passwordId}
             type={passwordVisible ? 'text' : 'password'}
             showClearIcon
             iconsAfter={
@@ -157,54 +193,119 @@ export const ReactHookFormTemplate = () => {
             }
             placeholder="Не менее 8 символов"
             autoComplete="new-password"
-            status={errors.password ? 'error' : undefined}
+            status={errors.password ? 'error' : passwordSuccess ? 'success' : undefined}
             aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'rhf-password-error' : undefined}
+            aria-describedby={
+              errors.password ? `${passwordId}-error` : passwordSuccess ? `${passwordId}-success` : undefined
+            }
             {...register('password', {
               required: 'Введите пароль',
+              onChange: handlePasswordChange,
               minLength: { value: 8, message: 'Пароль должен содержать не менее 8 символов' },
             })}
           />
-          {errors.password && <ErrorText id="rhf-password-error">{errors.password.message}</ErrorText>}
+          {errors.password ? (
+            <ErrorText id={`${passwordId}-error`}>{errors.password.message}</ErrorText>
+          ) : passwordSuccess ? (
+            <SuccessText id={`${passwordId}-success`}>{passwordSuccess}</SuccessText>
+          ) : null}
         </Field>
 
         <Field>
-          <Label htmlFor="rhf-email">Электронная почта</Label>
+          <Label htmlFor={confirmPasswordId}>Повторите пароль</Label>
           <Input
-            id="rhf-email"
+            aria-required
+            id={confirmPasswordId}
+            type={confirmPasswordVisible ? 'text' : 'password'}
+            showClearIcon
+            iconsAfter={
+              <InputIconPasswordButton
+                visible={confirmPasswordVisible}
+                onVisibleChange={setConfirmPasswordVisible}
+                preventFocus={false}
+              />
+            }
+            placeholder="Повторите пароль"
+            autoComplete="new-password"
+            status={errors.confirmPassword ? 'error' : confirmationSuccess ? 'success' : undefined}
+            aria-invalid={Boolean(errors.confirmPassword)}
+            aria-describedby={
+              errors.confirmPassword
+                ? `${confirmPasswordId}-error`
+                : confirmationSuccess
+                  ? `${confirmPasswordId}-success`
+                  : undefined
+            }
+            {...register('confirmPassword', {
+              required: 'Повторите пароль',
+              validate: (value) => value === getValues('password') || 'Пароли не совпадают',
+              onChange: () => {
+                void trigger('confirmPassword');
+              },
+            })}
+          />
+          {errors.confirmPassword ? (
+            <ErrorText id={`${confirmPasswordId}-error`}>{errors.confirmPassword.message}</ErrorText>
+          ) : confirmationSuccess ? (
+            <SuccessText id={`${confirmPasswordId}-success`}>{confirmationSuccess}</SuccessText>
+          ) : null}
+        </Field>
+
+        <Field>
+          <Label htmlFor={emailId}>Электронная почта</Label>
+          <Input
+            aria-required
+            id={emailId}
             type="email"
             showClearIcon
             placeholder="name@example.com"
             autoComplete="email"
             status={errors.email ? 'error' : undefined}
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'rhf-email-error' : undefined}
+            aria-describedby={errors.email ? `${emailId}-error` : undefined}
             {...register('email', {
               required: 'Введите электронную почту',
               pattern: { value: /^\S+@\S+\.\S+$/, message: 'Введите корректный адрес электронной почты' },
             })}
           />
-          {errors.email && <ErrorText id="rhf-email-error">{errors.email.message}</ErrorText>}
+          {errors.email && <ErrorText id={`${emailId}-error`}>{errors.email.message}</ErrorText>}
         </Field>
 
         <Field>
-          <Label htmlFor="rhf-website">Сайт</Label>
+          <Label htmlFor={websiteId}>Сайт</Label>
           <Input
-            id="rhf-website"
+            id={websiteId}
             type="url"
             showClearIcon
             placeholder="https://example.com"
             autoComplete="url"
             status={errors.website ? 'error' : undefined}
             aria-invalid={Boolean(errors.website)}
-            aria-describedby={errors.website ? 'rhf-website-error' : undefined}
+            aria-describedby={errors.website ? `${websiteId}-error` : undefined}
             {...register('website', {
-              required: 'Введите адрес сайта',
               pattern: { value: /^https?:\/\/.+/, message: 'Адрес должен начинаться с http:// или https://' },
             })}
           />
-          {errors.website && <ErrorText id="rhf-website-error">{errors.website.message}</ErrorText>}
+          {errors.website && <ErrorText id={`${websiteId}-error`}>{errors.website.message}</ErrorText>}
         </Field>
+
+        <Controller
+          name="comment"
+          control={control}
+          render={({ field }) => (
+            <Field>
+              <Label htmlFor={commentId}>Комментарий</Label>
+              <Input
+                {...field}
+                id={commentId}
+                type="text"
+                maxLength={50}
+                showClearIcon
+                placeholder="Добавьте комментарий"
+              />
+            </Field>
+          )}
+        />
 
         <Controller
           name="delivery"
@@ -239,11 +340,11 @@ export const ReactHookFormTemplate = () => {
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 error={Boolean(errors.agreement)}
-                aria-describedby={errors.agreement ? 'rhf-agreement-error' : undefined}
+                aria-describedby={errors.agreement ? agreementErrorId : undefined}
               >
                 Я принимаю условия использования
               </CheckBox>
-              {errors.agreement && <ErrorText id="rhf-agreement-error">{errors.agreement.message}</ErrorText>}
+              {errors.agreement && <ErrorText id={agreementErrorId}>{errors.agreement.message}</ErrorText>}
             </Field>
           )}
         />

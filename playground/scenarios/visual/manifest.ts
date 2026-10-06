@@ -6,6 +6,7 @@ export const VISUAL_SCENARIO_IDS = {
   checkBox: 'visual/check-box',
   divider: 'visual/divider',
   fieldSet: 'visual/field-set',
+  formItem: 'visual/form-item',
   input: 'visual/input',
   link: 'visual/link',
   list: 'visual/list',
@@ -17,4 +18,5 @@ export const VISUAL_SCENARIO_IDS = {
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
   toggle: 'visual/toggle',
+  tooltip: 'visual/tooltip',
 } as const;
