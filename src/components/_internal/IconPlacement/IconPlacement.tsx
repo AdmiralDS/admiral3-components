@@ -6,17 +6,21 @@ import { IconPlacementButton } from './style';
 import type { IconPlacementProps } from './types';
 
 export const IconPlacement = forwardRef<HTMLButtonElement, IconPlacementProps>(
-  ({ type = 'button', dimension = 'm', colorMode = 'colored', children, activateOnKeyDown = false, ...props }, ref) => {
+  (
+    { type = 'button', dimension = 'm', colorMode = 'colored', children, disableKeyboardActivation = false, ...props },
+    ref,
+  ) => {
     const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
       if (props.disabled) return;
 
-      if (activateOnKeyDown && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        //eslint-disable-next-line
-        props.onClick?.(e as any);
+      if (disableKeyboardActivation) {
+        props.onKeyDown?.(e);
+      } else {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          props.onKeyDown?.(e);
+        }
       }
-
-      props.onKeyDown?.(e);
     };
 
     return (

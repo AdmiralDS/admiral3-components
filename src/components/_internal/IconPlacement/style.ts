@@ -95,6 +95,7 @@ export const IconPlacementButton = styled.button<IconPlacementButtonStyleProps>`
           : cssToken('--admiral-color-neutral-text-disable-rest', (theme) => theme.color.neutral.text.disable.rest)};
     }
   }
+
   &:not(:disabled) {
     ${iconColorMixin}
     ${eventsMixin}
