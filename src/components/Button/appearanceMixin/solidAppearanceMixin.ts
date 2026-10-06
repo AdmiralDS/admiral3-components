@@ -1,9 +1,37 @@
-import { css } from 'styled-components';
+import { css, type ExecutionContext } from 'styled-components';
 
 import { solidColors } from './colors';
+import { cssToken } from '../../../theme/cssToken';
 import type { ButtonColorMode } from '../types';
 
-export const solidAppearanceMixin = css<{ $colorMode: ButtonColorMode }>`
+const buttonGroupColoredDisabledText = cssToken(
+  '--admiral-color-neutral-text-static-white-3',
+  (theme) => theme.color.neutral.text.staticWhite._3,
+);
+const buttonGroupNeutralDisabledText = cssToken(
+  '--admiral-color-neutral-text-inverted-disable',
+  (theme) => theme.color.neutral.text.inverted.disable,
+);
+
+interface SolidAppearanceProps {
+  $buttonGroup?: boolean;
+  $colorMode: ButtonColorMode;
+}
+
+const getDisabledBackground = (props: ExecutionContext & SolidAppearanceProps) =>
+  (props.$buttonGroup ? solidColors[props.$colorMode].background : solidColors[props.$colorMode].backgroundDisabled)(
+    props,
+  );
+
+const getDisabledText = (props: ExecutionContext & SolidAppearanceProps) => {
+  if (!props.$buttonGroup || props.$colorMode === 'staticWhite') {
+    return solidColors[props.$colorMode].colorDisabled(props);
+  }
+
+  return props.$colorMode === 'colored' ? buttonGroupColoredDisabledText(props) : buttonGroupNeutralDisabledText(props);
+};
+
+export const solidAppearanceMixin = css<SolidAppearanceProps>`
   background-color: ${(p) => solidColors[p.$colorMode].background(p)};
   color: ${(p) => solidColors[p.$colorMode].color(p)};
   &&& *[fill^='#'] {
@@ -20,10 +48,10 @@ export const solidAppearanceMixin = css<{ $colorMode: ButtonColorMode }>`
 
   &&&&[data-appearance~='disabled'],
   &&&:disabled {
-    background-color: ${(p) => solidColors[p.$colorMode].backgroundDisabled};
-    color: ${(p) => solidColors[p.$colorMode].colorDisabled};
+    background-color: ${getDisabledBackground};
+    color: ${getDisabledText};
     &&& *[fill^='#'] {
-      fill: ${(p) => solidColors[p.$colorMode].colorDisabled};
+      fill: ${getDisabledText};
     }
   }
 `;

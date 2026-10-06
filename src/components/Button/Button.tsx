@@ -76,6 +76,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         $dimension={dimension}
         $appearance={appearance}
+        $buttonGroup={buttonGroup !== null}
         $colorConfig={resolvedColorConfig}
         $colorMode={colorMode}
         $loading={loading}

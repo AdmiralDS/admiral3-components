@@ -84,6 +84,7 @@ export type ButtonProps = SolidGhostAppearanceProps | FlatOutlineAppearanceProps
 
 export interface StyledButtonProps {
   $appearance: ButtonAppearance;
+  $buttonGroup?: boolean;
   $colorMode: ButtonColorMode;
   $dimension: ButtonDimension;
   $colorConfig?: ButtonColorConfig;

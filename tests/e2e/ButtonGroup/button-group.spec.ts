@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { BUTTON_DIMENSION_PARAMETERS } from '#src/components/Button/constants';
+
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 const defaultScenarioId = 'button-group/default';
@@ -12,7 +14,9 @@ const solidBackgroundColorToken = '--admiral-color-primary-base-1-rest';
 const invisibleBackgroundColorToken = '--admiral-color-neutral-base-invisible-rest';
 const customTextColorToken = '--admiral-color-error-text-1-rest';
 const customBorderColorToken = '--admiral-color-error-stroke-1-rest';
-const dimensions = { l: 48, m: 40, s: 32, xs: 24 } as const;
+const solidColoredFocusColorToken = '--admiral-color-neutral-stroke-static-white-1';
+const solidColoredDisabledTextColorToken = '--admiral-color-neutral-text-static-white-3';
+const dimensions = BUTTON_DIMENSION_PARAMETERS;
 
 test.describe('ButtonGroup playground', () => {
   test('renders a labelled horizontal toolbar with uniform Button props', async ({ page }) => {
@@ -48,6 +52,9 @@ test.describe('ButtonGroup playground', () => {
     await page.keyboard.press(tabKey);
     await expect(first).toBeFocused();
     await expect(first).toHaveCSS('outline-style', 'solid');
+    await expect(first).toHaveCSS('outline-width', '2px');
+    await expect(first).toHaveCSS('outline-offset', '-4px');
+    await expect(first).toHaveCSS('outline-color', await resolveCssColorToken(page, solidColoredFocusColorToken));
 
     await page.keyboard.press(tabKey);
     await expect(page.getByTestId('after-button-group')).toBeFocused();
@@ -115,8 +122,8 @@ test.describe('ButtonGroup playground', () => {
       elements.map((element) => element.getBoundingClientRect().toJSON()),
     );
 
-    expect(boxes[1].left).toBeCloseTo(boxes[0].right + 1, 1);
-    expect(boxes[2].left).toBeCloseTo(boxes[1].right + 1, 1);
+    expect(boxes[1].left).toBeCloseTo(boxes[0].right + 2, 1);
+    expect(boxes[2].left).toBeCloseTo(boxes[1].right + 2, 1);
     await expect(buttons.first()).toHaveCSS('border-top-left-radius', '4px');
     await expect(buttons.first()).toHaveCSS('border-top-right-radius', '0px');
     await expect(buttons.nth(1)).toHaveCSS('border-radius', '0px');
@@ -163,9 +170,18 @@ test.describe('ButtonGroup playground', () => {
   test('preserves individual disabled, inactive and loading behavior', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(statesScenarioId));
 
-    await expect(page.getByTestId('button-group-disabled')).toBeDisabled();
-    await expect(page.getByTestId('button-group-disabled')).toHaveAttribute('tabindex', '-1');
-    await expect(page.getByTestId('button-group-inactive')).toHaveAttribute('aria-disabled', 'true');
+    const disabled = page.getByTestId('button-group-disabled');
+    const inactive = page.getByTestId('button-group-inactive');
+    const expectedBackground = await resolveCssColorToken(page, solidBackgroundColorToken);
+    const expectedDisabledText = await resolveCssColorToken(page, solidColoredDisabledTextColorToken);
+
+    await expect(disabled).toBeDisabled();
+    await expect(disabled).toHaveAttribute('tabindex', '-1');
+    await expect(disabled).toHaveCSS('background-color', expectedBackground);
+    await expect(disabled).toHaveCSS('color', expectedDisabledText);
+    await expect(inactive).toHaveAttribute('aria-disabled', 'true');
+    await expect(inactive).toHaveCSS('background-color', expectedBackground);
+    await expect(inactive).toHaveCSS('color', expectedDisabledText);
     await expect(page.getByTestId('button-group-loading')).toHaveAttribute('aria-disabled', 'true');
     await expect(page.getByTestId('button-group-loading')).toHaveCSS('cursor', 'progress');
   });

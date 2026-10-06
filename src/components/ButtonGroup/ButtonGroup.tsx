@@ -121,6 +121,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           role="toolbar"
           aria-orientation="horizontal"
           $appearance={appearance}
+          $colorMode={colorMode}
           data-appearance={colorConfig ? 'custom' : appearance}
           data-color-mode={colorMode}
           data-dimension={dimension}
