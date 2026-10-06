@@ -72,6 +72,16 @@ test.describe('TextArea playground', () => {
     await expect(control).toHaveCSS('resize', 'vertical');
     await expect(control).toHaveCSS('min-height', '64px');
     await expect(control).toHaveCSS('max-height', '136px');
+  });
+
+  test('resizes vertically by dragging and clamps height at maxRows', async ({ page, browserName }) => {
+    test.skip(
+      browserName === 'webkit' && process.platform === 'linux',
+      'Native textarea resize drag does not work in Linux WebKit',
+    );
+
+    await page.goto(getPlaygroundScenarioPath('text-area/resize'));
+    const control = page.getByRole('textbox', { name: 'Текст', exact: true });
     const box = (await control.boundingBox())!;
     await page.mouse.move(box.x + box.width - 3, box.y + box.height - 3);
     await page.mouse.down();
