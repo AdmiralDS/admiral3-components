@@ -4,8 +4,12 @@ import { ButtonGroup, type ButtonGroupProps } from '@admiral-ds/admiral3-compone
 
 import { ButtonGroupAppearancesTemplate } from './ButtonGroupAppearances.template';
 import buttonGroupAppearancesTemplateRaw from './ButtonGroupAppearances.template?raw';
+import { ButtonGroupChildDisabledTabStopTemplate } from './ButtonGroupChildDisabledTabStop.template';
+import buttonGroupChildDisabledTabStopTemplateRaw from './ButtonGroupChildDisabledTabStop.template?raw';
 import { ButtonGroupCustomColorTemplate } from './ButtonGroupCustomColor.template';
 import buttonGroupCustomColorTemplateRaw from './ButtonGroupCustomColor.template?raw';
+import { ButtonGroupCustomColorFocusAndDisabledTemplate } from './ButtonGroupCustomColorFocusAndDisabled.template';
+import buttonGroupCustomColorFocusAndDisabledTemplateRaw from './ButtonGroupCustomColorFocusAndDisabled.template?raw';
 import { ButtonGroupDimensionsTemplate } from './ButtonGroupDimensions.template';
 import buttonGroupDimensionsTemplateRaw from './ButtonGroupDimensions.template?raw';
 import { ButtonGroupIconBadgeTemplate } from './ButtonGroupIconBadge.template';
@@ -138,6 +142,30 @@ export const KeyboardNavigation: StoryObj<ButtonGroupProps> = {
     docs: {
       source: {
         code: buttonGroupKeyboardNavigationTemplateRaw,
+      },
+    },
+  },
+};
+
+export const CustomColorFocusAndDisabled: StoryObj<ButtonGroupProps> = {
+  render: ButtonGroupCustomColorFocusAndDisabledTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      source: {
+        code: buttonGroupCustomColorFocusAndDisabledTemplateRaw,
+      },
+    },
+  },
+};
+
+export const ChildDisabledTabStop: StoryObj<ButtonGroupProps> = {
+  render: ButtonGroupChildDisabledTabStopTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      source: {
+        code: buttonGroupChildDisabledTabStopTemplateRaw,
       },
     },
   },
