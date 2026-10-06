@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite';
 
+import { requiredPropsPlugin } from './plugins/required-props.ts';
+
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const srcPath = resolve(currentDir, '../src');
 const entryPath = resolve(srcPath, 'index.ts');
@@ -26,6 +28,13 @@ const config: StorybookConfig = {
   },
   async viteFinal(baseConfig) {
     return mergeConfig(baseConfig, {
+      plugins: [
+        requiredPropsPlugin({
+          tsconfigPath: storybookTsconfigPath,
+          include: srcPath,
+        }),
+      ],
+
       resolve: {
         alias: {
           '#src': srcPath,
