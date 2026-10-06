@@ -46,6 +46,7 @@ export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-di
   box-shadow: ${boxShadow};
   color: ${textColor};
   overflow-wrap: break-word;
+  ${({ $cssMixin }) => $cssMixin}
 `;
 
 export const FakeTarget = styled.div`

@@ -10,7 +10,7 @@ import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
-  ({ children, dimension = 'm', targetElement, tooltipPosition, ...props }, ref) => {
+  ({ children, dimension = 'm', targetElement, tooltipPosition, tooltipStyles, ...props }, ref) => {
     const tooltipElementRef = useRef<HTMLDivElement | null>(null);
     const tooltipSize = useRef<{ width: number; height: number } | undefined>(undefined);
 
@@ -85,7 +85,14 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       >
         <FakeTarget />
         <TooltipWrapper ref={mergedRef}>
-          <TooltipContainer role="tooltip" $dimension={dimension} {...props}>
+          <TooltipContainer
+            role="tooltip"
+            $dimension={dimension}
+            $cssMixin={tooltipStyles?.cssMixin}
+            className={tooltipStyles?.className}
+            style={tooltipStyles?.style}
+            {...props}
+          >
             {children}
           </TooltipContainer>
         </TooltipWrapper>
