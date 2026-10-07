@@ -15,6 +15,8 @@ import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
 import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
+import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
+import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
@@ -71,6 +73,18 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / RadioButton',
     visual: true,
     render: () => <RadioButtonVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.removableChip,
+    title: 'Visual / RemovableChip',
+    visual: true,
+    render: () => <RemovableChipVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.selectableChip,
+    title: 'Visual / SelectableChip',
+    visual: true,
+    render: () => <SelectableChipVisualTemplate />,
   },
   {
     id: VISUAL_SCENARIO_IDS.skeleton,
