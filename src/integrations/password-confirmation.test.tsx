@@ -1,12 +1,26 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ReactHookFormTemplate } from './react-hook-form/ReactHookForm.template';
 import { ReactHookFormWithFormItemTemplate } from './react-hook-form/ReactHookFormWithFormItem.template';
 import { TanStackFormTemplate } from './tanstack-form/TanStackForm.template';
 import { TanStackFormWithFormItemTemplate } from './tanstack-form/TanStackFormWithFormItem.template';
 
-afterEach(cleanup);
+// jsdom не реализует наблюдение за размерами; геометрия autoHeight проверяется в браузере.
+beforeEach(() => {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
+});
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe.each([
   ['React Hook Form', ReactHookFormTemplate, ReactHookFormWithFormItemTemplate],

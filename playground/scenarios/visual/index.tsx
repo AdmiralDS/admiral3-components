@@ -17,6 +17,7 @@ import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
+import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
 
@@ -78,6 +79,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SkeletonVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.textArea,
+    title: 'Visual / TextArea',
+    visual: true,
+    render: () => <TextAreaVisualTemplate />,
+  },
   { id: VISUAL_SCENARIO_IDS.toggle, title: 'Visual / Toggle', visual: true, render: () => <ToggleVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.tooltip, title: 'Visual / Tooltip', visual: true, render: () => <TooltipVisualTemplate /> },
 ];

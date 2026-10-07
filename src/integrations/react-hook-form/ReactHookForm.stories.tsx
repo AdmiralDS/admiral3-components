@@ -14,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Интеграция Input, RadioButton, CheckBox и Toggle с React Hook Form. Текстовые поля показаны с обычными подписями и в обёртке FormItem; пример с FormItem также демонстрирует поле со счётчиком, подключённое через Controller. Оба варианта включают валидацию, отправку и сброс формы.',
+          'Интеграция Input, TextArea, RadioButton, CheckBox и Toggle с React Hook Form. Комментарий реализован через TextArea с адаптивной высотой и очисткой. Текстовые поля показаны с обычными подписями и в обёртке FormItem; пример с FormItem также демонстрирует поле со счётчиком, подключённое через Controller. Оба варианта включают валидацию, отправку и сброс формы.',
       },
     },
   },

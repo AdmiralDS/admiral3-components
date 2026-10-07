@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { getPlaygroundScenarioPath } from '../utils';
+import { getTabKey, getPlaygroundScenarioPath } from '../utils';
 
 const defaultScenarioId = 'input/default';
 const clearIconScenarioId = 'input/clear-icon';
@@ -116,7 +116,7 @@ test.describe('Input playground', () => {
 
     const component = page.getByTestId('input');
     const clearButton = page.getByRole('button', { name: 'Очистить поле' });
-    const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+    const tabKey = getTabKey(browserName);
 
     await component.focus();
     await page.keyboard.press(tabKey);
@@ -137,8 +137,8 @@ test.describe('Input playground', () => {
     const clearButton = page.getByRole('button', { name: 'Очистить поле' });
     const informerIcon = page.getByTestId('informer-icon');
     const customButton = page.getByRole('button', { name: 'Пользовательское действие' });
-    const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
-    const reverseTabKey = browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab';
+    const tabKey = getTabKey(browserName);
+    const reverseTabKey = getTabKey(browserName, true);
 
     await previousElement.focus();
 
@@ -179,7 +179,7 @@ test.describe('Input playground', () => {
     const disabledInput = page.getByTestId('disabled-input');
     const disabledInformerIcon = page.getByTestId('disabled-informer-icon');
     const nextElement = page.getByTestId('after-input-states');
-    const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+    const tabKey = getTabKey(browserName);
 
     await customButton.focus();
     await page.keyboard.press(tabKey);
@@ -293,7 +293,7 @@ test.describe('Input playground', () => {
     const component = page.getByTestId('input');
     const border = component.locator('..').locator('[data-role="input-border"]');
     const iconButton = page.getByRole('button', { name: 'Действие с полем' });
-    const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+    const tabKey = getTabKey(browserName);
 
     await component.click();
     await page.keyboard.press(tabKey);

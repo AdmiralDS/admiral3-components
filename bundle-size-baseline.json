@@ -22,10 +22,10 @@
       "rawBytes": 4829
     },
     "helper-components": {
-      "rawBytes": 9721
+      "rawBytes": 9796
     },
     "input": {
-      "rawBytes": 13230
+      "rawBytes": 13292
     },
     "link": {
       "rawBytes": 2676
@@ -53,6 +53,9 @@
     },
     "spinner": {
       "rawBytes": 6566
+    },
+    "text-area": {
+      "rawBytes": 24414
     },
     "toggle": {
       "rawBytes": 7700
