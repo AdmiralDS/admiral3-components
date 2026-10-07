@@ -6,28 +6,21 @@ import { IconPlacementButton } from './style';
 import type { IconPlacementProps } from './types';
 
 export const IconPlacement = forwardRef<HTMLButtonElement, IconPlacementProps>(
-  (
-    { type = 'button', dimension = 'm', colorMode = 'colored', children, disableKeyboardActivation = false, ...props },
-    ref,
-  ) => {
+  ({ type = 'button', dimension = 'm', colorMode = 'colored', children, ...props }, ref) => {
     const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
       if (props.disabled) return;
 
-      if (disableKeyboardActivation) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
         props.onKeyDown?.(e);
-      } else {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          props.onKeyDown?.(e);
-        }
       }
     };
 
     return (
       <IconPlacementButton
+        {...props}
         ref={ref}
         type={type}
-        {...props}
         $colorMode={colorMode}
         $dimension={dimension}
         onKeyDown={handleKeyDown}

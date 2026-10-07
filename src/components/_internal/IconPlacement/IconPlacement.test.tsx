@@ -54,11 +54,11 @@ describe('IconPlacement', () => {
     expect(button).toHaveAttribute('value', 'remove');
   });
 
-  it('does not forward internal variant and activation props to the DOM', () => {
-    render(<IconPlacement dimension="xs" colorMode={{ iconColor: 'rebeccapurple' }} disableKeyboardActivation />);
+  it('does not forward internal variant props to the DOM', () => {
+    render(<IconPlacement dimension="xs" colorMode={{ iconColor: 'rebeccapurple' }} />);
     const button = screen.getByRole('button');
 
-    for (const attribute of ['dimension', 'colorMode', 'disableKeyboardActivation', '$dimension', '$colorMode']) {
+    for (const attribute of ['dimension', 'colorMode', '$dimension', '$colorMode']) {
       expect(button).not.toHaveAttribute(attribute);
     }
   });
@@ -86,18 +86,13 @@ describe('IconPlacement', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each([false, true])(
-    'does not forward keydown when disabled and disableKeyboardActivation is %s',
-    (customHandling) => {
-      const onKeyDown = vi.fn();
-      render(<IconPlacement disabled disableKeyboardActivation={customHandling} onKeyDown={onKeyDown} />);
-      const button = screen.getByRole('button');
+  it.each(['Enter', ' ', 'Escape'])('does not forward %j when disabled', (key) => {
+    const onKeyDown = vi.fn();
+    render(<IconPlacement disabled onKeyDown={onKeyDown} />);
 
-      for (const key of ['Enter', ' ', 'Escape']) fireEvent.keyDown(button, { key });
-
-      expect(onKeyDown).not.toHaveBeenCalled();
-    },
-  );
+    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
+    expect(onKeyDown).not.toHaveBeenCalled();
+  });
 
   it('restores click activation when disabled is removed', () => {
     const onClick = vi.fn();
@@ -110,122 +105,58 @@ describe('IconPlacement', () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it.each([
-    ['Enter', undefined],
-    [' ', undefined],
-    ['Enter', false],
-    [' ', false],
-  ] as const)('prevents the default action of %j when disableKeyboardActivation is %s', (key, customHandling) => {
+  it.each(['Enter', ' '])('prevents the default action of %j without a user keydown handler', (key) => {
     const onClick = vi.fn();
-    render(<IconPlacement disableKeyboardActivation={customHandling} onClick={onClick} />);
+    render(<IconPlacement onClick={onClick} />);
 
     // fireEvent does not synthesize the browser's native keyboard click.
     expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each([
-    ['Enter', undefined],
-    [' ', undefined],
-    ['Enter', false],
-    [' ', false],
-  ] as const)(
-    'forwards %j exactly once with defaultPrevented when disableKeyboardActivation is %s',
-    (key, customHandling) => {
-      const onKeyDown = vi.fn();
-      render(<IconPlacement disableKeyboardActivation={customHandling} onKeyDown={onKeyDown} />);
-
-      fireEvent.keyDown(screen.getByRole('button'), { key });
-
-      expect(onKeyDown).toHaveBeenCalledOnce();
-      expect(onKeyDown.mock.calls[0][0].key).toBe(key);
-      expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
-    },
-  );
-
-  it.each(['Enter', ' '])('does not prevent the default action of %j when disableKeyboardActivation is true', (key) => {
+  it.each(['Enter', ' '])('forwards %j exactly once after preventing its default action', (key) => {
     const onClick = vi.fn();
-    render(<IconPlacement disableKeyboardActivation onClick={onClick} />);
+    const onKeyDown = vi.fn();
+    render(<IconPlacement onClick={onClick} onKeyDown={onKeyDown} />);
 
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
+    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
+    expect(onKeyDown).toHaveBeenCalledOnce();
+    expect(onKeyDown.mock.calls[0][0].key).toBe(key);
+    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each(['Enter', ' ', 'Escape', 'ArrowRight', 'Backspace'])(
-    'forwards %j unchanged exactly once when disableKeyboardActivation is true',
-    (key) => {
-      const onClick = vi.fn();
-      const onKeyDown = vi.fn();
-      render(<IconPlacement disableKeyboardActivation onClick={onClick} onKeyDown={onKeyDown} />);
-
-      expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
-
-      expect(onKeyDown).toHaveBeenCalledOnce();
-      expect(onKeyDown.mock.calls[0][0].key).toBe(key);
-      expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(false);
-      expect(onClick).not.toHaveBeenCalled();
-    },
-  );
-
-  it.each([
-    ['Escape', undefined],
-    ['ArrowRight', undefined],
-    ['Backspace', undefined],
-    ['Escape', false],
-    ['ArrowRight', false],
-    ['Backspace', false],
-  ] as const)('does not forward %s when disableKeyboardActivation is %s', (key, customHandling) => {
+  it.each(['Escape', 'ArrowRight', 'Backspace', 'Tab', 'a'])('does not forward or prevent %j', (key) => {
     const onClick = vi.fn();
     const onKeyDown = vi.fn();
-    render(<IconPlacement disableKeyboardActivation={customHandling} onClick={onClick} onKeyDown={onKeyDown} />);
+    render(<IconPlacement onClick={onClick} onKeyDown={onKeyDown} />);
 
     expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
     expect(onKeyDown).not.toHaveBeenCalled();
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('lets the user prevent the default action when disableKeyboardActivation is true', () => {
+  it('allows programmatic clicks', () => {
     const onClick = vi.fn();
-    const onKeyDown = vi.fn();
-    render(
-      <IconPlacement
-        disableKeyboardActivation
-        onClick={onClick}
-        onKeyDown={(event) => {
-          event.preventDefault();
-          onKeyDown(event);
-        }}
-      />,
-    );
+    render(<IconPlacement onClick={onClick} />);
+    const button = screen.getByRole('button');
 
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape' })).toBe(false);
-    expect(onKeyDown).toHaveBeenCalledOnce();
-    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
-    expect(onClick).not.toHaveBeenCalled();
+    button.click();
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick.mock.calls[0][0].type).toBe('click');
   });
 
-  it.each([false, true])(
-    'allows pointer and programmatic clicks when disableKeyboardActivation is %s',
-    (customHandling) => {
-      const onClick = vi.fn();
-      render(<IconPlacement disableKeyboardActivation={customHandling} onClick={onClick} />);
-      const button = screen.getByRole('button');
-
-      expect(button).toBeEnabled();
-      fireEvent.click(button);
-      button.click();
-      expect(onClick).toHaveBeenCalledTimes(2);
-      for (const [event] of onClick.mock.calls) expect(event.type).toBe('click');
-    },
-  );
-
-  it('restores built-in default-action prevention when disableKeyboardActivation is removed', () => {
-    const { rerender } = render(<IconPlacement disableKeyboardActivation />);
+  it('restores keyboard handling when disabled is removed', () => {
+    const onKeyDown = vi.fn();
+    const { rerender } = render(<IconPlacement disabled onKeyDown={onKeyDown} />);
     expect(fireEvent.keyDown(screen.getByRole('button'), { key: ' ' })).toBe(true);
+    expect(onKeyDown).not.toHaveBeenCalled();
 
-    rerender(<IconPlacement />);
+    rerender(<IconPlacement onKeyDown={onKeyDown} />);
 
     expect(fireEvent.keyDown(screen.getByRole('button'), { key: ' ' })).toBe(false);
+    expect(onKeyDown).toHaveBeenCalledOnce();
+    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
   });
 });
 
@@ -268,30 +199,15 @@ describe('CloseIconPlacementButton', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each([
-    ['Enter', false, true],
-    [' ', false, true],
-    ['Enter', true, false],
-    [' ', true, false],
-  ] as const)(
-    'handles %j with disableKeyboardActivation=%s and defaultPrevented=%s',
-    (key, customHandling, prevented) => {
-      const onClick = vi.fn();
-      const onKeyDown = vi.fn();
-      render(
-        <CloseIconPlacementButton
-          disableKeyboardActivation={customHandling}
-          onClick={onClick}
-          onKeyDown={onKeyDown}
-          aria-label="Удалить"
-        />,
-      );
+  it.each(['Enter', ' '])('forwards %j after preventing its default action', (key) => {
+    const onClick = vi.fn();
+    const onKeyDown = vi.fn();
+    render(<CloseIconPlacementButton onClick={onClick} onKeyDown={onKeyDown} aria-label="Удалить" />);
 
-      expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(!prevented);
-      expect(onKeyDown).toHaveBeenCalledOnce();
-      expect(onKeyDown.mock.calls[0][0].key).toBe(key);
-      expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(prevented);
-      expect(onClick).not.toHaveBeenCalled();
-    },
-  );
+    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
+    expect(onKeyDown).toHaveBeenCalledOnce();
+    expect(onKeyDown.mock.calls[0][0].key).toBe(key);
+    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });

@@ -14,8 +14,6 @@ export interface IconPlacementProps extends ButtonHTMLAttributes<HTMLButtonEleme
   dimension?: IconPlacementDimension;
   /** Отключение кнопки */
   disabled?: boolean;
-  //** Отключает вызов onKeyDown нажитиями на клавиши Enter и Space. Если выключен то событие onKeyDown срабатывает только на клавишах Enter и Space */
-  disableKeyboardActivation?: boolean;
   /** Цветовой режим. По умолчанию 'colored'. */
   colorMode?: IconPlacementColorMode | ColorConfig;
 }
