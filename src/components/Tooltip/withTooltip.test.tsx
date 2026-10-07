@@ -1,8 +1,8 @@
-import { createRef, forwardRef } from 'react';
+import { createRef, forwardRef, type ComponentRef } from 'react';
 
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { css } from 'styled-components';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { TOOLTIP_DELAY } from './useTooltip';
 import { withTooltip } from './withTooltip';
@@ -19,7 +19,8 @@ describe('withTooltip', () => {
   });
 
   it('renders the wrapped component and forwards its props and ref to the root element', () => {
-    const ref = createRef<HTMLElement>();
+    expectTypeOf<ComponentRef<typeof TargetWithTooltip>>().toEqualTypeOf<HTMLButtonElement>();
+    const ref = createRef<HTMLButtonElement>();
 
     render(
       <TargetWithTooltip ref={ref} renderContent={() => 'Tooltip content'} data-testid="target" disabled>

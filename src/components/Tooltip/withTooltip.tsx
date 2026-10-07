@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentRef, ComponentType } from 'react';
 import { forwardRef, useCallback } from 'react';
 
 import { Tooltip } from './Tooltip';
@@ -13,7 +13,9 @@ import { refSetter } from '../../utils/refSetter';
  * Оборачиваемый компонент должен принимать ref и передавать его корневому HTML-элементу.
  */
 export function withTooltip<T extends object>(Component: ComponentType<T>) {
-  const ComponentWithTooltip = forwardRef<HTMLElement, T & WithTooltipProps>(
+  type TargetElement = Extract<ComponentRef<typeof Component>, HTMLElement>;
+
+  const ComponentWithTooltip = forwardRef<TargetElement, T & WithTooltipProps>(
     (
       {
         renderContent,
@@ -26,14 +28,14 @@ export function withTooltip<T extends object>(Component: ComponentType<T>) {
       },
       ref,
     ) => {
-      const { isVisible, targetProps, tooltipProps } = useTooltip<HTMLElement>({
+      const { isVisible, targetProps, tooltipProps } = useTooltip<TargetElement>({
         delay: withDelay ? TOOLTIP_DELAY : 0,
       });
       const targetHookRef = targetProps.ref;
       const tooltipHookRef = tooltipProps.ref;
 
       const mergedTargetRef = useCallback(
-        (element: HTMLElement | null) => refSetter(ref, targetHookRef)(element),
+        (element: TargetElement | null) => refSetter(ref, targetHookRef)(element),
         [ref, targetHookRef],
       );
       const mergedTooltipRef = useCallback(
