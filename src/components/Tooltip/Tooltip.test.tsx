@@ -3,7 +3,7 @@ import { createRef, forwardRef } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TOOLTIP_DIMENSIONS, TOOLTIP_DIMENSION_PARAMETERS } from './constants';
+import { TOOLTIP_DIMENSIONS, TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_LAYOUTS } from './constants';
 import { getTooltipDirection } from './getTooltipDirection';
 import { Tooltip } from './Tooltip';
 import type { TooltipInternalPosition } from './types';
@@ -152,30 +152,18 @@ describe('Tooltip', () => {
     iframe.remove();
   });
 
-  it.each<[TooltipInternalPosition, string, string, boolean]>([
-    ['leftBottom', 'row-reverse', 'flex-start', false],
-    ['leftTop', 'row-reverse', 'flex-end', false],
-    ['left', 'row-reverse', 'center', false],
-    ['rightBottom', 'row', 'flex-start', false],
-    ['rightTop', 'row', 'flex-end', false],
-    ['right', 'row', 'center', false],
-    ['topPageCenter', 'column-reverse', 'center', true],
-    ['topLeft', 'column-reverse', 'flex-end', false],
-    ['topRight', 'column-reverse', 'flex-start', false],
-    ['top', 'column-reverse', 'center', false],
-    ['bottomPageCenter', 'column', 'center', true],
-    ['bottomLeft', 'column', 'flex-end', false],
-    ['bottomRight', 'column', 'flex-start', false],
-    ['bottom', 'column', 'center', false],
-  ])('applies layout for the %s direction', (direction, flexDirection, alignSelf, fullWidth) => {
-    vi.mocked(getTooltipDirection).mockReturnValue(direction);
-    renderTooltip({ 'data-testid': 'tooltip' });
-    act(() => animationFrameCallback?.(0));
-    const wrapper = screen.getByTestId('tooltip').parentElement!;
-    expect(wrapper).toHaveStyle({ alignSelf });
-    expect(wrapper.parentElement).toHaveStyle({ flexDirection });
-    expect(wrapper.parentElement).toHaveAttribute('data-full-container-width', String(fullWidth));
-  });
+  it.each(Object.entries(TOOLTIP_LAYOUTS))(
+    'applies layout for the %s direction',
+    (direction, { flexDirection, alignSelf, fullWidth, padding }) => {
+      vi.mocked(getTooltipDirection).mockReturnValue(direction as TooltipInternalPosition);
+      renderTooltip({ 'data-testid': 'tooltip' });
+      act(() => animationFrameCallback?.(0));
+      const wrapper = screen.getByTestId('tooltip').parentElement!;
+      expect(wrapper).toHaveStyle({ alignSelf, padding });
+      expect(wrapper.parentElement).toHaveStyle({ flexDirection });
+      expect(wrapper.parentElement).toHaveAttribute('data-full-container-width', String(fullWidth));
+    },
+  );
 
   it('makes the wrapper visible after mount', () => {
     renderTooltip({ 'data-testid': 'tooltip' });

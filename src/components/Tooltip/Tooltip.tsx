@@ -16,6 +16,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
     const [portalFlexDirection, setPortalFlexDirection] = useState<CSSProperties['flexDirection']>();
     const [portalFullWidth, setPortalFullWidth] = useState(false);
+    const [wrapperPadding, setWrapperPadding] = useState<CSSProperties['padding']>(TOOLTIP_LAYOUTS.bottom.padding);
     const [recalculationKey, setRecalculationKey] = useState(0);
 
     const emptyContent = !hasSlotContent(children);
@@ -29,6 +30,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
           const layout = TOOLTIP_LAYOUTS[direction];
           setPortalFlexDirection(layout.flexDirection);
           setPortalFullWidth(layout.fullWidth);
+          setWrapperPadding(layout.padding);
           tooltip.style.alignSelf = layout.alignSelf;
         }
       },
@@ -84,7 +86,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         fullContainerWidth={portalFullWidth}
       >
         <FakeTarget />
-        <TooltipWrapper ref={mergedRef}>
+        <TooltipWrapper ref={mergedRef} $padding={wrapperPadding}>
           <TooltipContainer
             role="tooltip"
             $dimension={dimension}

@@ -5,8 +5,6 @@ import { textStyles } from '@admiral-ds/admiral3-tokens';
 export const TOOLTIP_DIMENSIONS = ['m', 's'] as const;
 export const TOOLTIP_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
 
-export const TOOLTIP_WRAPPER_PADDING = 8;
-
 export const TOOLTIP_DIMENSION_PARAMETERS = {
   m: { minHeight: 24, padding: '4px 8px', typography: textStyles.body.body2Short },
   s: { minHeight: 20, padding: '2px 6px', typography: textStyles.caption.caption1 },
@@ -60,22 +58,23 @@ type TooltipLayout = {
   flexDirection: CSSProperties['flexDirection'];
   alignSelf: CSSProperties['alignSelf'];
   fullWidth: boolean;
+  padding: CSSProperties['padding'];
 };
 
 /** Параметры flex-разметки портала и выравнивания Tooltip для каждой рассчитанной позиции. */
 export const TOOLTIP_LAYOUTS = {
-  leftBottom: { flexDirection: 'row-reverse', alignSelf: 'flex-start', fullWidth: false },
-  leftTop: { flexDirection: 'row-reverse', alignSelf: 'flex-end', fullWidth: false },
-  left: { flexDirection: 'row-reverse', alignSelf: 'center', fullWidth: false },
-  rightBottom: { flexDirection: 'row', alignSelf: 'flex-start', fullWidth: false },
-  rightTop: { flexDirection: 'row', alignSelf: 'flex-end', fullWidth: false },
-  right: { flexDirection: 'row', alignSelf: 'center', fullWidth: false },
-  topPageCenter: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: true },
-  topLeft: { flexDirection: 'column-reverse', alignSelf: 'flex-end', fullWidth: false },
-  topRight: { flexDirection: 'column-reverse', alignSelf: 'flex-start', fullWidth: false },
-  top: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: false },
-  bottomPageCenter: { flexDirection: 'column', alignSelf: 'center', fullWidth: true },
-  bottomLeft: { flexDirection: 'column', alignSelf: 'flex-end', fullWidth: false },
-  bottomRight: { flexDirection: 'column', alignSelf: 'flex-start', fullWidth: false },
-  bottom: { flexDirection: 'column', alignSelf: 'center', fullWidth: false },
+  leftBottom: { flexDirection: 'row-reverse', alignSelf: 'flex-start', fullWidth: false, padding: '0 8px 0 0' },
+  leftTop: { flexDirection: 'row-reverse', alignSelf: 'flex-end', fullWidth: false, padding: '0 8px 0 0' },
+  left: { flexDirection: 'row-reverse', alignSelf: 'center', fullWidth: false, padding: '0 8px 0 0' },
+  rightBottom: { flexDirection: 'row', alignSelf: 'flex-start', fullWidth: false, padding: '0 0 0 8px' },
+  rightTop: { flexDirection: 'row', alignSelf: 'flex-end', fullWidth: false, padding: '0 0 0 8px' },
+  right: { flexDirection: 'row', alignSelf: 'center', fullWidth: false, padding: '0 0 0 8px' },
+  topPageCenter: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: true, padding: '0 0 8px' },
+  topLeft: { flexDirection: 'column-reverse', alignSelf: 'flex-end', fullWidth: false, padding: '0 0 8px' },
+  topRight: { flexDirection: 'column-reverse', alignSelf: 'flex-start', fullWidth: false, padding: '0 0 8px' },
+  top: { flexDirection: 'column-reverse', alignSelf: 'center', fullWidth: false, padding: '0 0 8px' },
+  bottomPageCenter: { flexDirection: 'column', alignSelf: 'center', fullWidth: true, padding: '8px 0 0' },
+  bottomLeft: { flexDirection: 'column', alignSelf: 'flex-end', fullWidth: false, padding: '8px 0 0' },
+  bottomRight: { flexDirection: 'column', alignSelf: 'flex-start', fullWidth: false, padding: '8px 0 0' },
+  bottom: { flexDirection: 'column', alignSelf: 'center', fullWidth: false, padding: '8px 0 0' },
 } satisfies Record<(typeof TOOLTIP_INTERNAL_POSITIONS)[number], TooltipLayout>;

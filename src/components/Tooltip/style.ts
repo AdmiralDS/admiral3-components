@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { zIndex } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
-import { TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_WRAPPER_PADDING } from './constants';
+import { TOOLTIP_DIMENSION_PARAMETERS } from './constants';
 import type { StyledTooltipProps } from './types';
 import { cssToken } from '../../theme/cssToken';
 import { PositionedPortal } from '../_internal/PositionedPortal';
@@ -19,7 +19,7 @@ const textColor = cssToken(
 const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 const boxShadow = cssToken('--admiral-shadow-shadow04', (theme) => theme.shadow.shadow04);
 
-export const TooltipWrapper = styled.div`
+export const TooltipWrapper = styled.div<{ $padding: CSSProperties['padding'] }>`
   box-sizing: border-box;
   opacity: 0;
   transition-delay: 200ms;
@@ -28,7 +28,7 @@ export const TooltipWrapper = styled.div`
   width: max-content;
   min-width: max-content;
   pointer-events: initial;
-  padding: ${TOOLTIP_WRAPPER_PADDING}px;
+  padding: ${({ $padding }) => $padding};
 `;
 
 export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-dimension': string }>((props) => ({
