@@ -30,7 +30,7 @@ Tooltip существует в размерах S и M. Рекомендует�
 `;
 
 const meta = {
-  title: 'Components/Tooltip',
+  title: 'Components/Tooltip/Tooltip',
   component: Tooltip,
   tags: ['autodocs'],
   parameters: {

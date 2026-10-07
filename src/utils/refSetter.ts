@@ -1,17 +1,27 @@
-import type { ForwardedRef } from 'react';
+import type { ForwardedRef, RefCallback } from 'react';
 
 type PossibleRef<T> = ForwardedRef<T> | undefined;
 
-export function refSetter<T>(...refs: PossibleRef<T>[]): (instance: T | null) => void {
+export function refSetter<T>(...refs: PossibleRef<T>[]): RefCallback<T> {
   return (instance) => {
-    refs.forEach((ref) => {
+    const cleanups = refs.map((ref) => {
       if (!ref) return;
 
       if (typeof ref === 'function') {
-        ref(instance);
-      } else {
-        ref.current = instance;
+        const cleanup = ref(instance);
+
+        return typeof cleanup === 'function' ? cleanup : () => ref(null);
       }
+
+      ref.current = instance;
+
+      return () => {
+        ref.current = null;
+      };
     });
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup?.());
+    };
   };
 }
