@@ -1,9 +1,9 @@
+import { ServiceCloseOutline } from '@admiral-ds/admiral3-icons';
 import styled, { css } from 'styled-components';
 
 import { hoverPressLeaveTransition } from '#src/theme/animation';
 
 import { CHIPS_DIMENSION_PARAMETERS } from './constants';
-import { CloseIconPlacementButton } from './IconPlacement';
 import type {
   ChipActionsStyleProps,
   ChipColorMode,
@@ -39,17 +39,9 @@ const textNeutralStaticWhite3 = cssToken(
   '--admiral-color-neutral-text-static-white-3',
   (theme) => theme.color.neutral.text.staticWhite._3,
 );
-const textPrimary1Hover = cssToken(
-  '--admiral-color-primary-text-1-hover',
-  (theme) => theme.color.primary.text._1.hover,
-);
 const textNeutral2Hover = cssToken(
   '--admiral-color-neutral-text-2-hover',
   (theme) => theme.color.neutral.text._2.hover,
-);
-const textPrimary1Press = cssToken(
-  '--admiral-color-primary-text-1-press',
-  (theme) => theme.color.primary.text._1.press,
 );
 const textNeutral2Press = cssToken(
   '--admiral-color-neutral-text-2-press',
@@ -369,18 +361,22 @@ export const IconsWrapperStyled = styled.span<{ $dimension: ChipDimension }>`
   }
 `;
 
-export const CloseIconButton = styled(CloseIconPlacementButton)<{
+const colorIcon = css<{ $colorMode: ChipColorMode }>`
+  color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Rest : textPrimary1Rest)(p)};
+
+  &:hover {
+    color: ${(p) => textNeutral2Hover(p)};
+  }
+  &:active {
+    color: ${(p) => textNeutral2Press(p)};
+  }
+`;
+
+export const CloseIcon = styled(ServiceCloseOutline)<{
   $colorMode: ChipColorMode;
+  $disabled?: boolean;
 }>`
-  color: inherit;
-  margin-inline: 0px;
-  & svg {
-    transition: color ${hoverPressLeaveTransition};
-  }
-  &:not(:disabled):hover svg {
-    color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Hover : textPrimary1Hover)(p)};
-  }
-  &:not(:disabled):active svg {
-    color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Press : textPrimary1Press)(p)};
-  }
+  cursor: pointer;
+  transition: color ${hoverPressLeaveTransition};
+  ${(p) => (p.$disabled ? `cursor: not-allowed; color: ${textNeutralDisabledRest(p)}` : colorIcon)}
 `;

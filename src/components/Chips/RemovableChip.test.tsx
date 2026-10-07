@@ -8,7 +8,7 @@ import { RemovableChip } from './RemovableChip';
 describe('RemovableChip', () => {
   afterEach(cleanup);
 
-  it('forwards its root ref and keeps the close button out of the Tab order', () => {
+  it('forwards its root ref and renders a close icon without a separate Tab stop', () => {
     const ref = createRef<HTMLDivElement>();
     render(
       <RemovableChip ref={ref} onClose={vi.fn()} data-testid="chip" closeButtonProps={{ 'aria-label': 'Удалить Марс' }}>
@@ -16,15 +16,14 @@ describe('RemovableChip', () => {
       </RemovableChip>,
     );
     const chip = screen.getByTestId('chip');
-    const close = within(chip).getByRole('button', { name: 'Удалить Марс' });
+    const close = within(chip).getByLabelText('Удалить Марс', { selector: 'svg' });
 
     expect(ref.current).toBe(chip);
     expect(chip).toHaveAttribute('role', 'button');
     expect(chip).toHaveAttribute('tabindex', '0');
     expect(chip).not.toHaveAttribute('aria-pressed');
-    expect(close).toHaveAttribute('type', 'button');
-    expect(close).toHaveAttribute('tabindex', '-1');
-    expect(close.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+    expect(close).not.toHaveAttribute('tabindex');
+    expect(chip.querySelector('button')).toBeNull();
     expect(chip).toHaveAttribute('data-dimension', 'm');
     expect(chip).toHaveAttribute('data-appearance', 'outlined');
     expect(chip).toHaveAttribute('data-color-mode', 'colored');
@@ -44,7 +43,7 @@ describe('RemovableChip', () => {
     fireEvent.click(screen.getByText('Марс'));
     expect(onClose).not.toHaveBeenCalled();
     expect(onParentClick).toHaveBeenCalledOnce();
-    fireEvent.click(within(chip).getByRole('button', { name: 'Удалить Марс' }).querySelector('svg')!);
+    fireEvent.click(within(chip).getByLabelText('Удалить Марс', { selector: 'svg' }));
     expect(onClose).toHaveBeenCalledOnce();
     expect(onClose).toHaveBeenCalledWith();
     expect(onParentClick).toHaveBeenCalledOnce();
@@ -67,7 +66,7 @@ describe('RemovableChip', () => {
     expect(onClose.mock.invocationCallOrder[0]).toBeLessThan(onKeyDown.mock.invocationCallOrder[0]);
   });
 
-  it('forwards the body onClick without removal and does not call it for the close button', () => {
+  it('forwards the body onClick without removal and does not call it for the close icon', () => {
     const onClick = vi.fn();
     const onClose = vi.fn();
     render(
@@ -80,7 +79,7 @@ describe('RemovableChip', () => {
     expect(onClick).toHaveBeenCalledOnce();
     expect(onClose).not.toHaveBeenCalled();
     expect(onClick.mock.calls[0][0].target).toBe(screen.getByText('Марс'));
-    fireEvent.click(chip.querySelector('button')!);
+    fireEvent.click(chip.querySelector('svg')!);
     expect(onClose).toHaveBeenCalledOnce();
     expect(onClick).toHaveBeenCalledOnce();
   });
@@ -112,11 +111,10 @@ describe('RemovableChip', () => {
     expect(chip).toHaveAttribute('aria-disabled', 'true');
     expect(chip).toHaveAttribute('tabindex', state.disabled ? '-1' : '0');
     for (const key of ['Enter', ' ', 'Backspace', 'Escape']) fireEvent.keyDown(chip, { key });
-    const close = chip.querySelector('button');
+    const close = chip.querySelector('svg');
     if (state.disabled) {
-      expect(close).toBeDisabled();
+      expect(close).not.toBeNull();
       fireEvent.click(close!);
-      close!.click();
     } else {
       expect(close).toBeNull();
     }
@@ -124,7 +122,7 @@ describe('RemovableChip', () => {
     expect(onKeyDown).not.toHaveBeenCalled();
   });
 
-  it('restores the close button and activation when readOnly is removed', () => {
+  it('restores the close icon and activation when readOnly is removed', () => {
     const onClose = vi.fn();
     const { rerender } = render(
       <RemovableChip readOnly data-testid="chip" onClose={onClose}>
@@ -139,11 +137,11 @@ describe('RemovableChip', () => {
     );
 
     expect(chip).not.toHaveAttribute('aria-disabled');
-    fireEvent.click(chip.querySelector('button')!);
+    fireEvent.click(chip.querySelector('svg')!);
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('forwards variant markers and close button DOM attributes', () => {
+  it('forwards variant markers and close icon DOM attributes', () => {
     render(
       <RemovableChip
         onClose={vi.fn()}
@@ -163,7 +161,7 @@ describe('RemovableChip', () => {
     expect(chip).toHaveAttribute('data-dimension', 'l');
     expect(chip).toHaveAttribute('data-appearance', 'flat');
     expect(chip).toHaveAttribute('data-color-mode', 'neutral');
-    const close = within(chip).getByRole('button', { name: 'Убрать фильтр' });
+    const close = within(chip).getByLabelText('Убрать фильтр', { selector: 'svg' });
     expect(close).toHaveAttribute('aria-describedby', 'hint');
     expect(close).toHaveAttribute('title', 'Убрать');
     expect(screen.getByTestId('icon').parentElement).toHaveAttribute('aria-hidden', 'true');

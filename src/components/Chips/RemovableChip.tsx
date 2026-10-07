@@ -3,7 +3,7 @@ import { forwardRef, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { refSetter } from '#src/utils/refSetter';
 
 import { ChipContent } from './ChipContent';
-import { CloseIconButton, RemovableChipStyled } from './style';
+import { CloseIcon, RemovableChipStyled } from './style';
 import type { RemovableChipProps } from './types';
 import { useChipTooltip } from './useChipTooltip';
 
@@ -36,7 +36,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
 
     const tooltip = useChipTooltip(containerRef, children, renderContentTooltip, disabledTooltip);
 
-    const handleClickCloseIcon = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleClickCloseIcon = (e: MouseEvent<SVGSVGElement>) => {
       e.stopPropagation();
 
       if (!disabled) onClose?.();
@@ -79,16 +79,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
           contentRef={tooltip.contentRef}
         />
         {!readOnly && (
-          <CloseIconButton
-            {...closeButtonProps}
-            dimension={dimension === 'l' ? 'mBig' : dimension === 'm' ? 'sMedium' : 'sSmall'}
-            disableHighlighter
-            onClick={handleClickCloseIcon}
-            disabled={disabled}
-            tabIndex={-1}
-            appearance={colorMode === 'colored' ? 'primary' : 'secondary'}
-            $colorMode={colorMode}
-          />
+          <CloseIcon {...closeButtonProps} onClick={handleClickCloseIcon} $disabled={disabled} $colorMode={colorMode} />
         )}
       </RemovableChipStyled>
     );

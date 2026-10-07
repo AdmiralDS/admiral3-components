@@ -3,18 +3,18 @@ import { expect, test } from '@playwright/test';
 import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 test.describe('RemovableChip playground', () => {
-  test('mounts without runtime errors and only the close button removes with a pointer', async ({ page }) => {
+  test('mounts without runtime errors and only the close icon removes with a pointer', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(getPlaygroundScenarioPath('removable-chip/default'));
     const chips = page.getByTestId('removable-chip');
     const mars = chips.filter({ hasText: 'Марс' });
-    const close = mars.getByRole('button', { name: 'Удалить чипс' });
+    const close = mars.getByLabel('Удалить чипс');
 
     await expect(chips).toHaveCount(3);
     await expect(mars).toHaveAttribute('role', 'button');
     await expect(mars).not.toHaveAttribute('aria-pressed');
-    await expect(close).toHaveAttribute('tabindex', '-1');
+    await expect(close).not.toHaveAttribute('tabindex');
     await mars.getByText('Марс').click();
     await expect(chips).toHaveCount(3);
     await close.click();
@@ -24,7 +24,7 @@ test.describe('RemovableChip playground', () => {
   });
 
   for (const key of ['Enter', 'Space', 'Backspace']) {
-    test(`skips the close button with Tab and removes the focused chip with ${key}`, async ({ page }) => {
+    test(`skips the close icon with Tab and removes the focused chip with ${key}`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('removable-chip/default'));
       const chips = page.getByTestId('removable-chip');
       const mars = chips.filter({ hasText: 'Марс' });
@@ -46,10 +46,10 @@ test.describe('RemovableChip playground', () => {
       await page.goto(getPlaygroundScenarioPath(`removable-chip/${state}`));
       const chips = page.getByTestId('removable-chip');
       const chip = chips.first();
-      const close = chip.locator('button');
+      const close = chip.getByLabel('Удалить чипс');
       await expect(chip).toHaveAttribute('aria-disabled', 'true');
       await expect(chip).toHaveAttribute('tabindex', state === 'disabled' ? '-1' : '0');
-      if (state === 'disabled') await expect(close).toBeDisabled();
+      if (state === 'disabled') await expect(close).toHaveCount(1);
       else await expect(close).toHaveCount(0);
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
@@ -65,19 +65,13 @@ test.describe('RemovableChip playground', () => {
     test(`applies hover and press only to the close icon in ${mode} mode`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('removable-chip/appearances'));
       const chip = page.getByTestId('removable-chip').filter({ hasText: `flat / ${mode}` });
-      const close = chip.getByRole('button', { name: 'Удалить чипс' });
+      const close = chip.getByLabel('Удалить чипс');
       const background = await resolveCssColorToken(
         page,
         mode === 'colored' ? '--admiral-color-primary-base-3-rest' : '--admiral-color-neutral-base-opacity-rest',
       );
-      const hover = await resolveCssColorToken(
-        page,
-        mode === 'colored' ? '--admiral-color-primary-text-1-hover' : '--admiral-color-neutral-text-2-hover',
-      );
-      const press = await resolveCssColorToken(
-        page,
-        mode === 'colored' ? '--admiral-color-primary-text-1-press' : '--admiral-color-neutral-text-2-press',
-      );
+      const hover = await resolveCssColorToken(page, '--admiral-color-neutral-text-2-hover');
+      const press = await resolveCssColorToken(page, '--admiral-color-neutral-text-2-press');
 
       await chip.hover({ position: { x: 4, y: 4 } });
       await expect(chip).toHaveCSS('background-color', background);
@@ -97,7 +91,7 @@ test.describe('RemovableChip playground', () => {
   test('keeps the disabled close icon color on hover and press', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('removable-chip/disabled'));
     const chip = page.getByTestId('removable-chip').first();
-    const close = chip.locator('button');
+    const close = chip.getByLabel('Удалить чипс');
     const color = await resolveCssColorToken(page, '--admiral-color-neutral-text-disable-rest');
     await close.hover({ force: true });
     await expect(close.locator('path')).toHaveCSS('fill', color);

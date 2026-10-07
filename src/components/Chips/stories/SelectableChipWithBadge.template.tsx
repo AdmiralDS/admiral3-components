@@ -10,7 +10,7 @@ export const SelectableChipWithBadgeTemplate = (args: SelectableChipProps) => {
   return (
     <StoryDemoContainer $withBackground={false} $direction="column" $gap="16px">
       <StoryDemoDescription>В компоненте можно включать бейджи.</StoryDemoDescription>
-      <SelectableChip {...args} selected={selected} onClick={() => setSelected((value) => !value)} badge={5}>
+      <SelectableChip {...args} selected={selected} onChangeSelected={(selected) => setSelected(selected)} badge={5}>
         Chip
       </SelectableChip>
     </StoryDemoContainer>

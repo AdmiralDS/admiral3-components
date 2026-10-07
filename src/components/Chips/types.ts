@@ -1,7 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { CHIPS_APPEARANCES, CHIPS_COLOR_MODES, CHIPS_DIMENSIONS } from './constants';
-import type { IconPlacementProps } from './IconPlacement';
 
 export type ChipDimension = (typeof CHIPS_DIMENSIONS)[number];
 export type ChipAppearance = (typeof CHIPS_APPEARANCES)[number];
@@ -47,6 +46,8 @@ export interface SelectableChipProps extends ChipBaseProps {
   readOnly?: boolean;
   /** Иконки или другие декоративные элементы после контента чипса. */
   iconsAfter?: ReactNode;
+  /** Обработчик изменения выбранного состояния при клике или нажатии Enter/Space. */
+  onChangeSelected?: (selected: boolean) => void;
 }
 
 export interface RemovableChipProps extends ChipBaseProps {
@@ -55,7 +56,7 @@ export interface RemovableChipProps extends ChipBaseProps {
   /** Отключённое состояние. Блокирует обработчики событий onClose и onKeyDown. */
   disabled?: boolean;
   /** Props кнопки закрытия. */
-  closeButtonProps?: IconPlacementProps;
+  closeButtonProps?: HTMLAttributes<SVGSVGElement>;
   /** Только для чтения. Блокирует переданные обработчики событий и скрывает кнопку удаления. */
   readOnly?: boolean;
 }
