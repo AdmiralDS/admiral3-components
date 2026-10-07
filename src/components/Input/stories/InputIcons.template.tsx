@@ -1,19 +1,19 @@
 import { useRef } from 'react';
 
-import { DocumentsCopyOutline, ServiceInfoOutline, SystemSearchOutline } from '@admiral-ds/admiral3-icons';
+import { ServiceInfoOutline, SystemSearchOutline } from '@admiral-ds/admiral3-icons';
 
-import { Input, InputIcon, InputIconButton, type InputProps } from '@admiral-ds/admiral3-components';
+import {
+  Input,
+  InputIcon,
+  InputIconButton,
+  InputIconCopyButton,
+  type InputProps,
+} from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription, StoryDemoItem } from '../../stories/StoryContainers';
 
 const InputWithIcons = (args: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleCopy = () => {
-    if (inputRef.current) {
-      void navigator.clipboard.writeText(inputRef.current.value);
-    }
-  };
 
   return (
     <Input
@@ -30,9 +30,12 @@ const InputWithIcons = (args: InputProps) => {
           <InputIconButton aria-label="Показать информацию">
             <ServiceInfoOutline aria-hidden />
           </InputIconButton>
-          <InputIconButton aria-label="Скопировать значение" disabled={args.disabled} onClick={handleCopy} preventFocus>
-            <DocumentsCopyOutline aria-hidden />
-          </InputIconButton>
+          <InputIconCopyButton
+            inputRef={inputRef}
+            aria-label="Скопировать значение"
+            disabled={args.disabled}
+            preventFocus
+          />
         </>
       }
     />

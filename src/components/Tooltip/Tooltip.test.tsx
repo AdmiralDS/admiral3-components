@@ -127,6 +127,31 @@ describe('Tooltip', () => {
     expect(cancelAnimationFrame).toHaveBeenCalledWith(1);
   });
 
+  it('uses the target owner window to schedule direction calculation', () => {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const iframeTarget = iframe.contentDocument!.createElement('button');
+    let iframeAnimationFrameCallback: FrameRequestCallback | undefined;
+    const requestAnimationFrameSpy = vi
+      .spyOn(iframe.contentWindow!, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        iframeAnimationFrameCallback = callback;
+        return 17;
+      });
+    const cancelAnimationFrameSpy = vi.spyOn(iframe.contentWindow!, 'cancelAnimationFrame');
+
+    const { unmount } = render(<Tooltip targetElement={iframeTarget}>Content</Tooltip>);
+
+    expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
+    act(() => iframeAnimationFrameCallback?.(0));
+    expect(getTooltipDirection).toHaveBeenCalledWith(iframeTarget, expect.any(HTMLDivElement), 16, undefined);
+
+    unmount();
+    expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(17);
+    iframe.remove();
+  });
+
   it.each<[TooltipInternalPosition, string, string, boolean]>([
     ['leftBottom', 'row-reverse', 'flex-start', false],
     ['leftTop', 'row-reverse', 'flex-end', false],

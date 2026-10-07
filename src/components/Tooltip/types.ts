@@ -1,6 +1,7 @@
-import type { AriaAttributes, HTMLAttributes, ReactNode, RefCallback } from 'react';
+import type { AriaAttributes, HTMLAttributes, ReactNode, Ref, RefCallback } from 'react';
 
 import type { TOOLTIP_DIMENSIONS, TOOLTIP_INTERNAL_POSITIONS, TOOLTIP_POSITIONS } from './constants';
+import type { ComponentStyleConfig } from '../../types';
 
 export type TooltipDimension = (typeof TOOLTIP_DIMENSIONS)[number];
 export type TooltipPosition = (typeof TOOLTIP_POSITIONS)[number];
@@ -15,6 +16,8 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   targetElement: Element | null;
   /** Предпочтительное направление открытия Tooltip. */
   tooltipPosition?: TooltipPosition;
+  /** Пользовательские стили Tooltip. */
+  tooltipStyles?: ComponentStyleConfig;
 }
 
 export interface UseTooltipOptions {
@@ -38,8 +41,24 @@ export interface UseTooltipResult<T extends HTMLElement = HTMLElement> {
   };
 }
 
+export interface WithTooltipProps {
+  /** Функция, возвращающая содержимое Tooltip. Для передачи параметров используйте замыкание. */
+  renderContent: () => ReactNode;
+  /** Открывать Tooltip с рекомендуемой задержкой. */
+  withDelay?: boolean;
+  /** Ref компонента Tooltip. */
+  tooltipRef?: Ref<HTMLDivElement>;
+  /** Предпочтительное направление открытия Tooltip. */
+  tooltipPosition?: TooltipPosition;
+  /** Размер Tooltip. */
+  tooltipDimension?: TooltipDimension;
+  /** Пользовательские стили Tooltip. */
+  tooltipStyles?: ComponentStyleConfig;
+}
+
 export interface StyledTooltipProps {
   $dimension: TooltipDimension;
+  $cssMixin?: ComponentStyleConfig['cssMixin'];
 }
 
 /** Типы, используемые при расчёте и проверке позиции Tooltip. */

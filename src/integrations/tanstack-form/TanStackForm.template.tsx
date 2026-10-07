@@ -12,6 +12,7 @@ import {
   RadioButton,
   RadioGroup,
   Toggle,
+  TextArea,
 } from '@admiral-ds/admiral3-components';
 
 type FormValues = {
@@ -348,15 +349,17 @@ export const TanStackFormTemplate = () => {
           {(field) => (
             <Field>
               <Label htmlFor={commentId}>Комментарий</Label>
-              <Input
+              <TextArea
                 id={commentId}
                 name={field.name}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
                 onBlur={field.handleBlur}
-                type="text"
                 maxLength={50}
                 showClearIcon
+                autoHeight
+                minRows={2}
+                maxRows={5}
                 placeholder="Добавьте комментарий"
               />
             </Field>

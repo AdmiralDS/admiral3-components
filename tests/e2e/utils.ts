@@ -2,6 +2,12 @@ import type { Locator, Page } from '@playwright/test';
 
 import { TIMEOUTS } from './constants';
 
+/** Возвращает сочетание для перехода между всеми фокусируемыми элементами. */
+export const getTabKey = (browserName: 'chromium' | 'firefox' | 'webkit', reverse = false) => {
+  const alt = browserName === 'webkit' && process.platform === 'darwin';
+  return `${alt ? 'Alt+' : ''}${reverse ? 'Shift+' : ''}Tab`;
+};
+
 /** Возвращает путь к internal playground сценарию для e2e. */
 export const getPlaygroundScenarioPath = (scenarioId: string) => {
   return `/?scenario=${encodeURIComponent(scenarioId)}`;

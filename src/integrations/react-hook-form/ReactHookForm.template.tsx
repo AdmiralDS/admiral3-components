@@ -12,6 +12,7 @@ import {
   RadioButton,
   RadioGroup,
   Toggle,
+  TextArea,
 } from '@admiral-ds/admiral3-components';
 
 type FormValues = {
@@ -295,12 +296,14 @@ export const ReactHookFormTemplate = () => {
           render={({ field }) => (
             <Field>
               <Label htmlFor={commentId}>Комментарий</Label>
-              <Input
+              <TextArea
                 {...field}
                 id={commentId}
-                type="text"
                 maxLength={50}
                 showClearIcon
+                autoHeight
+                minRows={2}
+                maxRows={5}
                 placeholder="Добавьте комментарий"
               />
             </Field>

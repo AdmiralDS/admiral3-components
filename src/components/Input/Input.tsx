@@ -92,9 +92,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onChange?.(event);
       if (value === undefined) {
         onCharacterCountChange?.(event.currentTarget.value.length);
-      } else {
-        // После завершения события React синхронизирует controlled input с принятым значением.
-        queueMicrotask(reportCharacterCount);
       }
     };
 
