@@ -1,4 +1,4 @@
-import { COMPATIBLE_POSITIONS, DEFAULT_TOOLTIP_POSITION, POSITION_PRIORITY } from './constants';
+import { COMPATIBLE_POSITIONS, DEFAULT_TOOLTIP_POSITION, POSITION_PRIORITY, TOOLTIP_OFFSET } from './constants';
 import type { PositionCheck, PositionContext, TooltipInternalPosition, TooltipPosition } from './types';
 
 export function getTooltipDirection(
@@ -43,7 +43,7 @@ const POSITION_CHECKS = {
      * ширины вызвавшего элемента (anchorElement), то нужно убедиться, что тултипу хватит
      * места слева и справа) */
     ({ spaceBottom, spaceLeft, spaceRight, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnBottom = spaceBottom > tooltipHeight;
+      const isEnoughOnBottom = spaceBottom > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnLeft = spaceLeft + anchorWidth / 2 > tooltipWidth / 2;
       const isEnoughOnRight = spaceRight + anchorWidth / 2 > tooltipWidth / 2;
       return isEnoughOnBottom && isEnoughOnLeft && isEnoughOnRight;
@@ -53,7 +53,7 @@ const POSITION_CHECKS = {
      * ширины вызвавшего элемента (anchorElement), то нужно убедиться, что тултипу хватит
      * места слева и справа) */
     ({ spaceTop, spaceLeft, spaceRight, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnTop = spaceTop > tooltipHeight;
+      const isEnoughOnTop = spaceTop > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnLeft = spaceLeft + anchorWidth / 2 > tooltipWidth / 2;
       const isEnoughOnRight = spaceRight + anchorWidth / 2 > tooltipWidth / 2;
       return isEnoughOnTop && isEnoughOnLeft && isEnoughOnRight;
@@ -63,7 +63,7 @@ const POSITION_CHECKS = {
      * высоты вызвавшего элемента (anchorElement), то нужно убедиться, что тултипу хватит
      * места сверху и снизу) */
     ({ spaceTop, spaceBottom, spaceLeft, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnLeft = spaceLeft > tooltipWidth;
+      const isEnoughOnLeft = spaceLeft > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnTop = spaceTop > (tooltipHeight - anchorHeight) / 2;
       const isEnoughOnBottom = spaceBottom > (tooltipHeight - anchorHeight) / 2;
       return isEnoughOnLeft && isEnoughOnBottom && isEnoughOnTop;
@@ -73,7 +73,7 @@ const POSITION_CHECKS = {
      * высоты вызвавшего элемента (anchorElement), то нужно убедиться, что тултипу хватит
      * места сверху и снизу) */
     ({ spaceTop, spaceRight, spaceBottom, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnRight = spaceRight > tooltipWidth;
+      const isEnoughOnRight = spaceRight > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnTop = spaceTop > (tooltipHeight - anchorHeight) / 2;
       const isEnoughOnBottom = spaceBottom > (tooltipHeight - anchorHeight) / 2;
       return isEnoughOnRight && isEnoughOnBottom && isEnoughOnTop;
@@ -82,7 +82,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места снизу и по ширине справа
      * (то есть тултип будет выровнен по левому краю вызвавшего элемента (anchorElement)) */
     ({ spaceBottom, spaceRight, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnBottom = spaceBottom > tooltipHeight;
+      const isEnoughOnBottom = spaceBottom > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnRight = spaceRight + anchorWidth > tooltipWidth;
       return isEnoughOnBottom && isEnoughOnRight;
     },
@@ -90,7 +90,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места снизу и по ширине слева
      * (то есть тултип будет выровнен по правому краю вызвавшего элемента (anchorElement)) */
     ({ spaceBottom, spaceLeft, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnBottom = spaceBottom > tooltipHeight;
+      const isEnoughOnBottom = spaceBottom > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnLeft = spaceLeft + anchorWidth > tooltipWidth;
       return isEnoughOnBottom && isEnoughOnLeft;
     },
@@ -98,7 +98,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места сверху и по ширине справа
      * (то есть тултип будет выровнен по левому краю вызвавшего элемента (anchorElement)) */
     ({ spaceTop, spaceRight, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnTop = spaceTop > tooltipHeight;
+      const isEnoughOnTop = spaceTop > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnRight = spaceRight + anchorWidth > tooltipWidth;
       return isEnoughOnTop && isEnoughOnRight;
     },
@@ -106,7 +106,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места сверху и по ширине слева
      * (то есть тултип будет выровнен по правому краю вызвавшего элемента (anchorElement)) */
     ({ spaceTop, spaceLeft, anchorWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnTop = spaceTop > tooltipHeight;
+      const isEnoughOnTop = spaceTop > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnLeft = spaceLeft + anchorWidth > tooltipWidth;
       return isEnoughOnTop && isEnoughOnLeft;
     },
@@ -114,7 +114,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места слева и по высоте снизу
      * (то есть тултип будет выровнен по верхнему краю вызвавшего элемента (anchorElement)) */
     ({ spaceBottom, spaceLeft, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnLeft = spaceLeft > tooltipWidth;
+      const isEnoughOnLeft = spaceLeft > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnBottom = spaceBottom + anchorHeight > tooltipHeight;
       return isEnoughOnLeft && isEnoughOnBottom;
     },
@@ -122,7 +122,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места слева и по высоте сверху
      * (то есть тултип будет выровнен по нижнему краю вызвавшего элемента (anchorElement)) */
     ({ spaceTop, spaceLeft, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnLeft = spaceLeft > tooltipWidth;
+      const isEnoughOnLeft = spaceLeft > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnTop = spaceTop + anchorHeight > tooltipHeight;
       return isEnoughOnLeft && isEnoughOnTop;
     },
@@ -130,7 +130,7 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места справа и по высоте снизу
      * (то есть тултип будет выровнен по верхнему краю вызвавшего элемента (anchorElement)) */
     ({ spaceRight, spaceBottom, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnRight = spaceRight > tooltipWidth;
+      const isEnoughOnRight = spaceRight > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnBottom = spaceBottom + anchorHeight > tooltipHeight;
       return isEnoughOnRight && isEnoughOnBottom;
     },
@@ -138,21 +138,21 @@ const POSITION_CHECKS = {
     /** проверяем, что тултипу хватит места справа и по высоте сверху
      * (то есть тултип будет выровнен по нижнему краю вызвавшего элемента (anchorElement)) */
     ({ spaceTop, spaceRight, anchorHeight, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnRight = spaceRight > tooltipWidth;
+      const isEnoughOnRight = spaceRight > tooltipWidth + TOOLTIP_OFFSET;
       const isEnoughOnTop = spaceTop + anchorHeight > tooltipHeight;
       return isEnoughOnRight && isEnoughOnTop;
     },
   bottomPageCenter:
     /** проверяем, что тултипу хватит места снизу и по центру */
     ({ spaceBottom, viewportWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnBottom = spaceBottom > tooltipHeight;
+      const isEnoughOnBottom = spaceBottom > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnCenter = viewportWidth > tooltipWidth;
       return isEnoughOnBottom && isEnoughOnCenter;
     },
   topPageCenter:
     /** проверяем, что тултипу хватит места сверху и по центру */
     ({ spaceTop, viewportWidth, tooltipWidth, tooltipHeight }) => {
-      const isEnoughOnTop = spaceTop > tooltipHeight;
+      const isEnoughOnTop = spaceTop > tooltipHeight + TOOLTIP_OFFSET;
       const isEnoughOnCenter = viewportWidth > tooltipWidth;
       return isEnoughOnTop && isEnoughOnCenter;
     },

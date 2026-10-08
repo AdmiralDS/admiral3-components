@@ -50,7 +50,12 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     return emptyContent || !targetElement ? null : (
       <StyledPortal targetElement={targetElement} ref={floatingPortalRef} $flexDirection={layout.flexDirection}>
         <FakeTarget />
-        <TooltipWrapper ref={mergedRef} $padding={layout.padding} $alignSelf={layout.alignSelf}>
+        <TooltipWrapper
+          ref={mergedRef}
+          $margin={layout.margin}
+          $anchorSide={layout.anchorSide}
+          $alignSelf={layout.alignSelf}
+        >
           <TooltipContainer
             role="tooltip"
             $dimension={dimension}

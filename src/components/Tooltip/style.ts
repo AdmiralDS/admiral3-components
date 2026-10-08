@@ -1,10 +1,8 @@
-import type { CSSProperties } from 'react';
-
 import { zIndex } from '@admiral-ds/admiral3-tokens';
 import styled from 'styled-components';
 
-import { TOOLTIP_DIMENSION_PARAMETERS } from './constants';
-import type { StyledTooltipProps } from './types';
+import { TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_OFFSET } from './constants';
+import type { StyledPortalProps, StyledTooltipProps, StyledTooltipWrapperProps } from './types';
 import { cssToken } from '../../theme/cssToken';
 import { FloatingPortal } from '../_internal/FloatingPortal';
 
@@ -19,11 +17,9 @@ const textColor = cssToken(
 const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 const boxShadow = cssToken('--admiral-shadow-shadow04', (theme) => theme.shadow.shadow04);
 
-export const TooltipWrapper = styled.div<{
-  $padding: CSSProperties['padding'];
-  $alignSelf: CSSProperties['alignSelf'];
-}>`
+export const TooltipWrapper = styled.div<StyledTooltipWrapperProps>`
   box-sizing: border-box;
+  position: relative;
   opacity: 0;
   transition-delay: 200ms;
   transition-property: opacity;
@@ -32,7 +28,21 @@ export const TooltipWrapper = styled.div<{
   width: max-content;
   min-width: max-content;
   pointer-events: initial;
-  padding: ${({ $padding }) => $padding};
+  margin: ${({ $margin }) => $margin};
+
+  /* Прозрачный мостик заполняет зазор между якорем и TooltipContainer,
+     чтобы при переводе указателя через этот зазор Tooltip не закрывался. */
+  &::before {
+    content: '';
+    position: absolute;
+    ${({ $anchorSide }) =>
+      $anchorSide === 'top' || $anchorSide === 'bottom' ? 'left: 0; width: 100%;' : 'top: 0; height: 100%;'}
+    ${({ $anchorSide }) => `${$anchorSide}: -${TOOLTIP_OFFSET}px;`}
+    ${({ $anchorSide }) =>
+      $anchorSide === 'top' || $anchorSide === 'bottom'
+        ? `height: ${TOOLTIP_OFFSET}px;`
+        : `width: ${TOOLTIP_OFFSET}px;`}
+  }
 `;
 
 export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-dimension': string }>((props) => ({
@@ -62,7 +72,7 @@ export const FakeTarget = styled.div`
   flex: 0 0 auto;
 `;
 
-export const StyledPortal = styled(FloatingPortal)<{ $flexDirection?: CSSProperties['flexDirection'] }>`
+export const StyledPortal = styled(FloatingPortal)<StyledPortalProps>`
   display: flex;
   flex-wrap: nowrap;
   ${({ $flexDirection }) => ($flexDirection ? `flex-direction: ${$flexDirection};` : '')}

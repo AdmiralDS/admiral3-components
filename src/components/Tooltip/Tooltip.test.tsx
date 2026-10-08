@@ -153,12 +153,12 @@ describe('Tooltip', () => {
 
   it.each(Object.entries(TOOLTIP_LAYOUTS))(
     'applies layout for the %s direction',
-    (direction, { flexDirection, alignSelf, fullWidth, padding }) => {
+    (direction, { flexDirection, alignSelf, fullWidth, margin }) => {
       vi.mocked(getTooltipDirection).mockReturnValue(direction as TooltipInternalPosition);
       renderTooltip({ 'data-testid': 'tooltip' });
       act(() => animationFrameCallback?.(0));
       const wrapper = screen.getByTestId('tooltip').parentElement!;
-      expect(wrapper).toHaveStyle({ alignSelf, padding });
+      expect(wrapper).toHaveStyle({ alignSelf, margin });
       expect(wrapper.parentElement).toHaveStyle({ flexDirection });
       expect(wrapper.parentElement).toHaveStyle({ width: fullWidth ? '100%' : '0px' });
     },
@@ -212,7 +212,7 @@ describe('Tooltip', () => {
     const wrapper = screen.getByTestId('tooltip').parentElement!;
     expect(wrapper).toHaveStyle({
       alignSelf: TOOLTIP_LAYOUTS.top.alignSelf,
-      padding: TOOLTIP_LAYOUTS.top.padding,
+      margin: TOOLTIP_LAYOUTS.top.margin,
     });
     expect(wrapper.parentElement).toHaveStyle({ flexDirection: TOOLTIP_LAYOUTS.top.flexDirection });
   });
