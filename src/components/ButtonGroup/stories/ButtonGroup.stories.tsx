@@ -8,10 +8,14 @@ import { ButtonGroupCustomColorTemplate } from './ButtonGroupCustomColor.templat
 import buttonGroupCustomColorTemplateRaw from './ButtonGroupCustomColor.template?raw';
 import { ButtonGroupDimensionsTemplate } from './ButtonGroupDimensions.template';
 import buttonGroupDimensionsTemplateRaw from './ButtonGroupDimensions.template?raw';
+import { ButtonGroupDynamicChildrenTemplate } from './ButtonGroupDynamicChildren.template';
+import buttonGroupDynamicChildrenTemplateRaw from './ButtonGroupDynamicChildren.template?raw';
 import { ButtonGroupIconBadgeTemplate } from './ButtonGroupIconBadge.template';
 import buttonGroupIconBadgeTemplateRaw from './ButtonGroupIconBadge.template?raw';
 import { ButtonGroupKeyboardNavigationTemplate } from './ButtonGroupKeyboardNavigation.template';
 import buttonGroupKeyboardNavigationTemplateRaw from './ButtonGroupKeyboardNavigation.template?raw';
+import { ButtonGroupNeutralFocusFallbackTemplate } from './ButtonGroupNeutralFocusFallback.template';
+import buttonGroupNeutralFocusFallbackTemplateRaw from './ButtonGroupNeutralFocusFallback.template?raw';
 import { ButtonGroupPlaygroundTemplate } from './ButtonGroupPlayground.template';
 import buttonGroupPlaygroundTemplateRaw from './ButtonGroupPlayground.template?raw';
 import { ButtonGroupStatesTemplate } from './ButtonGroupStates.template';
@@ -139,6 +143,26 @@ export const KeyboardNavigation: StoryObj<ButtonGroupProps> = {
       source: {
         code: buttonGroupKeyboardNavigationTemplateRaw,
       },
+    },
+  },
+};
+
+export const DynamicChildren: StoryObj<ButtonGroupProps> = {
+  render: ButtonGroupDynamicChildrenTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      source: { code: buttonGroupDynamicChildrenTemplateRaw },
+    },
+  },
+};
+
+export const NeutralFocusFallback: StoryObj<ButtonGroupProps> = {
+  render: ButtonGroupNeutralFocusFallbackTemplate,
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      source: { code: buttonGroupNeutralFocusFallbackTemplateRaw },
     },
   },
 };
