@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { INPUT_APPEARANCES, INPUT_DIMENSIONS, INPUT_DIMENSION_PARAMETERS } from './constants';
 import { Input } from './Input';
 import type { InputClearButtonProps } from './types';
+import { FormItem } from '../FormItem';
 import { InputIcon, InputIconButton, InputIconInformer } from '../HelperComponents';
 
 const PointerIcon = styled.span`
@@ -14,6 +15,34 @@ const PointerIcon = styled.span`
 `;
 
 describe('Input', () => {
+  it.each([
+    { mode: 'accept', expected: '  New value  ' },
+    { mode: 'transform', expected: 'New value' },
+    { mode: 'reject', expected: 'Initial' },
+  ])(
+    'keeps the controlled value and counter synchronized when the owner chooses to $mode input',
+    ({ mode, expected }) => {
+      const ControlledCounter = () => {
+        const [value, setValue] = useState('Initial');
+        return (
+          <FormItem maxLength={30} counterThreshold={0}>
+            <Input
+              aria-label="Text"
+              value={value}
+              onChange={(event) => {
+                if (mode !== 'reject') setValue(mode === 'transform' ? event.target.value.trim() : event.target.value);
+              }}
+            />
+          </FormItem>
+        );
+      };
+      render(<ControlledCounter />);
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: '  New value  ' } });
+      expect(screen.getByRole('textbox')).toHaveValue(expected);
+      expect(screen.getByText(`${expected.length} / 30`)).toBeInTheDocument();
+    },
+  );
+
   afterEach(() => {
     cleanup();
   });

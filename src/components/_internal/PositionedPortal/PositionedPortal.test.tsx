@@ -94,9 +94,19 @@ describe('PositionedPortal', () => {
     expect(observerMock.unobserve).toHaveBeenCalledOnce();
   });
 
-  it('does not access document when rendered on the server', () => {
+  it('does not access document when rendered on the server without a target element or container', () => {
     vi.stubGlobal('document', undefined);
 
     expect(renderToString(<PositionedPortal targetElement={null}>Content</PositionedPortal>)).toBe('');
+  });
+
+  it('does not render in the document body without a target element or container', () => {
+    render(
+      <PositionedPortal targetElement={null} data-testid="portal">
+        Content
+      </PositionedPortal>,
+    );
+
+    expect(screen.queryByTestId('portal')).not.toBeInTheDocument();
   });
 });

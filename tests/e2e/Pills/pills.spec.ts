@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
+import { getTabKey, getPlaygroundScenarioPath, resolveCssColorToken } from '../utils';
 
 const infoScenarioId = 'pills/info';
 const customColorsScenarioId = 'pills/custom-colors';
@@ -41,7 +41,7 @@ test.describe('Pills playground', () => {
   });
 
   test('allows a standalone Pill to receive focus through Tab', async ({ page, browserName }) => {
-    const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+    const tabKey = getTabKey(browserName);
     await page.goto(getPlaygroundScenarioPath(infoScenarioId));
 
     await page.getByRole('navigation', { name: 'Playground scenarios' }).getByRole('link').last().focus();
@@ -120,7 +120,7 @@ test.describe('Pills playground', () => {
   });
 
   test('uses one Tab stop and moves focus between segments with navigation keys', async ({ page, browserName }) => {
-    const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+    const tabKey = getTabKey(browserName);
     await page.goto(getPlaygroundScenarioPath(keyboardNavigationScenarioId));
 
     const firstSegment = page.getByTestId('pills-segment-0');

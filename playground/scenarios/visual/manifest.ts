@@ -17,6 +17,7 @@ export const VISUAL_SCENARIO_IDS = {
   radioButton: 'visual/radio-button',
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
+  textArea: 'visual/text-area',
   toggle: 'visual/toggle',
   tooltip: 'visual/tooltip',
 } as const;

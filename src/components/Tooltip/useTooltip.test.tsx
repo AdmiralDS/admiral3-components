@@ -224,6 +224,28 @@ describe('useTooltip', () => {
     iframe.remove();
   });
 
+  it('uses the target owner window for the pointer check animation frame', () => {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const ownerDocument = iframe.contentDocument!;
+    const ownerWindow = iframe.contentWindow!;
+    const requestAnimationFrameSpy = vi.spyOn(ownerWindow, 'requestAnimationFrame').mockReturnValue(73);
+    const cancelAnimationFrameSpy = vi.spyOn(ownerWindow, 'cancelAnimationFrame');
+    target = ownerDocument.createElement('button');
+    tooltip = ownerDocument.createElement('div');
+    ownerDocument.body.append(target, tooltip);
+    const { unmount } = setup();
+
+    fireEvent.mouseEnter(target);
+    fireEvent.mouseLeave(target, { relatedTarget: null });
+
+    expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
+    unmount();
+    expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(73);
+    iframe.remove();
+  });
+
   it('removes listeners when refs change', () => {
     const { result } = setup();
     act(() => {

@@ -6,6 +6,8 @@ import { TooltipCustomTemplate } from './TooltipCustom.template';
 import tooltipCustomTemplateRaw from './TooltipCustom.template?raw';
 import { TooltipDelayTemplate } from './TooltipDelay.template';
 import tooltipDelayTemplateRaw from './TooltipDelay.template?raw';
+import { TooltipIframeTemplate } from './TooltipIframe.template';
+import tooltipIframeTemplateRaw from './TooltipIframe.template?raw';
 import { TooltipPlaygroundTemplate } from './TooltipPlayground.template';
 import tooltipPlaygroundTemplateRaw from './TooltipPlayground.template?raw';
 import { TooltipPositionTemplate } from './TooltipPosition.template';
@@ -28,7 +30,7 @@ Tooltip существует в размерах S и M. Рекомендует�
 `;
 
 const meta = {
-  title: 'Components/Tooltip',
+  title: 'Components/Tooltip/Tooltip',
   component: Tooltip,
   tags: ['autodocs'],
   parameters: {
@@ -129,4 +131,18 @@ export const CustomContent: StoryObj<TooltipProps> = {
     },
   },
   name: 'Пример с кастомным наполнением тултипа',
+};
+
+export const IFrame: StoryObj = {
+  render: TooltipIframeTemplate,
+  parameters: {
+    // axe-core must be injected into every iframe to test its content. This example intentionally omits that
+    // infrastructure to keep the focus on redirecting application styles into iframe documents.
+    a11y: { options: { rules: { 'frame-tested': { enabled: false } } } },
+    controls: { disable: true },
+    docs: {
+      source: { code: tooltipIframeTemplateRaw },
+    },
+  },
+  name: 'Пример использования тултипа внутри iframe',
 };

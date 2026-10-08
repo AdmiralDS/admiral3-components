@@ -10,10 +10,10 @@
       "rawBytes": 24246
     },
     "button-group": {
-      "rawBytes": 4125
+      "rawBytes": 4241
     },
     "check-box": {
-      "rawBytes": 11970
+      "rawBytes": 12086
     },
     "divider": {
       "rawBytes": 1543
@@ -25,10 +25,10 @@
       "rawBytes": 4829
     },
     "helper-components": {
-      "rawBytes": 9721
+      "rawBytes": 9796
     },
     "input": {
-      "rawBytes": 13216
+      "rawBytes": 13394
     },
     "link": {
       "rawBytes": 2676
@@ -37,7 +37,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 5555
+      "rawBytes": 5671
     },
     "progress-header": {
       "rawBytes": 2489
@@ -49,7 +49,7 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 8975
+      "rawBytes": 9091
     },
     "skeleton": {
       "rawBytes": 1298
@@ -57,11 +57,14 @@
     "spinner": {
       "rawBytes": 6562
     },
+    "text-area": {
+      "rawBytes": 24799
+    },
     "toggle": {
       "rawBytes": 7679
     },
     "tooltip": {
-      "rawBytes": 7951
+      "rawBytes": 8236
     }
   },
   "version": 1
