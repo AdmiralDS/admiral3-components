@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { TOOLTIP_DIMENSION_PARAMETERS } from './constants';
 import type { StyledTooltipProps } from './types';
 import { cssToken } from '../../theme/cssToken';
-import { PositionedPortal } from '../_internal/PositionedPortal';
+import { FloatingPortal } from '../_internal/FloatingPortal';
 
 const backgroundColor = cssToken(
   '--admiral-color-neutral-base-inverted-rest',
@@ -19,12 +19,16 @@ const textColor = cssToken(
 const borderRadius = cssToken('--admiral-radius-small', (theme) => theme.radius.small);
 const boxShadow = cssToken('--admiral-shadow-shadow04', (theme) => theme.shadow.shadow04);
 
-export const TooltipWrapper = styled.div<{ $padding: CSSProperties['padding'] }>`
+export const TooltipWrapper = styled.div<{
+  $padding: CSSProperties['padding'];
+  $alignSelf: CSSProperties['alignSelf'];
+}>`
   box-sizing: border-box;
   opacity: 0;
   transition-delay: 200ms;
   transition-property: opacity;
-  align-self: center;
+  /* Выравнивание теперь декларативно следует единому состоянию direction. */
+  align-self: ${({ $alignSelf }) => $alignSelf};
   width: max-content;
   min-width: max-content;
   pointer-events: initial;
@@ -50,13 +54,15 @@ export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-di
 `;
 
 export const FakeTarget = styled.div`
+  /* Занимает rect настоящего target внутри portal-контейнера. Flex-направление
+     размещает Tooltip до или после этой области, не перемещая сам target в DOM. */
   pointer-events: none;
   height: 100%;
   width: 100%;
   flex: 0 0 auto;
 `;
 
-export const StyledPortal = styled(PositionedPortal)<{ $flexDirection?: CSSProperties['flexDirection'] }>`
+export const StyledPortal = styled(FloatingPortal)<{ $flexDirection?: CSSProperties['flexDirection'] }>`
   display: flex;
   flex-wrap: nowrap;
   ${({ $flexDirection }) => ($flexDirection ? `flex-direction: ${$flexDirection};` : '')}

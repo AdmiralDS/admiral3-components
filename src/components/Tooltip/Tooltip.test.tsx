@@ -7,16 +7,15 @@ import { TOOLTIP_DIMENSIONS, TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_LAYOUTS } fro
 import { getTooltipDirection } from './getTooltipDirection';
 import { Tooltip } from './Tooltip';
 import type { TooltipInternalPosition } from './types';
+import type * as FloatingPortalModule from '../_internal/FloatingPortal';
 
 vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: () => 16 }));
 
-vi.mock('../_internal/PositionedPortal', () => ({
-  PositionedPortal: forwardRef<
-    HTMLDivElement,
-    React.ComponentProps<'div'> & { targetElement: Element | null; fullContainerWidth?: boolean }
-  >(({ targetElement: _targetElement, fullContainerWidth, ...props }, ref) => (
-    <div ref={ref} data-full-container-width={String(Boolean(fullContainerWidth))} {...props} />
-  )),
+vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({
+  ...(await importOriginal<typeof FloatingPortalModule>()),
+  FloatingPortal: forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { targetElement: Element | null }>(
+    ({ targetElement: _targetElement, ...props }, ref) => <div ref={ref} {...props} />,
+  ),
 }));
 
 vi.mock('./getTooltipDirection', () => ({ getTooltipDirection: vi.fn(() => 'bottom') }));
@@ -118,13 +117,13 @@ describe('Tooltip', () => {
     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-dimension', 'm');
   });
 
-  it('calculates direction on the next animation frame and cancels it on unmount', () => {
+  it('calculates direction on the next animation frame', () => {
     const { unmount } = renderTooltip({ tooltipPosition: 'right' });
     expect(getTooltipDirection).not.toHaveBeenCalled();
     act(() => animationFrameCallback?.(0));
     expect(getTooltipDirection).toHaveBeenCalledWith(targetElement, expect.any(HTMLDivElement), 16, 'right');
     unmount();
-    expect(cancelAnimationFrame).toHaveBeenCalledWith(1);
+    expect(cancelAnimationFrame).not.toHaveBeenCalled();
   });
 
   it('uses the target owner window to schedule direction calculation', () => {
@@ -148,7 +147,7 @@ describe('Tooltip', () => {
     expect(getTooltipDirection).toHaveBeenCalledWith(iframeTarget, expect.any(HTMLDivElement), 16, undefined);
 
     unmount();
-    expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(17);
+    expect(cancelAnimationFrameSpy).not.toHaveBeenCalled();
     iframe.remove();
   });
 
@@ -161,23 +160,26 @@ describe('Tooltip', () => {
       const wrapper = screen.getByTestId('tooltip').parentElement!;
       expect(wrapper).toHaveStyle({ alignSelf, padding });
       expect(wrapper.parentElement).toHaveStyle({ flexDirection });
-      expect(wrapper.parentElement).toHaveAttribute('data-full-container-width', String(fullWidth));
+      expect(wrapper.parentElement).toHaveStyle({ width: fullWidth ? '100%' : '0px' });
     },
   );
 
   it('makes the wrapper visible after mount', () => {
     renderTooltip({ 'data-testid': 'tooltip' });
+    act(() => animationFrameCallback?.(0));
     expect(screen.getByTestId('tooltip').parentElement).toHaveStyle({ opacity: '1' });
   });
 
   it('observes size, recalculates after a width or height change, and disconnects on unmount', () => {
     const { unmount } = renderTooltip();
     const observer = ResizeObserverMock.instances[0];
+    expect(observer.observe).toHaveBeenCalledWith(targetElement);
     expect(observer.observe).toHaveBeenCalledWith(expect.any(HTMLDivElement));
     act(() => observer.emit(20, 100));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
     act(() => observer.emit(20, 100));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
+    act(() => animationFrameCallback?.(0));
     act(() => observer.emit(20, 120));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(2);
     act(() => animationFrameCallback?.(0));
@@ -185,6 +187,34 @@ describe('Tooltip', () => {
     expect(requestAnimationFrame).toHaveBeenCalledTimes(3);
     unmount();
     expect(observer.disconnect).toHaveBeenCalledOnce();
+  });
+
+  it.each(['scroll', 'resize'])('recalculates direction after a window %s', (eventName) => {
+    renderTooltip();
+    act(() => animationFrameCallback?.(0));
+    expect(getTooltipDirection).toHaveBeenCalledTimes(1);
+
+    act(() => window.dispatchEvent(new Event(eventName)));
+    expect(getTooltipDirection).toHaveBeenCalledTimes(1);
+
+    act(() => animationFrameCallback?.(0));
+    expect(getTooltipDirection).toHaveBeenCalledTimes(2);
+  });
+
+  it('applies a newly selected direction after an environment update', () => {
+    vi.mocked(getTooltipDirection).mockReturnValueOnce('bottom').mockReturnValue('top');
+    renderTooltip({ 'data-testid': 'tooltip' });
+    act(() => animationFrameCallback?.(0));
+
+    act(() => window.dispatchEvent(new Event('resize')));
+    act(() => animationFrameCallback?.(0));
+
+    const wrapper = screen.getByTestId('tooltip').parentElement!;
+    expect(wrapper).toHaveStyle({
+      alignSelf: TOOLTIP_LAYOUTS.top.alignSelf,
+      padding: TOOLTIP_LAYOUTS.top.padding,
+    });
+    expect(wrapper.parentElement).toHaveStyle({ flexDirection: TOOLTIP_LAYOUTS.top.flexDirection });
   });
 
   it('renders nothing without a target element', () => {
