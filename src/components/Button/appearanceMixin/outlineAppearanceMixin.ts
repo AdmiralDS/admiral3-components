@@ -19,7 +19,8 @@ export const outlineAppearanceMixin = css<{
     background-color: ${(p) => outlineColors[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]),
+  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) => outlineColors[p.$colorMode].backgroundPress};
   }
 

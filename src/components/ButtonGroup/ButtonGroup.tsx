@@ -25,6 +25,15 @@ const setActiveButton = (container: HTMLDivElement | null, activeButton: HTMLBut
   });
 };
 
+const updateActiveButton = (container: HTMLDivElement | null, currentButton: HTMLButtonElement | null) => {
+  const buttons = getEnabledButtonElements(container);
+  const activeButton =
+    buttons.find((button) => button === currentButton) ?? buttons.find((button) => button.tabIndex === 0) ?? buttons[0];
+
+  setActiveButton(container, activeButton);
+  return activeButton ?? null;
+};
+
 const getEventButton = (container: HTMLDivElement | null, target: EventTarget | null) => {
   if (!container || !(target instanceof Element)) return undefined;
 
@@ -55,15 +64,29 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
     );
 
     useLayoutEffect(() => {
-      const buttons = getEnabledButtonElements(groupRef.current);
-      const activeButton =
-        buttons.find((button) => button === activeButtonRef.current) ??
-        buttons.find((button) => button.tabIndex === 0) ??
-        buttons[0];
-
-      activeButtonRef.current = activeButton ?? null;
-      setActiveButton(groupRef.current, activeButton);
+      activeButtonRef.current = updateActiveButton(groupRef.current, activeButtonRef.current);
     }, [children, appearance, colorMode, dimension, colorConfig]);
+
+    useLayoutEffect(() => {
+      const container = groupRef.current;
+      const Observer = container?.ownerDocument.defaultView?.MutationObserver;
+      if (!container || !Observer) return;
+
+      const observer = new Observer((mutations) => {
+        const directButtonStateChanged = mutations.some((mutation) => mutation.target.parentElement === container);
+        if (directButtonStateChanged) {
+          activeButtonRef.current = updateActiveButton(container, activeButtonRef.current);
+        }
+      });
+
+      observer.observe(container, {
+        attributes: true,
+        attributeFilter: ['disabled', 'data-button-skeleton'],
+        subtree: true,
+      });
+
+      return () => observer.disconnect();
+    }, []);
 
     const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
       onFocus?.(event);
@@ -122,6 +145,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           aria-orientation="horizontal"
           $appearance={appearance}
           $colorMode={colorMode}
+          $colorConfig={colorConfig}
           data-appearance={colorConfig ? 'custom' : appearance}
           data-color-mode={colorMode}
           data-dimension={dimension}

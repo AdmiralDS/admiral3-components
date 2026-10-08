@@ -23,7 +23,7 @@ const getDisabledBackground = (props: ExecutionContext & SolidAppearanceProps) =
     props,
   );
 
-const getDisabledText = (props: ExecutionContext & SolidAppearanceProps) => {
+export const getSolidDisabledText = (props: ExecutionContext & SolidAppearanceProps) => {
   if (!props.$buttonGroup || props.$colorMode === 'staticWhite') {
     return solidColors[props.$colorMode].colorDisabled(props);
   }
@@ -42,16 +42,17 @@ export const solidAppearanceMixin = css<SolidAppearanceProps>`
     background-color: ${(p) => solidColors[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]),
+  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) => solidColors[p.$colorMode].backgroundPress};
   }
 
   &&&&[data-appearance~='disabled'],
   &&&:disabled {
     background-color: ${getDisabledBackground};
-    color: ${getDisabledText};
+    color: ${getSolidDisabledText};
     &&& *[fill^='#'] {
-      fill: ${getDisabledText};
+      fill: ${getSolidDisabledText};
     }
   }
 `;

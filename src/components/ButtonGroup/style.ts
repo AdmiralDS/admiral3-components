@@ -70,4 +70,13 @@ export const StyledButtonGroup = styled.div<StyledButtonGroupProps>`
   &[data-appearance='flat'][data-color-mode='neutral'] > button:focus-visible {
     outline-color: ${neutralFocus};
   }
+
+  &[data-appearance='custom'] > button:focus-visible {
+    outline-color: ${({ $appearance, $colorConfig, $colorMode }) =>
+      $colorMode === 'colored' && $colorConfig?.focusColor
+        ? $colorConfig.focusColor
+        : $appearance === 'solid'
+          ? solidColoredFocus
+          : coloredFocus};
+  }
 `;

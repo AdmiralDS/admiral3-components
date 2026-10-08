@@ -1,6 +1,6 @@
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ButtonGroup } from './ButtonGroup';
@@ -122,6 +122,43 @@ describe('ButtonGroup', () => {
         color: 'var(--group-button-text)',
         boxShadow: 'inset 0 0 0 1px var(--group-button-border)',
       });
+    });
+  });
+
+  it('uses regular custom colors as disabled fallbacks inside the group', () => {
+    render(
+      <>
+        <ButtonGroup
+          aria-label="Solid actions"
+          colorConfig={{
+            backgroundColor: {
+              rest: 'var(--group-button-background)',
+              hover: 'var(--group-button-background-hover)',
+              press: 'var(--group-button-background-press)',
+            },
+          }}
+        >
+          <Button disabled data-testid="solid-disabled">
+            Solid
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup
+          aria-label="Outline actions"
+          appearance="outline"
+          colorConfig={{ borderColor: 'var(--group-button-border)' }}
+        >
+          <Button disabled data-testid="outline-disabled">
+            Outline
+          </Button>
+        </ButtonGroup>
+      </>,
+    );
+
+    expect(screen.getByTestId('solid-disabled')).toHaveStyle({
+      backgroundColor: 'var(--group-button-background)',
+    });
+    expect(screen.getByTestId('outline-disabled')).toHaveStyle({
+      boxShadow: 'inset 0 0 0 1px var(--group-button-border)',
     });
   });
 
@@ -248,6 +285,32 @@ describe('ButtonGroup', () => {
 
     expect(screen.getByRole('button', { name: 'First' })).toHaveAttribute('tabindex', '0');
     expect(screen.getByRole('button', { name: 'Second' })).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('updates the Tab stop when a child Button changes its own disabled state', async () => {
+    const SelfDisablingButton = () => {
+      const [disabled, setDisabled] = useState(false);
+      return (
+        <Button disabled={disabled} onClick={() => setDisabled(true)}>
+          First
+        </Button>
+      );
+    };
+
+    render(
+      <ButtonGroup aria-label="Actions">
+        <SelfDisablingButton />
+        <Button>Second</Button>
+      </ButtonGroup>,
+    );
+
+    const first = screen.getByRole('button', { name: 'First' });
+    const second = screen.getByRole('button', { name: 'Second' });
+
+    fireEvent.click(first);
+
+    await waitFor(() => expect(second).toHaveAttribute('tabindex', '0'));
+    expect(first).toHaveAttribute('tabindex', '-1');
   });
 
   it('has no Tab stop when all direct Buttons are disabled', () => {

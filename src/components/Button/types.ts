@@ -39,6 +39,8 @@ export interface ButtonColorConfig {
   borderColor?: string;
   /** Цвет обводки Button в disabled состоянии. */
   borderColorDisabled?: string;
+  /** Цвет контура фокуса Button. */
+  focusColor?: string;
 }
 
 export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

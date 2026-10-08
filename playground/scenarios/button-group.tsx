@@ -3,6 +3,8 @@ import type { ButtonGroupProps } from '@admiral-ds/admiral3-components';
 import type { PlaygroundScenario } from './index';
 import { ButtonGroupDirtyTemplate } from '../../src/components/ButtonGroup/stories/ButtonGroupDirty.template';
 import {
+  ButtonGroupChildDisabledDirtyTemplate,
+  ButtonGroupCustomColorStatesDirtyTemplate,
   ButtonGroupDimensionsDirtyTemplate,
   ButtonGroupStatesDirtyTemplate,
 } from '../../src/components/ButtonGroup/stories/ButtonGroupE2E.template';
@@ -54,5 +56,15 @@ export const buttonGroupScenarios: PlaygroundScenario[] = [
     id: 'button-group/keyboard-navigation',
     title: 'ButtonGroup Keyboard Navigation',
     render: () => <ButtonGroupKeyboardNavigationTemplate {...defaultArgs} />,
+  },
+  {
+    id: 'button-group/child-disabled-tab-stop',
+    title: 'ButtonGroup Child Disabled Tab Stop',
+    render: () => <ButtonGroupChildDisabledDirtyTemplate />,
+  },
+  {
+    id: 'button-group/styling/custom-color-states',
+    title: 'ButtonGroup Custom Color States',
+    render: () => <ButtonGroupCustomColorStatesDirtyTemplate />,
   },
 ];

@@ -10,12 +10,18 @@ const customColorsScenarioId = 'button-group/styling/custom-colors';
 const dimensionsScenarioId = 'button-group/styling/dimensions';
 const statesScenarioId = 'button-group/states';
 const keyboardScenarioId = 'button-group/keyboard-navigation';
+const childDisabledScenarioId = 'button-group/child-disabled-tab-stop';
+const customColorStatesScenarioId = 'button-group/styling/custom-color-states';
 const solidBackgroundColorToken = '--admiral-color-primary-base-1-rest';
+const solidPressBackgroundColorToken = '--admiral-color-primary-base-1-press';
+const customBackgroundColorToken = '--admiral-color-error-base-1-rest';
 const invisibleBackgroundColorToken = '--admiral-color-neutral-base-invisible-rest';
 const customTextColorToken = '--admiral-color-error-text-1-rest';
 const customBorderColorToken = '--admiral-color-error-stroke-1-rest';
 const solidColoredFocusColorToken = '--admiral-color-neutral-stroke-static-white-1';
 const solidColoredDisabledTextColorToken = '--admiral-color-neutral-text-static-white-3';
+const disabledTextColorToken = '--admiral-color-neutral-text-disable-rest';
+const customFocusColorToken = '--admiral-color-success-stroke-1-rest';
 const dimensions = BUTTON_DIMENSION_PARAMETERS;
 
 test.describe('ButtonGroup playground', () => {
@@ -77,6 +83,26 @@ test.describe('ButtonGroup playground', () => {
     await expect(last).toBeFocused();
   });
 
+  test('moves the Tab stop when a child Button disables itself', async ({ page, browserName }) => {
+    const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+    await page.goto(getPlaygroundScenarioPath(childDisabledScenarioId));
+
+    const before = page.getByTestId('before-button-group');
+    const selfDisabling = page.getByTestId('button-group-self-disabling');
+    const remaining = page.getByTestId('button-group-remaining');
+
+    await before.focus();
+    await page.keyboard.press(tabKey);
+    await expect(selfDisabling).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(selfDisabling).toBeDisabled();
+    await expect(remaining).toHaveAttribute('tabindex', '0');
+
+    await before.focus();
+    await page.keyboard.press(tabKey);
+    await expect(remaining).toBeFocused();
+  });
+
   test('applies the wrapper color config to every Button', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(customColorsScenarioId));
 
@@ -95,7 +121,39 @@ test.describe('ButtonGroup playground', () => {
     }
   });
 
-  test('keeps native Enter and Space activation', async ({ page }) => {
+  test('uses group fallbacks and custom focusColor with a partial color config', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(customColorStatesScenarioId));
+
+    const solidFocus = page.getByTestId('button-group-custom-solid-focus');
+    const solidDisabled = page.getByTestId('button-group-custom-solid-disabled');
+    const outlineFocus = page.getByTestId('button-group-custom-outline-focus');
+    const outlineDisabled = page.getByTestId('button-group-custom-outline-disabled');
+
+    await solidFocus.focus();
+    await expect(solidFocus).toHaveCSS('outline-color', await resolveCssColorToken(page, solidColoredFocusColorToken));
+    await expect(solidDisabled).toHaveCSS(
+      'background-color',
+      await resolveCssColorToken(page, customBackgroundColorToken),
+    );
+    await expect(solidDisabled).toHaveCSS(
+      'color',
+      await resolveCssColorToken(page, solidColoredDisabledTextColorToken),
+    );
+
+    await outlineFocus.focus();
+    await expect(outlineFocus).toHaveCSS('outline-color', await resolveCssColorToken(page, customFocusColorToken));
+    await expect(outlineDisabled).toHaveCSS(
+      'background-color',
+      await resolveCssColorToken(page, invisibleBackgroundColorToken),
+    );
+    await expect(outlineDisabled).toHaveCSS('color', await resolveCssColorToken(page, disabledTextColorToken));
+    await expect(outlineDisabled).toHaveCSS(
+      'box-shadow',
+      `${await resolveCssColorToken(page, customBorderColorToken)} 0px 0px 0px 1px inset`,
+    );
+  });
+
+  test('supports Enter and Space activation', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(keyboardScenarioId));
 
     const first = page.getByTestId('button-group-first');
@@ -108,7 +166,12 @@ test.describe('ButtonGroup playground', () => {
     });
 
     await first.focus();
-    await page.keyboard.press('Enter');
+    await page.keyboard.down('Enter');
+    await expect(first).toHaveAttribute('data-button-pressed', '');
+    await expect(first).toHaveCSS('background-color', await resolveCssColorToken(page, solidPressBackgroundColorToken));
+    await page.keyboard.up('Enter');
+    await expect(first).not.toHaveAttribute('data-button-pressed');
+
     await page.keyboard.press('Space');
 
     await expect(first).toHaveAttribute('data-click-count', '2');

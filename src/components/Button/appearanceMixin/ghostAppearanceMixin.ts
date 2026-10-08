@@ -14,7 +14,8 @@ export const ghostAppearanceMixin = css<{ $colorMode: ButtonColorMode }>`
     background-color: ${(p) => ghostColors[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]),
+  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) => ghostColors[p.$colorMode].backgroundPress};
   }
 

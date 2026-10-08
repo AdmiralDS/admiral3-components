@@ -37,4 +37,5 @@ export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 export interface StyledButtonGroupProps {
   $appearance: ButtonGroupAppearance;
   $colorMode: ButtonGroupColorMode;
+  $colorConfig?: ButtonGroupColorConfig;
 }

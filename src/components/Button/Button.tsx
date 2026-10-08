@@ -1,4 +1,4 @@
-import { forwardRef, Children, useContext } from 'react';
+import { forwardRef, Children, useContext, useState } from 'react';
 
 import { ButtonGroupContext } from '#src/components/ButtonGroup/ButtonGroupContext';
 import { SpinnerIcon } from '#src/components/Spinner/SpinnerIcon';
@@ -32,6 +32,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       loadingPosition,
       skeleton = false,
       onClick,
+      onBlur,
+      onKeyDown,
+      onKeyUp,
       children,
       ...props
     },
@@ -42,6 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const appearance = buttonGroup?.appearance ?? userAppearance ?? DEFAULT_APPEARANCE;
     const userColorMode = buttonGroup?.colorMode ?? userColorModeProp ?? DEFAULT_COLOR_MODE;
     const resolvedColorConfig = buttonGroup ? buttonGroup.colorConfig : colorConfig;
+    const [enterPressed, setEnterPressed] = useState(false);
 
     /** Использование fallback-значения при невалидной комбинации пропсов */
     const colorMode =
@@ -69,6 +73,23 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       onClick?.(event);
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(event);
+
+      if (event.key === 'Enter') setEnterPressed(true);
+    };
+
+    const handleKeyUp = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      onKeyUp?.(event);
+
+      if (event.key === 'Enter') setEnterPressed(false);
+    };
+
+    const handleBlur = (event: React.FocusEvent<HTMLButtonElement>) => {
+      onBlur?.(event);
+      setEnterPressed(false);
+    };
+
     return (
       <StyledButton
         ref={ref}
@@ -89,8 +110,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-hidden={ariaHidden}
         tabIndex={tabIndex}
         onClick={handleClick}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         {...props}
         data-button-skeleton={skeleton ? '' : undefined}
+        data-button-pressed={enterPressed ? '' : undefined}
       >
         {loading && !loadingPosition && (
           <SpinnerContainer>

@@ -14,7 +14,8 @@ export const flatAppearanceMixin = css<{ $buttonGroup?: boolean; $colorMode: But
     background-color: ${(p) => flatColors[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]),
+  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) => flatColors[p.$colorMode].backgroundPress};
   }
 

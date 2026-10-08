@@ -40,10 +40,12 @@ const ERROR_COLOR_CONFIGS: Record<ButtonGroupAppearance, ButtonGroupColorConfig>
       press: 'var(--admiral-color-error-base-3-press)',
     },
     textColor: 'var(--admiral-color-error-text-1-rest)',
+    focusColor: 'var(--admiral-color-error-stroke-1-rest)',
   },
   outline: {
     borderColor: 'var(--admiral-color-error-stroke-1-rest)',
     textColor: 'var(--admiral-color-error-text-1-rest)',
+    focusColor: 'var(--admiral-color-error-stroke-1-rest)',
   },
 };
 
@@ -67,7 +69,7 @@ export const ButtonGroupCustomColorTemplate = (args: ButtonGroupProps) => (
             aria-label={`Пользовательские цвета ${appearance}`}
           >
             <Button>Первый</Button>
-            <Button>Второй</Button>
+            <Button disabled>Второй</Button>
             <Button>Третий</Button>
           </ButtonGroup>
         </Example>
