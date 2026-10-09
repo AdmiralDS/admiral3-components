@@ -3,22 +3,26 @@ import { createRef, forwardRef } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TOOLTIP_DIMENSIONS, TOOLTIP_DIMENSION_PARAMETERS, TOOLTIP_LAYOUTS } from './constants';
-import { getTooltipDirection } from './getTooltipDirection';
+import {
+  TOOLTIP_DIMENSIONS,
+  TOOLTIP_DIMENSION_PARAMETERS,
+  TOOLTIP_LAYOUTS,
+  TOOLTIP_POSITION_CONFIG,
+} from './constants';
 import { Tooltip } from './Tooltip';
 import type { TooltipInternalPosition } from './types';
 import type * as FloatingPortalModule from '../_internal/FloatingPortal';
+import { getFloatingDirection } from '../_internal/FloatingPortal';
 
 vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: () => 16 }));
 
 vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({
   ...(await importOriginal<typeof FloatingPortalModule>()),
+  getFloatingDirection: vi.fn(() => 'bottom'),
   FloatingPortal: forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { targetElement: Element | null }>(
     ({ targetElement: _targetElement, ...props }, ref) => <div ref={ref} {...props} />,
   ),
 }));
-
-vi.mock('./getTooltipDirection', () => ({ getTooltipDirection: vi.fn(() => 'bottom') }));
 
 class ResizeObserverMock implements ResizeObserver {
   static instances: ResizeObserverMock[] = [];
@@ -60,7 +64,7 @@ describe('Tooltip', () => {
       }),
     );
     vi.stubGlobal('cancelAnimationFrame', vi.fn());
-    vi.mocked(getTooltipDirection).mockReturnValue('bottom');
+    vi.mocked(getFloatingDirection).mockReturnValue('bottom');
   });
 
   afterEach(() => {
@@ -119,13 +123,14 @@ describe('Tooltip', () => {
 
   it('calculates direction on the next animation frame', () => {
     const { unmount } = renderTooltip({ tooltipPosition: 'right' });
-    expect(getTooltipDirection).not.toHaveBeenCalled();
+    expect(getFloatingDirection).not.toHaveBeenCalled();
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(
+    expect(getFloatingDirection).toHaveBeenCalledWith(
       targetElement,
       expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
       expect.any(HTMLDivElement),
       'right',
+      TOOLTIP_POSITION_CONFIG,
     );
     unmount();
     expect(cancelAnimationFrame).not.toHaveBeenCalled();
@@ -149,11 +154,12 @@ describe('Tooltip', () => {
     expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
     expect(requestAnimationFrame).not.toHaveBeenCalled();
     act(() => iframeAnimationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(
+    expect(getFloatingDirection).toHaveBeenCalledWith(
       iframeTarget,
       expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
       expect.any(HTMLDivElement),
       undefined,
+      TOOLTIP_POSITION_CONFIG,
     );
 
     unmount();
@@ -164,7 +170,7 @@ describe('Tooltip', () => {
   it.each(Object.entries(TOOLTIP_LAYOUTS))(
     'applies layout for the %s direction',
     (direction, { flexDirection, alignSelf, fullWidth, margin }) => {
-      vi.mocked(getTooltipDirection).mockReturnValue(direction as TooltipInternalPosition);
+      vi.mocked(getFloatingDirection).mockReturnValue(direction as TooltipInternalPosition);
       renderTooltip({ 'data-testid': 'tooltip' });
       act(() => animationFrameCallback?.(0));
       const wrapper = screen.getByTestId('tooltip').parentElement!;
@@ -205,17 +211,17 @@ describe('Tooltip', () => {
   it.each(['scroll', 'resize'])('recalculates direction after a window %s', (eventName) => {
     renderTooltip();
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledTimes(1);
+    expect(getFloatingDirection).toHaveBeenCalledTimes(1);
 
     act(() => window.dispatchEvent(new Event(eventName)));
-    expect(getTooltipDirection).toHaveBeenCalledTimes(1);
+    expect(getFloatingDirection).toHaveBeenCalledTimes(1);
 
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledTimes(2);
+    expect(getFloatingDirection).toHaveBeenCalledTimes(2);
   });
 
   it('applies a newly selected direction after an environment update', () => {
-    vi.mocked(getTooltipDirection).mockReturnValueOnce('bottom').mockReturnValue('top');
+    vi.mocked(getFloatingDirection).mockReturnValueOnce('bottom').mockReturnValue('top');
     renderTooltip({ 'data-testid': 'tooltip' });
     act(() => animationFrameCallback?.(0));
 

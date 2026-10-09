@@ -1,13 +1,12 @@
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
-import { TOOLTIP_LAYOUTS } from './constants';
-import { getTooltipDirection } from './getTooltipDirection';
+import { TOOLTIP_LAYOUTS, TOOLTIP_POSITION_CONFIG } from './constants';
 import { FakeTarget, StyledPortal, TooltipContainer, TooltipWrapper } from './style';
 import type { TooltipProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 import type { FloatingUpdateContext } from '../_internal/FloatingPortal';
-import { useFloating } from '../_internal/FloatingPortal';
+import { getFloatingDirection, useFloating } from '../_internal/FloatingPortal';
 
 const stretchToViewportWidth = (floatingElement: HTMLElement) => {
   floatingElement.style.left = '0px';
@@ -27,7 +26,13 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       ({ floatingElement, floatingPortal, targetRect }: FloatingUpdateContext) => {
         if (!targetElement) return;
 
-        const nextDirection = getTooltipDirection(targetElement, targetRect, floatingElement, tooltipPosition);
+        const nextDirection = getFloatingDirection(
+          targetElement,
+          targetRect,
+          floatingElement,
+          tooltipPosition,
+          TOOLTIP_POSITION_CONFIG,
+        );
         const nextLayout = TOOLTIP_LAYOUTS[nextDirection];
         if (nextLayout.fullWidth) stretchToViewportWidth(floatingPortal);
         // Изначально Tooltip прозрачен и расположен снизу.

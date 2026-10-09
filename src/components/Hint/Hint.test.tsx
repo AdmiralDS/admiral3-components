@@ -4,19 +4,19 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { css } from 'styled-components';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { HINT_CONTENT_PADDING, HINT_CONTENT_PADDING_WITH_CLOSE, HINT_PADDING } from './constants';
+import { HINT_CONTENT_PADDING, HINT_CONTENT_PADDING_WITH_CLOSE, HINT_PADDING, HINT_POSITION_CONFIG } from './constants';
 import { Hint } from './Hint';
 import { HintLabel } from './style';
 import type * as FloatingPortalModule from '../_internal/FloatingPortal';
-import { getTooltipDirection } from '../Tooltip/getTooltipDirection';
+import { getFloatingDirection } from '../_internal/FloatingPortal';
 
 vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({
   ...(await importOriginal<typeof FloatingPortalModule>()),
+  getFloatingDirection: vi.fn(() => 'bottom'),
   FloatingPortal: forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { targetElement: Element | null }>(
     ({ targetElement: _targetElement, ...props }, ref) => <div ref={ref} {...props} />,
   ),
 }));
-vi.mock('../Tooltip/getTooltipDirection', () => ({ getTooltipDirection: vi.fn(() => 'bottom') }));
 
 const targetElement = document.createElement('button');
 
@@ -155,11 +155,12 @@ describe('Hint', () => {
       </Hint>,
     );
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(
+    expect(getFloatingDirection).toHaveBeenCalledWith(
       targetElement,
       expect.objectContaining({ width: 0, height: 0 }),
       expect.any(HTMLDivElement),
       'right',
+      HINT_POSITION_CONFIG,
     );
   });
 

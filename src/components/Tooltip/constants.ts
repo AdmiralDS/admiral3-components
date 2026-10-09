@@ -2,8 +2,11 @@ import type { CSSProperties } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 
+import type { FloatingPositionConfig } from '../_internal/FloatingPortal';
+import { FLOATING_INTERNAL_POSITIONS, FLOATING_POSITIONS } from '../_internal/FloatingPortal';
+
 export const TOOLTIP_DIMENSIONS = ['m', 's'] as const;
-export const TOOLTIP_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
+export const TOOLTIP_POSITIONS = FLOATING_POSITIONS;
 export const TOOLTIP_ANCHOR_SIDES = ['top', 'right', 'bottom', 'left'] as const;
 
 export const TOOLTIP_DIMENSION_PARAMETERS = {
@@ -13,33 +16,10 @@ export const TOOLTIP_DIMENSION_PARAMETERS = {
 
 export const DEFAULT_TOOLTIP_POSITION = 'bottom' as const;
 export const TOOLTIP_OFFSET = 8;
-export const TOOLTIP_INTERNAL_POSITIONS = [
-  ...TOOLTIP_POSITIONS,
-  'bottomRight',
-  'bottomLeft',
-  'topRight',
-  'topLeft',
-  'leftBottom',
-  'leftTop',
-  'rightBottom',
-  'rightTop',
-  'bottomPageCenter',
-  'topPageCenter',
-] as const;
-
-/** Допустимые варианты смещения тултипа для каждого заданного направления. */
-export const COMPATIBLE_POSITIONS: Record<
-  (typeof TOOLTIP_POSITIONS)[number],
-  readonly (typeof TOOLTIP_INTERNAL_POSITIONS)[number][]
-> = {
-  bottom: ['bottom', 'bottomRight', 'bottomLeft', 'bottomPageCenter'],
-  top: ['top', 'topRight', 'topLeft', 'topPageCenter'],
-  left: ['left', 'leftBottom', 'leftTop'],
-  right: ['right', 'rightBottom', 'rightTop'],
-};
+export const TOOLTIP_INTERNAL_POSITIONS = FLOATING_INTERNAL_POSITIONS;
 
 /** Порядок подбора позиции: сначала с центрированием относительно якоря, затем со смещением. */
-export const POSITION_PRIORITY = [
+const TOOLTIP_POSITION_PRIORITY = [
   'bottom',
   'top',
   'left',
@@ -55,6 +35,18 @@ export const POSITION_PRIORITY = [
   'bottomPageCenter',
   'topPageCenter',
 ] as const satisfies readonly (typeof TOOLTIP_INTERNAL_POSITIONS)[number][];
+
+export const TOOLTIP_POSITION_CONFIG: FloatingPositionConfig = {
+  positionPriority: TOOLTIP_POSITION_PRIORITY,
+  positionPriorityByPosition: {
+    bottom: ['bottom', 'bottomRight', 'bottomLeft', 'bottomPageCenter'],
+    top: ['top', 'topRight', 'topLeft', 'topPageCenter'],
+    left: ['left', 'leftBottom', 'leftTop'],
+    right: ['right', 'rightBottom', 'rightTop'],
+  },
+  fallbackPosition: (position) => position ?? DEFAULT_TOOLTIP_POSITION,
+  offset: TOOLTIP_OFFSET,
+};
 
 type TooltipLayout = {
   flexDirection: CSSProperties['flexDirection'];

@@ -1,3 +1,5 @@
+import type { FloatingPositionConfig } from '../_internal/FloatingPortal';
+
 export const HINT_OFFSET = 8;
 export const HINT_MAX_HEIGHT = 320;
 export const HINT_PADDING = '8px 0';
@@ -11,3 +13,44 @@ export const HINT_CLOSE_BUTTON = {
 export const HINT_CONTENT_PADDING_WITH_CLOSE = `4px ${
   HINT_CLOSE_BUTTON.right + HINT_CLOSE_BUTTON.size + HINT_CLOSE_BUTTON.gap
 }px 4px 16px`;
+
+const HINT_POSITION_PRIORITY = [
+  'bottomRight',
+  'bottomLeft',
+  'topRight',
+  'topLeft',
+  'leftBottom',
+  'leftTop',
+  'rightBottom',
+  'rightTop',
+  'bottom',
+  'top',
+  'left',
+  'right',
+  'bottomPageCenter',
+  'topPageCenter',
+] as const;
+
+export const HINT_POSITION_CONFIG: FloatingPositionConfig = {
+  positionPriority: HINT_POSITION_PRIORITY,
+  positionPriorityByPosition: {
+    bottom: ['bottomRight', 'bottomLeft', 'bottom', 'bottomPageCenter'],
+    top: ['topRight', 'topLeft', 'top', 'topPageCenter'],
+    left: ['leftBottom', 'leftTop', 'left'],
+    right: ['rightBottom', 'rightTop', 'right'],
+  },
+  fallbackPosition: (position) => {
+    switch (position) {
+      case 'left':
+        return 'leftBottom';
+      case 'right':
+        return 'rightBottom';
+      case 'top':
+        return 'topRight';
+      case 'bottom':
+      default:
+        return 'bottomRight';
+    }
+  },
+  offset: HINT_OFFSET,
+};

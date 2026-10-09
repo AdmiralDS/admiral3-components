@@ -1,10 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getTooltipDirection } from './getTooltipDirection';
-import type { TooltipInternalPosition } from './types';
-import { getScrollbarSize } from '../../utils/getScrollbarSize';
+import { getFloatingDirection } from './getFloatingDirection';
+import type { FloatingInternalPosition, FloatingPosition } from './getFloatingDirection';
+import { getScrollbarSize } from '../../../utils/getScrollbarSize';
+import { HINT_POSITION_CONFIG } from '../../Hint/constants';
+import { TOOLTIP_POSITION_CONFIG } from '../../Tooltip/constants';
 
-vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: vi.fn(() => 0) }));
+vi.mock('../../../utils/getScrollbarSize', () => ({ getScrollbarSize: vi.fn(() => 0) }));
 
 type Rect = { x: number; y: number; width: number; height: number };
 
@@ -16,23 +18,25 @@ const createElementWithRect = ({ x, y, width, height }: Rect) => {
 
 const getDirection = (
   anchorRect: Rect,
-  tooltipRect: Pick<Rect, 'width' | 'height'>,
-  tooltipPosition?: 'bottom' | 'top' | 'left' | 'right',
+  floatingRect: Pick<Rect, 'width' | 'height'>,
+  position?: FloatingPosition,
+  config = TOOLTIP_POSITION_CONFIG,
 ) =>
-  getTooltipDirection(
+  getFloatingDirection(
     document.createElement('div'),
     new DOMRect(anchorRect.x, anchorRect.y, anchorRect.width, anchorRect.height),
-    createElementWithRect({ x: 0, y: 0, ...tooltipRect }),
-    tooltipPosition,
+    createElementWithRect({ x: 0, y: 0, ...floatingRect }),
+    position,
+    config,
   );
 
-describe('getTooltipDirection', () => {
+describe('getFloatingDirection', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it.each<[TooltipInternalPosition, Rect, Pick<Rect, 'width' | 'height'>]>([
+  it.each<[FloatingInternalPosition, Rect, Pick<Rect, 'width' | 'height'>]>([
     ['bottom', { x: 450, y: 350, width: 100, height: 100 }, { width: 100, height: 100 }],
     ['top', { x: 450, y: 700, width: 100, height: 50 }, { width: 100, height: 100 }],
     ['left', { x: 400, y: 350, width: 100, height: 100 }, { width: 100, height: 700 }],
@@ -47,22 +51,46 @@ describe('getTooltipDirection', () => {
     ['rightTop', { x: 10, y: 770, width: 20, height: 20 }, { width: 100, height: 780 }],
     ['bottomPageCenter', { x: 200, y: 10, width: 20, height: 20 }, { width: 900, height: 100 }],
     ['topPageCenter', { x: 200, y: 770, width: 20, height: 20 }, { width: 900, height: 100 }],
-  ])('selects %s according to the complete position priority', (expectedPosition, anchorRect, tooltipRect) => {
+  ])('selects %s using the Tooltip priority', (expectedPosition, anchorRect, floatingRect) => {
     vi.stubGlobal('innerWidth', 1000);
     vi.stubGlobal('innerHeight', 800);
 
-    expect(getDirection(anchorRect, tooltipRect)).toBe(expectedPosition);
+    expect(getDirection(anchorRect, floatingRect)).toBe(expectedPosition);
   });
 
-  it('checks only positions compatible with the explicitly requested tooltipPosition', () => {
+  it('uses a reduced priority for an explicitly requested side', () => {
     vi.stubGlobal('innerWidth', 1000);
     vi.stubGlobal('innerHeight', 800);
 
     const anchorRect = { x: 100, y: 10, width: 20, height: 20 };
-    const tooltipRect = { width: 100, height: 100 };
+    const floatingRect = { width: 100, height: 100 };
 
-    expect(getDirection(anchorRect, tooltipRect)).toBe('bottom');
-    expect(getDirection(anchorRect, tooltipRect, 'right')).toBe('rightBottom');
+    expect(getDirection(anchorRect, floatingRect)).toBe('bottom');
+    expect(getDirection(anchorRect, floatingRect, 'right')).toBe('rightBottom');
+  });
+
+  it('supports a different priority and fallback for Hint', () => {
+    vi.stubGlobal('innerWidth', 1000);
+    vi.stubGlobal('innerHeight', 800);
+
+    expect(
+      getDirection(
+        { x: 450, y: 350, width: 100, height: 100 },
+        { width: 100, height: 100 },
+        undefined,
+        HINT_POSITION_CONFIG,
+      ),
+    ).toBe('bottomRight');
+    expect(
+      getDirection({ x: 0, y: 0, width: 10, height: 10 }, { width: 2000, height: 2000 }, 'top', HINT_POSITION_CONFIG),
+    ).toBe('topRight');
+  });
+
+  it('uses the configured Tooltip fallback', () => {
+    vi.stubGlobal('innerWidth', 1000);
+    vi.stubGlobal('innerHeight', 800);
+
+    expect(getDirection({ x: 0, y: 0, width: 10, height: 10 }, { width: 2000, height: 2000 }, 'left')).toBe('left');
   });
 
   it('accounts for the scrollbar size when calculating available viewport space', () => {
@@ -70,10 +98,10 @@ describe('getTooltipDirection', () => {
     vi.stubGlobal('innerHeight', 300);
 
     const anchorRect = { x: 450, y: 150, width: 100, height: 30 };
-    const tooltipRect = { width: 100, height: 110 };
+    const floatingRect = { width: 100, height: 110 };
 
-    expect(getDirection(anchorRect, tooltipRect)).toBe('bottom');
+    expect(getDirection(anchorRect, floatingRect)).toBe('bottom');
     vi.mocked(getScrollbarSize).mockReturnValue(16);
-    expect(getDirection(anchorRect, tooltipRect)).toBe('top');
+    expect(getDirection(anchorRect, floatingRect)).toBe('top');
   });
 });

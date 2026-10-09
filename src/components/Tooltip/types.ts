@@ -1,16 +1,12 @@
 import type { AriaAttributes, CSSProperties, HTMLAttributes, ReactNode, Ref, RefCallback } from 'react';
 
-import type {
-  TOOLTIP_ANCHOR_SIDES,
-  TOOLTIP_DIMENSIONS,
-  TOOLTIP_INTERNAL_POSITIONS,
-  TOOLTIP_POSITIONS,
-} from './constants';
+import type { TOOLTIP_ANCHOR_SIDES, TOOLTIP_DIMENSIONS } from './constants';
 import type { ComponentStyleConfig } from '../../types';
+import type { FloatingInternalPosition, FloatingPosition } from '../_internal/FloatingPortal';
 
 export type TooltipDimension = (typeof TOOLTIP_DIMENSIONS)[number];
-export type TooltipPosition = (typeof TOOLTIP_POSITIONS)[number];
-export type TooltipInternalPosition = (typeof TOOLTIP_INTERNAL_POSITIONS)[number];
+export type TooltipPosition = FloatingPosition;
+export type TooltipInternalPosition = FloatingInternalPosition;
 export type TooltipAnchorSide = (typeof TOOLTIP_ANCHOR_SIDES)[number];
 
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
@@ -87,18 +83,3 @@ export interface StyledTooltipWrapperProps {
 export interface StyledPortalProps {
   $flexDirection?: CSSProperties['flexDirection'];
 }
-
-/** Типы, используемые при расчёте и проверке позиции Tooltip. */
-export type PositionContext = {
-  spaceTop: number;
-  spaceRight: number;
-  spaceBottom: number;
-  spaceLeft: number;
-  viewportWidth: number;
-  anchorWidth: number;
-  anchorHeight: number;
-  tooltipWidth: number;
-  tooltipHeight: number;
-};
-
-export type PositionCheck = (context: PositionContext) => boolean;
