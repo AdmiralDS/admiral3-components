@@ -1,2 +1,3 @@
 export { Hint } from './Hint';
-export type { HintDimension, HintProps } from './types';
+export { useHint } from './useHint';
+export type { HintDimension, HintPosition, HintProps, UseHintOptions, UseHintResult } from './types';

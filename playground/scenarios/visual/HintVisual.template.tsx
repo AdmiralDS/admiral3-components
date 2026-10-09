@@ -1,6 +1,4 @@
-import type { ComponentProps } from 'react';
-
-import { Hint } from '@admiral-ds/admiral3-components';
+import { Button, Hint, type HintProps, useHint } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -17,7 +15,7 @@ import { HINT_DIMENSIONS } from '../../../src/components/Hint/constants';
 
 type VisualVariant = {
   label: string;
-  props: ComponentProps<typeof Hint>;
+  props: Omit<HintProps, 'targetElement'>;
 };
 
 // Add every supported appearance alongside the generated dimension matrix.
@@ -29,6 +27,20 @@ const VARIANTS: VisualVariant[] = HINT_DIMENSIONS.map((dimension) => ({
 // Add every visually distinct interactive and disabled state.
 const STATES: VisualVariant[] = [{ label: 'default', props: {} }];
 
+const HintSample = ({ props }: { props: Omit<HintProps, 'targetElement'> }) => {
+  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>();
+  return (
+    <>
+      <Button {...triggerProps}>Target</Button>
+      {isVisible && (
+        <Hint {...props} {...hintProps}>
+          Hint
+        </Hint>
+      )}
+    </>
+  );
+};
+
 const renderMatrix = (items: VisualVariant[]) => (
   <VisualGroups>
     {items.map(({ label, props }) => (
@@ -37,7 +49,7 @@ const renderMatrix = (items: VisualVariant[]) => (
         <VisualSamples>
           <VisualSample>
             <VisualLabel>{label}</VisualLabel>
-            <Hint {...props}>Hint</Hint>
+            <HintSample props={props} />
           </VisualSample>
         </VisualSamples>
       </VisualGroup>

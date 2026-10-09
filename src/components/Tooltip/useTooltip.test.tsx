@@ -37,7 +37,7 @@ describe('useTooltip', () => {
   const setup = (delay = 0) => {
     const hook = renderHook(() => useTooltip<HTMLButtonElement>({ delay }));
     act(() => {
-      hook.result.current.targetProps.ref(target);
+      hook.result.current.triggerProps.ref(target);
       hook.result.current.tooltipProps.ref(tooltip);
     });
     return hook;
@@ -46,18 +46,42 @@ describe('useTooltip', () => {
   it('provides the target element to the tooltip props', () => {
     const { result } = setup();
     expect(result.current.tooltipProps.targetElement).toBe(target);
-    act(() => result.current.targetProps.ref(null));
+    act(() => result.current.triggerProps.ref(null));
+    expect(result.current.tooltipProps.targetElement).toBeNull();
+  });
+
+  it('uses a separate element for positioning while keeping interactions on the trigger', () => {
+    const positionTarget = document.createElement('div');
+    const { result } = renderHook(() => useTooltip<HTMLButtonElement>({ targetElement: positionTarget }));
+    act(() => {
+      result.current.triggerProps.ref(target);
+      result.current.tooltipProps.ref(tooltip);
+    });
+
+    expect(result.current.tooltipProps.targetElement).toBe(positionTarget);
+    fireEvent.mouseEnter(target);
+    expect(result.current.isVisible).toBe(true);
+    fireEvent.mouseLeave(target, { relatedTarget: positionTarget });
+    expect(result.current.isVisible).toBe(false);
+    fireEvent.mouseEnter(positionTarget);
+    fireEvent.focus(positionTarget);
+    expect(result.current.isVisible).toBe(false);
+  });
+
+  it('preserves an explicitly null target element instead of falling back to the trigger', () => {
+    const { result } = renderHook(() => useTooltip<HTMLButtonElement>({ targetElement: null }));
+    act(() => result.current.triggerProps.ref(target));
     expect(result.current.tooltipProps.targetElement).toBeNull();
   });
 
   it('provides linked accessibility props for the target and tooltip', () => {
     const { result } = setup();
     expect(result.current.tooltipProps.id).toBeTruthy();
-    expect(result.current.targetProps['aria-describedby']).toBeUndefined();
+    expect(result.current.triggerProps['aria-describedby']).toBeUndefined();
     fireEvent.mouseEnter(target);
-    expect(result.current.targetProps['aria-describedby']).toBe(result.current.tooltipProps.id);
+    expect(result.current.triggerProps['aria-describedby']).toBe(result.current.tooltipProps.id);
     fireEvent.mouseLeave(target, { relatedTarget: document.body });
-    expect(result.current.targetProps['aria-describedby']).toBeUndefined();
+    expect(result.current.triggerProps['aria-describedby']).toBeUndefined();
   });
 
   it.each(['mouseenter', 'focus'] as const)('shows on target %s', (eventName) => {
@@ -249,7 +273,7 @@ describe('useTooltip', () => {
   it('removes listeners when refs change', () => {
     const { result } = setup();
     act(() => {
-      result.current.targetProps.ref(null);
+      result.current.triggerProps.ref(null);
       result.current.tooltipProps.ref(null);
     });
     fireEvent.mouseEnter(target);

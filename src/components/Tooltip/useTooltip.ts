@@ -9,26 +9,29 @@ const isElementInside = (container: Element | null, element: EventTarget | null)
 export const TOOLTIP_DELAY = 1500;
 
 /**
- * Предоставляет свойства для target-элемента и Tooltip и управляет его открытием при наведении
+ * Предоставляет свойства для элемента-триггера и Tooltip и управляет его открытием при наведении
  * или получении фокуса. Поддерживает отложенное открытие и закрытие по Escape.
+ * Элемент позиционирования может отличаться от триггера, но не входит в интерактивную область Tooltip.
  */
 export const useTooltip = <T extends HTMLElement = HTMLElement>({
   delay = 0,
+  targetElement,
 }: UseTooltipOptions = {}): UseTooltipResult<T> => {
-  const [targetElement, setTargetElement] = useState<T | null>(null);
+  const [triggerElement, setTriggerElement] = useState<T | null>(null);
   const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
   const [isVisible, setVisible] = useState(false);
+  const resolvedTargetElement = targetElement === undefined ? triggerElement : targetElement;
   const tooltipId = useId();
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerCheckFrameRef = useRef<number | null>(null);
   const pointerCheckWindowRef = useRef<Window | null>(null);
   const interactionInProgressRef = useRef(false);
-  const ownerDocument = targetElement?.ownerDocument ?? tooltipElement?.ownerDocument;
+  const ownerDocument = triggerElement?.ownerDocument ?? tooltipElement?.ownerDocument;
 
   const isInsideTooltipArea = useCallback(
     (element: EventTarget | null) =>
-      isElementInside(targetElement, element) || isElementInside(tooltipElement, element),
-    [targetElement, tooltipElement],
+      isElementInside(triggerElement, element) || isElementInside(tooltipElement, element),
+    [triggerElement, tooltipElement],
   );
 
   const cancelOpening = useCallback(() => {
@@ -119,21 +122,21 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
   );
 
   useEffect(() => {
-    if (!targetElement) return;
+    if (!triggerElement) return;
 
     // Нативные события корректно обрабатывают переход с disabled-элемента на якорь.
-    targetElement.addEventListener('mouseenter', showTooltipOnHover);
-    targetElement.addEventListener('focus', showTooltip);
-    targetElement.addEventListener('mouseleave', hideIfPointerOutside);
-    targetElement.addEventListener('blur', hideIfFocusOutside);
+    triggerElement.addEventListener('mouseenter', showTooltipOnHover);
+    triggerElement.addEventListener('focus', showTooltip);
+    triggerElement.addEventListener('mouseleave', hideIfPointerOutside);
+    triggerElement.addEventListener('blur', hideIfFocusOutside);
 
     return () => {
-      targetElement.removeEventListener('mouseenter', showTooltipOnHover);
-      targetElement.removeEventListener('focus', showTooltip);
-      targetElement.removeEventListener('mouseleave', hideIfPointerOutside);
-      targetElement.removeEventListener('blur', hideIfFocusOutside);
+      triggerElement.removeEventListener('mouseenter', showTooltipOnHover);
+      triggerElement.removeEventListener('focus', showTooltip);
+      triggerElement.removeEventListener('mouseleave', hideIfPointerOutside);
+      triggerElement.removeEventListener('blur', hideIfFocusOutside);
     };
-  }, [hideIfFocusOutside, hideIfPointerOutside, showTooltip, showTooltipOnHover, targetElement]);
+  }, [hideIfFocusOutside, hideIfPointerOutside, showTooltip, showTooltipOnHover, triggerElement]);
 
   useEffect(() => {
     if (!tooltipElement) return;
@@ -202,18 +205,18 @@ export const useTooltip = <T extends HTMLElement = HTMLElement>({
     [cancelOpening, cancelPointerCheck],
   );
 
-  const targetProps = useMemo(
-    () => ({ ref: setTargetElement, 'aria-describedby': isVisible ? tooltipId : undefined }),
+  const triggerProps = useMemo(
+    () => ({ ref: setTriggerElement, 'aria-describedby': isVisible ? tooltipId : undefined }),
     [isVisible, tooltipId],
   );
   const tooltipProps = useMemo(
-    () => ({ ref: setTooltipElement, id: tooltipId, targetElement }),
-    [targetElement, tooltipId],
+    () => ({ ref: setTooltipElement, id: tooltipId, targetElement: resolvedTargetElement }),
+    [resolvedTargetElement, tooltipId],
   );
 
   return {
     isVisible,
-    targetProps,
+    triggerProps,
     tooltipProps,
   };
 };

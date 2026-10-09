@@ -29,21 +29,27 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
 export interface UseTooltipOptions {
   /** Задержка открытия Tooltip при наведении в миллисекундах. Рекомендуемое значение — TOOLTIP_DELAY. */
   delay?: number;
+  /**
+   * Элемент, относительно которого позиционируется Tooltip. Если не задан, Tooltip позиционируется
+   * относительно элемента-триггера из triggerProps. Не участвует в управлении видимостью:
+   * наведение и фокус на этом элементе не открывают и не удерживают Tooltip.
+   */
+  targetElement?: Element | null;
 }
 
 export interface UseTooltipResult<T extends HTMLElement = HTMLElement> {
   /** Признак видимости Tooltip. */
   isVisible: boolean;
-  /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
-  targetProps: {
+  /** Готовые свойства для элемента-триггера, управляющего видимостью Tooltip. */
+  triggerProps: {
     ref: RefCallback<T>;
     'aria-describedby': AriaAttributes['aria-describedby'];
   };
-  /** Готовые свойства, связывающие Tooltip с целевым элементом. */
+  /** Готовые свойства, связывающие Tooltip с элементом позиционирования. */
   tooltipProps: {
     ref: RefCallback<HTMLDivElement>;
     id: string;
-    targetElement: T | null;
+    targetElement: Element | null;
   };
 }
 
@@ -54,6 +60,11 @@ export interface WithTooltipProps {
   withDelay?: boolean;
   /** Ref компонента Tooltip. */
   tooltipRef?: Ref<HTMLDivElement>;
+  /**
+   * Элемент, относительно которого позиционируется Tooltip. Если не задан, Tooltip позиционируется
+   * относительно обёрнутого компонента. Не участвует в управлении видимостью Tooltip.
+   */
+  tooltipTargetElement?: Element | null;
   /** Предпочтительное направление открытия Tooltip. */
   tooltipPosition?: TooltipPosition;
   /** Размер Tooltip. */

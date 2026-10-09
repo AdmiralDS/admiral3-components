@@ -2,7 +2,7 @@ import type { PlaygroundScenario } from './index';
 import type { HintProps } from '../../src/components/Hint';
 import { HintPlaygroundTemplate } from '../../src/components/Hint/stories/HintPlayground.template';
 
-const defaultArgs: HintProps = {
+const defaultArgs: Omit<HintProps, 'targetElement'> = {
   children: 'Hint',
 };
 

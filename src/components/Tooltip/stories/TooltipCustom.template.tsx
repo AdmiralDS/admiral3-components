@@ -22,7 +22,7 @@ const Position = styled.span<{ $dimension: TooltipDimension }>`
 
 export const TooltipCustomTemplate = (props: TooltipProps) => {
   const dimension = props.dimension ?? 'm';
-  const { targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+  const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
     <StoryDemoContainer $direction="column" $gap="20px">
@@ -30,7 +30,7 @@ export const TooltipCustomTemplate = (props: TooltipProps) => {
         <code>children</code> принимает ReactNode, поэтому внутри Tooltip можно использовать собственную разметку и
         типографику.
       </StoryDemoDescription>
-      <Button {...targetProps} dimension="m" square aria-label="Профиль">
+      <Button {...triggerProps} dimension="m" square aria-label="Профиль">
         <CategoryVIPOutline aria-hidden />
       </Button>
       {isVisible && (
