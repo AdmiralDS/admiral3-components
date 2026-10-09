@@ -150,6 +150,25 @@ test.describe('ButtonGroup playground', () => {
       'box-shadow',
       `${await resolveCssColorToken(page, customBorderColorToken)} 0px 0px 0px 1px inset`,
     );
+
+    await page.locator('#playground-theme').selectOption('dark');
+    await page.evaluate(() => {
+      const themeRoot = document.querySelector<HTMLElement>('[data-admiral-theme]');
+      if (!themeRoot) throw new Error('Playground theme root not found');
+
+      themeRoot.style.setProperty('--admiral-color-neutral-text-inverted-rest', 'rgb(1, 2, 3)');
+      themeRoot.style.setProperty('--admiral-color-neutral-stroke-2-focus', 'rgb(4, 5, 6)');
+    });
+
+    const solidNeutralFocus = page.getByTestId('button-group-custom-solid-neutral-focus');
+    await solidNeutralFocus.focus();
+    await expect(solidNeutralFocus).toHaveCSS('outline-color', 'rgb(1, 2, 3)');
+
+    for (const appearance of ['outline', 'flat']) {
+      const neutralFocus = page.getByTestId(`button-group-custom-${appearance}-neutral-focus`);
+      await neutralFocus.focus();
+      await expect(neutralFocus).toHaveCSS('outline-color', 'rgb(4, 5, 6)');
+    }
   });
 
   test('keeps native Enter and Space activation', async ({ page }) => {

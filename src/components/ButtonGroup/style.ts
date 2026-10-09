@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, type ExecutionContext } from 'styled-components';
 
 import type { StyledButtonGroupProps } from './types';
 import { cssToken } from '../../theme/cssToken';
@@ -14,6 +14,18 @@ const solidNeutralFocus = cssToken(
 );
 const coloredFocus = cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest);
 const neutralFocus = cssToken('--admiral-color-neutral-stroke-2-focus', (theme) => theme.color.neutral.stroke._2.focus);
+
+const getCustomFocusColor = (props: ExecutionContext & StyledButtonGroupProps) => {
+  if (props.$colorMode === 'colored' && props.$colorConfig?.focusColor) {
+    return props.$colorConfig.focusColor;
+  }
+
+  if (props.$appearance === 'solid') {
+    return props.$colorMode === 'neutral' ? solidNeutralFocus(props) : solidColoredFocus(props);
+  }
+
+  return props.$colorMode === 'neutral' ? neutralFocus(props) : coloredFocus(props);
+};
 
 export const StyledButtonGroup = styled.div<StyledButtonGroupProps>`
   box-sizing: border-box;
@@ -72,11 +84,6 @@ export const StyledButtonGroup = styled.div<StyledButtonGroupProps>`
   }
 
   &[data-appearance='custom'] > button:focus-visible {
-    outline-color: ${({ $appearance, $colorConfig, $colorMode }) =>
-      $colorMode === 'colored' && $colorConfig?.focusColor
-        ? $colorConfig.focusColor
-        : $appearance === 'solid'
-          ? solidColoredFocus
-          : coloredFocus};
+    outline-color: ${getCustomFocusColor};
   }
 `;

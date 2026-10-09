@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, ButtonGroup } from '@admiral-ds/admiral3-components';
 
 import { StoryDirtyContainer } from '../../stories/StoryContainers';
-import { BUTTON_GROUP_DIMENSIONS } from '../constants';
+import { BUTTON_GROUP_APPEARANCES, BUTTON_GROUP_DIMENSIONS } from '../constants';
 
 export const ButtonGroupDimensionsDirtyTemplate = () => (
   <StoryDirtyContainer>
@@ -95,5 +95,17 @@ export const ButtonGroupCustomColorStatesDirtyTemplate = () => (
         Disabled
       </Button>
     </ButtonGroup>
+    {BUTTON_GROUP_APPEARANCES.map((appearance) => (
+      <ButtonGroup
+        key={appearance}
+        appearance={appearance}
+        colorMode="neutral"
+        colorConfig={{}}
+        aria-label={`${appearance} neutral focus fallback`}
+      >
+        <Button data-testid={`button-group-custom-${appearance}-neutral-focus`}>Доступная</Button>
+        <Button>Вторая</Button>
+      </ButtonGroup>
+    ))}
   </StoryDirtyContainer>
 );
