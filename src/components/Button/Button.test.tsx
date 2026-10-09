@@ -219,22 +219,6 @@ describe('Button', () => {
     expect(clickCount).toBe(1);
   });
 
-  it('keeps the pressed state while Enter is held and clears it on release or blur', () => {
-    render(<Button data-testid="button">Button</Button>);
-
-    const button = screen.getByTestId('button');
-
-    expect(fireEvent.keyDown(button, { key: 'Enter' })).toBe(true);
-    expect(button).toHaveAttribute('data-button-pressed', '');
-
-    expect(fireEvent.keyUp(button, { key: 'Enter' })).toBe(true);
-    expect(button).not.toHaveAttribute('data-button-pressed');
-
-    fireEvent.keyDown(button, { key: 'Enter' });
-    fireEvent.blur(button);
-    expect(button).not.toHaveAttribute('data-button-pressed');
-  });
-
   it.each(['loading', 'skeleton'] as const)('blocks click events in %s state', (state) => {
     let clickCount = 0;
     let parentClickCount = 0;

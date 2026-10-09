@@ -96,8 +96,7 @@ export const customAppearanceMixin = css<CustomAppearanceProps>`
         : getToken(p.$appearance)[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]),
-  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) =>
       p.$colorMode === 'colored' && p.$colorConfig?.backgroundColor?.press
         ? p.$colorConfig.backgroundColor.press

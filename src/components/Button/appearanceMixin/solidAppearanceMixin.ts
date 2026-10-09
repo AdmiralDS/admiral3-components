@@ -42,8 +42,7 @@ export const solidAppearanceMixin = css<SolidAppearanceProps>`
     background-color: ${(p) => solidColors[p.$colorMode].backgroundHover};
   }
 
-  &&&:active:not(:disabled):not([aria-disabled]),
-  &&&[data-button-pressed]:not(:disabled):not([aria-disabled]) {
+  &&&:active:not(:disabled):not([aria-disabled]) {
     background-color: ${(p) => solidColors[p.$colorMode].backgroundPress};
   }
 

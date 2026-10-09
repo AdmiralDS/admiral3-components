@@ -13,7 +13,6 @@ const keyboardScenarioId = 'button-group/keyboard-navigation';
 const childDisabledScenarioId = 'button-group/child-disabled-tab-stop';
 const customColorStatesScenarioId = 'button-group/styling/custom-color-states';
 const solidBackgroundColorToken = '--admiral-color-primary-base-1-rest';
-const solidPressBackgroundColorToken = '--admiral-color-primary-base-1-press';
 const customBackgroundColorToken = '--admiral-color-error-base-1-rest';
 const invisibleBackgroundColorToken = '--admiral-color-neutral-base-invisible-rest';
 const customTextColorToken = '--admiral-color-error-text-1-rest';
@@ -153,7 +152,7 @@ test.describe('ButtonGroup playground', () => {
     );
   });
 
-  test('supports Enter and Space activation', async ({ page }) => {
+  test('keeps native Enter and Space activation', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(keyboardScenarioId));
 
     const first = page.getByTestId('button-group-first');
@@ -166,12 +165,7 @@ test.describe('ButtonGroup playground', () => {
     });
 
     await first.focus();
-    await page.keyboard.down('Enter');
-    await expect(first).toHaveAttribute('data-button-pressed', '');
-    await expect(first).toHaveCSS('background-color', await resolveCssColorToken(page, solidPressBackgroundColorToken));
-    await page.keyboard.up('Enter');
-    await expect(first).not.toHaveAttribute('data-button-pressed');
-
+    await page.keyboard.press('Enter');
     await page.keyboard.press('Space');
 
     await expect(first).toHaveAttribute('data-click-count', '2');
