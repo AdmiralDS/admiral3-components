@@ -164,6 +164,32 @@ describe('Hint', () => {
     );
   });
 
+  it.each([
+    ['bottom', 500, 'column'],
+    ['top', 750, 'column-reverse'],
+  ] as const)(
+    'places a mobile Hint on the %s and stretches its portal to the viewport',
+    (_, targetBottom, flexDirection) => {
+      vi.stubGlobal('innerWidth', 639);
+      vi.stubGlobal('innerHeight', 800);
+      vi.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, targetBottom - 40, 100, 40));
+      render(
+        <Hint targetElement={targetElement} data-testid="hint">
+          Content
+        </Hint>,
+      );
+      const wrapper = screen.getByTestId('hint').parentElement!;
+      vi.spyOn(wrapper, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 300, 200));
+
+      act(() => animationFrameCallback?.(0));
+
+      expect(getFloatingDirection).not.toHaveBeenCalled();
+      expect(screen.getByTestId('hint')).toHaveStyle({ maxWidth: 'calc(100vw - 32px)' });
+      expect(wrapper).toHaveStyle({ alignSelf: 'center' });
+      expect(wrapper.parentElement).toHaveStyle({ flexDirection, left: '0px', width: '100%' });
+    },
+  );
+
   it('renders nothing without content or target', () => {
     const { rerender } = render(<Hint targetElement={targetElement} />);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();

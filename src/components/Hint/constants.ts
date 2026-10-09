@@ -1,6 +1,7 @@
 import type { FloatingPositionConfig } from '../_internal/FloatingPortal';
 
 export const HINT_OFFSET = 8;
+export const HINT_MOBILE_BREAKPOINT = 640;
 export const HINT_MAX_HEIGHT = 320;
 export const HINT_PADDING = '8px 0';
 export const HINT_CONTENT_PADDING = '4px 16px';
@@ -53,4 +54,8 @@ export const HINT_POSITION_CONFIG: FloatingPositionConfig = {
     }
   },
   offset: HINT_OFFSET,
+  /** Второй проход по доступному месту в документе — стратегия именно для Hint. У Hint обычно более длинный
+   * жизненный цикл, чем у Tooltip: он может содержать интерактивный контент и оставаться открытым во время
+   * прокрутки. Поэтому реалистичен сценарий, когда Hint сейчас не помещается, но станет видимым после прокрутки. */
+  checkDocumentScroll: true,
 };

@@ -93,6 +93,47 @@ describe('getFloatingDirection', () => {
     expect(getDirection({ x: 0, y: 0, width: 10, height: 10 }, { width: 2000, height: 2000 }, 'left')).toBe('left');
   });
 
+  it('performs the optional second pass using the document scroll space before fallback', () => {
+    vi.stubGlobal('innerWidth', 1000);
+    vi.stubGlobal('innerHeight', 800);
+    vi.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(2000);
+    const fallbackPosition = vi.fn(() => 'top' as const);
+    const config = {
+      ...TOOLTIP_POSITION_CONFIG,
+      positionPriorityByPosition: {
+        ...TOOLTIP_POSITION_CONFIG.positionPriorityByPosition,
+        bottom: ['bottom'] as const,
+      },
+      fallbackPosition,
+      checkDocumentScroll: true,
+    };
+
+    expect(
+      getDirection({ x: 450, y: 350, width: 100, height: 100 }, { width: 100, height: 500 }, 'bottom', config),
+    ).toBe('bottom');
+    expect(fallbackPosition).not.toHaveBeenCalled();
+  });
+
+  it('does not use document scroll space when the second pass is disabled', () => {
+    vi.stubGlobal('innerWidth', 1000);
+    vi.stubGlobal('innerHeight', 800);
+    vi.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(2000);
+    const fallbackPosition = vi.fn(() => 'top' as const);
+    const config = {
+      ...TOOLTIP_POSITION_CONFIG,
+      positionPriorityByPosition: {
+        ...TOOLTIP_POSITION_CONFIG.positionPriorityByPosition,
+        bottom: ['bottom'] as const,
+      },
+      fallbackPosition,
+    };
+
+    expect(
+      getDirection({ x: 450, y: 350, width: 100, height: 100 }, { width: 100, height: 500 }, 'bottom', config),
+    ).toBe('top');
+    expect(fallbackPosition).toHaveBeenCalledWith('bottom');
+  });
+
   it('accounts for the scrollbar size when calculating available viewport space', () => {
     vi.stubGlobal('innerWidth', 1000);
     vi.stubGlobal('innerHeight', 300);

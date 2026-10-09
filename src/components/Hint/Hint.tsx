@@ -4,16 +4,12 @@ import { HINT_POSITION_CONFIG } from './constants';
 import { HintCloseButton } from './HintCloseButton';
 import { FakeTarget, HintContent, HintWrapper, HintContainer, StyledPortal } from './style';
 import type { HintProps } from './types';
+import { getMobileHintDirection, stretchToViewportWidth } from './utils';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 import type { FloatingUpdateContext } from '../_internal/FloatingPortal';
 import { getFloatingDirection, useFloating } from '../_internal/FloatingPortal';
 import { TOOLTIP_LAYOUTS } from '../Tooltip/constants';
-
-const stretchToViewportWidth = (floatingElement: HTMLElement) => {
-  floatingElement.style.left = '0px';
-  floatingElement.style.width = '100%';
-};
 
 /** Подсказка, которая позиционируется относительно targetElement. Управление видимостью вынесено в useHint. */
 export const Hint = forwardRef<HTMLDivElement, HintProps>(
@@ -30,14 +26,13 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
     const updateHint = useCallback(
       ({ floatingElement, floatingPortal, targetRect }: FloatingUpdateContext) => {
         if (!targetElement) return;
-        const nextDirection = getFloatingDirection(
-          targetElement,
-          targetRect,
-          floatingElement,
-          hintPosition,
-          HINT_POSITION_CONFIG,
-        );
-        if (TOOLTIP_LAYOUTS[nextDirection].fullWidth) stretchToViewportWidth(floatingPortal);
+        const mobileDirection = getMobileHintDirection(targetElement, targetRect, floatingElement);
+        const nextDirection =
+          mobileDirection ??
+          getFloatingDirection(targetElement, targetRect, floatingElement, hintPosition, HINT_POSITION_CONFIG);
+        const nextLayout = TOOLTIP_LAYOUTS[nextDirection];
+
+        if (nextLayout.fullWidth) stretchToViewportWidth(floatingPortal);
         floatingElement.style.opacity = '1';
         setDirection(nextDirection);
       },

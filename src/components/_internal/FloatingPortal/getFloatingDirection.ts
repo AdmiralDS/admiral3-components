@@ -42,6 +42,8 @@ export type FloatingPositionConfig = {
   fallbackPosition: (position?: FloatingPosition) => FloatingInternalPosition;
   /** Расстояние между якорем и floating-элементом. */
   offset: number;
+  /** Если во viewport нет подходящей позиции, повторить поиск с учётом доступного места в документе. */
+  checkDocumentScroll?: boolean;
 };
 
 export function getFloatingDirection(
@@ -58,7 +60,7 @@ export function getFloatingDirection(
   const viewportWidth = targetWindow?.innerWidth ?? 0;
   const viewportHeight = targetWindow?.innerHeight ?? 0;
 
-  const positionContext: PositionContext = {
+  const viewportPositionContext: PositionContext = {
     spaceTop: anchorElementRect.top,
     spaceRight: viewportWidth - anchorElementRect.right - scrollbarSize,
     spaceBottom: viewportHeight - anchorElementRect.bottom - scrollbarSize,
@@ -71,9 +73,32 @@ export function getFloatingDirection(
     offset: config.offset,
   };
   const positionPriority = position ? config.positionPriorityByPosition[position] : config.positionPriority;
-  const compatiblePosition = positionPriority.find((candidate) => POSITION_CHECKS[candidate](positionContext));
+  const findCompatiblePosition = (context: PositionContext) =>
+    positionPriority.find((candidate) => POSITION_CHECKS[candidate](context));
+  const viewportPosition = findCompatiblePosition(viewportPositionContext);
 
-  return compatiblePosition ?? config.fallbackPosition(position);
+  if (viewportPosition) return viewportPosition;
+
+  if (config.checkDocumentScroll) {
+    const documentScrollHeight = Math.max(
+      targetDocument.body.scrollHeight,
+      targetDocument.documentElement.scrollHeight,
+      targetDocument.body.offsetHeight,
+      targetDocument.documentElement.offsetHeight,
+      targetDocument.body.clientHeight,
+      targetDocument.documentElement.clientHeight,
+    );
+    const scrollY = targetWindow?.scrollY ?? 0;
+    const documentPosition = findCompatiblePosition({
+      ...viewportPositionContext,
+      spaceTop: anchorElementRect.top + scrollY,
+      spaceBottom: documentScrollHeight - (anchorElementRect.bottom + scrollY),
+    });
+
+    if (documentPosition) return documentPosition;
+  }
+
+  return config.fallbackPosition(position);
 }
 
 const POSITION_CHECKS = {
