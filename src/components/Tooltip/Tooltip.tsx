@@ -1,54 +1,53 @@
-import { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 
 import { TOOLTIP_LAYOUTS } from './constants';
 import { getTooltipDirection } from './getTooltipDirection';
 import { FakeTarget, StyledPortal, TooltipContainer, TooltipWrapper } from './style';
 import type { TooltipProps } from './types';
-import { getScrollbarSize } from '../../utils/getScrollbarSize';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 import type { FloatingUpdateContext } from '../_internal/FloatingPortal';
 import { useFloating } from '../_internal/FloatingPortal';
 
+const stretchToViewportWidth = (floatingElement: HTMLElement) => {
+  floatingElement.style.left = '0px';
+  floatingElement.style.width = '100%';
+};
+
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
   ({ children, dimension = 'm', targetElement, tooltipPosition, tooltipStyles, ...props }, ref) => {
-    const tooltipElementRef = useRef<HTMLDivElement | null>(null);
-    const directionRef = useRef<keyof typeof TOOLTIP_LAYOUTS>('bottom');
+    const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
+    const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
     const [direction, setDirection] = useState<keyof typeof TOOLTIP_LAYOUTS>('bottom');
 
     const emptyContent = !hasSlotContent(children);
-    const mergedRef = useMemo(() => refSetter(ref, tooltipElementRef), [ref]);
+    const mergedRef = useMemo(() => refSetter(ref, setTooltipElement), [ref]);
 
     const updateTooltip = useCallback(
-      ({ floatingElement }: FloatingUpdateContext) => {
-        const tooltip = tooltipElementRef.current;
-        if (!targetElement || !tooltip) return;
+      ({ floatingElement, floatingPortal, targetRect }: FloatingUpdateContext) => {
+        if (!targetElement) return;
 
-        const scrollbarSize = getScrollbarSize(targetElement.ownerDocument);
-        const nextDirection = getTooltipDirection(targetElement, tooltip, scrollbarSize, tooltipPosition);
+        const nextDirection = getTooltipDirection(targetElement, targetRect, floatingElement, tooltipPosition);
         const nextLayout = TOOLTIP_LAYOUTS[nextDirection];
-        if (nextLayout.fullWidth) {
-          floatingElement.style.left = '0px';
-          floatingElement.style.width = '100%';
-        }
-        tooltip.style.opacity = '1';
-
-        if (directionRef.current !== nextDirection) {
-          directionRef.current = nextDirection;
-          setDirection(nextDirection);
-        }
+        if (nextLayout.fullWidth) stretchToViewportWidth(floatingPortal);
+        // Изначально Tooltip прозрачен и расположен снизу.
+        // Показываем его после расчёта размеров и позиции.
+        floatingElement.style.opacity = '1';
+        setDirection(nextDirection);
       },
       [targetElement, tooltipPosition],
     );
 
     const layout = TOOLTIP_LAYOUTS[direction];
-    const { floatingPortalRef } = useFloating({
+    useFloating({
       targetElement: emptyContent ? null : targetElement,
+      floatingPortal,
+      floatingElement: tooltipElement,
       onUpdate: updateTooltip,
     });
 
     return emptyContent || !targetElement ? null : (
-      <StyledPortal targetElement={targetElement} ref={floatingPortalRef} $flexDirection={layout.flexDirection}>
+      <StyledPortal targetElement={targetElement} ref={setFloatingPortal} $flexDirection={layout.flexDirection}>
         <FakeTarget />
         <TooltipWrapper
           ref={mergedRef}

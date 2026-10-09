@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -34,15 +36,21 @@ describe('useFloating', () => {
       toJSON: () => undefined,
     });
     const TestComponent = () => {
-      const { floatingPortalRef } = useFloating({ targetElement });
-      return <div ref={floatingPortalRef} data-testid="floating" />;
+      const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
+      const [floatingElement, setFloatingElement] = useState<HTMLDivElement | null>(null);
+      useFloating({ targetElement, floatingPortal, floatingElement });
+      return (
+        <div ref={setFloatingPortal} data-testid="portal">
+          <div ref={setFloatingElement} />
+        </div>
+      );
     };
 
     render(<TestComponent />);
     act(() => animationFrameCallback?.(0));
 
-    const floatingElement = screen.getByTestId('floating');
-    expect(floatingElement).toHaveStyle({
+    const floatingPortal = screen.getByTestId('portal');
+    expect(floatingPortal).toHaveStyle({
       top: '30px',
       left: '20px',
       height: '40px',
@@ -75,17 +83,22 @@ describe('useFloating', () => {
     });
     const onUpdate = vi.fn();
     const TestComponent = () => {
-      const { floatingPortalRef } = useFloating({ targetElement, onUpdate });
-      return <div ref={floatingPortalRef} data-testid="floating" />;
+      const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
+      const [floatingElement, setFloatingElement] = useState<HTMLDivElement | null>(null);
+      useFloating({ targetElement, floatingPortal, floatingElement, onUpdate });
+      return (
+        <div ref={setFloatingPortal}>
+          <div ref={setFloatingElement} />
+        </div>
+      );
     };
 
     render(<TestComponent />);
     act(() => animationFrameCallback?.(0));
 
-    const floatingElement = screen.getByTestId('floating');
     expect(onUpdate).toHaveBeenCalledWith({
-      targetElement,
-      floatingElement,
+      floatingElement: expect.any(HTMLDivElement),
+      floatingPortal: expect.any(HTMLDivElement),
       targetRect: expect.objectContaining({ x: 20, y: 30, width: 100, height: 40 }),
     });
   });
@@ -104,8 +117,14 @@ describe('useFloating', () => {
     const targetElement = document.createElement('button');
     const onUpdate = vi.fn();
     const TestComponent = () => {
-      const { floatingPortalRef } = useFloating({ targetElement, onUpdate });
-      return <div ref={floatingPortalRef} />;
+      const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
+      const [floatingElement, setFloatingElement] = useState<HTMLDivElement | null>(null);
+      useFloating({ targetElement, floatingPortal, floatingElement, onUpdate });
+      return (
+        <div ref={setFloatingPortal}>
+          <div ref={setFloatingElement} />
+        </div>
+      );
     };
 
     render(<TestComponent />);

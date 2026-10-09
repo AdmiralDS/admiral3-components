@@ -1,15 +1,17 @@
 import { COMPATIBLE_POSITIONS, DEFAULT_TOOLTIP_POSITION, POSITION_PRIORITY, TOOLTIP_OFFSET } from './constants';
 import type { PositionCheck, PositionContext, TooltipInternalPosition, TooltipPosition } from './types';
+import { getScrollbarSize } from '../../utils/getScrollbarSize';
 
 export function getTooltipDirection(
   anchorElement: Element,
+  anchorElementRect: DOMRect,
   tooltipElement: Element,
-  scrollbarSize: number,
   tooltipPosition?: TooltipPosition,
 ): TooltipInternalPosition {
-  const anchorElementRect: DOMRect = anchorElement.getBoundingClientRect();
   const tooltipRect: DOMRect = tooltipElement.getBoundingClientRect();
-  const targetWindow = anchorElement.ownerDocument.defaultView;
+  const targetDocument = anchorElement.ownerDocument;
+  const scrollbarSize = getScrollbarSize(targetDocument);
+  const targetWindow = targetDocument.defaultView;
   const viewportWidth = targetWindow?.innerWidth ?? 0;
   const viewportHeight = targetWindow?.innerHeight ?? 0;
 

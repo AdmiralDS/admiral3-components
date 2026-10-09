@@ -2,6 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getTooltipDirection } from './getTooltipDirection';
 import type { TooltipInternalPosition } from './types';
+import { getScrollbarSize } from '../../utils/getScrollbarSize';
+
+vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: vi.fn(() => 0) }));
 
 type Rect = { x: number; y: number; width: number; height: number };
 
@@ -14,13 +17,12 @@ const createElementWithRect = ({ x, y, width, height }: Rect) => {
 const getDirection = (
   anchorRect: Rect,
   tooltipRect: Pick<Rect, 'width' | 'height'>,
-  scrollbarSize = 0,
   tooltipPosition?: 'bottom' | 'top' | 'left' | 'right',
 ) =>
   getTooltipDirection(
-    createElementWithRect(anchorRect),
+    document.createElement('div'),
+    new DOMRect(anchorRect.x, anchorRect.y, anchorRect.width, anchorRect.height),
     createElementWithRect({ x: 0, y: 0, ...tooltipRect }),
-    scrollbarSize,
     tooltipPosition,
   );
 
@@ -60,7 +62,7 @@ describe('getTooltipDirection', () => {
     const tooltipRect = { width: 100, height: 100 };
 
     expect(getDirection(anchorRect, tooltipRect)).toBe('bottom');
-    expect(getDirection(anchorRect, tooltipRect, 0, 'right')).toBe('rightBottom');
+    expect(getDirection(anchorRect, tooltipRect, 'right')).toBe('rightBottom');
   });
 
   it('accounts for the scrollbar size when calculating available viewport space', () => {
@@ -71,6 +73,7 @@ describe('getTooltipDirection', () => {
     const tooltipRect = { width: 100, height: 110 };
 
     expect(getDirection(anchorRect, tooltipRect)).toBe('bottom');
-    expect(getDirection(anchorRect, tooltipRect, 16)).toBe('top');
+    vi.mocked(getScrollbarSize).mockReturnValue(16);
+    expect(getDirection(anchorRect, tooltipRect)).toBe('top');
   });
 });

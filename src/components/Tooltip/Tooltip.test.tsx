@@ -121,7 +121,12 @@ describe('Tooltip', () => {
     const { unmount } = renderTooltip({ tooltipPosition: 'right' });
     expect(getTooltipDirection).not.toHaveBeenCalled();
     act(() => animationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(targetElement, expect.any(HTMLDivElement), 16, 'right');
+    expect(getTooltipDirection).toHaveBeenCalledWith(
+      targetElement,
+      expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
+      expect.any(HTMLDivElement),
+      'right',
+    );
     unmount();
     expect(cancelAnimationFrame).not.toHaveBeenCalled();
   });
@@ -144,7 +149,12 @@ describe('Tooltip', () => {
     expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
     expect(requestAnimationFrame).not.toHaveBeenCalled();
     act(() => iframeAnimationFrameCallback?.(0));
-    expect(getTooltipDirection).toHaveBeenCalledWith(iframeTarget, expect.any(HTMLDivElement), 16, undefined);
+    expect(getTooltipDirection).toHaveBeenCalledWith(
+      iframeTarget,
+      expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
+      expect.any(HTMLDivElement),
+      undefined,
+    );
 
     unmount();
     expect(cancelAnimationFrameSpy).not.toHaveBeenCalled();
@@ -170,11 +180,14 @@ describe('Tooltip', () => {
     expect(screen.getByTestId('tooltip').parentElement).toHaveStyle({ opacity: '1' });
   });
 
-  it('observes size, recalculates after a width or height change, and disconnects on unmount', () => {
+  it('observes the target and TooltipWrapper, then disconnects on unmount', () => {
     const { unmount } = renderTooltip();
     const observer = ResizeObserverMock.instances[0];
+    const tooltipWrapper = screen.getByRole('tooltip').parentElement!;
+    const floatingPortal = tooltipWrapper.parentElement!;
     expect(observer.observe).toHaveBeenCalledWith(targetElement);
-    expect(observer.observe).toHaveBeenCalledWith(expect.any(HTMLDivElement));
+    expect(observer.observe).toHaveBeenCalledWith(tooltipWrapper);
+    expect(observer.observe).not.toHaveBeenCalledWith(floatingPortal);
     act(() => observer.emit(20, 100));
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
     act(() => observer.emit(20, 100));
