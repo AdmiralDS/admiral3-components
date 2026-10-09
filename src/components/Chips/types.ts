@@ -47,7 +47,7 @@ export interface SelectableChipProps extends ChipBaseProps {
   /** Иконки или другие декоративные элементы после контента чипса. */
   iconsAfter?: ReactNode;
   /** Обработчик изменения выбранного состояния при клике или нажатии Enter/Space. */
-  onChangeSelected?: (selected: boolean) => void;
+  onSelectedChange?: (selected: boolean) => void;
 }
 
 export interface RemovableChipProps extends ChipBaseProps {

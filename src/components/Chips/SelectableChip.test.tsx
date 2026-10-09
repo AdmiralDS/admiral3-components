@@ -20,7 +20,7 @@ describe('SelectableChip', () => {
     expect(ref.current).toBe(chip);
     expect(chip).toBe(screen.getByTestId('chip'));
     expect(chip).toHaveAttribute('tabindex', '0');
-    expect(chip).not.toHaveAttribute('aria-pressed');
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
     expect(chip.querySelector('div')).toBeNull();
     expect(chip).toHaveAttribute('data-dimension', 'm');
     expect(chip).toHaveAttribute('data-appearance', 'outlined');
@@ -29,12 +29,12 @@ describe('SelectableChip', () => {
 
   it('keeps selected controlled and updates variant markers on rerender', () => {
     const onClick = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     const { rerender } = render(
       <SelectableChip
         selected={false}
         onClick={onClick}
-        onChangeSelected={onChangeSelected}
+        onSelectedChange={onSelectedChange}
         dimension="s"
         appearance="flat"
         colorMode="neutral"
@@ -50,11 +50,11 @@ describe('SelectableChip', () => {
     expect(chip).toHaveAttribute('data-color-mode', 'neutral');
     fireEvent.click(chip);
     expect(onClick).toHaveBeenCalledOnce();
-    expect(onChangeSelected).toHaveBeenCalledWith(true);
+    expect(onSelectedChange).toHaveBeenCalledWith(true);
     expect(chip).toHaveAttribute('aria-pressed', 'false');
 
     rerender(
-      <SelectableChip selected onClick={onClick} onChangeSelected={onChangeSelected}>
+      <SelectableChip selected onClick={onClick} onSelectedChange={onSelectedChange}>
         Марс
       </SelectableChip>,
     );
@@ -63,8 +63,8 @@ describe('SelectableChip', () => {
     expect(chip).toHaveAttribute('data-appearance', 'outlined');
     expect(chip).toHaveAttribute('data-color-mode', 'colored');
     fireEvent.click(chip);
-    expect(onChangeSelected).toHaveBeenLastCalledWith(false);
-    expect(onChangeSelected).toHaveBeenCalledTimes(2);
+    expect(onSelectedChange).toHaveBeenLastCalledWith(false);
+    expect(onSelectedChange).toHaveBeenCalledTimes(2);
     expect(chip).toHaveAttribute('aria-pressed', 'true');
   });
 
@@ -74,20 +74,20 @@ describe('SelectableChip', () => {
     [true, false],
   ] as const)('requests selection on click when selected is %j', (selected, nextSelected) => {
     const onClick = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     render(
-      <SelectableChip selected={selected} onClick={onClick} onChangeSelected={onChangeSelected}>
+      <SelectableChip selected={selected} onClick={onClick} onSelectedChange={onSelectedChange}>
         Марс
       </SelectableChip>,
     );
     const chip = screen.getByRole('button');
 
     fireEvent.click(chip);
-    expect(onChangeSelected).toHaveBeenCalledExactlyOnceWith(nextSelected);
+    expect(onSelectedChange).toHaveBeenCalledExactlyOnceWith(nextSelected);
     expect(onClick).toHaveBeenCalledOnce();
     expect(onClick.mock.calls[0][0].target).toBe(chip);
-    expect(onChangeSelected.mock.invocationCallOrder[0]).toBeLessThan(onClick.mock.invocationCallOrder[0]);
-    expect(chip).not.toHaveAttribute('onChangeSelected');
+    expect(onSelectedChange.mock.invocationCallOrder[0]).toBeLessThan(onClick.mock.invocationCallOrder[0]);
+    expect(chip).not.toHaveAttribute('onSelectedChange');
   });
 
   it.each(
@@ -97,23 +97,25 @@ describe('SelectableChip', () => {
   )('requests selection with "$key" when selected is $selected', ({ key, selected, nextSelected }) => {
     const onClick = vi.fn();
     const onKeyDown = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     render(
-      <SelectableChip selected={selected} onClick={onClick} onKeyDown={onKeyDown} onChangeSelected={onChangeSelected}>
+      <SelectableChip selected={selected} onClick={onClick} onKeyDown={onKeyDown} onSelectedChange={onSelectedChange}>
         Марс
       </SelectableChip>,
     );
     const chip = screen.getByRole('button');
 
     expect(fireEvent.keyDown(chip, { key })).toBe(false);
-    expect(onChangeSelected).toHaveBeenCalledExactlyOnceWith(nextSelected);
-    expect(onClick).not.toHaveBeenCalled();
+    expect(onSelectedChange).toHaveBeenCalledExactlyOnceWith(nextSelected);
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick.mock.calls[0][0].type).toBe('click');
     expect(onKeyDown).toHaveBeenCalledOnce();
     expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
-    expect(onChangeSelected.mock.invocationCallOrder[0]).toBeLessThan(onKeyDown.mock.invocationCallOrder[0]);
+    expect(onSelectedChange.mock.invocationCallOrder[0]).toBeLessThan(onClick.mock.invocationCallOrder[0]);
+    expect(onClick.mock.invocationCallOrder[0]).toBeLessThan(onKeyDown.mock.invocationCallOrder[0]);
   });
 
-  it('forwards click and keyboard handlers without onChangeSelected', () => {
+  it('activates onClick from the keyboard without onSelectedChange', () => {
     const onClick = vi.fn();
     const onKeyDown = vi.fn();
     render(
@@ -125,30 +127,31 @@ describe('SelectableChip', () => {
 
     fireEvent.click(chip);
     expect(fireEvent.keyDown(chip, { key: ' ' })).toBe(false);
-    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onClick.mock.calls[1][0].type).toBe('click');
     expect(onKeyDown).toHaveBeenCalledOnce();
   });
 
   it.each(['Backspace', 'Delete', 'ArrowRight', 'Escape'])('only forwards %s to onKeyDown', (key) => {
     const onClick = vi.fn();
     const onKeyDown = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     render(
-      <SelectableChip onClick={onClick} onKeyDown={onKeyDown} onChangeSelected={onChangeSelected}>
+      <SelectableChip onClick={onClick} onKeyDown={onKeyDown} onSelectedChange={onSelectedChange}>
         Марс
       </SelectableChip>,
     );
 
     expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
     expect(onClick).not.toHaveBeenCalled();
-    expect(onChangeSelected).not.toHaveBeenCalled();
+    expect(onSelectedChange).not.toHaveBeenCalled();
     expect(onKeyDown).toHaveBeenCalledOnce();
   });
 
   it.each([{ disabled: true }, { readOnly: true }])('blocks the main action and onKeyDown with %j', (state) => {
     const onClick = vi.fn();
     const onKeyDown = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     render(
       <SelectableChip
         {...state}
@@ -156,7 +159,7 @@ describe('SelectableChip', () => {
         iconsAfter={<span>После</span>}
         onClick={onClick}
         onKeyDown={onKeyDown}
-        onChangeSelected={onChangeSelected}
+        onSelectedChange={onSelectedChange}
       >
         Марс
       </SelectableChip>,
@@ -171,7 +174,7 @@ describe('SelectableChip', () => {
     fireEvent.click(screen.getByText('После'));
     for (const key of ['Enter', ' ', 'Backspace', 'Escape']) fireEvent.keyDown(chip, { key });
     expect(onClick).not.toHaveBeenCalled();
-    expect(onChangeSelected).not.toHaveBeenCalled();
+    expect(onSelectedChange).not.toHaveBeenCalled();
     expect(onKeyDown).not.toHaveBeenCalled();
   });
 
@@ -240,12 +243,12 @@ describe('SelectableChip', () => {
 
   it('activates the main action when iconsAfter is clicked without changing selected', () => {
     const onClick = vi.fn();
-    const onChangeSelected = vi.fn();
+    const onSelectedChange = vi.fn();
     render(
       <SelectableChip
         selected={false}
         onClick={onClick}
-        onChangeSelected={onChangeSelected}
+        onSelectedChange={onSelectedChange}
         iconsAfter={<span>После</span>}
       >
         Марс
@@ -253,7 +256,7 @@ describe('SelectableChip', () => {
     );
     fireEvent.click(screen.getByText('После'));
     expect(onClick).toHaveBeenCalledOnce();
-    expect(onChangeSelected).toHaveBeenCalledExactlyOnceWith(true);
+    expect(onSelectedChange).toHaveBeenCalledExactlyOnceWith(true);
     expect(screen.getByRole('button', { name: 'Марс' })).toHaveAttribute('aria-pressed', 'false');
   });
 

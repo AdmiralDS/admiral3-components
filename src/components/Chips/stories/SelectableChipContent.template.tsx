@@ -28,7 +28,7 @@ export const SelectableChipContentTemplate = (args: SelectableChipProps) => {
         avatar={<Avatar $dimension={args.dimension} />}
         badge={5}
         selected={selected}
-        onChangeSelected={(selected) => setSelected(selected)}
+        onSelectedChange={(selected) => setSelected(selected)}
       >
         Chip
       </SelectableChip>

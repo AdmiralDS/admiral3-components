@@ -15,9 +15,11 @@ test.describe('SelectableChip playground', () => {
     await chip.focus();
     await page.keyboard.press('Enter');
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
+    await expect(chip).toHaveAttribute('data-click-count', '1');
     await expect(chip).toHaveCSS('outline-width', '2px');
     await page.keyboard.press('Space');
     await expect(chip).toHaveAttribute('aria-pressed', 'false');
+    await expect(chip).toHaveAttribute('data-click-count', '2');
     expect(errors).toEqual([]);
   });
 

@@ -18,14 +18,14 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
       iconsBefore,
       avatar,
       badge,
-      selected,
+      selected = false,
       disabled,
       readOnly,
       renderContentTooltip,
       disabledTooltip,
       onClick,
       onKeyDown,
-      onChangeSelected,
+      onSelectedChange,
       tabIndex,
       iconsAfter,
       'aria-disabled': ariaDisabled,
@@ -44,7 +44,7 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
 
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onChangeSelected?.(!selected);
+        e.currentTarget.click();
       }
 
       onKeyDown?.(e);
@@ -53,7 +53,7 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
       if (eventsDisabled) return;
 
-      onChangeSelected?.(!selected);
+      onSelectedChange?.(!selected);
       onClick?.(e);
     };
 
