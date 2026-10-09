@@ -4,7 +4,7 @@ export const HintPlaygroundTemplate = (args: Omit<HintProps, 'targetElement'>) =
   const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>();
   return (
     <>
-      <Button {...triggerProps}>Наведи на меня</Button>
+      <Button {...triggerProps}>Наведи курсор или установи фокус</Button>
       {isVisible && <Hint {...args} {...hintProps} />}
     </>
   );

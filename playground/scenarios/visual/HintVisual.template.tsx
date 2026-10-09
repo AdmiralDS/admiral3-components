@@ -11,18 +11,13 @@ import {
   VisualSection,
   VisualTitle,
 } from './VisualLayout';
-import { HINT_DIMENSIONS } from '../../../src/components/Hint/constants';
 
 type VisualVariant = {
   label: string;
   props: Omit<HintProps, 'targetElement'>;
 };
 
-// Add every supported appearance alongside the generated dimension matrix.
-const VARIANTS: VisualVariant[] = HINT_DIMENSIONS.map((dimension) => ({
-  label: `size ${dimension}`,
-  props: { dimension },
-}));
+const VARIANTS: VisualVariant[] = [{ label: 'default', props: {} }];
 
 // Add every visually distinct interactive and disabled state.
 const STATES: VisualVariant[] = [{ label: 'default', props: {} }];
@@ -60,7 +55,7 @@ const renderMatrix = (items: VisualVariant[]) => (
 export const HintVisualTemplate = () => (
   <VisualLayout>
     <VisualSection>
-      <VisualTitle>Sizes and appearances</VisualTitle>
+      <VisualTitle>Appearance</VisualTitle>
       {renderMatrix(VARIANTS)}
     </VisualSection>
     <VisualSection>

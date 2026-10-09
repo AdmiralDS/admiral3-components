@@ -1,23 +1,42 @@
-import type { AriaAttributes, CSSProperties, HTMLAttributes, ReactNode, RefCallback } from 'react';
+import type {
+  AriaAttributes,
+  ButtonHTMLAttributes,
+  CSSProperties,
+  HTMLAttributes,
+  ReactNode,
+  RefCallback,
+} from 'react';
 
-import type { HINT_DIMENSIONS } from './constants';
+import type { ComponentStyleConfig } from '../../types';
+import type { DataAttributes } from '../../utils/dataAttributes';
 import type { TooltipAnchorSide, TooltipPosition } from '../Tooltip/types';
 
-export type HintDimension = (typeof HINT_DIMENSIONS)[number];
 export type HintPosition = TooltipPosition;
+export type HintVisibilityTrigger = 'hover' | 'click';
+export type HintCloseButtonProps = AriaAttributes &
+  Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'className' | 'title' | 'tabIndex'> &
+  DataAttributes;
 
-export interface HintProps extends HTMLAttributes<HTMLDivElement> {
-  /** Размер компонента. Значение по умолчанию 'm'. */
-  dimension?: HintDimension;
+export interface HintProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClose'> {
   /** Содержимое Hint. */
   children?: ReactNode;
   /** Элемент, относительно которого позиционируется Hint. */
   targetElement: Element | null;
   /** Предпочтительное направление открытия Hint. */
   hintPosition?: HintPosition;
+  /** Пользовательские стили Hint. */
+  hintStyles?: ComponentStyleConfig;
+  /** Отображает внутри Hint кнопку с иконкой закрытия. */
+  showCloseIcon?: boolean;
+  /** Вызывается при нажатии на кнопку с иконкой закрытия. */
+  onClose?: () => void;
+  /** Безопасные HTML-, ARIA- и data-атрибуты кнопки закрытия. */
+  closeButtonProps?: HintCloseButtonProps;
 }
 
 export interface UseHintOptions {
+  /** Способ управления видимостью Hint. Значение по умолчанию 'hover'. */
+  visibilityTrigger?: HintVisibilityTrigger;
   /** Задержка открытия Hint при наведении в миллисекундах. */
   delay?: number;
   /**
@@ -35,17 +54,24 @@ export interface UseHintResult<T extends HTMLElement = HTMLElement> {
   triggerProps: {
     ref: RefCallback<T>;
     'aria-describedby': AriaAttributes['aria-describedby'];
+    'aria-expanded'?: AriaAttributes['aria-expanded'];
   };
   /** Готовые свойства, связывающие Hint с элементом позиционирования. */
   hintProps: {
     ref: RefCallback<HTMLDivElement>;
     id: string;
     targetElement: Element | null;
+    showCloseIcon?: boolean;
+    onClose?: () => void;
   };
 }
 
 export interface StyledHintProps {
-  $dimension: HintDimension;
+  $cssMixin?: ComponentStyleConfig['cssMixin'];
+}
+
+export interface StyledHintContentProps {
+  $showCloseIcon: boolean;
 }
 
 export interface StyledHintWrapperProps {

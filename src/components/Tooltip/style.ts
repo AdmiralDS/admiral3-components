@@ -23,11 +23,10 @@ export const TooltipWrapper = styled.div<StyledTooltipWrapperProps>`
   opacity: 0;
   transition-delay: 200ms;
   transition-property: opacity;
-  /* Выравнивание теперь декларативно следует единому состоянию direction. */
-  align-self: ${({ $alignSelf }) => $alignSelf};
   width: max-content;
   min-width: max-content;
   pointer-events: initial;
+  align-self: ${({ $alignSelf }) => $alignSelf};
   margin: ${({ $margin }) => $margin};
 
   /* Прозрачный мостик заполняет зазор между якорем и TooltipContainer,
@@ -59,7 +58,7 @@ export const TooltipContainer = styled.div.attrs<StyledTooltipProps & { 'data-di
   background-color: ${backgroundColor};
   box-shadow: ${boxShadow};
   color: ${textColor};
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   ${({ $cssMixin }) => $cssMixin}
 `;
 

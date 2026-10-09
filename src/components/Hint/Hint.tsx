@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
-import { FakeTarget, HintWrapper, StyledHint, StyledPortal } from './style';
+import { HintCloseButton } from './HintCloseButton';
+import { FakeTarget, HintContent, HintWrapper, HintContainer, StyledPortal } from './style';
 import type { HintProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
@@ -16,7 +17,10 @@ const stretchToViewportWidth = (floatingElement: HTMLElement) => {
 
 /** Подсказка, которая позиционируется относительно targetElement. Управление видимостью вынесено в useHint. */
 export const Hint = forwardRef<HTMLDivElement, HintProps>(
-  ({ children, dimension = 'm', targetElement, hintPosition, ...props }, ref) => {
+  (
+    { children, targetElement, hintPosition, hintStyles, showCloseIcon = false, onClose, closeButtonProps, ...props },
+    ref,
+  ) => {
     const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
     const [hintElement, setHintElement] = useState<HTMLDivElement | null>(null);
     const [direction, setDirection] = useState<keyof typeof TOOLTIP_LAYOUTS>('bottom');
@@ -51,9 +55,24 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
           $anchorSide={layout.anchorSide}
           $alignSelf={layout.alignSelf}
         >
-          <StyledHint role="tooltip" {...props} $dimension={dimension}>
-            {children}
-          </StyledHint>
+          <HintContainer
+            role="tooltip"
+            $cssMixin={hintStyles?.cssMixin}
+            className={hintStyles?.className}
+            style={hintStyles?.style}
+            {...props}
+          >
+            <HintContent $showCloseIcon={showCloseIcon}>{children}</HintContent>
+            {showCloseIcon && (
+              <HintCloseButton
+                {...closeButtonProps}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onClose?.();
+                }}
+              />
+            )}
+          </HintContainer>
         </HintWrapper>
       </StyledPortal>
     );
