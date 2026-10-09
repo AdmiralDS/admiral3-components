@@ -2,6 +2,7 @@ export const VISUAL_SCENARIO_IDS = {
   badge: 'visual/badge',
   badgeDot: 'visual/badge-dot',
   button: 'visual/button',
+  buttonGroup: 'visual/button-group',
   checkBox: 'visual/check-box',
   divider: 'visual/divider',
   fieldSet: 'visual/field-set',

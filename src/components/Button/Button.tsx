@@ -1,5 +1,6 @@
-import { forwardRef, Children } from 'react';
+import { forwardRef, Children, useContext } from 'react';
 
+import { ButtonGroupContext } from '#src/components/ButtonGroup/ButtonGroupContext';
 import { SpinnerIcon } from '#src/components/Spinner/SpinnerIcon';
 
 import { StyledButton, ButtonContent, SpinnerContainer } from './style';
@@ -20,9 +21,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       type = 'button',
-      dimension = 'm',
-      appearance = DEFAULT_APPEARANCE,
-      colorMode: userColorMode = DEFAULT_COLOR_MODE,
+      dimension: userDimension,
+      appearance: userAppearance,
+      colorMode: userColorModeProp,
       colorConfig,
       disabled,
       inactive = false,
@@ -36,6 +37,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const buttonGroup = useContext(ButtonGroupContext);
+    const dimension = buttonGroup?.dimension ?? userDimension ?? 'm';
+    const appearance = buttonGroup?.appearance ?? userAppearance ?? DEFAULT_APPEARANCE;
+    const userColorMode = buttonGroup?.colorMode ?? userColorModeProp ?? DEFAULT_COLOR_MODE;
+    const resolvedColorConfig = buttonGroup ? buttonGroup.colorConfig : colorConfig;
+
     /** Использование fallback-значения при невалидной комбинации пропсов */
     const colorMode =
       (appearance === 'solid' || appearance === 'ghost') && userColorMode === 'staticWhite'
@@ -69,7 +76,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         $dimension={dimension}
         $appearance={appearance}
-        $colorConfig={colorConfig}
+        $buttonGroup={buttonGroup !== null}
+        $colorConfig={resolvedColorConfig}
         $colorMode={colorMode}
         $loading={loading}
         $loadingPosition={loadingPosition}
@@ -82,6 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         tabIndex={tabIndex}
         onClick={handleClick}
         {...props}
+        data-button-skeleton={skeleton ? '' : undefined}
       >
         {loading && !loadingPosition && (
           <SpinnerContainer>
