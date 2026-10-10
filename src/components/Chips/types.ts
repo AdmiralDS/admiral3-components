@@ -60,26 +60,3 @@ export interface RemovableChipProps extends ChipBaseProps {
   /** Режим только для чтения. Блокирует onClick, onKeyDown и onClose, а также скрывает иконку удаления. */
   readOnly?: boolean;
 }
-
-export interface StyledBaseChipProps {
-  $colorMode: ChipColorMode;
-  $disabled?: boolean;
-  $dimension: ChipDimension;
-  $appearance?: ChipAppearance;
-  $readOnly?: boolean;
-}
-
-export interface StyledSelectableChipProps extends StyledBaseChipProps {
-  $selected?: boolean;
-}
-
-export type ChipDimensionStyleProps = Pick<StyledBaseChipProps, '$dimension'>;
-export type ChipTypographyStyleProps = Pick<
-  StyledBaseChipProps,
-  '$colorMode' | '$appearance' | '$dimension' | '$disabled'
->;
-export type ChipActionsStyleProps = Pick<StyledSelectableChipProps, '$colorMode' | '$appearance' | '$selected'>;
-export type ChipColorsStyleProps = Pick<
-  StyledBaseChipProps,
-  '$colorMode' | '$appearance' | '$dimension' | '$disabled' | '$readOnly'
->;
