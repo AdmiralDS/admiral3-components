@@ -32,7 +32,12 @@ test.describe('SelectableChip playground', () => {
       await expect(chip).toHaveAttribute('tabindex', state === 'disabled' ? '-1' : '0');
       if (state === 'readonly') {
         await expect(chip).toHaveCSS('cursor', 'default');
-        await expect(chip).toHaveCSS('user-select', 'text');
+        expect(
+          await chip.evaluate((element) => {
+            const style = getComputedStyle(element);
+            return style.userSelect || style.webkitUserSelect;
+          }),
+        ).toBe('text');
       }
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
