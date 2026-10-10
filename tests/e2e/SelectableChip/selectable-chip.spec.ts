@@ -30,6 +30,10 @@ test.describe('SelectableChip playground', () => {
       const background = await chip.evaluate((element) => getComputedStyle(element).backgroundColor);
       await expect(chip).toHaveAttribute('aria-disabled', 'true');
       await expect(chip).toHaveAttribute('tabindex', state === 'disabled' ? '-1' : '0');
+      if (state === 'readonly') {
+        await expect(chip).toHaveCSS('cursor', 'default');
+        await expect(chip).toHaveCSS('user-select', 'text');
+      }
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
       await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);

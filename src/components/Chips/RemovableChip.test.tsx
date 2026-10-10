@@ -100,9 +100,10 @@ describe('RemovableChip', () => {
 
   it.each([{ disabled: true }, { readOnly: true }])('blocks removal and onKeyDown with %j', (state) => {
     const onClose = vi.fn();
+    const onClick = vi.fn();
     const onKeyDown = vi.fn();
     render(
-      <RemovableChip {...state} data-testid="chip" onClose={onClose} onKeyDown={onKeyDown}>
+      <RemovableChip {...state} data-testid="chip" onClose={onClose} onClick={onClick} onKeyDown={onKeyDown}>
         Марс
       </RemovableChip>,
     );
@@ -110,6 +111,7 @@ describe('RemovableChip', () => {
 
     expect(chip).toHaveAttribute('aria-disabled', 'true');
     expect(chip).toHaveAttribute('tabindex', state.disabled ? '-1' : '0');
+    fireEvent.click(chip);
     for (const key of ['Enter', ' ', 'Backspace', 'Escape']) fireEvent.keyDown(chip, { key });
     const close = chip.querySelector('svg');
     if (state.disabled) {
@@ -119,6 +121,7 @@ describe('RemovableChip', () => {
       expect(close).toBeNull();
     }
     expect(onClose).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
     expect(onKeyDown).not.toHaveBeenCalled();
   });
 

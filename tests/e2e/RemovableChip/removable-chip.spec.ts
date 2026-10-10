@@ -49,6 +49,7 @@ test.describe('RemovableChip playground', () => {
       const close = chip.getByLabel('Удалить чипс');
       await expect(chip).toHaveAttribute('aria-disabled', 'true');
       await expect(chip).toHaveAttribute('tabindex', state === 'disabled' ? '-1' : '0');
+      if (state === 'readonly') await expect(chip).toHaveCSS('user-select', 'text');
       if (state === 'disabled') await expect(close).toHaveCount(1);
       else await expect(close).toHaveCount(0);
       const bounds = await chip.boundingBox();

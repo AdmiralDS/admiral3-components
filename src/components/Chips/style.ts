@@ -253,11 +253,6 @@ const ChipButtonBase = styled.div.attrs<
   padding-inline: ${(p) =>
     CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
 
-  pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
-  & > * {
-    pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
-  }
-
   & svg [fill^='#'] {
     fill: currentColor;
   }
@@ -290,7 +285,7 @@ const ChipButtonBase = styled.div.attrs<
 `;
 
 export const SelectableChipStyled = styled(ChipButtonBase)<StyledSelectableChipProps>`
-  cursor: ${(p) => (p.$disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${(p) => (p.$disabled ? 'not-allowed' : p.$readOnly ? 'default' : 'pointer')};
   border: ${(props) => {
     const { $appearance } = props;
 

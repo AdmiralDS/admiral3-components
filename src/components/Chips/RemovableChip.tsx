@@ -20,6 +20,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
       disabled,
       readOnly,
       onClose,
+      onClick,
       onKeyDown,
       tabIndex,
       renderContentTooltip,
@@ -42,6 +43,12 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
       if (!disabled) onClose?.();
     };
 
+    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+      if (eventsDisabled) return;
+
+      onClick?.(e);
+    };
+
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
       if (eventsDisabled) return;
 
@@ -60,6 +67,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
         role="button"
         tabIndex={tabIndex ?? (disabled ? -1 : 0)}
         aria-disabled={ariaDisabled ?? (eventsDisabled || undefined)}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         title={tooltip.title}
         $dimension={dimension}
