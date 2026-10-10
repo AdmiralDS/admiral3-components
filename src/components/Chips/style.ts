@@ -371,6 +371,7 @@ export const CloseIcon = styled(ServiceCloseOutline)<{
   $colorMode: ChipColorMode;
   $disabled?: boolean;
 }>`
+  flex-shrink: 0;
   cursor: pointer;
   transition: color ${hoverPressLeaveTransition};
   ${(p) => (p.$disabled ? `cursor: not-allowed; color: ${textNeutralDisabledRest(p)}` : colorIcon)}

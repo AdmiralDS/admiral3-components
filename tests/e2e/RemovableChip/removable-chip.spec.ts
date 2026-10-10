@@ -158,7 +158,11 @@ test.describe('RemovableChip presentation', () => {
     const custom = chips.nth(1);
     const disabled = chips.nth(2);
     const short = chips.nth(3);
+    const close = auto.getByLabel('Удалить чипс');
     await expect(chips).toHaveCount(4);
+    await expect(close).toHaveCSS('width', '16px');
+    await expect(close).toHaveCSS('height', '16px');
+    await expect(close).toHaveCSS('flex-shrink', '0');
 
     await expect(auto).not.toHaveAttribute('title');
     await auto.hover();
