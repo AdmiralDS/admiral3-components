@@ -14,6 +14,8 @@ export const VISUAL_SCENARIO_IDS = {
   progressPage: 'visual/progress-page',
   pulse: 'visual/pulse',
   radioButton: 'visual/radio-button',
+  removableChip: 'visual/removable-chip',
+  selectableChip: 'visual/selectable-chip',
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
   textArea: 'visual/text-area',

@@ -1,0 +1,396 @@
+import { ServiceCloseOutline } from '@admiral-ds/admiral3-icons';
+import styled, { css } from 'styled-components';
+
+import { hoverPressLeaveTransition } from '#src/theme/animation';
+
+import { CHIPS_DIMENSION_PARAMETERS } from './constants';
+import type { ChipAppearance, ChipColorMode, ChipDimension } from './types';
+import { cssToken } from '../../theme/cssToken';
+
+interface DimensionStyleProps {
+  $dimension: ChipDimension;
+}
+
+interface ChipStyleProps extends DimensionStyleProps {
+  $appearance: ChipAppearance;
+  $colorMode: ChipColorMode;
+  $disabled?: boolean;
+  $readOnly?: boolean;
+}
+
+interface SelectableChipStyleProps extends ChipStyleProps {
+  $selected: boolean;
+}
+
+interface ChipDataAttributes {
+  'data-appearance'?: ChipAppearance;
+  'data-color-mode'?: ChipColorMode;
+  'data-dimension'?: ChipDimension;
+}
+
+const textNeutralStaticWhite1 = cssToken(
+  '--admiral-color-neutral-text-static-white-1',
+  (theme) => theme.color.neutral.text.staticWhite._1,
+);
+const textNeutral1Rest = cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest);
+const textNeutral2Rest = cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest);
+const textNeutralDisabledRest = cssToken(
+  '--admiral-color-neutral-text-disable-rest',
+  (theme) => theme.color.neutral.text.disable.rest,
+);
+const textPrimary1Rest = cssToken('--admiral-color-primary-text-1-rest', (theme) => theme.color.primary.text._1.rest);
+const textNeutralInvertedRest = cssToken(
+  '--admiral-color-neutral-text-inverted-rest',
+  (theme) => theme.color.neutral.text.inverted.rest,
+);
+const textNeutralInvertedDisabled = cssToken(
+  '--admiral-color-neutral-text-inverted-disable',
+  (theme) => theme.color.neutral.text.inverted.disable,
+);
+const textNeutralStaticWhite3 = cssToken(
+  '--admiral-color-neutral-text-static-white-3',
+  (theme) => theme.color.neutral.text.staticWhite._3,
+);
+const textNeutral2Hover = cssToken(
+  '--admiral-color-neutral-text-2-hover',
+  (theme) => theme.color.neutral.text._2.hover,
+);
+const textNeutral2Press = cssToken(
+  '--admiral-color-neutral-text-2-press',
+  (theme) => theme.color.neutral.text._2.press,
+);
+
+const backgroundPrimary3Rest = cssToken(
+  '--admiral-color-primary-base-3-rest',
+  (theme) => theme.color.primary.base._3.rest,
+);
+const backgroundPrimary3Hover = cssToken(
+  '--admiral-color-primary-base-3-hover',
+  (theme) => theme.color.primary.base._3.hover,
+);
+const backgroundPrimary3Press = cssToken(
+  '--admiral-color-primary-base-3-press',
+  (theme) => theme.color.primary.base._3.press,
+);
+const borderNeutral2Rest = cssToken(
+  '--admiral-color-neutral-stroke-2-rest',
+  (theme) => theme.color.neutral.stroke._2.rest,
+);
+const backgroundPrimary1Rest = cssToken(
+  '--admiral-color-primary-base-1-rest',
+  (theme) => theme.color.primary.base._1.rest,
+);
+const backgroundPrimary1Hover = cssToken(
+  '--admiral-color-primary-base-1-hover',
+  (theme) => theme.color.primary.base._1.hover,
+);
+const backgroundPrimary1Press = cssToken(
+  '--admiral-color-primary-base-1-press',
+  (theme) => theme.color.primary.base._1.press,
+);
+const backgroundNeutralOpacityRest = cssToken(
+  '--admiral-color-neutral-base-opacity-rest',
+  (theme) => theme.color.neutral.base.opacity.rest,
+);
+const backgroundNeutralOpacityHover = cssToken(
+  '--admiral-color-neutral-base-opacity-hover',
+  (theme) => theme.color.neutral.base.opacity.hover,
+);
+const backgroundNeutralOpacityPress = cssToken(
+  '--admiral-color-neutral-base-opacity-press',
+  (theme) => theme.color.neutral.base.opacity.press,
+);
+const backgroundNeutralInvisibleHover = cssToken(
+  '--admiral-color-neutral-base-invisible-hover',
+  (theme) => theme.color.neutral.base.invisible.hover,
+);
+const backgroundNeutralInvisiblePress = cssToken(
+  '--admiral-color-neutral-base-invisible-press',
+  (theme) => theme.color.neutral.base.invisible.press,
+);
+const borderPrimary1Rest = cssToken(
+  '--admiral-color-primary-stroke-1-rest',
+  (theme) => theme.color.primary.stroke._1.rest,
+);
+const borderPrimary1Hover = cssToken(
+  '--admiral-color-primary-stroke-1-hover',
+  (theme) => theme.color.primary.stroke._1.hover,
+);
+const borderPrimary1Press = cssToken(
+  '--admiral-color-primary-stroke-1-press',
+  (theme) => theme.color.primary.stroke._1.press,
+);
+const borderNeutralDisabled = cssToken(
+  '--admiral-color-neutral-stroke-2-rest',
+  (theme) => theme.color.neutral.stroke._2.rest,
+);
+const backgroundNeutralInvertedRest = cssToken(
+  '--admiral-color-neutral-base-inverted-rest',
+  (theme) => theme.color.neutral.base.inverted.rest,
+);
+const backgroundNeutralInvertedHover = cssToken(
+  '--admiral-color-neutral-base-inverted-hover',
+  (theme) => theme.color.neutral.base.inverted.hover,
+);
+const backgroundNeutralInvertedPress = cssToken(
+  '--admiral-color-neutral-base-inverted-press',
+  (theme) => theme.color.neutral.base.inverted.press,
+);
+
+const chipHeight = css<DimensionStyleProps>`
+  height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].height}px;
+`;
+
+const iconHeight = css<DimensionStyleProps>`
+  height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
+`;
+
+const iconWidth = css<DimensionStyleProps>`
+  width: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
+`;
+
+const chipTypographyHover = css<ChipStyleProps>`
+  &:hover {
+    color: ${(props) => {
+      const { $colorMode } = props;
+
+      if ($colorMode === 'neutral') {
+        return textNeutral1Rest(props);
+      } else {
+        return textPrimary1Rest(props);
+      }
+    }};
+  }
+`;
+
+const chipTypography = css<ChipStyleProps>`
+  ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].typography}
+  color: ${(props) => {
+    const { $colorMode, $disabled } = props;
+    if ($disabled) {
+      return textNeutralDisabledRest(props);
+    }
+
+    return $colorMode === 'neutral' ? textNeutral1Rest(props) : textPrimary1Rest(props);
+  }};
+
+  ${({ $disabled }) => !$disabled && chipTypographyHover}
+`;
+
+const actionsMixin = css<SelectableChipStyleProps>`
+  &:hover {
+    ${(props) => {
+      const { $appearance, $selected } = props;
+      if ($selected) {
+        return `background-color: ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedHover : backgroundPrimary1Hover)(props)};`;
+      }
+      if ($appearance === 'flat') {
+        return `background-color: ${(props.$colorMode === 'colored' ? backgroundPrimary3Hover : backgroundNeutralOpacityHover)(props)};`;
+      } else {
+        return `background-color: ${backgroundNeutralInvisibleHover(props)};`;
+      }
+    }};
+    ${(p) =>
+      p.$selected &&
+      `
+      border-color: ${(p.$colorMode === 'neutral' ? backgroundNeutralInvertedHover : borderPrimary1Hover)(p)};
+    `}
+  }
+  &:active {
+    ${(props) => {
+      const { $appearance, $selected } = props;
+      if ($selected) {
+        return `background-color: ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedPress : backgroundPrimary1Press)(props)};`;
+      }
+      if ($appearance === 'flat') {
+        return `background-color: ${(props.$colorMode === 'colored' ? backgroundPrimary3Press : backgroundNeutralOpacityPress)(props)};`;
+      } else {
+        return `background-color: ${backgroundNeutralInvisiblePress(props)};`;
+      }
+    }};
+    ${(p) =>
+      p.$selected &&
+      `
+      border-color: ${(p.$colorMode === 'neutral' ? backgroundNeutralInvertedPress : borderPrimary1Press)(p)};
+    `}
+  }
+`;
+
+const colorsBorderAndBackground = css<ChipStyleProps>`
+  transition:
+    background-color ${hoverPressLeaveTransition},
+    border-color ${hoverPressLeaveTransition};
+  border-radius: 1000px;
+  background-color: ${(props) => {
+    const { $appearance, $disabled } = props;
+    return $appearance === 'flat'
+      ? (props.$colorMode === 'colored' && !$disabled ? backgroundPrimary3Rest : backgroundNeutralOpacityRest)(props)
+      : 'transparent';
+  }};
+
+  border: ${(props) => {
+    const { $appearance, $disabled } = props;
+    if ($appearance === 'flat') return 'none';
+    if ($disabled) {
+      return `1px solid ${borderNeutralDisabled(props)}`;
+    } else {
+      return `1px solid ${(props.$colorMode === 'neutral' ? borderNeutral2Rest : borderPrimary1Rest)(props)}`;
+    }
+  }};
+
+  &:has(> :first-child:focus-visible) {
+    outline: 2px solid ${borderPrimary1Rest};
+    outline-offset: 2px;
+  }
+`;
+
+const chipLayout = css<ChipStyleProps>`
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 190px;
+  min-width: 0;
+  user-select: ${(p) => (p.$readOnly ? 'text' : 'none')};
+  cursor: default;
+  padding-inline: ${(p) =>
+    CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
+`;
+
+const chipIconColorReset = css`
+  & svg [fill^='#'] {
+    fill: currentColor;
+  }
+`;
+
+const chipFocus = css<ChipStyleProps>`
+  &:focus-visible {
+    outline: 2px solid ${borderPrimary1Rest};
+    outline-offset: 2px;
+  }
+`;
+
+const chipIcons = css<ChipStyleProps>`
+  & svg {
+    ${iconHeight}
+    ${iconWidth}
+    & *[fill^='#'] {
+      fill: ${(props) => {
+        const { $appearance, $disabled, $colorMode } = props;
+        return $disabled
+          ? textNeutralDisabledRest(props)
+          : $colorMode === 'colored'
+            ? textPrimary1Rest(props)
+            : $appearance === 'flat'
+              ? textNeutral2Rest(props)
+              : textNeutral1Rest(props);
+      }};
+    }
+  }
+`;
+
+const ChipBase = styled.div.attrs<ChipStyleProps & ChipDataAttributes>((props) => ({
+  'data-dimension': props.$dimension,
+  'data-appearance': props.$appearance,
+  'data-color-mode': props.$colorMode,
+}))<ChipStyleProps>`
+  ${chipLayout}
+  ${chipIconColorReset}
+  ${colorsBorderAndBackground}
+  ${chipHeight}
+  ${chipTypography}
+  ${chipFocus}
+  ${chipIcons}
+`;
+
+export const SelectableChipStyled = styled(ChipBase)<SelectableChipStyleProps>`
+  cursor: ${(p) => (p.$disabled ? 'not-allowed' : p.$readOnly ? 'default' : 'pointer')};
+  border: ${(props) => {
+    const { $appearance } = props;
+
+    if (props.$selected && $appearance !== 'flat') {
+      return `1px solid ${(props.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : borderPrimary1Rest)(props)}`;
+    }
+  }};
+  color: ${(props) => {
+    const { $colorMode, $disabled, $selected } = props;
+
+    if ($selected) {
+      if ($disabled) {
+        return ($colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
+      }
+      return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+    }
+  }};
+
+  ${(p) => !p.$disabled && !p.$readOnly && actionsMixin}
+  background-color: ${(p) => {
+    if (p.$selected) {
+      return (p.$colorMode === 'neutral' ? backgroundNeutralInvertedRest : backgroundPrimary1Rest)(p);
+    }
+  }};
+
+  & svg {
+    & *[fill^='#'] {
+      fill: ${(props) => {
+        const { $disabled, $selected, $colorMode } = props;
+        if ($selected) {
+          if ($disabled) {
+            return ($colorMode === 'neutral' ? textNeutralInvertedDisabled : textNeutralStaticWhite3)(props);
+          }
+          return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+        }
+      }};
+    }
+  }
+
+  &:hover {
+    color: ${(props) => {
+      const { $colorMode, $selected, $disabled } = props;
+      if ($selected && !$disabled) {
+        return ($colorMode === 'neutral' ? textNeutralInvertedRest : textNeutralStaticWhite1)(props);
+      }
+    }};
+  }
+`;
+
+export const RemovableChipStyled = styled(ChipBase)<ChipStyleProps>`
+  gap: 2px;
+`;
+
+export const ChipChildrenWrapperStyled = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 0;
+  padding-inline: 4px;
+`;
+
+export const IconsWrapperStyled = styled.span<{ $dimension: ChipDimension }>`
+  ${iconHeight}
+  & > svg {
+    ${iconHeight}
+    ${iconWidth}
+  }
+`;
+
+const colorIcon = css<{ $colorMode: ChipColorMode }>`
+  color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Rest : textPrimary1Rest)(p)};
+
+  &:hover {
+    color: ${(p) => textNeutral2Hover(p)};
+  }
+  &:active {
+    color: ${(p) => textNeutral2Press(p)};
+  }
+`;
+
+export const CloseIcon = styled(ServiceCloseOutline)<{
+  $colorMode: ChipColorMode;
+  $disabled?: boolean;
+}>`
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: color ${hoverPressLeaveTransition};
+  ${(p) => (p.$disabled ? `cursor: not-allowed; color: ${textNeutralDisabledRest(p)}` : colorIcon)}
+`;
