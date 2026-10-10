@@ -4,6 +4,7 @@ import type {
   CSSProperties,
   HTMLAttributes,
   ReactNode,
+  Ref,
   RefCallback,
 } from 'react';
 
@@ -77,6 +78,28 @@ export interface UseHintResult<T extends HTMLElement = HTMLElement> {
     role?: HTMLAttributes<HTMLDivElement>['role'];
     'aria-labelledby'?: AriaAttributes['aria-labelledby'];
   };
+}
+
+export interface WithHintProps {
+  /** Функция, возвращающая содержимое Hint. Для передачи параметров используйте замыкание. */
+  renderContent: () => ReactNode;
+  /** Способ управления видимостью Hint. Значение по умолчанию 'hover'. */
+  triggerMode?: HintTriggerMode;
+  /** Открывать Hint с рекомендуемой задержкой при наведении. В режиме 'click' не используется. */
+  withDelay?: boolean;
+  /** Ref компонента Hint. */
+  hintRef?: Ref<HTMLDivElement>;
+  /**
+   * Элемент, относительно которого позиционируется Hint. Если не задан, Hint позиционируется
+   * относительно обёрнутого компонента. Не участвует в управлении видимостью Hint.
+   */
+  hintTargetElement?: Element | null;
+  /** Предпочтительное направление открытия Hint. */
+  hintPosition?: HintPosition;
+  /** Пользовательские стили Hint. */
+  hintStyles?: ComponentStyleConfig;
+  /** Безопасные HTML-, ARIA- и data-атрибуты кнопки закрытия в режиме 'click'. */
+  closeButtonProps?: HintCloseButtonProps;
 }
 
 export interface StyledHintProps {
