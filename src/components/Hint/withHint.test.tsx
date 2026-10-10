@@ -86,6 +86,31 @@ describe('withHint', () => {
     expect(screen.getByRole('button', { name: 'Закрыть' })).toBeInTheDocument();
   });
 
+  it('preserves and merges click-mode aria attributes', () => {
+    render(
+      <TargetWithHint
+        renderContent={() => 'Hint content'}
+        triggerMode="click"
+        aria-controls="existing-controls"
+        aria-expanded
+        aria-haspopup="menu"
+      >
+        Target
+      </TargetWithHint>,
+    );
+    const target = screen.getByRole('button');
+
+    expect(target).toHaveAttribute('aria-controls', 'existing-controls');
+    expect(target).toHaveAttribute('aria-expanded', 'false');
+    expect(target).toHaveAttribute('aria-haspopup', 'dialog');
+    fireEvent.click(target);
+
+    expect(target.getAttribute('aria-controls')?.split(' ')).toEqual([
+      'existing-controls',
+      screen.getByRole('dialog').id,
+    ]);
+  });
+
   it.each([
     ['', 'empty string'],
     [undefined, 'undefined'],
@@ -100,6 +125,14 @@ describe('withHint', () => {
 
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
     expect(target).not.toHaveAttribute('aria-describedby');
+  });
+
+  it.each([0, <span key="node">Node content</span>])('renders valid falsy or React node content', (content) => {
+    render(<TargetWithHint renderContent={() => content}>Target</TargetWithHint>);
+
+    fireEvent.mouseEnter(screen.getByRole('button'));
+
+    expect(screen.getByRole('tooltip')).toHaveTextContent(content === 0 ? '0' : 'Node content');
   });
 
   it('forwards the target, hint ref, position and style configuration', () => {
@@ -130,5 +163,21 @@ describe('withHint', () => {
     expect(hint).toHaveStyle({ maxWidth: '200px', color: 'rgb(1, 2, 3)' });
     expect(hintRef.current).toBe(hint.parentElement);
     expect(screen.getByRole('button')).not.toHaveAttribute('hintTargetElement');
+  });
+
+  it('forwards close button attributes in click mode', () => {
+    render(
+      <TargetWithHint
+        renderContent={() => 'Hint content'}
+        triggerMode="click"
+        closeButtonProps={{ 'aria-label': 'Dismiss hint', 'data-testid': 'dismiss-hint' }}
+      >
+        Target
+      </TargetWithHint>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Target' }));
+
+    expect(screen.getByRole('button', { name: 'Dismiss hint' })).toHaveAttribute('data-testid', 'dismiss-hint');
   });
 });
