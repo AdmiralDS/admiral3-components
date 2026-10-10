@@ -5,7 +5,7 @@ export type {
   HintCloseButtonProps,
   HintPosition,
   HintProps,
-  HintVisibilityTrigger,
+  HintTriggerMode,
   UseHintOptions,
   UseHintResult,
 } from './types';

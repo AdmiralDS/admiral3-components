@@ -16,7 +16,7 @@ const Actions = styled.div`
 `;
 
 export const HintClickTemplate = () => {
-  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ visibilityTrigger: 'click' });
+  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ triggerMode: 'click' });
 
   return (
     <>

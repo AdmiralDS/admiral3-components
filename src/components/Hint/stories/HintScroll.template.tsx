@@ -9,7 +9,7 @@ const Content = styled.div`
 `;
 
 export const HintScrollTemplate = () => {
-  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ visibilityTrigger: 'click' });
+  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ triggerMode: 'click' });
 
   return (
     <>

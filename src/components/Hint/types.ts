@@ -12,7 +12,7 @@ import type { DataAttributes } from '../../utils/dataAttributes';
 import type { TooltipAnchorSide, TooltipPosition } from '../Tooltip/types';
 
 export type HintPosition = TooltipPosition;
-export type HintVisibilityTrigger = 'hover' | 'click';
+export type HintTriggerMode = 'hover' | 'click';
 export type HintCloseButtonProps = AriaAttributes &
   Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'className' | 'title' | 'tabIndex'> &
   DataAttributes;
@@ -35,8 +35,13 @@ export interface HintProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClose
 }
 
 export interface UseHintOptions {
-  /** Способ управления видимостью Hint. Значение по умолчанию 'hover'. */
-  visibilityTrigger?: HintVisibilityTrigger;
+  /**
+   * Способ управления видимостью Hint. Значение по умолчанию 'hover'.
+   *
+   * В режиме 'click' для ненативного элемента-триггера потребитель обязан самостоятельно задать
+   * `role="button"` и `tabIndex={0}`. Без них доступность триггера и клавиатурная навигация не гарантируются.
+   */
+  triggerMode?: HintTriggerMode;
   /** Задержка открытия Hint при наведении в миллисекундах. */
   delay?: number;
   /**
@@ -50,11 +55,17 @@ export interface UseHintOptions {
 export interface UseHintResult<T extends HTMLElement = HTMLElement> {
   /** Признак видимости Hint. */
   isVisible: boolean;
-  /** Готовые свойства для элемента-триггера, управляющего видимостью Hint. */
+  /**
+   * Готовые свойства для элемента-триггера, управляющего видимостью Hint.
+   * Для ненативного интерактивного элемента дополнительно требуются `role="button"` и `tabIndex={0}`.
+   */
   triggerProps: {
     ref: RefCallback<T>;
-    'aria-describedby': AriaAttributes['aria-describedby'];
+    id?: string;
+    'aria-describedby'?: AriaAttributes['aria-describedby'];
     'aria-expanded'?: AriaAttributes['aria-expanded'];
+    'aria-controls'?: AriaAttributes['aria-controls'];
+    'aria-haspopup'?: AriaAttributes['aria-haspopup'];
   };
   /** Готовые свойства, связывающие Hint с элементом позиционирования. */
   hintProps: {
@@ -63,6 +74,8 @@ export interface UseHintResult<T extends HTMLElement = HTMLElement> {
     targetElement: Element | null;
     showCloseIcon?: boolean;
     onClose?: () => void;
+    role?: HTMLAttributes<HTMLDivElement>['role'];
+    'aria-labelledby'?: AriaAttributes['aria-labelledby'];
   };
 }
 

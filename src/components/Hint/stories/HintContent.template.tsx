@@ -22,7 +22,7 @@ const Actions = styled.div`
 `;
 
 const Example = ({ children, label }: React.PropsWithChildren<{ label: string }>) => {
-  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ visibilityTrigger: 'click' });
+  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ triggerMode: 'click' });
 
   return (
     <div>
