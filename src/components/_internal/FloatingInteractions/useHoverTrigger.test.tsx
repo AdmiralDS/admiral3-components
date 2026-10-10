@@ -144,10 +144,10 @@ describe('useHoverTrigger', () => {
     fireEvent.mouseEnter(target);
     fireEvent.mouseLeave(target, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
-    fireEvent.mouseEnter(target);
+    fireEvent.focus(target);
     fireEvent.blur(target, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
-    fireEvent.mouseEnter(target);
+    fireEvent.focusIn(tooltip);
     fireEvent.focusOut(tooltip, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(false);
   });
@@ -157,6 +157,26 @@ describe('useHoverTrigger', () => {
     fireEvent.mouseEnter(target);
     fireEvent.blur(target, { relatedTarget: tooltip });
     fireEvent.focusOut(tooltip, { relatedTarget: target });
+    expect(result.current.isVisible).toBe(true);
+  });
+
+  it('stays open while the trigger remains focused after pointer leaves', () => {
+    const outside = document.createElement('div');
+    document.body.append(outside);
+    const { result } = setup();
+    fireEvent.focus(target);
+    fireEvent.mouseEnter(target);
+    fireEvent.mouseLeave(target, { relatedTarget: outside });
+    expect(result.current.isVisible).toBe(true);
+  });
+
+  it('stays open while the pointer remains over the trigger after focus leaves', () => {
+    const outside = document.createElement('div');
+    document.body.append(outside);
+    const { result } = setup();
+    fireEvent.mouseEnter(target);
+    fireEvent.focus(target);
+    fireEvent.blur(target, { relatedTarget: outside });
     expect(result.current.isVisible).toBe(true);
   });
 
@@ -279,6 +299,23 @@ describe('useHoverTrigger', () => {
     });
     fireEvent.mouseEnter(target);
     fireEvent.focusIn(tooltip);
+    expect(result.current.isVisible).toBe(false);
+  });
+
+  it('cancels delayed opening when the trigger ref is detached', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const { result } = setup(1500);
+    fireEvent.mouseEnter(target);
+    act(() => result.current.triggerProps.ref(null));
+    act(() => vi.runAllTimers());
+    expect(result.current.isVisible).toBe(false);
+  });
+
+  it('hides an open tooltip when the trigger ref is detached', () => {
+    const { result } = setup();
+    fireEvent.mouseEnter(target);
+    expect(result.current.isVisible).toBe(true);
+    act(() => result.current.triggerProps.ref(null));
     expect(result.current.isVisible).toBe(false);
   });
 

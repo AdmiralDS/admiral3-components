@@ -1,6 +1,7 @@
-import type { FloatingPositionConfig } from '../_internal/FloatingPortal';
+import { getHintTooltipLayouts, type HintTooltipPositionConfig } from '../_internal/FloatingPortal';
 
 export const HINT_OFFSET = 8;
+export const HINT_LAYOUTS = getHintTooltipLayouts(HINT_OFFSET);
 export const HINT_MOBILE_BREAKPOINT = 640;
 export const HINT_MAX_HEIGHT = 320;
 export const HINT_PADDING = '8px 0';
@@ -32,7 +33,7 @@ const HINT_POSITION_PRIORITY = [
   'topPageCenter',
 ] as const;
 
-export const HINT_POSITION_CONFIG: FloatingPositionConfig = {
+export const HINT_POSITION_CONFIG: HintTooltipPositionConfig = {
   positionPriority: HINT_POSITION_PRIORITY,
   positionPriorityByPosition: {
     bottom: ['bottomRight', 'bottomLeft', 'bottom', 'bottomPageCenter'],

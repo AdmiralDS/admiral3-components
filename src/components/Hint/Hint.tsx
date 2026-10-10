@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
-import { HINT_POSITION_CONFIG } from './constants';
+import { HINT_LAYOUTS, HINT_POSITION_CONFIG } from './constants';
 import { HintCloseButton } from './HintCloseButton';
 import { FakeTarget, HintContent, HintWrapper, HintContainer, StyledPortal } from './style';
 import type { HintProps } from './types';
@@ -8,8 +8,7 @@ import { getMobileHintDirection, stretchToViewportWidth } from './utils';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 import type { FloatingUpdateContext } from '../_internal/FloatingPortal';
-import { getFloatingDirection, useFloating } from '../_internal/FloatingPortal';
-import { TOOLTIP_LAYOUTS } from '../Tooltip/constants';
+import { getHintTooltipDirection, useFloating } from '../_internal/FloatingPortal';
 
 /** Подсказка, которая позиционируется относительно targetElement. Управление видимостью вынесено в useHint. */
 export const Hint = forwardRef<HTMLDivElement, HintProps>(
@@ -19,7 +18,7 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
   ) => {
     const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
     const [hintElement, setHintElement] = useState<HTMLDivElement | null>(null);
-    const [direction, setDirection] = useState<keyof typeof TOOLTIP_LAYOUTS>('bottom');
+    const [direction, setDirection] = useState<keyof typeof HINT_LAYOUTS>('bottom');
     const emptyContent = !hasSlotContent(children);
     const mergedRef = useMemo(() => refSetter(ref, setHintElement), [ref]);
 
@@ -29,8 +28,8 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
         const mobileDirection = getMobileHintDirection(targetElement, targetRect, floatingElement);
         const nextDirection =
           mobileDirection ??
-          getFloatingDirection(targetElement, targetRect, floatingElement, hintPosition, HINT_POSITION_CONFIG);
-        const nextLayout = TOOLTIP_LAYOUTS[nextDirection];
+          getHintTooltipDirection(targetElement, targetRect, floatingElement, hintPosition, HINT_POSITION_CONFIG);
+        const nextLayout = HINT_LAYOUTS[nextDirection];
 
         if (nextLayout.fullWidth) stretchToViewportWidth(floatingPortal);
         floatingElement.style.opacity = '1';
@@ -39,7 +38,7 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
       [hintPosition, targetElement],
     );
 
-    const layout = TOOLTIP_LAYOUTS[direction];
+    const layout = HINT_LAYOUTS[direction];
     useFloating({
       targetElement: emptyContent ? null : targetElement,
       floatingPortal,

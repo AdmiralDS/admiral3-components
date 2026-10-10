@@ -1,12 +1,12 @@
 import { HINT_MOBILE_BREAKPOINT } from './constants';
-import type { FloatingInternalPosition } from '../_internal/FloatingPortal';
+import type { HintTooltipInternalPosition } from '../_internal/FloatingPortal';
 
 /** На мобильном экране Hint располагается только сверху или снизу относительно anchor-элемента. */
 export const getMobileHintDirection = (
   anchorElement: Element,
   anchorRect: DOMRect,
   hintElement: Element,
-): FloatingInternalPosition | null => {
+): HintTooltipInternalPosition | null => {
   const targetWindow = anchorElement.ownerDocument.defaultView;
   if (!targetWindow || targetWindow.innerWidth >= HINT_MOBILE_BREAKPOINT) return null;
 

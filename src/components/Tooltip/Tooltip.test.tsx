@@ -12,13 +12,13 @@ import {
 import { Tooltip } from './Tooltip';
 import type { TooltipInternalPosition } from './types';
 import type * as FloatingPortalModule from '../_internal/FloatingPortal';
-import { getFloatingDirection } from '../_internal/FloatingPortal';
+import { getHintTooltipDirection } from '../_internal/FloatingPortal';
 
 vi.mock('../../utils/getScrollbarSize', () => ({ getScrollbarSize: () => 16 }));
 
 vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({
   ...(await importOriginal<typeof FloatingPortalModule>()),
-  getFloatingDirection: vi.fn(() => 'bottom'),
+  getHintTooltipDirection: vi.fn(() => 'bottom'),
   FloatingPortal: forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { targetElement: Element | null }>(
     ({ targetElement: _targetElement, ...props }, ref) => <div ref={ref} {...props} />,
   ),
@@ -64,7 +64,7 @@ describe('Tooltip', () => {
       }),
     );
     vi.stubGlobal('cancelAnimationFrame', vi.fn());
-    vi.mocked(getFloatingDirection).mockReturnValue('bottom');
+    vi.mocked(getHintTooltipDirection).mockReturnValue('bottom');
   });
 
   afterEach(() => {
@@ -123,9 +123,9 @@ describe('Tooltip', () => {
 
   it('calculates direction on the next animation frame', () => {
     const { unmount } = renderTooltip({ tooltipPosition: 'right' });
-    expect(getFloatingDirection).not.toHaveBeenCalled();
+    expect(getHintTooltipDirection).not.toHaveBeenCalled();
     act(() => animationFrameCallback?.(0));
-    expect(getFloatingDirection).toHaveBeenCalledWith(
+    expect(getHintTooltipDirection).toHaveBeenCalledWith(
       targetElement,
       expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
       expect.any(HTMLDivElement),
@@ -154,7 +154,7 @@ describe('Tooltip', () => {
     expect(requestAnimationFrameSpy).toHaveBeenCalledOnce();
     expect(requestAnimationFrame).not.toHaveBeenCalled();
     act(() => iframeAnimationFrameCallback?.(0));
-    expect(getFloatingDirection).toHaveBeenCalledWith(
+    expect(getHintTooltipDirection).toHaveBeenCalledWith(
       iframeTarget,
       expect.objectContaining({ x: 0, y: 0, width: 0, height: 0 }),
       expect.any(HTMLDivElement),
@@ -170,7 +170,7 @@ describe('Tooltip', () => {
   it.each(Object.entries(TOOLTIP_LAYOUTS))(
     'applies layout for the %s direction',
     (direction, { flexDirection, alignSelf, fullWidth, margin }) => {
-      vi.mocked(getFloatingDirection).mockReturnValue(direction as TooltipInternalPosition);
+      vi.mocked(getHintTooltipDirection).mockReturnValue(direction as TooltipInternalPosition);
       renderTooltip({ 'data-testid': 'tooltip' });
       act(() => animationFrameCallback?.(0));
       const wrapper = screen.getByTestId('tooltip').parentElement!;
@@ -211,17 +211,17 @@ describe('Tooltip', () => {
   it.each(['scroll', 'resize'])('recalculates direction after a window %s', (eventName) => {
     renderTooltip();
     act(() => animationFrameCallback?.(0));
-    expect(getFloatingDirection).toHaveBeenCalledTimes(1);
+    expect(getHintTooltipDirection).toHaveBeenCalledTimes(1);
 
     act(() => window.dispatchEvent(new Event(eventName)));
-    expect(getFloatingDirection).toHaveBeenCalledTimes(1);
+    expect(getHintTooltipDirection).toHaveBeenCalledTimes(1);
 
     act(() => animationFrameCallback?.(0));
-    expect(getFloatingDirection).toHaveBeenCalledTimes(2);
+    expect(getHintTooltipDirection).toHaveBeenCalledTimes(2);
   });
 
   it('applies a newly selected direction after an environment update', () => {
-    vi.mocked(getFloatingDirection).mockReturnValueOnce('bottom').mockReturnValue('top');
+    vi.mocked(getHintTooltipDirection).mockReturnValueOnce('bottom').mockReturnValue('top');
     renderTooltip({ 'data-testid': 'tooltip' });
     act(() => animationFrameCallback?.(0));
 

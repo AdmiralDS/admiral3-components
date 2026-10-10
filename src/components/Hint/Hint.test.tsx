@@ -8,11 +8,11 @@ import { HINT_CONTENT_PADDING, HINT_CONTENT_PADDING_WITH_CLOSE, HINT_PADDING, HI
 import { Hint } from './Hint';
 import { HintLabel } from './style';
 import type * as FloatingPortalModule from '../_internal/FloatingPortal';
-import { getFloatingDirection } from '../_internal/FloatingPortal';
+import { getHintTooltipDirection } from '../_internal/FloatingPortal';
 
 vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({
   ...(await importOriginal<typeof FloatingPortalModule>()),
-  getFloatingDirection: vi.fn(() => 'bottom'),
+  getHintTooltipDirection: vi.fn(() => 'bottom'),
   FloatingPortal: forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { targetElement: Element | null }>(
     ({ targetElement: _targetElement, ...props }, ref) => <div ref={ref} {...props} />,
   ),
@@ -155,7 +155,7 @@ describe('Hint', () => {
       </Hint>,
     );
     act(() => animationFrameCallback?.(0));
-    expect(getFloatingDirection).toHaveBeenCalledWith(
+    expect(getHintTooltipDirection).toHaveBeenCalledWith(
       targetElement,
       expect.objectContaining({ width: 0, height: 0 }),
       expect.any(HTMLDivElement),
@@ -183,7 +183,7 @@ describe('Hint', () => {
 
       act(() => animationFrameCallback?.(0));
 
-      expect(getFloatingDirection).not.toHaveBeenCalled();
+      expect(getHintTooltipDirection).not.toHaveBeenCalled();
       expect(screen.getByTestId('hint')).toHaveStyle({ maxWidth: 'calc(100vw - 32px)' });
       expect(wrapper).toHaveStyle({ alignSelf: 'center' });
       expect(wrapper.parentElement).toHaveStyle({ flexDirection, left: '0px', width: '100%' });

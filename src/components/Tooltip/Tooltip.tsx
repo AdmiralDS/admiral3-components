@@ -6,7 +6,7 @@ import type { TooltipProps } from './types';
 import { hasSlotContent } from '../../utils/hasSlotContent';
 import { refSetter } from '../../utils/refSetter';
 import type { FloatingUpdateContext } from '../_internal/FloatingPortal';
-import { getFloatingDirection, useFloating } from '../_internal/FloatingPortal';
+import { getHintTooltipDirection, useFloating } from '../_internal/FloatingPortal';
 
 const stretchToViewportWidth = (floatingElement: HTMLElement) => {
   floatingElement.style.left = '0px';
@@ -26,7 +26,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       ({ floatingElement, floatingPortal, targetRect }: FloatingUpdateContext) => {
         if (!targetElement) return;
 
-        const nextDirection = getFloatingDirection(
+        const nextDirection = getHintTooltipDirection(
           targetElement,
           targetRect,
           floatingElement,

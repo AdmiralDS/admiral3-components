@@ -1,8 +1,8 @@
 import { getScrollbarSize } from '../../../utils/getScrollbarSize';
 
-export const FLOATING_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
-export const FLOATING_INTERNAL_POSITIONS = [
-  ...FLOATING_POSITIONS,
+export const HINT_TOOLTIP_POSITIONS = ['bottom', 'top', 'left', 'right'] as const;
+export const HINT_TOOLTIP_INTERNAL_POSITIONS = [
+  ...HINT_TOOLTIP_POSITIONS,
   'bottomRight',
   'bottomLeft',
   'topRight',
@@ -15,8 +15,8 @@ export const FLOATING_INTERNAL_POSITIONS = [
   'topPageCenter',
 ] as const;
 
-export type FloatingPosition = (typeof FLOATING_POSITIONS)[number];
-export type FloatingInternalPosition = (typeof FLOATING_INTERNAL_POSITIONS)[number];
+export type HintTooltipPosition = (typeof HINT_TOOLTIP_POSITIONS)[number];
+export type HintTooltipInternalPosition = (typeof HINT_TOOLTIP_INTERNAL_POSITIONS)[number];
 
 type PositionContext = {
   spaceTop: number;
@@ -33,26 +33,26 @@ type PositionContext = {
 
 type PositionCheck = (context: PositionContext) => boolean;
 
-export type FloatingPositionConfig = {
+export type HintTooltipPositionConfig = {
   /** Порядок проверки позиций, когда предпочтительная сторона не задана. */
-  positionPriority: readonly FloatingInternalPosition[];
+  positionPriority: readonly HintTooltipInternalPosition[];
   /** Порядок проверки позиций при явно заданной предпочтительной стороне. */
-  positionPriorityByPosition: Record<FloatingPosition, readonly FloatingInternalPosition[]>;
+  positionPriorityByPosition: Record<HintTooltipPosition, readonly HintTooltipInternalPosition[]>;
   /** Позиция, используемая, если ни одна из проверяемых позиций не подошла. */
-  fallbackPosition: (position?: FloatingPosition) => FloatingInternalPosition;
+  fallbackPosition: (position?: HintTooltipPosition) => HintTooltipInternalPosition;
   /** Расстояние между якорем и floating-элементом. */
   offset: number;
   /** Если во viewport нет подходящей позиции, повторить поиск с учётом доступного места в документе. */
   checkDocumentScroll?: boolean;
 };
 
-export function getFloatingDirection(
+export function getHintTooltipDirection(
   anchorElement: Element,
   anchorElementRect: DOMRect,
   floatingElement: Element,
-  position: FloatingPosition | undefined,
-  config: FloatingPositionConfig,
-): FloatingInternalPosition {
+  position: HintTooltipPosition | undefined,
+  config: HintTooltipPositionConfig,
+): HintTooltipInternalPosition {
   const floatingRect = floatingElement.getBoundingClientRect();
   const targetDocument = anchorElement.ownerDocument;
   const scrollbarSize = getScrollbarSize(targetDocument);
@@ -166,4 +166,4 @@ const POSITION_CHECKS = {
    * при горизонтальном центрировании относительно страницы. */
   topPageCenter: ({ spaceTop, viewportWidth, floatingWidth, floatingHeight, offset }) =>
     spaceTop > floatingHeight + offset && viewportWidth > floatingWidth,
-} satisfies Record<FloatingInternalPosition, PositionCheck>;
+} satisfies Record<HintTooltipInternalPosition, PositionCheck>;

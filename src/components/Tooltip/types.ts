@@ -1,13 +1,17 @@
 import type { AriaAttributes, CSSProperties, HTMLAttributes, ReactNode, Ref, RefCallback } from 'react';
 
-import type { TOOLTIP_ANCHOR_SIDES, TOOLTIP_DIMENSIONS } from './constants';
+import type { TOOLTIP_DIMENSIONS } from './constants';
 import type { ComponentStyleConfig } from '../../types';
-import type { FloatingInternalPosition, FloatingPosition } from '../_internal/FloatingPortal';
+import type {
+  HintTooltipAnchorSide,
+  HintTooltipInternalPosition,
+  HintTooltipPosition,
+} from '../_internal/FloatingPortal';
 
 export type TooltipDimension = (typeof TOOLTIP_DIMENSIONS)[number];
-export type TooltipPosition = FloatingPosition;
-export type TooltipInternalPosition = FloatingInternalPosition;
-export type TooltipAnchorSide = (typeof TOOLTIP_ANCHOR_SIDES)[number];
+export type TooltipPosition = HintTooltipPosition;
+export type TooltipInternalPosition = HintTooltipInternalPosition;
+export type TooltipAnchorSide = HintTooltipAnchorSide;
 
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */

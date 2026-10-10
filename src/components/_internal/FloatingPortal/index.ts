@@ -1,3 +1,4 @@
 export * from './FloatingPortal';
-export * from './getFloatingDirection';
+export * from './getHintTooltipDirection';
+export * from './getHintTooltipLayouts';
 export * from './useFloating';

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getFloatingDirection } from './getFloatingDirection';
-import type { FloatingInternalPosition, FloatingPosition } from './getFloatingDirection';
+import { getHintTooltipDirection } from './getHintTooltipDirection';
+import type { HintTooltipInternalPosition, HintTooltipPosition } from './getHintTooltipDirection';
 import { getScrollbarSize } from '../../../utils/getScrollbarSize';
 import { HINT_POSITION_CONFIG } from '../../Hint/constants';
 import { TOOLTIP_POSITION_CONFIG } from '../../Tooltip/constants';
@@ -19,10 +19,10 @@ const createElementWithRect = ({ x, y, width, height }: Rect) => {
 const getDirection = (
   anchorRect: Rect,
   floatingRect: Pick<Rect, 'width' | 'height'>,
-  position?: FloatingPosition,
+  position?: HintTooltipPosition,
   config = TOOLTIP_POSITION_CONFIG,
 ) =>
-  getFloatingDirection(
+  getHintTooltipDirection(
     document.createElement('div'),
     new DOMRect(anchorRect.x, anchorRect.y, anchorRect.width, anchorRect.height),
     createElementWithRect({ x: 0, y: 0, ...floatingRect }),
@@ -30,13 +30,13 @@ const getDirection = (
     config,
   );
 
-describe('getFloatingDirection', () => {
+describe('getHintTooltipDirection', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it.each<[FloatingInternalPosition, Rect, Pick<Rect, 'width' | 'height'>]>([
+  it.each<[HintTooltipInternalPosition, Rect, Pick<Rect, 'width' | 'height'>]>([
     ['bottom', { x: 450, y: 350, width: 100, height: 100 }, { width: 100, height: 100 }],
     ['top', { x: 450, y: 700, width: 100, height: 50 }, { width: 100, height: 100 }],
     ['left', { x: 400, y: 350, width: 100, height: 100 }, { width: 100, height: 700 }],

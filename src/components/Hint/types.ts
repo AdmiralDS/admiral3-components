@@ -9,9 +9,9 @@ import type {
 
 import type { ComponentStyleConfig } from '../../types';
 import type { DataAttributes } from '../../utils/dataAttributes';
-import type { TooltipAnchorSide, TooltipPosition } from '../Tooltip/types';
+import type { HintTooltipAnchorSide, HintTooltipPosition } from '../_internal/FloatingPortal';
 
-export type HintPosition = TooltipPosition;
+export type HintPosition = HintTooltipPosition;
 export type HintTriggerMode = 'hover' | 'click';
 export type HintCloseButtonProps = AriaAttributes &
   Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'className' | 'title' | 'tabIndex'> &
@@ -89,7 +89,7 @@ export interface StyledHintContentProps {
 
 export interface StyledHintWrapperProps {
   $margin: CSSProperties['margin'];
-  $anchorSide: TooltipAnchorSide;
+  $anchorSide: HintTooltipAnchorSide;
   $alignSelf: CSSProperties['alignSelf'];
 }
 

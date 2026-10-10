@@ -31,20 +31,23 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
   targetElement,
 }: UseHoverTriggerOptions = {}): UseHoverTriggerResult<T> => {
   const [triggerElement, setTriggerElement] = useState<T | null>(null);
-  const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
+  const [floatingElement, setFloatingElement] = useState<HTMLDivElement | null>(null);
   const [isVisible, setVisible] = useState(false);
   const resolvedTargetElement = targetElement === undefined ? triggerElement : targetElement;
-  const tooltipId = useId();
+  const floatingId = useId();
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerCheckFrameRef = useRef<number | null>(null);
   const pointerCheckWindowRef = useRef<Window | null>(null);
+  const triggerElementRef = useRef<T | null>(null);
+  const pointerInsideRef = useRef(false);
+  const focusInsideRef = useRef(false);
   const interactionInProgressRef = useRef(false);
-  const ownerDocument = triggerElement?.ownerDocument ?? tooltipElement?.ownerDocument;
+  const ownerDocument = triggerElement?.ownerDocument ?? floatingElement?.ownerDocument;
 
-  const isInsideTooltipArea = useCallback(
+  const isInsideInteractiveArea = useCallback(
     (element: EventTarget | null) =>
-      isElementInside(triggerElement, element) || isElementInside(tooltipElement, element),
-    [triggerElement, tooltipElement],
+      isElementInside(triggerElement, element) || isElementInside(floatingElement, element),
+    [floatingElement, triggerElement],
   );
 
   const cancelOpening = useCallback(() => {
@@ -52,12 +55,13 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
     openTimerRef.current = null;
   }, []);
 
-  const showTooltip = useCallback(() => {
+  const show = useCallback(() => {
     cancelOpening();
     setVisible(true);
   }, [cancelOpening]);
 
-  const showTooltipOnHover = useCallback(() => {
+  const handleTriggerMouseEnter = useCallback(() => {
+    pointerInsideRef.current = true;
     cancelOpening();
     if (delay <= 0) {
       setVisible(true);
@@ -70,11 +74,17 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
     }, delay);
   }, [cancelOpening, delay]);
 
-  const hideTooltip = useCallback(() => {
+  const hide = useCallback(() => {
     cancelOpening();
     interactionInProgressRef.current = false;
     setVisible(false);
   }, [cancelOpening]);
+
+  const hideIfInactive = useCallback(() => {
+    if (!pointerInsideRef.current && !focusInsideRef.current && !interactionInProgressRef.current) {
+      hide();
+    }
+  }, [hide]);
 
   const cancelPointerCheck = useCallback(() => {
     if (pointerCheckFrameRef.current !== null) {
@@ -84,18 +94,19 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
     pointerCheckWindowRef.current = null;
   }, []);
 
-  const hideIfPointerOutside = useCallback(
+  const handleAreaMouseLeave = useCallback(
     (event: MouseEvent) => {
       const relatedTarget = event.relatedTarget;
 
-      // relatedTarget позволяет не закрывать Tooltip при переходе между якорем
-      // и прозрачной областью внешней обёртки Tooltip.
-      if (isInsideTooltipArea(relatedTarget) || interactionInProgressRef.current) {
+      // relatedTarget позволяет не закрывать floating-элемент при переходе между триггером
+      // и прозрачной областью его внешней обёртки.
+      if (isInsideInteractiveArea(relatedTarget)) {
         return;
       }
 
       if (relatedTarget) {
-        hideTooltip();
+        pointerInsideRef.current = false;
+        hideIfInactive();
         return;
       }
 
@@ -106,7 +117,8 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
       cancelPointerCheck();
       const ownerWindow = ownerDocument?.defaultView;
       if (!ownerWindow) {
-        hideTooltip();
+        pointerInsideRef.current = false;
+        hideIfInactive();
         return;
       }
 
@@ -115,65 +127,82 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
         pointerCheckFrameRef.current = null;
         pointerCheckWindowRef.current = null;
         const hoveredElement = ownerDocument?.elementFromPoint(clientX, clientY) ?? null;
-        if (!interactionInProgressRef.current && !isInsideTooltipArea(hoveredElement)) {
-          hideTooltip();
+        if (!isInsideInteractiveArea(hoveredElement)) {
+          pointerInsideRef.current = false;
+          hideIfInactive();
         }
       });
     },
-    [cancelPointerCheck, hideTooltip, isInsideTooltipArea, ownerDocument],
+    [cancelPointerCheck, hideIfInactive, isInsideInteractiveArea, ownerDocument],
   );
 
-  const hideIfFocusOutside = useCallback(
+  const handleAreaFocusOut = useCallback(
     (event: FocusEvent) => {
-      // При pointerdown внутри Tooltip blur якоря может прийти с relatedTarget=null.
-      // Не закрываем Tooltip до завершения клика или выделения текста.
-      if (!interactionInProgressRef.current && !isInsideTooltipArea(event.relatedTarget)) {
-        hideTooltip();
-      }
+      if (isInsideInteractiveArea(event.relatedTarget)) return;
+
+      focusInsideRef.current = false;
+      // При pointerdown внутри floating-элемента blur триггера может прийти с relatedTarget=null.
+      // Не закрываем floating-элемент до завершения клика или выделения текста.
+      hideIfInactive();
     },
-    [hideTooltip, isInsideTooltipArea],
+    [hideIfInactive, isInsideInteractiveArea],
   );
+
+  const handleTriggerFocus = useCallback(() => {
+    focusInsideRef.current = true;
+    show();
+  }, [show]);
+
+  const handleFloatingMouseEnter = useCallback(() => {
+    pointerInsideRef.current = true;
+    cancelOpening();
+  }, [cancelOpening]);
+
+  const handleFloatingFocusIn = useCallback(() => {
+    focusInsideRef.current = true;
+    cancelOpening();
+  }, [cancelOpening]);
 
   useEffect(() => {
     if (!triggerElement) return;
 
     // Нативные события корректно обрабатывают переход с disabled-элемента на якорь.
-    triggerElement.addEventListener('mouseenter', showTooltipOnHover);
-    triggerElement.addEventListener('focus', showTooltip);
-    triggerElement.addEventListener('mouseleave', hideIfPointerOutside);
-    triggerElement.addEventListener('blur', hideIfFocusOutside);
+    triggerElement.addEventListener('mouseenter', handleTriggerMouseEnter);
+    triggerElement.addEventListener('focus', handleTriggerFocus);
+    triggerElement.addEventListener('mouseleave', handleAreaMouseLeave);
+    triggerElement.addEventListener('blur', handleAreaFocusOut);
 
     return () => {
-      triggerElement.removeEventListener('mouseenter', showTooltipOnHover);
-      triggerElement.removeEventListener('focus', showTooltip);
-      triggerElement.removeEventListener('mouseleave', hideIfPointerOutside);
-      triggerElement.removeEventListener('blur', hideIfFocusOutside);
+      triggerElement.removeEventListener('mouseenter', handleTriggerMouseEnter);
+      triggerElement.removeEventListener('focus', handleTriggerFocus);
+      triggerElement.removeEventListener('mouseleave', handleAreaMouseLeave);
+      triggerElement.removeEventListener('blur', handleAreaFocusOut);
     };
-  }, [hideIfFocusOutside, hideIfPointerOutside, showTooltip, showTooltipOnHover, triggerElement]);
+  }, [handleAreaFocusOut, handleAreaMouseLeave, handleTriggerFocus, handleTriggerMouseEnter, triggerElement]);
 
   useEffect(() => {
-    if (!tooltipElement) return;
+    if (!floatingElement) return;
 
     const handlePointerDown = () => {
-      // Пока пользователь нажимает кнопку мыши или выделяет текст внутри Tooltip,
+      // Пока пользователь нажимает кнопку мыши или выделяет текст внутри floating-элемента,
       // mouseleave/blur не должны размонтировать элемент под указателем.
       interactionInProgressRef.current = true;
     };
 
-    tooltipElement.addEventListener('mouseenter', cancelOpening);
-    tooltipElement.addEventListener('mouseleave', hideIfPointerOutside);
-    tooltipElement.addEventListener('focusin', cancelOpening);
-    tooltipElement.addEventListener('focusout', hideIfFocusOutside);
-    tooltipElement.addEventListener('pointerdown', handlePointerDown);
+    floatingElement.addEventListener('mouseenter', handleFloatingMouseEnter);
+    floatingElement.addEventListener('mouseleave', handleAreaMouseLeave);
+    floatingElement.addEventListener('focusin', handleFloatingFocusIn);
+    floatingElement.addEventListener('focusout', handleAreaFocusOut);
+    floatingElement.addEventListener('pointerdown', handlePointerDown);
 
     return () => {
-      tooltipElement.removeEventListener('mouseenter', cancelOpening);
-      tooltipElement.removeEventListener('mouseleave', hideIfPointerOutside);
-      tooltipElement.removeEventListener('focusin', cancelOpening);
-      tooltipElement.removeEventListener('focusout', hideIfFocusOutside);
-      tooltipElement.removeEventListener('pointerdown', handlePointerDown);
+      floatingElement.removeEventListener('mouseenter', handleFloatingMouseEnter);
+      floatingElement.removeEventListener('mouseleave', handleAreaMouseLeave);
+      floatingElement.removeEventListener('focusin', handleFloatingFocusIn);
+      floatingElement.removeEventListener('focusout', handleAreaFocusOut);
+      floatingElement.removeEventListener('pointerdown', handlePointerDown);
     };
-  }, [cancelOpening, hideIfFocusOutside, hideIfPointerOutside, tooltipElement]);
+  }, [floatingElement, handleAreaFocusOut, handleAreaMouseLeave, handleFloatingFocusIn, handleFloatingMouseEnter]);
 
   useEffect(() => {
     if (!ownerDocument) return;
@@ -185,9 +214,9 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
       const hoveredElement = ownerDocument.elementFromPoint(event.clientX, event.clientY);
 
       // Если пользователь закончил выделение за пределами обеих интерактивных
-      // областей, закрываем Tooltip сразу после завершения взаимодействия.
-      if (!isInsideTooltipArea(hoveredElement)) {
-        hideTooltip();
+      // областей, закрываем floating-элемент сразу после завершения взаимодействия.
+      if (!isInsideInteractiveArea(hoveredElement)) {
+        hide();
       }
     };
 
@@ -197,18 +226,18 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
       ownerDocument.removeEventListener('pointerup', handlePointerEnd);
       ownerDocument.removeEventListener('pointercancel', handlePointerEnd);
     };
-  }, [hideTooltip, isInsideTooltipArea, ownerDocument]);
+  }, [hide, isInsideInteractiveArea, ownerDocument]);
 
   useEffect(() => {
     if (!ownerDocument) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') hideTooltip();
+      if (event.key === 'Escape') hide();
     };
 
     ownerDocument.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => ownerDocument.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [hideTooltip, ownerDocument]);
+  }, [hide, ownerDocument]);
 
   useEffect(
     () => () => {
@@ -218,13 +247,29 @@ export const useHoverTrigger = <T extends HTMLElement = HTMLElement>({
     [cancelOpening, cancelPointerCheck],
   );
 
+  const setTriggerRef = useCallback(
+    (element: T | null) => {
+      if (triggerElementRef.current === element) return;
+
+      cancelOpening();
+      cancelPointerCheck();
+      pointerInsideRef.current = false;
+      focusInsideRef.current = false;
+      interactionInProgressRef.current = false;
+      triggerElementRef.current = element;
+      setTriggerElement(element);
+      setVisible(false);
+    },
+    [cancelOpening, cancelPointerCheck],
+  );
+
   const triggerProps = useMemo(
-    () => ({ ref: setTriggerElement, 'aria-describedby': isVisible ? tooltipId : undefined }),
-    [isVisible, tooltipId],
+    () => ({ ref: setTriggerRef, 'aria-describedby': isVisible ? floatingId : undefined }),
+    [floatingId, isVisible, setTriggerRef],
   );
   const floatingProps = useMemo(
-    () => ({ ref: setTooltipElement, id: tooltipId, targetElement: resolvedTargetElement }),
-    [resolvedTargetElement, tooltipId],
+    () => ({ ref: setFloatingElement, id: floatingId, targetElement: resolvedTargetElement }),
+    [floatingId, resolvedTargetElement],
   );
 
   return {
