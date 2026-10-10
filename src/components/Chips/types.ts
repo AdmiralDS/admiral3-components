@@ -19,7 +19,7 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   avatar?: ReactNode;
   /** Число, которое будет отображено в компоненте Badge справа от контента. */
   badge?: number;
-  /** Только для чтения. Блокирует переданные обработчики событий; у RemovableChip скрывает кнопку удаления. */
+  /** Режим только для чтения. Блокирует основные действия компонента, сохраняя события наведения и фокуса. */
   readOnly?: boolean;
   //TODO поправить описание при добавлении компонента Tooltip
   /** Функция, которая возвращает реакт-компонент с контентом tooltip, сейчас используется нативный title в качестве tooltip, поэтому функция должна возвращать string. Если этому компоненту нужны props, используйте замыкание */
@@ -40,9 +40,9 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
 export interface SelectableChipProps extends ChipBaseProps {
   /** Выбранное состояние чипса. */
   selected?: boolean;
-  /** Отключённое состояние. Блокирует обработчики событий onClick и onKeyDown, остальные обработчики событий блокируются на строне пользователя. */
+  /** Отключённое состояние. Блокирует onClick, onKeyDown и onSelectedChange. */
   disabled?: boolean;
-  /** Только для чтения. Блокирует переданные обработчики событий */
+  /** Режим только для чтения. Блокирует onClick, onKeyDown и onSelectedChange. */
   readOnly?: boolean;
   /** Иконки или другие декоративные элементы после контента чипса. */
   iconsAfter?: ReactNode;
@@ -53,11 +53,11 @@ export interface SelectableChipProps extends ChipBaseProps {
 export interface RemovableChipProps extends ChipBaseProps {
   /** Обработчик удаления. */
   onClose: () => void;
-  /** Отключённое состояние. Блокирует обработчики событий onClose и onKeyDown. */
+  /** Отключённое состояние. Блокирует onClick, onKeyDown и onClose. */
   disabled?: boolean;
   /** Props кнопки закрытия. */
   closeButtonProps?: HTMLAttributes<SVGSVGElement>;
-  /** Только для чтения. Блокирует переданные обработчики событий и скрывает кнопку удаления. */
+  /** Режим только для чтения. Блокирует onClick, onKeyDown и onClose, а также скрывает иконку удаления. */
   readOnly?: boolean;
 }
 
