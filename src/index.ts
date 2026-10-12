@@ -16,6 +16,7 @@ export * from './components/Pulse';
 export * from './components/RadioButton';
 export * from './components/Skeleton';
 export * from './components/Spinner';
+export * from './components/Tag';
 export * from './components/TextArea';
 export * from './components/Toggle';
 export * from './components/Tooltip';

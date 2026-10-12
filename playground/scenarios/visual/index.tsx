@@ -20,6 +20,7 @@ import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
+import { TagVisualTemplate } from './TagVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
   { id: VISUAL_SCENARIO_IDS.badge, title: 'Visual / Badge', visual: true, render: () => <BadgeVisualTemplate /> },
@@ -79,6 +80,7 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SkeletonVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.tag, title: 'Visual / Tag', visual: true, render: () => <TagVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.textArea,
     title: 'Visual / TextArea',
