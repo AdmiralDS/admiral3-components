@@ -7,16 +7,20 @@ import { checkBoxScenarios } from './check-box';
 import { chipsScenarios } from './chips';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
+import { formItemScenarios } from './form-item';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
+import { pillsScenarios } from './pills';
 import { progressHeaderScenarios } from './progress-header';
 import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
+import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
 
 export type PlaygroundScenario = {
@@ -34,15 +38,19 @@ export const playgroundScenarios = [
   ...chipsScenarios,
   ...dividerScenarios,
   ...fieldSetScenarios,
+  ...formItemScenarios,
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
+  ...pillsScenarios,
   ...progressHeaderScenarios,
   ...progressPageScenarios,
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
+  ...textAreaScenarios,
   ...toggleScenarios,
+  ...tooltipScenarios,
   ...visualScenarios,
 ];

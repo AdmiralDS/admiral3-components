@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { execNpmSync } from './utils/run-npm.mjs';
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
@@ -54,7 +55,7 @@ const forbiddenPackagePathRules = [
  * с тем, что будет опубликовано при npm publish.
  */
 const readPackDryRun = () => {
-  const output = execFileSync('npm', ['pack', '--dry-run', '--json'], {
+  const output = execNpmSync(['pack', '--dry-run', '--json'], {
     cwd: rootDir,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],

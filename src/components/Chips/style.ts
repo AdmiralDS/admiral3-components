@@ -1,18 +1,32 @@
+import { ServiceCloseOutline } from '@admiral-ds/admiral3-icons';
 import styled, { css } from 'styled-components';
 
 import { hoverPressLeaveTransition } from '#src/theme/animation';
 
 import { CHIPS_DIMENSION_PARAMETERS } from './constants';
-import type {
-  ChipActionsStyleProps,
-  ChipColorsStyleProps,
-  ChipDimension,
-  ChipDimensionStyleProps,
-  ChipTypographyStyleProps,
-  StyledBaseChipProps,
-  StyledSelectableChipProps,
-} from './types';
+import type { ChipAppearance, ChipColorMode, ChipDimension } from './types';
 import { cssToken } from '../../theme/cssToken';
+
+interface DimensionStyleProps {
+  $dimension: ChipDimension;
+}
+
+interface ChipStyleProps extends DimensionStyleProps {
+  $appearance: ChipAppearance;
+  $colorMode: ChipColorMode;
+  $disabled?: boolean;
+  $readOnly?: boolean;
+}
+
+interface SelectableChipStyleProps extends ChipStyleProps {
+  $selected: boolean;
+}
+
+interface ChipDataAttributes {
+  'data-appearance'?: ChipAppearance;
+  'data-color-mode'?: ChipColorMode;
+  'data-dimension'?: ChipDimension;
+}
 
 const textNeutralStaticWhite1 = cssToken(
   '--admiral-color-neutral-text-static-white-1',
@@ -36,6 +50,14 @@ const textNeutralInvertedDisabled = cssToken(
 const textNeutralStaticWhite3 = cssToken(
   '--admiral-color-neutral-text-static-white-3',
   (theme) => theme.color.neutral.text.staticWhite._3,
+);
+const textNeutral2Hover = cssToken(
+  '--admiral-color-neutral-text-2-hover',
+  (theme) => theme.color.neutral.text._2.hover,
+);
+const textNeutral2Press = cssToken(
+  '--admiral-color-neutral-text-2-press',
+  (theme) => theme.color.neutral.text._2.press,
 );
 
 const backgroundPrimary3Rest = cssToken(
@@ -115,19 +137,19 @@ const backgroundNeutralInvertedPress = cssToken(
   (theme) => theme.color.neutral.base.inverted.press,
 );
 
-const heights = css<ChipDimensionStyleProps>`
+const chipHeight = css<DimensionStyleProps>`
   height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].height}px;
 `;
 
-const heightIcons = css<ChipDimensionStyleProps>`
+const iconHeight = css<DimensionStyleProps>`
   height: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
 `;
 
-const widthIcons = css<ChipDimensionStyleProps>`
+const iconWidth = css<DimensionStyleProps>`
   width: ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].iconSize}px;
 `;
 
-const chipTypographyHover = css<ChipTypographyStyleProps>`
+const chipTypographyHover = css<ChipStyleProps>`
   &:hover {
     color: ${(props) => {
       const { $colorMode } = props;
@@ -141,7 +163,7 @@ const chipTypographyHover = css<ChipTypographyStyleProps>`
   }
 `;
 
-const chipTypography = css<ChipTypographyStyleProps>`
+const chipTypography = css<ChipStyleProps>`
   ${({ $dimension }) => CHIPS_DIMENSION_PARAMETERS[$dimension].typography}
   color: ${(props) => {
     const { $colorMode, $disabled } = props;
@@ -155,7 +177,7 @@ const chipTypography = css<ChipTypographyStyleProps>`
   ${({ $disabled }) => !$disabled && chipTypographyHover}
 `;
 
-const actionsMixin = css<ChipActionsStyleProps>`
+const actionsMixin = css<SelectableChipStyleProps>`
   &:hover {
     ${(props) => {
       const { $appearance, $selected } = props;
@@ -194,7 +216,7 @@ const actionsMixin = css<ChipActionsStyleProps>`
   }
 `;
 
-const colorsBorderAndBackground = css<ChipColorsStyleProps>`
+const colorsBorderAndBackground = css<ChipStyleProps>`
   transition:
     background-color ${hoverPressLeaveTransition},
     border-color ${hoverPressLeaveTransition};
@@ -222,17 +244,7 @@ const colorsBorderAndBackground = css<ChipColorsStyleProps>`
   }
 `;
 
-const ChipButtonBase = styled.div.attrs<
-  StyledBaseChipProps & {
-    'data-dimension': string;
-    'data-appearance': string;
-    'data-color-mode': string;
-  }
->((props) => ({
-  'data-dimension': props.$dimension,
-  'data-appearance': props.$appearance,
-  'data-color-mode': props.$colorMode,
-}))<StyledBaseChipProps>`
+const chipLayout = css<ChipStyleProps>`
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
@@ -242,28 +254,25 @@ const ChipButtonBase = styled.div.attrs<
   cursor: default;
   padding-inline: ${(p) =>
     CHIPS_DIMENSION_PARAMETERS[p.$dimension].contentPadding - (p.$appearance === 'outlined' ? 1 : 0)}px;
+`;
 
-  pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
-  & > * {
-    pointer-events: ${(p) => (p.$readOnly ? 'none' : 'auto')};
-  }
-
+const chipIconColorReset = css`
   & svg [fill^='#'] {
     fill: currentColor;
   }
+`;
 
-  ${colorsBorderAndBackground}
-  ${heights}
-  ${chipTypography}
-
+const chipFocus = css<ChipStyleProps>`
   &:focus-visible {
     outline: 2px solid ${borderPrimary1Rest};
     outline-offset: 2px;
   }
+`;
 
+const chipIcons = css<ChipStyleProps>`
   & svg {
-    ${heightIcons}
-    ${widthIcons}
+    ${iconHeight}
+    ${iconWidth}
     & *[fill^='#'] {
       fill: ${(props) => {
         const { $appearance, $disabled, $colorMode } = props;
@@ -279,8 +288,22 @@ const ChipButtonBase = styled.div.attrs<
   }
 `;
 
-export const SelectableChipStyled = styled(ChipButtonBase)<StyledSelectableChipProps>`
-  cursor: ${(p) => (p.$disabled ? 'not-allowed' : 'pointer')};
+const ChipBase = styled.div.attrs<ChipStyleProps & ChipDataAttributes>((props) => ({
+  'data-dimension': props.$dimension,
+  'data-appearance': props.$appearance,
+  'data-color-mode': props.$colorMode,
+}))<ChipStyleProps>`
+  ${chipLayout}
+  ${chipIconColorReset}
+  ${colorsBorderAndBackground}
+  ${chipHeight}
+  ${chipTypography}
+  ${chipFocus}
+  ${chipIcons}
+`;
+
+export const SelectableChipStyled = styled(ChipBase)<SelectableChipStyleProps>`
+  cursor: ${(p) => (p.$disabled ? 'not-allowed' : p.$readOnly ? 'default' : 'pointer')};
   border: ${(props) => {
     const { $appearance } = props;
 
@@ -330,7 +353,7 @@ export const SelectableChipStyled = styled(ChipButtonBase)<StyledSelectableChipP
   }
 `;
 
-export const RemovableChipStyled = styled(ChipButtonBase)<StyledBaseChipProps>`
+export const RemovableChipStyled = styled(ChipBase)<ChipStyleProps>`
   gap: 2px;
 `;
 
@@ -344,9 +367,30 @@ export const ChipChildrenWrapperStyled = styled.span`
 `;
 
 export const IconsWrapperStyled = styled.span<{ $dimension: ChipDimension }>`
-  ${heightIcons}
+  ${iconHeight}
   & > svg {
-    ${heightIcons}
-    ${widthIcons}
+    ${iconHeight}
+    ${iconWidth}
   }
+`;
+
+const colorIcon = css<{ $colorMode: ChipColorMode }>`
+  color: ${(p) => (p.$colorMode === 'neutral' ? textNeutral2Rest : textPrimary1Rest)(p)};
+
+  &:hover {
+    color: ${(p) => textNeutral2Hover(p)};
+  }
+  &:active {
+    color: ${(p) => textNeutral2Press(p)};
+  }
+`;
+
+export const CloseIcon = styled(ServiceCloseOutline)<{
+  $colorMode: ChipColorMode;
+  $disabled?: boolean;
+}>`
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: color ${hoverPressLeaveTransition};
+  ${(p) => (p.$disabled ? `cursor: not-allowed; color: ${textNeutralDisabledRest(p)}` : colorIcon)}
 `;

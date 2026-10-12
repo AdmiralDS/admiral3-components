@@ -3,10 +3,9 @@ import { forwardRef, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { refSetter } from '#src/utils/refSetter';
 
 import { ChipContent } from './ChipContent';
-import { RemovableChipStyled } from './style';
+import { CloseIcon, RemovableChipStyled } from './style';
 import type { RemovableChipProps } from './types';
 import { useChipTooltip } from './useChipTooltip';
-import { CloseIconPlacementButton } from '../_internal/IconPlacement';
 
 export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
   (
@@ -21,6 +20,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
       disabled,
       readOnly,
       onClose,
+      onClick,
       onKeyDown,
       tabIndex,
       renderContentTooltip,
@@ -37,10 +37,16 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
 
     const tooltip = useChipTooltip(containerRef, children, renderContentTooltip, disabledTooltip);
 
-    const handleClickCloseIcon = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleClickCloseIcon = (e: MouseEvent<SVGSVGElement>) => {
       e.stopPropagation();
 
       if (!disabled) onClose?.();
+    };
+
+    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+      if (eventsDisabled) return;
+
+      onClick?.(e);
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -61,6 +67,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
         role="button"
         tabIndex={tabIndex ?? (disabled ? -1 : 0)}
         aria-disabled={ariaDisabled ?? (eventsDisabled || undefined)}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         title={tooltip.title}
         $dimension={dimension}
@@ -80,14 +87,7 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
           contentRef={tooltip.contentRef}
         />
         {!readOnly && (
-          <CloseIconPlacementButton
-            {...closeButtonProps}
-            dimension={dimension === 'l' ? 'm' : 's'}
-            onClick={handleClickCloseIcon}
-            disabled={disabled}
-            tabIndex={-1}
-            colorMode={colorMode}
-          />
+          <CloseIcon {...closeButtonProps} onClick={handleClickCloseIcon} $disabled={disabled} $colorMode={colorMode} />
         )}
       </RemovableChipStyled>
     );

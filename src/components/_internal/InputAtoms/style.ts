@@ -94,7 +94,7 @@ export const StyledBaseInputContainer = styled.div<StyledBaseInputContainerProps
     padding-inline-end: var(--admiral-input-padding-inline);
   }
 
-  &[data-appearance='flat']:not([data-disabled]):not([data-read-only]):has(> input:focus) {
+  &[data-appearance='flat']:not([data-disabled]):not([data-read-only]):has(> :is(input, textarea):focus) {
     background: ${backgroundBase};
   }
 
@@ -111,7 +111,7 @@ export const StyledBaseInputContainer = styled.div<StyledBaseInputContainerProps
     cursor: not-allowed;
   }
 
-  &[data-disabled] > input {
+  &[data-disabled] > :is(input, textarea) {
     cursor: not-allowed;
   }
 `;
@@ -175,7 +175,7 @@ export const StyledBaseInputBorder = styled.span.attrs({
     border-color: ${borderHover};
   }
 
-  ${StyledBaseInputContainer}:not([data-disabled]):not([data-read-only]) > input:focus ~ & {
+  ${StyledBaseInputContainer}:not([data-disabled]):not([data-read-only]) > :is(input, textarea):focus ~ & {
     border-width: 2px;
     border-color: ${borderFocus};
   }
@@ -193,7 +193,7 @@ export const StyledBaseInputBorder = styled.span.attrs({
     border-color: ${borderErrorHover};
   }
 
-  ${StyledBaseInputContainer}[data-status='error']:not([data-disabled]):not([data-read-only]) > input:focus ~ & {
+  ${StyledBaseInputContainer}[data-status='error']:not([data-disabled]):not([data-read-only]) > :is(input, textarea):focus ~ & {
     border-width: 2px;
     border-color: ${borderErrorRest};
   }
@@ -211,7 +211,7 @@ export const StyledBaseInputBorder = styled.span.attrs({
     border-color: ${borderSuccessHover};
   }
 
-  ${StyledBaseInputContainer}[data-status='success']:not([data-disabled]):not([data-read-only]) > input:focus ~ & {
+  ${StyledBaseInputContainer}[data-status='success']:not([data-disabled]):not([data-read-only]) > :is(input, textarea):focus ~ & {
     border-width: 2px;
     border-color: ${borderSuccessRest};
   }

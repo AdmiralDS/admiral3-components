@@ -1,7 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { CHIPS_APPEARANCES, CHIPS_COLOR_MODES, CHIPS_DIMENSIONS } from './constants';
-import type { IconPlacementProps } from '../_internal/IconPlacement';
 
 export type ChipDimension = (typeof CHIPS_DIMENSIONS)[number];
 export type ChipAppearance = (typeof CHIPS_APPEARANCES)[number];
@@ -20,7 +19,7 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   avatar?: ReactNode;
   /** Число, которое будет отображено в компоненте Badge справа от контента. */
   badge?: number;
-  /** Только для чтения. Блокирует переданные обработчики событий; у RemovableChip скрывает кнопку удаления. */
+  /** Режим только для чтения. Блокирует основные действия компонента, сохраняя события наведения и фокуса. */
   readOnly?: boolean;
   //TODO поправить описание при добавлении компонента Tooltip
   /** Функция, которая возвращает реакт-компонент с контентом tooltip, сейчас используется нативный title в качестве tooltip, поэтому функция должна возвращать string. Если этому компоненту нужны props, используйте замыкание */
@@ -41,44 +40,23 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
 export interface SelectableChipProps extends ChipBaseProps {
   /** Выбранное состояние чипса. */
   selected?: boolean;
-  /** Отключённое состояние. Блокирует обработчики событий onClick и onKeyDown, остальные обработчики событий блокируются на строне пользователя. */
+  /** Отключённое состояние. Блокирует onClick, onKeyDown и onSelectedChange. */
   disabled?: boolean;
-  /** Только для чтения. Блокирует переданные обработчики событий */
+  /** Режим только для чтения. Блокирует onClick, onKeyDown и onSelectedChange. */
   readOnly?: boolean;
   /** Иконки или другие декоративные элементы после контента чипса. */
   iconsAfter?: ReactNode;
+  /** Обработчик изменения выбранного состояния при клике или нажатии Enter/Space. */
+  onSelectedChange?: (selected: boolean) => void;
 }
 
 export interface RemovableChipProps extends ChipBaseProps {
   /** Обработчик удаления. */
   onClose: () => void;
-  /** Отключённое состояние. Блокирует обработчики событий onClose и onKeyDown. */
+  /** Отключённое состояние. Блокирует onClick, onKeyDown и onClose. */
   disabled?: boolean;
   /** Props кнопки закрытия. */
-  closeButtonProps?: IconPlacementProps;
-  /** Только для чтения. Блокирует переданные обработчики событий и скрывает кнопку удаления. */
+  closeButtonProps?: HTMLAttributes<SVGSVGElement>;
+  /** Режим только для чтения. Блокирует onClick, onKeyDown и onClose, а также скрывает иконку удаления. */
   readOnly?: boolean;
 }
-
-export interface StyledBaseChipProps {
-  $colorMode: ChipColorMode;
-  $disabled?: boolean;
-  $dimension: ChipDimension;
-  $appearance?: ChipAppearance;
-  $readOnly?: boolean;
-}
-
-export interface StyledSelectableChipProps extends StyledBaseChipProps {
-  $selected?: boolean;
-}
-
-export type ChipDimensionStyleProps = Pick<StyledBaseChipProps, '$dimension'>;
-export type ChipTypographyStyleProps = Pick<
-  StyledBaseChipProps,
-  '$colorMode' | '$appearance' | '$dimension' | '$disabled'
->;
-export type ChipActionsStyleProps = Pick<StyledSelectableChipProps, '$colorMode' | '$appearance' | '$selected'>;
-export type ChipColorsStyleProps = Pick<
-  StyledBaseChipProps,
-  '$colorMode' | '$appearance' | '$dimension' | '$disabled' | '$readOnly'
->;

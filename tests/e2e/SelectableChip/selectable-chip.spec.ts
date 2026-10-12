@@ -15,9 +15,11 @@ test.describe('SelectableChip playground', () => {
     await chip.focus();
     await page.keyboard.press('Enter');
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
+    await expect(chip).toHaveAttribute('data-click-count', '1');
     await expect(chip).toHaveCSS('outline-width', '2px');
     await page.keyboard.press('Space');
     await expect(chip).toHaveAttribute('aria-pressed', 'false');
+    await expect(chip).toHaveAttribute('data-click-count', '2');
     expect(errors).toEqual([]);
   });
 
@@ -28,6 +30,15 @@ test.describe('SelectableChip playground', () => {
       const background = await chip.evaluate((element) => getComputedStyle(element).backgroundColor);
       await expect(chip).toHaveAttribute('aria-disabled', 'true');
       await expect(chip).toHaveAttribute('tabindex', state === 'disabled' ? '-1' : '0');
+      if (state === 'readonly') {
+        await expect(chip).toHaveCSS('cursor', 'default');
+        expect(
+          await chip.evaluate((element) => {
+            const style = getComputedStyle(element);
+            return style.userSelect || style.webkitUserSelect;
+          }),
+        ).toBe('text');
+      }
       const bounds = await chip.boundingBox();
       expect(bounds).not.toBeNull();
       await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);

@@ -48,6 +48,7 @@ describe('Button', () => {
     render(<Button data-testid="button">Content</Button>);
 
     expect(screen.getByTestId('button')).toHaveTextContent('Content');
+    expect(screen.getByTestId('button')).not.toHaveAttribute('aria-hidden');
     expect(screen.getByText('Content').tagName).toBe('SPAN');
   });
 
@@ -238,14 +239,18 @@ describe('Button', () => {
     expect(clickEvent.defaultPrevented).toBe(true);
   });
 
-  it('makes a skeleton button unfocusable', () => {
+  it('makes a skeleton button unfocusable and hides it from assistive technologies', () => {
     render(
       <Button data-testid="button" skeleton>
         Button
       </Button>,
     );
 
-    expect(screen.getByTestId('button')).toHaveAttribute('tabindex', '-1');
+    const button = screen.getByTestId('button');
+
+    expect(button).toHaveAttribute('tabindex', '-1');
+    expect(button).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it.each([undefined, 'start', 'end'] as const)(

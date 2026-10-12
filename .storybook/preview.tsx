@@ -5,6 +5,7 @@ import { buildTheme, cornerRadiusOptions, type BuiltTheme, type CornerRadiusBase
 import '@admiral-ds/admiral3-tokens/css';
 import { FontsSourceCodePro, FontsVTBGroup } from '@admiral-ds/admiral3-tokens/fonts';
 import type { Preview } from '@storybook/react-vite';
+import { inferControls } from 'storybook/preview-api';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 
 import { DocsThemeContainer } from './DocsThemeContainer';
@@ -92,6 +93,21 @@ const CanvasLayoutDecorator = (Story: ComponentType, context: { viewMode?: strin
   );
 };
 
+type ArgTypesEnhancer = NonNullable<Preview['argTypesEnhancers']>[number];
+
+const disableObjectControls = Object.assign(
+  (context: Parameters<ArgTypesEnhancer>[0]) =>
+    Object.fromEntries(
+      Object.entries(inferControls(context)).map(([name, argType]) => {
+        const control = argType.control;
+        const controlType = typeof control === 'object' && control !== null ? control.type : control;
+
+        return [name, controlType === 'object' ? { ...argType, control: false as const } : argType];
+      }),
+    ),
+  { secondPass: true },
+);
+
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [PreviewThemeDecorator, CanvasLayoutDecorator],
@@ -132,14 +148,18 @@ const preview: Preview = {
     layout: 'fullscreen',
     docs: {
       container: DocsThemeContainer,
+      argTypes: { sort: 'requiredFirst' },
+      controls: { sort: 'requiredFirst' },
     },
     controls: {
+      sort: 'requiredFirst',
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
   },
+  argTypesEnhancers: [disableObjectControls],
 };
 
 export default preview;

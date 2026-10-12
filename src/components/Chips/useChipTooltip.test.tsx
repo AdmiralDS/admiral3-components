@@ -42,6 +42,19 @@ describe.each([
     expect(chip).not.toHaveAttribute('title');
   });
 
+  it('shows a title on hover when readOnly', () => {
+    vi.spyOn(overflowUtils, 'checkOverflow').mockReturnValue(true);
+    render(
+      <Component data-testid="chip" readOnly>
+        Полное название
+      </Component>,
+    );
+    const chip = screen.getByTestId('chip');
+
+    fireEvent.mouseEnter(chip);
+    expect(chip).toHaveAttribute('title', 'Полное название');
+  });
+
   it('uses custom tooltip content for non-string children', () => {
     vi.spyOn(overflowUtils, 'checkOverflow').mockReturnValue(true);
     render(

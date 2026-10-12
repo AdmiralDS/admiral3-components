@@ -16,7 +16,7 @@ export const ButtonPlaygroundTemplate = (args: ButtonProps) => {
         {args.children}
         <ServiceShareOutline />
       </Button>
-      <Button {...args} square>
+      <Button {...args} square aria-label="Share">
         <ServiceShareOutline />
       </Button>
     </StoryDemoContainer>

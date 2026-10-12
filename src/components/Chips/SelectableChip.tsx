@@ -1,4 +1,4 @@
-import { forwardRef, useRef, type KeyboardEvent } from 'react';
+import { forwardRef, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 
 import { hasSlotContent } from '#src/utils/hasSlotContent';
 import { refSetter } from '#src/utils/refSetter';
@@ -18,13 +18,14 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
       iconsBefore,
       avatar,
       badge,
-      selected,
+      selected = false,
       disabled,
       readOnly,
       renderContentTooltip,
       disabledTooltip,
       onClick,
       onKeyDown,
+      onSelectedChange,
       tabIndex,
       iconsAfter,
       'aria-disabled': ariaDisabled,
@@ -43,11 +44,17 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
 
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        //eslint-disable-next-line
-        onClick?.(e as any);
+        e.currentTarget.click();
       }
 
       onKeyDown?.(e);
+    };
+
+    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+      if (eventsDisabled) return;
+
+      onSelectedChange?.(!selected);
+      onClick?.(e);
     };
 
     return (
@@ -58,9 +65,7 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
         tabIndex={tabIndex ?? (disabled ? -1 : 0)}
         aria-disabled={ariaDisabled ?? (eventsDisabled || undefined)}
         aria-pressed={selected}
-        onClick={(event) => {
-          if (!eventsDisabled) onClick?.(event);
-        }}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         title={tooltip.title}
         $dimension={dimension}

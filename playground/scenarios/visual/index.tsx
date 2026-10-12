@@ -5,10 +5,12 @@ import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
+import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
 import { VISUAL_SCENARIO_IDS } from './manifest';
+import { PillsVisualTemplate } from './PillsVisual.template';
 import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
 import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
@@ -17,7 +19,9 @@ import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
 import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
+import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
+import { TooltipVisualTemplate } from './TooltipVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
   { id: VISUAL_SCENARIO_IDS.badge, title: 'Visual / Badge', visual: true, render: () => <BadgeVisualTemplate /> },
@@ -41,9 +45,16 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <FieldSetVisualTemplate />,
   },
+  {
+    id: VISUAL_SCENARIO_IDS.formItem,
+    title: 'Visual / FormItem',
+    visual: true,
+    render: () => <FormItemVisualTemplate />,
+  },
   { id: VISUAL_SCENARIO_IDS.input, title: 'Visual / Input', visual: true, render: () => <InputVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.pills, title: 'Visual / Pills', visual: true, render: () => <PillsVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.progressHeader,
     title: 'Visual / ProgressHeader',
@@ -82,5 +93,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SkeletonVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.textArea,
+    title: 'Visual / TextArea',
+    visual: true,
+    render: () => <TextAreaVisualTemplate />,
+  },
   { id: VISUAL_SCENARIO_IDS.toggle, title: 'Visual / Toggle', visual: true, render: () => <ToggleVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.tooltip, title: 'Visual / Tooltip', visual: true, render: () => <TooltipVisualTemplate /> },
 ];

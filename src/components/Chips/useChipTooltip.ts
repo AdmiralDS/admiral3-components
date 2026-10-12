@@ -42,7 +42,7 @@ export const useChipTooltip = (
         chipNode.removeEventListener('blur', hide);
       };
     }
-  }, [disabledTooltip]);
+  }, [disabledTooltip, containerRef]);
 
   return {
     contentRef,
