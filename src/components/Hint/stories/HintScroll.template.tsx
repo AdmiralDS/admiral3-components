@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import { Button, Hint, HintLabel, useHint } from '@admiral-ds/admiral3-components';
 
+import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -12,12 +14,18 @@ export const HintScrollTemplate = () => {
   const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ triggerMode: 'click' });
 
   return (
-    <>
+    <StoryDemoContainer $direction="column" $gap="20px">
+      <StoryDemoDescription>
+        По умолчанию высота Hint ограничена 320 пикселями. Если содержимое не помещается, прокручивается внутренняя
+        область, а кнопка закрытия остаётся закреплённой в правом верхнем углу. Ширину и более строгое ограничение
+        высоты можно задать через <code>hintStyles</code>; в этом примере через него установлена только ширина 320
+        пикселей, а максимальная высота остаётся стандартной.
+      </StoryDemoDescription>
       <Button {...triggerProps}>Показать длинную подсказку</Button>
       {isVisible && (
         <Hint
           {...hintProps}
-          hintStyles={{ style: { width: 320, maxHeight: 240 } }}
+          hintStyles={{ style: { width: 320 } }}
           closeButtonProps={{ 'aria-label': 'Закрыть подсказку' }}
         >
           <Content>
@@ -40,6 +48,6 @@ export const HintScrollTemplate = () => {
           </Content>
         </Hint>
       )}
-    </>
+    </StoryDemoContainer>
   );
 };

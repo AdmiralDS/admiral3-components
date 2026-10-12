@@ -72,11 +72,6 @@ export const HintContent = styled.div<StyledHintContentProps>`
   overflow: auto;
 `;
 
-/** Заголовок для стандартного текстового содержимого Hint. */
-export const HintLabel = styled.div`
-  ${textStyles.subtitle.subtitle3}
-`;
-
 export const FakeTarget = styled.div`
   pointer-events: none;
   height: 100%;

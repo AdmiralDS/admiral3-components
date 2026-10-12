@@ -1,5 +1,5 @@
 export { Hint } from './Hint';
-export { HintLabel } from './style';
+export { HintLabel } from './HintLabel';
 export { withHint } from './withHint';
 export { HINT_DELAY, useHint } from './useHint';
 export type {

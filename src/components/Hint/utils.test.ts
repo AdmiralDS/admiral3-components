@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { HINT_MOBILE_BREAKPOINT } from './constants';
+import { HINT_MOBILE_BREAKPOINT, HINT_OFFSET } from './constants';
 import { getMobileHintDirection, stretchToViewportWidth } from './utils';
 
 describe('Hint utils', () => {
@@ -33,6 +33,20 @@ describe('Hint utils', () => {
     vi.spyOn(hint, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 300, 200));
 
     expect(getMobileHintDirection(target, new DOMRect(0, targetBottom - 40, 100, 40), hint)).toBe(direction);
+  });
+
+  it('includes the offset when checking the space below the target', () => {
+    const target = document.createElement('button');
+    const hint = document.createElement('div');
+    const hintHeight = 200;
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(HINT_MOBILE_BREAKPOINT - 1);
+    vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(800);
+    vi.spyOn(hint, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 300, hintHeight));
+
+    const availableSpace = hintHeight + HINT_OFFSET - 1;
+    const targetBottom = window.innerHeight - availableSpace;
+
+    expect(getMobileHintDirection(target, new DOMRect(0, targetBottom - 40, 100, 40), hint)).toBe('topPageCenter');
   });
 
   it('stretches the portal to the viewport width', () => {

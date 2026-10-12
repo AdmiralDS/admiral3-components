@@ -8,13 +8,30 @@ import { StoryDemoContainer, StoryDemoDescription, StoryDemoItem } from '../../s
 
 export const HintInputTargetTemplate = (props: Omit<HintProps, 'targetElement'>) => {
   const [inputContainer, setInputContainer] = useState<HTMLDivElement | null>(null);
-  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({ targetElement: inputContainer });
+  const { isVisible, triggerProps, hintProps } = useHint<HTMLButtonElement>({
+    triggerMode: 'click',
+    targetElement: inputContainer,
+  });
 
   return (
     <StoryDemoContainer $direction="column" $gap="20px">
       <StoryDemoDescription>
-        Иконка вопроса управляет видимостью Hint, а <code>targetElement</code> задаёт отдельный элемент позиционирования
-        — контейнер Input. Наведение и фокус на самом поле не открывают и не удерживают Hint.
+        Обычно Hint позиционируется относительно того же элемента, который управляет его видимостью. Параметр хука{' '}
+        <code>targetElement</code> позволяет разделить эти роли: в примере компактная иконка вопроса остаётся триггером,
+        а Hint позиционируется относительно контейнера Input. Такой подход нужен, когда подсказку открывает небольшой
+        элемент внутри составного компонента, но визуально она должна быть выровнена по всему полю или другому крупному
+        элементу интерфейса.
+      </StoryDemoDescription>
+      <StoryDemoDescription>
+        Переданный <code>targetElement</code> используется только для вычисления позиции. Наведение, фокус и клик по
+        нему не открывают Hint и не удерживают его открытым — интерактивной зоной остаются только триггер и сам Hint.
+        Поэтому для раздельных триггера и элемента позиционирования рекомендуется режим <code>triggerMode="click"</code>
+        . В hover-режиме при движении указателя от иконки через область Input до Hint указатель покинет интерактивную
+        зону и подсказка закроется до того, как пользователь сможет на неё перейти.
+      </StoryDemoDescription>
+      <StoryDemoDescription>
+        Вызов <code>useHint(&#123; triggerMode: 'click', targetElement: inputContainer &#125;)</code> сохраняет Hint
+        открытым после активации и позволяет перейти к его содержимому.
       </StoryDemoDescription>
       <StoryDemoItem>
         <Input

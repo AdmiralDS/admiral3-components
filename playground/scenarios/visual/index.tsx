@@ -6,6 +6,7 @@ import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
+import { HintVisualTemplate } from './HintVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
@@ -20,7 +21,6 @@ import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
-import { HintVisualTemplate } from './HintVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
   { id: VISUAL_SCENARIO_IDS.badge, title: 'Visual / Badge', visual: true, render: () => <BadgeVisualTemplate /> },

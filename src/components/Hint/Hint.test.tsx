@@ -12,7 +12,7 @@ import {
   HINT_POSITION_CONFIG,
 } from './constants';
 import { Hint } from './Hint';
-import { HintLabel } from './style';
+import { HintLabel } from './HintLabel';
 import { getHintTooltipDirection, type HintTooltipInternalPosition } from '../_internal/FloatingPortal';
 
 vi.mock('../_internal/FloatingPortal', async (importOriginal) => ({

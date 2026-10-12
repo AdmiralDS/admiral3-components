@@ -7,6 +7,7 @@ import { checkBoxScenarios } from './check-box';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
+import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
@@ -21,7 +22,6 @@ import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
-import { hintScenarios } from './hint';
 
 export type PlaygroundScenario = {
   id: string;
