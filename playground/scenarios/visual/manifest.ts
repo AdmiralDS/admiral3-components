@@ -6,6 +6,7 @@ export const VISUAL_SCENARIO_IDS = {
   divider: 'visual/divider',
   fieldSet: 'visual/field-set',
   formItem: 'visual/form-item',
+  hint: 'visual/hint',
   input: 'visual/input',
   link: 'visual/link',
   list: 'visual/list',

@@ -8,6 +8,7 @@ import { chipsScenarios } from './chips';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
+import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
@@ -39,6 +40,7 @@ export const playgroundScenarios = [
   ...dividerScenarios,
   ...fieldSetScenarios,
   ...formItemScenarios,
+  ...hintScenarios,
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,

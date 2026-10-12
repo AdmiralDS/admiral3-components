@@ -7,6 +7,7 @@ export * from './components/Divider';
 export * from './components/FieldSet';
 export * from './components/FormItem';
 export * from './components/HelperComponents';
+export * from './components/Hint';
 export * from './components/Input';
 export * from './components/Link';
 export * from './components/List';
