@@ -1,7 +1,11 @@
+import { textStyles } from '@admiral-ds/admiral3-tokens';
 import styled, { css } from 'styled-components';
+
 import { typography } from '#src/components/Typography';
 import type { TagKind, TagDimension } from '#src/components/Tag';
 import { cssToken } from '../../theme/cssToken';
+import type { StyledTagProps } from './types';
+import { TAG_DIMENSION_PARAMETRS } from './constants';
 
 const wrapperBackground = css<{ $background: TagKind | string }>`
   background: ${({ $background }) => {
@@ -106,8 +110,7 @@ const wrapperPress = css<{ $backgroundHover: TagKind | string }>`
 `;
 
 export const Wrapper = styled.button<{
-  $dimension?: TagDimension;
-  $width?: number | string;
+  $dimension: TagDimension;
   $clickable: boolean;
   $statusViaBackground?: boolean;
   $border: TagKind | string;
@@ -117,16 +120,16 @@ export const Wrapper = styled.button<{
   position: relative;
   box-sizing: border-box;
   max-width: 100%;
+  gap: 6px;
 
   ${({ $dimension }) => `
-    height: ${$dimension === 's' ? TAG_HEIGHT_S : TAG_HEIGHT_M}px;
-    padding: ${$dimension === 's' ? TAG_PADDING_TOP_S : TAG_PADDING_TOP_M}px ${
-      $dimension === 's' ? TAG_PADDING_LEFT_S : TAG_PADDING_LEFT_M
-    }px;
+    height: ${TAG_DIMENSION_PARAMETRS[$dimension].height}px;
+    padding-block: ${TAG_DIMENSION_PARAMETRS[$dimension].paddingBlock}px;
+    padding-inline: ${TAG_DIMENSION_PARAMETRS[$dimension].paddingInline}px;
   `}
 
-  ${({ $width }) => $width && `width: ${typeof $width === 'number' ? `${$width}px` : $width};`}
-  border-radius: ${cssToken('--admiral-radius-medium', (theme) => theme.radius.medium)};
+  border-radius: ${cssToken('--admiral-radius-small', (theme) => theme.radius.small)};
+
   ${({ $statusViaBackground, theme }) =>
     $statusViaBackground
       ? wrapperBackground
@@ -156,24 +159,13 @@ export const Wrapper = styled.button<{
   }
 `;
 
-export const Text = styled.span`
-  color: var(--admiral-color-Neutral_Neutral90, ${(p) => p.theme.color['Neutral/Neutral 90']});
-  user-select: none;
+export const Text = styled.span<StyledTagProps>`
+  color: ${cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest)};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  ${typography['Caption/Caption 1']}
-`;
-
-export const TagCircle = styled.div<{ $background: TagKind | string }>`
-  display: flex;
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-  ${circleBackground}
+  ${(p) => (p.$dimension === 'l' ? textStyles.body.body2Long : textStyles.caption.caption1)}
 `;
 
 export const Icon = styled.div`
