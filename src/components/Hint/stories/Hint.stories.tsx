@@ -10,6 +10,12 @@ import { HintHoverTemplate } from './HintHover.template';
 import hintHoverTemplateRaw from './HintHover.template?raw';
 import { HintInputTargetTemplate } from './HintInputTarget.template';
 import hintInputTargetTemplateRaw from './HintInputTarget.template?raw';
+import {
+  HintHiddenNextElementTemplate,
+  HintKeyboardActivationTemplate,
+  HintLastTriggerTemplate,
+} from './HintKeyboard.template';
+import hintKeyboardTemplateRaw from './HintKeyboard.template?raw';
 import { HintPlaygroundTemplate } from './HintPlayground.template';
 import hintPlaygroundTemplateRaw from './HintPlayground.template?raw';
 import { HintPositionTemplate } from './HintPosition.template';
@@ -158,4 +164,22 @@ export const Scroll: StoryObj<HintProps> = {
     },
   },
   name: 'Внутренний скролл и максимальная высота',
+};
+
+export const LastTriggerTab: StoryObj<HintProps> = {
+  render: HintLastTriggerTemplate,
+  parameters: { docs: { source: { code: hintKeyboardTemplateRaw } } },
+  name: 'Tab: триггер последний на странице',
+};
+
+export const HiddenNextElementTab: StoryObj<HintProps> = {
+  render: HintHiddenNextElementTemplate,
+  parameters: { docs: { source: { code: hintKeyboardTemplateRaw } } },
+  name: 'Tab: следующий элемент скрыт',
+};
+
+export const KeyboardActivation: StoryObj<HintProps> = {
+  render: HintKeyboardActivationTemplate,
+  parameters: { docs: { source: { code: hintKeyboardTemplateRaw } } },
+  name: 'Активация кнопки: мышь и клавиатура',
 };
