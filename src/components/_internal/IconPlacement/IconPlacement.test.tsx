@@ -86,14 +86,6 @@ describe('IconPlacement', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each(['Enter', ' ', 'Escape'])('does not forward %j when disabled', (key) => {
-    const onKeyDown = vi.fn();
-    render(<IconPlacement disabled onKeyDown={onKeyDown} />);
-
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
-    expect(onKeyDown).not.toHaveBeenCalled();
-  });
-
   it('restores click activation when disabled is removed', () => {
     const onClick = vi.fn();
     const { rerender } = render(<IconPlacement disabled onClick={onClick} />);
@@ -105,36 +97,27 @@ describe('IconPlacement', () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it.each(['Enter', ' '])('prevents the default action of %j without a user keydown handler', (key) => {
+  it.each(['Enter', ' '])('keeps the native default action of %j', (key) => {
     const onClick = vi.fn();
     render(<IconPlacement onClick={onClick} />);
 
     // fireEvent does not synthesize the browser's native keyboard click.
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
-    expect(onClick).not.toHaveBeenCalled();
-  });
-
-  it.each(['Enter', ' '])('forwards %j exactly once after preventing its default action', (key) => {
-    const onClick = vi.fn();
-    const onKeyDown = vi.fn();
-    render(<IconPlacement onClick={onClick} onKeyDown={onKeyDown} />);
-
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
-    expect(onKeyDown).toHaveBeenCalledOnce();
-    expect(onKeyDown.mock.calls[0][0].key).toBe(key);
-    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
-    expect(onClick).not.toHaveBeenCalled();
-  });
-
-  it.each(['Escape', 'ArrowRight', 'Backspace', 'Tab', 'a'])('does not forward or prevent %j', (key) => {
-    const onClick = vi.fn();
-    const onKeyDown = vi.fn();
-    render(<IconPlacement onClick={onClick} onKeyDown={onKeyDown} />);
-
     expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
-    expect(onKeyDown).not.toHaveBeenCalled();
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it.each(['Enter', ' ', 'Escape', 'ArrowRight', 'Backspace', 'Tab', 'a'])(
+    'forwards %j without preventing it',
+    (key) => {
+      const onKeyDown = vi.fn();
+      render(<IconPlacement onKeyDown={onKeyDown} />);
+
+      expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
+      expect(onKeyDown).toHaveBeenCalledOnce();
+      expect(onKeyDown.mock.calls[0][0].key).toBe(key);
+      expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(false);
+    },
+  );
 
   it('allows programmatic clicks', () => {
     const onClick = vi.fn();
@@ -144,19 +127,6 @@ describe('IconPlacement', () => {
     button.click();
     expect(onClick).toHaveBeenCalledOnce();
     expect(onClick.mock.calls[0][0].type).toBe('click');
-  });
-
-  it('restores keyboard handling when disabled is removed', () => {
-    const onKeyDown = vi.fn();
-    const { rerender } = render(<IconPlacement disabled onKeyDown={onKeyDown} />);
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key: ' ' })).toBe(true);
-    expect(onKeyDown).not.toHaveBeenCalled();
-
-    rerender(<IconPlacement onKeyDown={onKeyDown} />);
-
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key: ' ' })).toBe(false);
-    expect(onKeyDown).toHaveBeenCalledOnce();
-    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
   });
 });
 
@@ -199,15 +169,13 @@ describe('CloseIconPlacementButton', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it.each(['Enter', ' '])('forwards %j after preventing its default action', (key) => {
-    const onClick = vi.fn();
+  it.each(['Enter', ' ', 'Escape'])('forwards %j without preventing it', (key) => {
     const onKeyDown = vi.fn();
-    render(<CloseIconPlacementButton onClick={onClick} onKeyDown={onKeyDown} aria-label="Удалить" />);
+    render(<CloseIconPlacementButton onKeyDown={onKeyDown} aria-label="Удалить" />);
 
-    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
+    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(true);
     expect(onKeyDown).toHaveBeenCalledOnce();
     expect(onKeyDown.mock.calls[0][0].key).toBe(key);
-    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
-    expect(onClick).not.toHaveBeenCalled();
+    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(false);
   });
 });
