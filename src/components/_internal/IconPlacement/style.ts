@@ -51,7 +51,7 @@ const eventsMixin = css<Pick<IconPlacementButtonStyleProps, '$colorMode'>>`
               '--admiral-color-primary-stroke-inverted-rest',
               (theme) => theme.color.primary.stroke.inverted.rest,
             )
-          : cssToken('--admiral-color-neutral-stroke-1-rest', (theme) => theme.color.neutral.stroke._1.rest)}
+          : cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest)}
       solid 2px;
   }
 `;

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ICON_PLACEMENT_DIMENSIONS } from '../constants';
+import { ICON_PLACEMENT_COLOR_MODES, ICON_PLACEMENT_DIMENSIONS } from '../constants';
 import { IconPlacement } from '../IconPlacement';
 import { IconPlacementClickTemplate } from './IconPlacementClick.template';
 import iconPlacementClickTemplateRaw from './IconPlacementClick.template?raw';
@@ -15,12 +15,19 @@ const meta = {
       control: { type: 'inline-radio' },
       options: ICON_PLACEMENT_DIMENSIONS,
     },
+    colorMode: {
+      control: { type: 'radio' },
+      options: ICON_PLACEMENT_COLOR_MODES,
+    },
   },
 } satisfies Meta<typeof IconPlacement>;
 
 export default meta;
 
 export const Sizes: StoryObj<typeof meta> = {
+  args: {
+    colorMode: 'colored',
+  },
   render: IconPlacementSizesTemplate,
   parameters: {
     controls: { exclude: ['children', 'dimension'] },
@@ -31,6 +38,7 @@ export const Sizes: StoryObj<typeof meta> = {
 export const ClickHandling: StoryObj<typeof meta> = {
   args: {
     dimension: 'm',
+    colorMode: 'colored',
   },
   render: IconPlacementClickTemplate,
   parameters: {
