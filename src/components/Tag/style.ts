@@ -1,13 +1,13 @@
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import styled, { css } from 'styled-components';
 
-import { typography } from '#src/components/Typography';
-import type { TagKind, TagDimension } from '#src/components/Tag';
-import { cssToken } from '../../theme/cssToken';
-import type { StyledTagProps } from './types';
-import { TAG_DIMENSION_PARAMETRS } from './constants';
+import type { TagDimension } from '#src/components/Tag';
 
-const wrapperBackground = css<{ $background: TagKind | string }>`
+import { TAG_DIMENSION_PARAMETRS } from './constants';
+import type { StyledTagProps, TagStatus } from './types';
+import { cssToken } from '../../theme/cssToken';
+
+const wrapperBackground = css<{ $background?: TagStatus | string }>`
   background: ${({ $background }) => {
     switch ($background) {
       case 'primary':
@@ -20,8 +20,6 @@ const wrapperBackground = css<{ $background: TagKind | string }>`
         return cssToken('--admiral-color-warning-base-3-rest', (theme) => theme.color.warning.base._3.rest);
       case 'attention':
         return cssToken('--admiral-color-attention-base-3-rest', (theme) => theme.color.attention.base._3.rest);
-      case 'neutral':
-        return cssToken('--admiral-color-neutral-base-opacity-rest', (theme) => theme.color.neutral.base.opacity.rest);
       default:
         return (
           $background ||
@@ -31,7 +29,7 @@ const wrapperBackground = css<{ $background: TagKind | string }>`
   }};
 `;
 
-const wrapperBorder = css<{ $border: TagKind | string }>`
+const wrapperBorder = css<{ $border?: TagStatus | string }>`
   border: 1px solid
     ${({ $border }) => {
       switch ($border) {
@@ -45,8 +43,6 @@ const wrapperBorder = css<{ $border: TagKind | string }>`
           return cssToken('--admiral-color-warning-stroke-2-rest', (theme) => theme.color.warning.stroke._2.rest);
         case 'attention':
           return cssToken('--admiral-color-attention-stroke-1-rest', (theme) => theme.color.attention.stroke._1.rest);
-        case 'neutral':
-          return cssToken('--admiral-color-neutral-stroke-2-rest', (theme) => theme.color.neutral.stroke._2.rest);
         default:
           return (
             $border || cssToken('--admiral-color-neutral-stroke-2-rest', (theme) => theme.color.neutral.stroke._2.rest)
@@ -55,7 +51,7 @@ const wrapperBorder = css<{ $border: TagKind | string }>`
     }};
 `;
 
-const wrapperHover = css<{ $backgroundHover: TagKind | string }>`
+const wrapperHover = css<{ $backgroundHover?: TagStatus | string }>`
   background: ${({ $backgroundHover }) => {
     switch ($backgroundHover) {
       case 'info':
@@ -68,11 +64,6 @@ const wrapperHover = css<{ $backgroundHover: TagKind | string }>`
         return cssToken('--admiral-color-warning-base-3-hover', (theme) => theme.color.warning.base._3.hover);
       case 'attention':
         return cssToken('--admiral-color-attention-base-3-hover', (theme) => theme.color.attention.base._3.hover);
-      case 'neutral':
-        return cssToken(
-          '--admiral-color-neutral-base-opacity-hover',
-          (theme) => theme.color.neutral.base.opacity.hover,
-        );
       default:
         return (
           $backgroundHover ||
@@ -82,9 +73,9 @@ const wrapperHover = css<{ $backgroundHover: TagKind | string }>`
   }};
 `;
 
-const wrapperPress = css<{ $backgroundHover: TagKind | string }>`
-  background: ${({ $backgroundHover }) => {
-    switch ($backgroundHover) {
+const wrapperPress = css<{ $backgroundPress?: TagStatus | string }>`
+  background: ${({ $backgroundPress }) => {
+    switch ($backgroundPress) {
       case 'info':
         return cssToken('--admiral-color-primary-base-3-press', (theme) => theme.color.primary.base._3.press);
       case 'success':
@@ -95,14 +86,9 @@ const wrapperPress = css<{ $backgroundHover: TagKind | string }>`
         return cssToken('--admiral-color-warning-base-3-press', (theme) => theme.color.warning.base._3.press);
       case 'attention':
         return cssToken('--admiral-color-attention-base-3-press', (theme) => theme.color.attention.base._3.press);
-      case 'neutral':
-        return cssToken(
-          '--admiral-color-neutral-base-opacity-press',
-          (theme) => theme.color.neutral.base.opacity.press,
-        );
       default:
         return (
-          $backgroundHover ||
+          $backgroundPress ||
           cssToken('--admiral-color-neutral-base-opacity-press', (theme) => theme.color.neutral.base.opacity.press)
         );
     }
@@ -112,10 +98,11 @@ const wrapperPress = css<{ $backgroundHover: TagKind | string }>`
 export const Wrapper = styled.button<{
   $dimension: TagDimension;
   $clickable: boolean;
-  $statusViaBackground?: boolean;
-  $border: TagKind | string;
-  $background: TagKind | string;
-  $backgroundHover: TagKind | string;
+  $border?: TagStatus | string;
+  $background?: TagStatus | string;
+  $backgroundHover?: TagStatus | string;
+  $backgroundPress?: TagStatus | string;
+  $withBorder: boolean;
 }>`
   position: relative;
   box-sizing: border-box;
@@ -129,27 +116,18 @@ export const Wrapper = styled.button<{
   `}
 
   border-radius: ${cssToken('--admiral-radius-small', (theme) => theme.radius.small)};
-
-  ${({ $statusViaBackground, theme }) =>
-    $statusViaBackground
-      ? wrapperBackground
-      : `background: var(--admiral-color-Opacity_Neutral8, ${theme.color['Opacity/Neutral 8']});`}
-  ${({ $statusViaBackground }) => ($statusViaBackground ? wrapperBorder : `border: 1px solid transparent;`)}
+  ${({ $withBorder }) => ($withBorder ? wrapperBorder : `border: 1px solid transparent;`)}
+  ${wrapperBackground}
 
   display: inline-flex;
   align-items: center;
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 
-  &:hover,
+  &:hover {
+    ${(p) => p.$clickable && wrapperHover}
+  }
   &:active {
-    ${({ $statusViaBackground, $clickable }) =>
-      $clickable && !$statusViaBackground ? `border: 1px solid transparent;` : ''}
-    ${({ $statusViaBackground, theme, $clickable }) =>
-      $clickable
-        ? $statusViaBackground
-          ? wrapperHover
-          : `background: var(--admiral-color-Opacity_Neutral12, ${theme.color['Opacity/Neutral 12']});`
-        : ''}
+    ${(p) => p.$clickable && wrapperPress}
   }
 
   &:focus-visible {
@@ -159,8 +137,11 @@ export const Wrapper = styled.button<{
   }
 `;
 
-export const Text = styled.span<StyledTagProps>`
-  color: ${cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest)};
+export const Text = styled.span<{ $colorText?: string; $dimension: TagDimension }>`
+  color: ${({ $colorText }) =>
+    $colorText
+      ? $colorText
+      : cssToken('--admiral-color-neutral-text-1-rest', (theme) => theme.color.neutral.text._1.rest)};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -168,32 +149,13 @@ export const Text = styled.span<StyledTagProps>`
   ${(p) => (p.$dimension === 'l' ? textStyles.body.body2Long : textStyles.caption.caption1)}
 `;
 
-export const Icon = styled.div`
+export const Icon = styled.span<StyledTagProps>`
   display: flex;
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
+  width: ${(p) => (p.$dimension === 'l' ? '20px' : '16px')};
+  height: ${(p) => (p.$dimension === 'l' ? '20px' : '16px')};
 
-  & *[fill^='#'] {
-    fill: var(--admiral-color-Neutral_Neutral50, ${(p) => p.theme.color['Neutral/Neutral 50']});
-  }
-`;
-
-export const StatusIcon = styled.div`
-  display: flex;
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  margin-left: 4px;
-
-  & *[fill^='#'] {
-    fill: var(--admiral-color-Neutral_Neutral50, ${(p) => p.theme.color['Neutral/Neutral 50']});
-  }
-
-  &:hover {
-    & *[fill^='#'] {
-      fill: var(--admiral-color-Neutral_Neutral50, ${(p) => p.theme.color['Neutral/Neutral 50']});
-    }
+  & > svg {
+    color: ${cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest)};
   }
 `;

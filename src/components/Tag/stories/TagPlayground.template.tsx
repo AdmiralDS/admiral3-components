@@ -1,5 +1,11 @@
-import { Tag, type TagProps } from '@admiral-ds/admiral3-components';
+import { TagDot, type TagNeutralProps } from '@admiral-ds/admiral3-components';
 
-export const TagPlaygroundTemplate = (args: TagProps) => {
-  return <Tag {...args} />;
+import { StoryDemoContainer } from '../../stories/StoryContainers';
+
+export const TagPlaygroundTemplate = (args: TagNeutralProps) => {
+  return (
+    <StoryDemoContainer>
+      <TagDot {...args} />
+    </StoryDemoContainer>
+  );
 };

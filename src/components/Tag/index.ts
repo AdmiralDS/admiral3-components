@@ -1,2 +1,3 @@
-export { Tag } from './Tag';
-export type { TagDimension, TagProps } from './types';
+export { TagDot } from './TagDot';
+export { TagTinted } from './TagTinted';
+export type { TagColorConfig, TagColoredProps, TagDimension, TagNeutralProps, TagProps, TagStatus } from './types';

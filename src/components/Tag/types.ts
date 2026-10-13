@@ -1,7 +1,5 @@
 import type { HTMLAttributes } from 'react';
 
-import type { ComponentStyleConfig } from '#src/types';
-
 import type { TAG_DIMENSIONS } from './constants';
 
 /** Размер Tag. */
@@ -14,15 +12,15 @@ export type TagAppearance = 'colored' | 'neutral';
 /** Пользовательская стилизация Tag при appearance='colored'. */
 export interface TagColorConfig {
   /** Стили фона Tag. */
-  background: ComponentStyleConfig;
+  background?: string;
   /** Стили обводки Tag */
-  border?: ComponentStyleConfig;
+  border?: string;
   /** Стили фона Tag при наведении. */
-  backgroundHover?: ComponentStyleConfig;
+  backgroundHover?: string;
   /** Стили фона Tag при нажатии. */
-  backgroundPress?: ComponentStyleConfig;
+  backgroundPress?: string;
   /** Стили цвета текста Tag. */
-  textColor?: ComponentStyleConfig;
+  textColor?: string;
 }
 
 interface BaseTagProps extends HTMLAttributes<HTMLButtonElement> {
@@ -51,6 +49,14 @@ export type TagProps = BaseTagProps &
         status?: TagStatus;
       }
   );
+
+export interface TagColoredProps extends BaseTagProps {
+  status?: TagStatus | TagColorConfig;
+}
+
+export interface TagNeutralProps extends BaseTagProps {
+  status?: TagStatus;
+}
 
 export interface StyledTagProps {
   $dimension: TagDimension;
