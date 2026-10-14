@@ -1,6 +1,6 @@
 import type { PlaygroundScenario } from './index';
 import type { TagProps } from '../../src/components/Tag';
-import { TagPlaygroundTemplate } from '../../src/components/Tag/stories/TagPlayground.template';
+import { TagPlaygroundTemplate } from '../../src/components/Tag/stories/TagDotPlayground.template';
 
 const defaultArgs: TagProps = {
   children: 'Tag',

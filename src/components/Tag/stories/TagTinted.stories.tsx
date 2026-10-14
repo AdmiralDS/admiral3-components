@@ -4,7 +4,7 @@ import { TagTinted, type TagColoredProps } from '@admiral-ds/admiral3-components
 
 import { TagTintedPlaygroundTemplate } from './TagTintedPlayground.template';
 import tagTintedPlaygroundTemplateRaw from './TagTintedPlayground.template?raw';
-import { TAG_DIMENSIONS } from '../constants';
+import { TAG_DIMENSIONS, TAG_STATUSES } from '../constants';
 
 const meta = {
   title: 'Components/Tags/TagTinted',
@@ -17,7 +17,7 @@ const meta = {
     },
     status: {
       control: { type: 'select' },
-      options: [undefined, 'info', 'success', 'error', 'warning', 'attention'],
+      options: TAG_STATUSES,
     },
     withBorder: { control: 'boolean' },
     iconsBefore: { control: false },
@@ -28,9 +28,7 @@ const meta = {
 export default meta;
 
 const defaultArgs: TagColoredProps = {
-  children: 'TagTinted',
   dimension: 'm',
-  status: 'success',
   withBorder: false,
 };
 

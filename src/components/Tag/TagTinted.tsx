@@ -1,13 +1,17 @@
 import { forwardRef, useRef } from 'react';
 
 import { Tooltip, useTooltip } from '#src/components/Tooltip';
+import { hasSlotContent } from '#src/utils/hasSlotContent';
 import { refSetter } from '#src/utils/refSetter';
 
 import { Wrapper, Icon, Text } from './style';
-import type { TagColoredProps } from './types';
+import type { TagProps } from './types';
 
-export const TagTinted = forwardRef<HTMLButtonElement, TagColoredProps>(
-  ({ children, dimension = 'm', withBorder = false, iconsBefore, onClick, status, ...props }, ref) => {
+export const TagTinted = forwardRef<HTMLButtonElement, TagProps>(
+  (
+    { children, dimension = 'm', withBorder = false, iconsBefore, onClick, status = 'neutral', tabIndex, ...props },
+    ref,
+  ) => {
     const textRef = useRef<HTMLElement>(null);
 
     const {
@@ -16,6 +20,7 @@ export const TagTinted = forwardRef<HTMLButtonElement, TagColoredProps>(
       isVisible,
     } = useTooltip<HTMLButtonElement>();
 
+    const active = !!onClick;
     const customStatus = typeof status === `object`;
 
     return (
@@ -24,19 +29,17 @@ export const TagTinted = forwardRef<HTMLButtonElement, TagColoredProps>(
           {...targetProps}
           ref={refSetter(ref, targetRef)}
           onClick={onClick}
-          $clickable={!!onClick}
-          $border={customStatus ? status.border : status}
-          $background={customStatus ? status.background : status}
-          $backgroundHover={customStatus ? status.backgroundHover : status}
-          $backgroundPress={customStatus ? status.backgroundPress : status}
+          $clickable={active}
+          $status={status}
           $dimension={dimension}
           $withBorder={withBorder}
+          tabIndex={tabIndex ?? (active ? 0 : -1)}
           type="button"
           {...props}
         >
-          {iconsBefore && <Icon $dimension={dimension}>{iconsBefore}</Icon>}
+          {hasSlotContent(iconsBefore) && <Icon $dimension={dimension}>{iconsBefore}</Icon>}
           {children && (
-            <Text $dimension={dimension} $colorText={customStatus ? status.backgroundPress : undefined} ref={textRef}>
+            <Text $dimension={dimension} $colorText={customStatus ? status.textColor : undefined} ref={textRef}>
               {children}
             </Text>
           )}

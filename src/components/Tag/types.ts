@@ -1,63 +1,45 @@
 import type { HTMLAttributes } from 'react';
 
-import type { TAG_DIMENSIONS } from './constants';
+import type { TAG_DIMENSIONS, TAG_STATUSES } from './constants';
 
-/** Размер Tag. */
 export type TagDimension = (typeof TAG_DIMENSIONS)[number];
-/** Статус, определяющий цветовое оформление Tag. */
-export type TagStatus = 'info' | 'success' | 'error' | 'warning' | 'attention';
-/** Способ отображения статуса Tag: цветной фон или статусная метка на нейтральном фоне. */
-export type TagAppearance = 'colored' | 'neutral';
+export type TagStatus = (typeof TAG_STATUSES)[number] | TagColorConfig;
 
-/** Пользовательская стилизация Tag при appearance='colored'. */
-export interface TagColorConfig {
-  /** Стили фона Tag. */
-  background?: string;
-  /** Стили обводки Tag */
-  border?: string;
-  /** Стили фона Tag при наведении. */
-  backgroundHover?: string;
-  /** Стили фона Tag при нажатии. */
-  backgroundPress?: string;
-  /** Стили цвета текста Tag. */
-  textColor?: string;
+interface BackgroundColorConfig {
+  /** Базовый цвет фона Tag. */
+  rest: string;
+  /** Цвет фона Tag в состоянии hover. */
+  hover?: string;
+  /** Цвет фона Tag в состоянии press. */
+  press?: string;
 }
 
-interface BaseTagProps extends HTMLAttributes<HTMLButtonElement> {
+export interface TagColorConfig {
+  /** Стили фона Tag. */
+  background?: BackgroundColorConfig;
+  /** Стили обводки Tag */
+  border?: string;
+  /** Стили цвета текста Tag. */
+  textColor?: string;
+  /** Стили цвета бейджа перед текстом, используется исключительно в TagDot. */
+  dotColor?: string;
+}
+
+export interface TagProps extends HTMLAttributes<HTMLButtonElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */
   dimension?: TagDimension;
-  //todo 1 или несколько иконок? Нужно продумать пропс для иконки под TagMenu?
   /** Иконки перед содержимым Tag. Отображаются только при appearance='colored'. */
   iconsBefore?: React.ReactNode;
   /** Параметр включения обводки */
   withBorder?: boolean;
-}
-
-/** Свойства Tag с допустимыми статусами для каждого варианта оформления. */
-export type TagProps = BaseTagProps &
-  (
-    | {
-        /** Отображение статуса через цвет фона и обводки, если она включена. */
-        appearance: 'colored';
-        /** Предустановленный статус Tag или пользовательская стилизация. */
-        status?: TagStatus | TagColorConfig;
-      }
-    | {
-        /** Отображение статуса через цветную метку слева от содержимого на нейтральном фоне. */
-        appearance: 'neutral';
-        /** Предустановленный статус цветной метки. */
-        status?: TagStatus;
-      }
-  );
-
-export interface TagColoredProps extends BaseTagProps {
-  status?: TagStatus | TagColorConfig;
-}
-
-export interface TagNeutralProps extends BaseTagProps {
+  /** Статус, определяющий цветовое оформление Tag. */
   status?: TagStatus;
 }
 
-export interface StyledTagProps {
+export interface StyledTagWrapperProps {
   $dimension: TagDimension;
+  $clickable: boolean;
+  $status?: TagStatus;
+  /** Статус для data-атрибута, не влияющий на цвет фона TagDot. */
+  $withBorder: boolean;
 }

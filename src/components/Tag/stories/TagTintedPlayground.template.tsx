@@ -4,8 +4,8 @@ import { StoryDemoContainer } from '../../stories/StoryContainers';
 
 export const TagTintedPlaygroundTemplate = (args: TagColoredProps) => {
   return (
-    <StoryDemoContainer>
-      <TagTinted {...args} />
+    <StoryDemoContainer $withBackground={false}>
+      <TagTinted {...args}>Tag</TagTinted>
     </StoryDemoContainer>
   );
 };

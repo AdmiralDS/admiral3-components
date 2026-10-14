@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { TagDot, type TagNeutralProps } from '@admiral-ds/admiral3-components';
 
-import { TagPlaygroundTemplate } from './TagPlayground.template';
-import tagPlaygroundTemplateRaw from './TagPlayground.template?raw';
-import { TAG_DIMENSIONS } from '../constants';
+import { TagDotPlaygroundTemplate } from './TagDotPlayground.template';
+import tagDotPlaygroundTemplateRaw from './TagDotPlayground.template?raw';
+import { TAG_DIMENSIONS, TAG_STATUSES } from '../constants';
 
 const meta = {
   title: 'Components/Tags/TagDot',
@@ -17,10 +17,8 @@ const meta = {
     },
     status: {
       control: { type: 'select' },
-      options: [undefined, 'info', 'success', 'error', 'warning', 'attention'],
+      options: TAG_STATUSES,
     },
-    withBorder: { control: 'boolean' },
-    iconsBefore: { control: false, table: { disable: true } },
     onClick: { action: 'click', control: false },
   },
 } satisfies Meta<typeof TagDot>;
@@ -28,19 +26,17 @@ const meta = {
 export default meta;
 
 const defaultArgs: TagNeutralProps = {
-  children: 'TagDot',
   dimension: 'm',
-  status: 'success',
   withBorder: false,
 };
 
 export const Playground: StoryObj<TagNeutralProps> = {
   args: defaultArgs,
-  render: TagPlaygroundTemplate,
+  render: TagDotPlaygroundTemplate,
   parameters: {
     docs: {
       source: {
-        code: tagPlaygroundTemplateRaw,
+        code: tagDotPlaygroundTemplateRaw,
       },
     },
   },
