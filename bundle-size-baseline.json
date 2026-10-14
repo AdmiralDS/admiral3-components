@@ -10,10 +10,10 @@
       "rawBytes": 22793
     },
     "check-box": {
-      "rawBytes": 11999
+      "rawBytes": 12115
     },
     "chips": {
-      "rawBytes": 13178
+      "rawBytes": 16024
     },
     "divider": {
       "rawBytes": 1543
@@ -28,7 +28,7 @@
       "rawBytes": 9796
     },
     "input": {
-      "rawBytes": 13292
+      "rawBytes": 13408
     },
     "link": {
       "rawBytes": 2676
@@ -37,7 +37,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 5555
+      "rawBytes": 5671
     },
     "progress-header": {
       "rawBytes": 2489
@@ -49,7 +49,7 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 9008
+      "rawBytes": 9124
     },
     "skeleton": {
       "rawBytes": 1298
@@ -58,13 +58,13 @@
       "rawBytes": 6566
     },
     "text-area": {
-      "rawBytes": 24414
+      "rawBytes": 24803
     },
     "toggle": {
       "rawBytes": 7700
     },
     "tooltip": {
-      "rawBytes": 8120
+      "rawBytes": 8236
     }
   },
   "version": 1

@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, type KeyboardEvent } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -96,7 +96,10 @@ describe('SelectableChip', () => {
     ),
   )('requests selection with "$key" when selected is $selected', ({ key, selected, nextSelected }) => {
     const onClick = vi.fn();
-    const onKeyDown = vi.fn();
+    const defaultPreventedOnKeyDown: boolean[] = [];
+    const onKeyDown = vi.fn((event: KeyboardEvent<HTMLDivElement>) => {
+      defaultPreventedOnKeyDown.push(event.defaultPrevented);
+    });
     const onSelectedChange = vi.fn();
     render(
       <SelectableChip selected={selected} onClick={onClick} onKeyDown={onKeyDown} onSelectedChange={onSelectedChange}>
@@ -110,9 +113,27 @@ describe('SelectableChip', () => {
     expect(onClick).toHaveBeenCalledOnce();
     expect(onClick.mock.calls[0][0].type).toBe('click');
     expect(onKeyDown).toHaveBeenCalledOnce();
-    expect(onKeyDown.mock.calls[0][0].defaultPrevented).toBe(true);
+    expect(defaultPreventedOnKeyDown).toEqual([false]);
     expect(onSelectedChange.mock.invocationCallOrder[0]).toBeLessThan(onClick.mock.invocationCallOrder[0]);
-    expect(onClick.mock.invocationCallOrder[0]).toBeLessThan(onKeyDown.mock.invocationCallOrder[0]);
+    expect(onKeyDown.mock.invocationCallOrder[0]).toBeLessThan(onClick.mock.invocationCallOrder[0]);
+  });
+
+  it.each(['Enter', ' '])('allows onKeyDown to cancel activation with %j', (key) => {
+    const onClick = vi.fn();
+    const onSelectedChange = vi.fn();
+    render(
+      <SelectableChip
+        onClick={onClick}
+        onKeyDown={(event) => event.preventDefault()}
+        onSelectedChange={onSelectedChange}
+      >
+        Марс
+      </SelectableChip>,
+    );
+
+    expect(fireEvent.keyDown(screen.getByRole('button'), { key })).toBe(false);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onSelectedChange).not.toHaveBeenCalled();
   });
 
   it('activates onClick from the keyboard without onSelectedChange', () => {

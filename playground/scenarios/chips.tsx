@@ -1,5 +1,7 @@
+import { FilterChipsScenario } from './FilterChipsScenario';
 import type { PlaygroundScenario } from './index';
 import { CHIPS_DIMENSIONS } from '../../src/components/Chips/constants';
+import { FilterChipsWithSelectableChipTemplate } from '../../src/components/Chips/stories/FilterChipsWithSelectableChip.template';
 import { RemovableChipTemplate } from '../../src/components/Chips/stories/RemovableChip.template';
 import { RemovableChipAppearancesTemplate } from '../../src/components/Chips/stories/RemovableChipAppearances.template';
 import { RemovableChipSizesTemplate } from '../../src/components/Chips/stories/RemovableChipSizes.template';
@@ -14,6 +16,20 @@ const onClose = () => undefined;
 const closeButtonProps = { 'aria-label': 'Удалить чипс' };
 
 export const chipsScenarios: PlaygroundScenario[] = [
+  ...[
+    { id: 'filter', props: {} },
+    { id: 'filter-disabled', props: { disabled: true } },
+    { id: 'filter-readonly', props: { readOnly: true } },
+  ].map(({ id, props }) => ({
+    id: `chips/${id}`,
+    title: `FilterChips ${id}`,
+    render: () => <FilterChipsScenario {...props} />,
+  })),
+  {
+    id: 'chips/filter-regular-chips',
+    title: 'FilterChips with SelectableChip',
+    render: () => <FilterChipsWithSelectableChipTemplate />,
+  },
   ...[
     { id: 'default', props: {} },
     { id: 'disabled', props: { disabled: true } },
