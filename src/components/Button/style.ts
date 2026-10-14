@@ -78,6 +78,9 @@ export const StyledButton = styled.button.attrs<
   &:focus-visible {
     outline-offset: 2px;
     outline: 2px solid
-      ${cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest)};
+      ${(p) =>
+        p.$colorMode === 'colored' && p.$colorConfig?.focusColor
+          ? p.$colorConfig.focusColor
+          : cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest)};
   }
 `;

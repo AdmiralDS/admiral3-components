@@ -63,6 +63,12 @@ describe('Button', () => {
     expect(screen.getByTestId('button')).toHaveAttribute('type', 'button');
   });
 
+  it('preserves a custom tabIndex outside ButtonGroup', () => {
+    render(<Button tabIndex={3}>Content</Button>);
+
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '3');
+  });
+
   it('forwards ref to the root element', () => {
     const ref = createRef<HTMLButtonElement>();
 
@@ -73,6 +79,22 @@ describe('Button', () => {
     );
 
     expect(ref.current).toBe(screen.getByTestId('button'));
+  });
+
+  it('preserves callback ref cleanup', () => {
+    let cleanupCalled = false;
+    const callbackRef = (element: HTMLButtonElement | null) => {
+      if (!element) return;
+
+      return () => {
+        cleanupCalled = true;
+      };
+    };
+    const { unmount } = render(<Button ref={callbackRef}>Content</Button>);
+
+    unmount();
+
+    expect(cleanupCalled).toBe(true);
   });
 
   it('uses default solid appearance, colored colorMode and M dimension', () => {
@@ -249,6 +271,7 @@ describe('Button', () => {
     const button = screen.getByTestId('button');
 
     expect(button).toHaveAttribute('tabindex', '-1');
+    expect(button).toHaveAttribute('data-button-skeleton', '');
     expect(button).toHaveAttribute('aria-hidden', 'true');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });

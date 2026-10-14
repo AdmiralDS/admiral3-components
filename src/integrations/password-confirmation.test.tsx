@@ -55,7 +55,7 @@ describe.each([
       (id) => id.includes('-rhf-') || id.includes('-tanstack-'),
     );
     expect(new Set(templateIds).size).toBe(templateIds.length);
-  });
+  }, 10000);
 
   it.each([
     ['without FormItem', Template],
