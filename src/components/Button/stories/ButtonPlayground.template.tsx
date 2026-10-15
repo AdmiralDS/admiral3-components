@@ -1,8 +1,10 @@
 import { ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 
-import { Button, type ButtonProps } from '@admiral-ds/admiral3-components';
+import { Button, withTooltip, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
+
+const ButtonWithTooltip = withTooltip(Button);
 
 export const ButtonPlaygroundTemplate = (args: ButtonProps) => {
   return (
@@ -16,9 +18,9 @@ export const ButtonPlaygroundTemplate = (args: ButtonProps) => {
         {args.children}
         <ServiceShareOutline />
       </Button>
-      <Button {...args} square aria-label="Share">
+      <ButtonWithTooltip {...args} square aria-label="Share" renderContent={() => 'Open sharing options'}>
         <ServiceShareOutline />
-      </Button>
+      </ButtonWithTooltip>
     </StoryDemoContainer>
   );
 };
