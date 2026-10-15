@@ -10,6 +10,7 @@ import { solidAppearanceMixin } from './solidAppearanceMixin';
 export const buttonAppearanceMixin = css<{
   $colorMode: ButtonColorMode;
   $appearance: ButtonAppearance;
+  $buttonGroup?: boolean;
   $colorConfig?: ButtonColorConfig;
   $skeleton?: boolean;
 }>`
