@@ -6,6 +6,7 @@ import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
+import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
@@ -51,6 +52,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / FieldSet',
     visual: true,
     render: () => <FieldSetVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.filterChips,
+    title: 'Visual / FilterChips',
+    visual: true,
+    render: () => <FilterChipsVisualTemplate />,
   },
   {
     id: VISUAL_SCENARIO_IDS.formItem,
