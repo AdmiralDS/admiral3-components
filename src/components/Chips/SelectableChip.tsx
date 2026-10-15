@@ -42,12 +42,12 @@ export const SelectableChip = forwardRef<HTMLDivElement, SelectableChipProps>(
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
       if (eventsDisabled) return;
 
-      if (e.key === 'Enter' || e.key === ' ') {
+      onKeyDown?.(e);
+
+      if ((e.key === 'Enter' || e.key === ' ') && !e.defaultPrevented) {
         e.preventDefault();
         e.currentTarget.click();
       }
-
-      onKeyDown?.(e);
     };
 
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
