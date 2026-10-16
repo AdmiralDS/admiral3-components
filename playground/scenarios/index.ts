@@ -19,6 +19,7 @@ import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
 import { spinnerScenarios } from './spinner';
+import { tagScenarios } from './tag';
 import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
@@ -51,6 +52,7 @@ export const playgroundScenarios = [
   ...radioButtonScenarios,
   ...skeletonScenarios,
   ...spinnerScenarios,
+  ...tagScenarios,
   ...textAreaScenarios,
   ...toggleScenarios,
   ...tooltipScenarios,
