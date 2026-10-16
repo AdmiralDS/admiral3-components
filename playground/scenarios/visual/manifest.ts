@@ -20,6 +20,8 @@ export const VISUAL_SCENARIO_IDS = {
   removableChip: 'visual/removable-chip',
   selectableChip: 'visual/selectable-chip',
   skeleton: 'visual/skeleton',
+  slider: 'visual/slider',
+  sliderRange: 'visual/slider-range',
   spinner: 'visual/spinner',
   tag: 'visual/tag',
   textArea: 'visual/text-area',

@@ -60,6 +60,12 @@
     "skeleton": {
       "rawBytes": 1298
     },
+    "slider": {
+      "rawBytes": 28129
+    },
+    "slider-range": {
+      "rawBytes": 27833
+    },
     "spinner": {
       "rawBytes": 6566
     },
