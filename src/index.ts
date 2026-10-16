@@ -18,6 +18,8 @@ export * from './components/ProgressPage';
 export * from './components/Pulse';
 export * from './components/RadioButton';
 export * from './components/Skeleton';
+export * from './components/Slider';
+export * from './components/SliderRange';
 export * from './components/Spinner';
 export * from './components/Tag';
 export * from './components/TextArea';
