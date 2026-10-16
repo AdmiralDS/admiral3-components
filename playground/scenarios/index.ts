@@ -23,6 +23,7 @@ import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
+import { avatarScenarios } from './avatar';
 
 export type PlaygroundScenario = {
   id: string;
@@ -32,6 +33,7 @@ export type PlaygroundScenario = {
 };
 
 export const playgroundScenarios = [
+  ...avatarScenarios,
   ...badgeScenarios,
   ...badgeDotScenarios,
   ...buttonScenarios,

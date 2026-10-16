@@ -24,8 +24,10 @@ import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
+import { AvatarVisualTemplate } from './AvatarVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
+  { id: VISUAL_SCENARIO_IDS.avatar, title: 'Visual / Avatar', visual: true, render: () => <AvatarVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.badge, title: 'Visual / Badge', visual: true, render: () => <BadgeVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.badgeDot,

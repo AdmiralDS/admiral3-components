@@ -10,6 +10,10 @@
       "import": "./dist/index.js"
     },
     "./package.json": "./package.json",
+    "./avatar": {
+      "types": "./dist/components/Avatar/index.d.ts",
+      "import": "./dist/components/Avatar/index.js"
+    },
     "./badge": {
       "types": "./dist/components/Badge/index.d.ts",
       "import": "./dist/components/Badge/index.js"
