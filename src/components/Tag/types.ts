@@ -25,21 +25,23 @@ export interface TagColorConfig {
   dotColor?: string;
 }
 
-export interface TagProps extends HTMLAttributes<HTMLButtonElement> {
+export interface TagDotProps extends HTMLAttributes<HTMLButtonElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */
   dimension?: TagDimension;
-  /** Иконки перед содержимым Tag. Отображаются только при appearance='colored'. */
-  iconsBefore?: React.ReactNode;
   /** Параметр включения обводки */
   withBorder?: boolean;
   /** Статус, определяющий цветовое оформление Tag. */
   status?: TagStatus;
 }
 
+export interface TagTintedProps extends TagDotProps {
+  /** Иконки перед содержимым Tag. Отображаются только В TagTinted. */
+  iconsBefore?: React.ReactNode;
+}
+
 export interface StyledTagWrapperProps {
   $dimension: TagDimension;
   $clickable: boolean;
   $status?: TagStatus;
-  /** Статус для data-атрибута, не влияющий на цвет фона TagDot. */
   $withBorder: boolean;
 }

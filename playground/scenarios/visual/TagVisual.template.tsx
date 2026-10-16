@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-import { Tag } from '@admiral-ds/admiral3-components';
+import { TagDot } from '@admiral-ds/admiral3-components';
 
 import {
   VisualGroup,
@@ -17,7 +17,7 @@ import { TAG_DIMENSIONS } from '../../../src/components/Tag/constants';
 
 type VisualVariant = {
   label: string;
-  props: ComponentProps<typeof Tag>;
+  props: ComponentProps<typeof TagDot>;
 };
 
 // Add every supported appearance alongside the generated dimension matrix.
@@ -37,7 +37,7 @@ const renderMatrix = (items: VisualVariant[]) => (
         <VisualSamples>
           <VisualSample>
             <VisualLabel>{label}</VisualLabel>
-            <Tag {...props}>Tag</Tag>
+            <TagDot {...props}>Tag</TagDot>
           </VisualSample>
         </VisualSamples>
       </VisualGroup>

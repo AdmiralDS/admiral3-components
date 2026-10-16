@@ -1,8 +1,8 @@
-import { TagTinted, type TagColoredProps } from '@admiral-ds/admiral3-components';
+import { TagTinted, type TagTintedProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 
-export const TagTintedPlaygroundTemplate = (args: TagColoredProps) => {
+export const TagTintedPlaygroundTemplate = (args: TagTintedProps) => {
   return (
     <StoryDemoContainer $withBackground={false}>
       <TagTinted {...args}>Tag</TagTinted>

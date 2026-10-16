@@ -7,6 +7,7 @@ import { TAG_DIMENSION_PARAMETRS } from './constants';
 import type { StyledTagWrapperProps, TagStatus } from './types';
 import { hoverPressLeaveTransition } from '../../theme/animation';
 import { cssToken } from '../../theme/cssToken';
+import { BadgeDot } from '../BadgeDot';
 
 const wrapperBackground = css<{ $status?: TagStatus }>`
   background: ${({ $status }) => {
@@ -168,7 +169,7 @@ export const Text = styled.span<{ $colorText?: string; $dimension: TagDimension 
   ${(p) => (p.$dimension === 'l' ? textStyles.body.body2Long : textStyles.caption.caption1)}
 `;
 
-export const Icon = styled.span<{ $dimension: TagDimension }>`
+export const IconsWrapper = styled.span<{ $dimension: TagDimension }>`
   display: flex;
   flex-shrink: 0;
   width: ${(p) => (p.$dimension === 'l' ? '20px' : '16px')};
@@ -177,4 +178,8 @@ export const Icon = styled.span<{ $dimension: TagDimension }>`
   & > svg {
     color: ${cssToken('--admiral-color-neutral-text-2-rest', (theme) => theme.color.neutral.text._2.rest)};
   }
+`;
+
+export const StatusDot = styled(BadgeDot)`
+  flex-shrink: 0;
 `;

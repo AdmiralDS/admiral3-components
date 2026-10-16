@@ -17,10 +17,10 @@ import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
+import { TagVisualTemplate } from './TagVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
-import { TagVisualTemplate } from './TagVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
   { id: VISUAL_SCENARIO_IDS.badge, title: 'Visual / Badge', visual: true, render: () => <BadgeVisualTemplate /> },
