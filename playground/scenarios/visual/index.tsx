@@ -1,10 +1,12 @@
 import type { PlaygroundScenario } from '../index';
 import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
+import { ButtonGroupVisualTemplate } from './ButtonGroupVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
+import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
@@ -15,6 +17,8 @@ import { ProgressHeaderVisualTemplate } from './ProgressHeaderVisual.template';
 import { ProgressPageVisualTemplate } from './ProgressPageVisual.template';
 import { PulseVisualTemplate } from './PulseVisual.template';
 import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
+import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
+import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TagVisualTemplate } from './TagVisual.template';
@@ -32,6 +36,12 @@ export const visualScenarios: PlaygroundScenario[] = [
   },
   { id: VISUAL_SCENARIO_IDS.button, title: 'Visual / Button', visual: true, render: () => <ButtonVisualTemplate /> },
   {
+    id: VISUAL_SCENARIO_IDS.buttonGroup,
+    title: 'Visual / ButtonGroup',
+    visual: true,
+    render: () => <ButtonGroupVisualTemplate />,
+  },
+  {
     id: VISUAL_SCENARIO_IDS.checkBox,
     title: 'Visual / CheckBox',
     visual: true,
@@ -43,6 +53,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / FieldSet',
     visual: true,
     render: () => <FieldSetVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.filterChips,
+    title: 'Visual / FilterChips',
+    visual: true,
+    render: () => <FilterChipsVisualTemplate />,
   },
   {
     id: VISUAL_SCENARIO_IDS.formItem,
@@ -72,6 +88,18 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / RadioButton',
     visual: true,
     render: () => <RadioButtonVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.removableChip,
+    title: 'Visual / RemovableChip',
+    visual: true,
+    render: () => <RemovableChipVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.selectableChip,
+    title: 'Visual / SelectableChip',
+    visual: true,
+    render: () => <SelectableChipVisualTemplate />,
   },
   {
     id: VISUAL_SCENARIO_IDS.skeleton,

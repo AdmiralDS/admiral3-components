@@ -22,9 +22,17 @@
       "types": "./dist/components/Button/index.d.ts",
       "import": "./dist/components/Button/index.js"
     },
+    "./button-group": {
+      "types": "./dist/components/ButtonGroup/index.d.ts",
+      "import": "./dist/components/ButtonGroup/index.js"
+    },
     "./check-box": {
       "types": "./dist/components/CheckBox/index.d.ts",
       "import": "./dist/components/CheckBox/index.js"
+    },
+    "./chips": {
+      "types": "./dist/components/Chips/index.d.ts",
+      "import": "./dist/components/Chips/index.js"
     },
     "./divider": {
       "types": "./dist/components/Divider/index.d.ts",

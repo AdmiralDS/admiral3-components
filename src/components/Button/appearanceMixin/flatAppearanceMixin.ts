@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 import { flatColors } from './colors';
 import type { ButtonColorMode } from '../types';
 
-export const flatAppearanceMixin = css<{ $colorMode: ButtonColorMode }>`
+export const flatAppearanceMixin = css<{ $buttonGroup?: boolean; $colorMode: ButtonColorMode }>`
   background-color: ${(p) => flatColors[p.$colorMode].background};
   color: ${(p) => flatColors[p.$colorMode].color};
   &&& *[fill^='#'] {
@@ -20,7 +20,8 @@ export const flatAppearanceMixin = css<{ $colorMode: ButtonColorMode }>`
 
   &&&&[data-appearance~='disabled'],
   &&&:disabled {
-    background-color: ${(p) => flatColors[p.$colorMode].backgroundDisabled};
+    background-color: ${(p) =>
+      (p.$buttonGroup ? flatColors[p.$colorMode].background : flatColors[p.$colorMode].backgroundDisabled)(p)};
     color: ${(p) => flatColors[p.$colorMode].colorDisabled};
     &&& *[fill^='#'] {
       fill: ${(p) => flatColors[p.$colorMode].colorDisabled};

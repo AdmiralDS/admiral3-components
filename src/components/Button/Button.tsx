@@ -1,9 +1,12 @@
-import { forwardRef, Children } from 'react';
+import { forwardRef, Children, useContext, useMemo } from 'react';
 
+import { ButtonGroupContext } from '#src/components/ButtonGroup/ButtonGroupContext';
+import { useRegisterButtonGroupButton } from '#src/components/ButtonGroup/useRegisterButtonGroupButton';
 import { SpinnerIcon } from '#src/components/Spinner/SpinnerIcon';
 
 import { StyledButton, ButtonContent, SpinnerContainer } from './style';
 import type { ButtonProps } from './types';
+import { refSetter } from '../../utils/refSetter';
 
 const DEFAULT_APPEARANCE = 'solid';
 const DEFAULT_COLOR_MODE = 'colored';
@@ -20,9 +23,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       type = 'button',
-      dimension = 'm',
-      appearance = DEFAULT_APPEARANCE,
-      colorMode: userColorMode = DEFAULT_COLOR_MODE,
+      dimension: userDimension,
+      appearance: userAppearance,
+      colorMode: userColorModeProp,
       colorConfig,
       disabled,
       inactive = false,
@@ -31,11 +34,24 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       loadingPosition,
       skeleton = false,
       onClick,
+      tabIndex: userTabIndex,
       children,
       ...props
     },
     ref,
   ) => {
+    const buttonGroup = useContext(ButtonGroupContext);
+    const dimension = buttonGroup?.dimension ?? userDimension ?? 'm';
+    const appearance = buttonGroup?.appearance ?? userAppearance ?? DEFAULT_APPEARANCE;
+    const userColorMode = buttonGroup?.colorMode ?? userColorModeProp ?? DEFAULT_COLOR_MODE;
+    const resolvedColorConfig = buttonGroup ? buttonGroup.colorConfig : colorConfig;
+    const { buttonRef, tabIndex: buttonGroupTabIndex } = useRegisterButtonGroupButton(
+      buttonGroup,
+      Boolean(disabled),
+      skeleton,
+    );
+    const mergedRef = useMemo(() => refSetter(buttonRef, ref), [buttonRef, ref]);
+
     /** Использование fallback-значения при невалидной комбинации пропсов */
     const colorMode =
       (appearance === 'solid' || appearance === 'ghost') && userColorMode === 'staticWhite'
@@ -50,7 +66,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const ariaLabel = hasAccessibleName || !loading ? undefined : 'Загрузка...';
     const ariaDisabled = inactive || loading ? 'true' : undefined;
     const ariaHidden = skeleton ? true : undefined;
-    const tabIndex = disabled || skeleton ? -1 : 0;
+    const tabIndex = disabled || skeleton ? -1 : (buttonGroupTabIndex ?? userTabIndex ?? 0);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       if (loading || skeleton) {
@@ -64,12 +80,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <StyledButton
-        ref={ref}
+        ref={mergedRef}
         type={type}
         disabled={disabled}
         $dimension={dimension}
         $appearance={appearance}
-        $colorConfig={colorConfig}
+        $buttonGroup={buttonGroup !== null}
+        $colorConfig={resolvedColorConfig}
         $colorMode={colorMode}
         $loading={loading}
         $loadingPosition={loadingPosition}
@@ -79,9 +96,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-label={ariaLabel}
         aria-disabled={ariaDisabled}
         aria-hidden={ariaHidden}
-        tabIndex={tabIndex}
         onClick={handleClick}
         {...props}
+        tabIndex={tabIndex}
+        data-button-skeleton={skeleton ? '' : undefined}
       >
         {loading && !loadingPosition && (
           <SpinnerContainer>

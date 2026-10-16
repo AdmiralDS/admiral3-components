@@ -3,7 +3,9 @@ import type { ReactElement } from 'react';
 import { badgeScenarios } from './badge';
 import { badgeDotScenarios } from './badge-dot';
 import { buttonScenarios } from './button';
+import { buttonGroupScenarios } from './button-group';
 import { checkBoxScenarios } from './check-box';
+import { chipsScenarios } from './chips';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
@@ -34,7 +36,9 @@ export const playgroundScenarios = [
   ...badgeScenarios,
   ...badgeDotScenarios,
   ...buttonScenarios,
+  ...buttonGroupScenarios,
   ...checkBoxScenarios,
+  ...chipsScenarios,
   ...dividerScenarios,
   ...fieldSetScenarios,
   ...formItemScenarios,

@@ -1,7 +1,7 @@
 import { ServiceCheckOutline, ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
-import { Badge, Button, type ButtonProps } from '@admiral-ds/admiral3-components';
+import { Badge, Button, withTooltip, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 import { BUTTON_APPEARANCES } from '../constants';
@@ -11,6 +11,8 @@ const Appearance = styled.div`
   gap: 16px;
   align-self: flex-start;
 `;
+
+const ButtonWithTooltip = withTooltip(Button);
 
 export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | 'colorMode'>) => {
   return (
@@ -39,9 +41,16 @@ export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | '
       </StoryDemoDescription>
       <Appearance>
         {BUTTON_APPEARANCES.map((appearance) => (
-          <Button key={appearance} {...args} appearance={appearance} square aria-label="Share">
+          <ButtonWithTooltip
+            key={appearance}
+            {...args}
+            appearance={appearance}
+            square
+            aria-label="Share"
+            renderContent={() => 'Open sharing options'}
+          >
             <ServiceShareOutline />
-          </Button>
+          </ButtonWithTooltip>
         ))}
       </Appearance>
       <StoryDemoDescription>
