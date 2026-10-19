@@ -21,6 +21,7 @@ export function withTooltip<T extends object>(Component: ComponentType<T>) {
         renderContent,
         withDelay = false,
         tooltipRef,
+        tooltipTargetElement,
         tooltipPosition,
         tooltipDimension,
         tooltipStyles,
@@ -28,10 +29,11 @@ export function withTooltip<T extends object>(Component: ComponentType<T>) {
       },
       ref,
     ) => {
-      const { isVisible, targetProps, tooltipProps } = useTooltip<TargetElement>({
+      const { isVisible, triggerProps, tooltipProps } = useTooltip<TargetElement>({
         delay: withDelay ? TOOLTIP_DELAY : 0,
+        targetElement: tooltipTargetElement,
       });
-      const targetHookRef = targetProps.ref;
+      const targetHookRef = triggerProps.ref;
       const tooltipHookRef = tooltipProps.ref;
 
       const mergedTargetRef = useCallback(
@@ -47,7 +49,7 @@ export function withTooltip<T extends object>(Component: ComponentType<T>) {
 
       const describedBy = [
         (componentProps as { 'aria-describedby'?: string })['aria-describedby'],
-        hasContent ? targetProps['aria-describedby'] : undefined,
+        hasContent ? triggerProps['aria-describedby'] : undefined,
       ]
         .filter(Boolean)
         .join(' ');

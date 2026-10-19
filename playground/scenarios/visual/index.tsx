@@ -8,6 +8,7 @@ import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
+import { HintVisualTemplate } from './HintVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
@@ -65,6 +66,7 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <FormItemVisualTemplate />,
   },
+  { id: VISUAL_SCENARIO_IDS.hint, title: 'Visual / Hint', visual: true, render: () => <HintVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.input, title: 'Visual / Input', visual: true, render: () => <InputVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },

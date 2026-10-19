@@ -1,11 +1,17 @@
-import type { AriaAttributes, HTMLAttributes, ReactNode, Ref, RefCallback } from 'react';
+import type { AriaAttributes, CSSProperties, HTMLAttributes, ReactNode, Ref, RefCallback } from 'react';
 
-import type { TOOLTIP_DIMENSIONS, TOOLTIP_INTERNAL_POSITIONS, TOOLTIP_POSITIONS } from './constants';
+import type { TOOLTIP_DIMENSIONS } from './constants';
 import type { ComponentStyleConfig } from '../../types';
+import type {
+  HintTooltipAnchorSide,
+  HintTooltipInternalPosition,
+  HintTooltipPosition,
+} from '../_internal/FloatingPortal';
 
 export type TooltipDimension = (typeof TOOLTIP_DIMENSIONS)[number];
-export type TooltipPosition = (typeof TOOLTIP_POSITIONS)[number];
-export type TooltipInternalPosition = (typeof TOOLTIP_INTERNAL_POSITIONS)[number];
+export type TooltipPosition = HintTooltipPosition;
+export type TooltipInternalPosition = HintTooltipInternalPosition;
+export type TooltipAnchorSide = HintTooltipAnchorSide;
 
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   /** Размер компонента. Значение по умолчанию 'm'. */
@@ -23,21 +29,27 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
 export interface UseTooltipOptions {
   /** Задержка открытия Tooltip при наведении в миллисекундах. Рекомендуемое значение — TOOLTIP_DELAY. */
   delay?: number;
+  /**
+   * Элемент, относительно которого позиционируется Tooltip. Если не задан, Tooltip позиционируется
+   * относительно элемента-триггера из triggerProps. Не участвует в управлении видимостью:
+   * наведение и фокус на этом элементе не открывают и не удерживают Tooltip.
+   */
+  targetElement?: Element | null;
 }
 
 export interface UseTooltipResult<T extends HTMLElement = HTMLElement> {
   /** Признак видимости Tooltip. */
   isVisible: boolean;
-  /** Готовые свойства для элемента, относительно которого позиционируется Tooltip. */
-  targetProps: {
+  /** Готовые свойства для элемента-триггера, управляющего видимостью Tooltip. */
+  triggerProps: {
     ref: RefCallback<T>;
     'aria-describedby': AriaAttributes['aria-describedby'];
   };
-  /** Готовые свойства, связывающие Tooltip с целевым элементом. */
+  /** Готовые свойства, связывающие Tooltip с элементом позиционирования. */
   tooltipProps: {
     ref: RefCallback<HTMLDivElement>;
     id: string;
-    targetElement: T | null;
+    targetElement: Element | null;
   };
 }
 
@@ -48,6 +60,11 @@ export interface WithTooltipProps {
   withDelay?: boolean;
   /** Ref компонента Tooltip. */
   tooltipRef?: Ref<HTMLDivElement>;
+  /**
+   * Элемент, относительно которого позиционируется Tooltip. Если не задан, Tooltip позиционируется
+   * относительно обёрнутого компонента. Не участвует в управлении видимостью Tooltip.
+   */
+  tooltipTargetElement?: Element | null;
   /** Предпочтительное направление открытия Tooltip. */
   tooltipPosition?: TooltipPosition;
   /** Размер Tooltip. */
@@ -61,17 +78,12 @@ export interface StyledTooltipProps {
   $cssMixin?: ComponentStyleConfig['cssMixin'];
 }
 
-/** Типы, используемые при расчёте и проверке позиции Tooltip. */
-export type PositionContext = {
-  spaceTop: number;
-  spaceRight: number;
-  spaceBottom: number;
-  spaceLeft: number;
-  viewportWidth: number;
-  anchorWidth: number;
-  anchorHeight: number;
-  tooltipWidth: number;
-  tooltipHeight: number;
-};
+export interface StyledTooltipWrapperProps {
+  $margin: CSSProperties['margin'];
+  $anchorSide: TooltipAnchorSide;
+  $alignSelf: CSSProperties['alignSelf'];
+}
 
-export type PositionCheck = (context: PositionContext) => boolean;
+export interface StyledPortalProps {
+  $flexDirection?: CSSProperties['flexDirection'];
+}

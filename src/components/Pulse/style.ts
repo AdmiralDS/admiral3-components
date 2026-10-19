@@ -56,7 +56,7 @@ export const PulseElement = styled.div.attrs<
   align-items: center;
   block-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].size}px;
   inline-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].size}px;
-  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+  border-radius: 50%;
   --admiral-pulse-color: ${({ $colorConfig, $status, theme }) =>
     $colorConfig?.backgroundColor ?? pulseBackgroundColors[$status]({ theme })};
   background-color: var(--admiral-pulse-color);
@@ -68,7 +68,7 @@ export const PulseElement = styled.div.attrs<
     inline-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].waveSize}px;
     block-size: ${({ $dimension }) => PULSE_DIMENSION_PARAMETERS[$dimension].waveSize}px;
     border: none;
-    border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+    border-radius: 50%;
     background-color: transparent;
     animation: ${({ $dimension }) => pulseAnimations[$dimension]} 2500ms cubic-bezier(0, 0, 0.58, 1) infinite;
   }

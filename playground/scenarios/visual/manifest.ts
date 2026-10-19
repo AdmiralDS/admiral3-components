@@ -8,6 +8,7 @@ export const VISUAL_SCENARIO_IDS = {
   fieldSet: 'visual/field-set',
   filterChips: 'visual/filter-chips',
   formItem: 'visual/form-item',
+  hint: 'visual/hint',
   input: 'visual/input',
   link: 'visual/link',
   list: 'visual/list',

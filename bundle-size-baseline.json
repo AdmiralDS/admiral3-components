@@ -1,28 +1,28 @@
 {
   "components": {
     "badge": {
-      "rawBytes": 3422
+      "rawBytes": 3394
     },
     "badge-dot": {
-      "rawBytes": 1467
+      "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 24484
+      "rawBytes": 24483
     },
     "button-group": {
-      "rawBytes": 4894
+      "rawBytes": 4899
     },
     "check-box": {
-      "rawBytes": 12086
+      "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 16091
+      "rawBytes": 16024
     },
     "divider": {
       "rawBytes": 1543
     },
     "field-set": {
-      "rawBytes": 1702
+      "rawBytes": 1719
     },
     "form-item": {
       "rawBytes": 4829
@@ -30,8 +30,11 @@
     "helper-components": {
       "rawBytes": 9796
     },
+    "hint": {
+      "rawBytes": 14813
+    },
     "input": {
-      "rawBytes": 13394
+      "rawBytes": 13406
     },
     "link": {
       "rawBytes": 2676
@@ -49,25 +52,25 @@
       "rawBytes": 3151
     },
     "pulse": {
-      "rawBytes": 2342
+      "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 9136
+      "rawBytes": 9120
     },
     "skeleton": {
       "rawBytes": 1298
     },
     "spinner": {
-      "rawBytes": 6562
+      "rawBytes": 6566
     },
     "text-area": {
-      "rawBytes": 24799
+      "rawBytes": 28009
     },
     "toggle": {
-      "rawBytes": 7766
+      "rawBytes": 7700
     },
     "tooltip": {
-      "rawBytes": 8236
+      "rawBytes": 10939
     }
   },
   "version": 1

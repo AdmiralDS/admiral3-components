@@ -68,7 +68,7 @@ describe('Badge', () => {
 
     expect(screen.getByTestId('badge')).toHaveStyle({
       ...getBadgeDimensionStyles('m'),
-      borderRadius: 'var(--admiral-radius-round, 1000px)',
+      borderRadius: 'var(--Round, 1000px)',
       backgroundColor: resolveToken(badgeBackgroundColors.neutral1),
       color: resolveToken(badgeTextColors.neutral1),
     });

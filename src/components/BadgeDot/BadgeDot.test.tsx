@@ -68,7 +68,7 @@ describe('BadgeDot', () => {
 
     expect(dot).toHaveStyle({
       ...getBadgeDotDimensionStyles('m'),
-      borderRadius: 'var(--admiral-radius-round, 1000px)',
+      borderRadius: '50%',
       backgroundColor: resolveToken(badgeDotBackgroundColors.neutral),
     });
   });

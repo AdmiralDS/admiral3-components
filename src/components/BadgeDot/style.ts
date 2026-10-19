@@ -29,5 +29,5 @@ export const StyledBadgeDot = styled.div.attrs<
     props.$colorConfig?.backgroundColor ?? badgeDotBackgroundColors[props.$appearance](props)};
   width: ${({ $dimension }) => BADGE_DOT_DIMENSION_PARAMETERS[$dimension]}px;
   height: ${({ $dimension }) => BADGE_DOT_DIMENSION_PARAMETERS[$dimension]}px;
-  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+  border-radius: 50%;
 `;

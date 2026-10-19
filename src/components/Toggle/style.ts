@@ -84,7 +84,7 @@ export const Control = styled.span`
   height: ${TOGGLE_DIMENSION_PARAMETERS.m.height}px;
   margin-block: ${TOGGLE_DIMENSION_PARAMETERS.m.controlMarginBlock}px;
   border: 1px solid ${borderRest};
-  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+  border-radius: 1000px;
   background: ${backgroundRest};
   transition:
     background-color ${hoverPressLeaveTransition},
@@ -141,7 +141,7 @@ export const Thumb = styled.span`
   left: ${TOGGLE_DIMENSION_PARAMETERS.m.thumbOffsetInline}px;
   width: ${TOGGLE_DIMENSION_PARAMETERS.m.thumbSize}px;
   height: ${TOGGLE_DIMENSION_PARAMETERS.m.thumbSize}px;
-  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+  border-radius: 50%;
   background: ${thumbInactive};
   transform: translateY(-50%);
   transition:
