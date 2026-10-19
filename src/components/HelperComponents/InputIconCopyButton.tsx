@@ -14,8 +14,8 @@ export interface InputIconCopyButtonProps extends InputIconButtonProps {
 /** Кнопка копирования значения Input или TextArea с подсказкой о результате. */
 export const InputIconCopyButton = forwardRef<HTMLButtonElement, InputIconCopyButtonProps>(
   ({ inputRef, onClick, children, 'aria-describedby': ariaDescribedBy, ...props }, ref) => {
-    const { targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
-    const buttonRef = useMemo(() => refSetter(targetProps.ref, ref), [targetProps.ref, ref]);
+    const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+    const buttonRef = useMemo(() => refSetter(triggerProps.ref, ref), [triggerProps.ref, ref]);
     const [message, setMessage] = useState('Копировать текст');
     const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
     const mounted = useRef(false);
@@ -51,7 +51,7 @@ export const InputIconCopyButton = forwardRef<HTMLButtonElement, InputIconCopyBu
           aria-label="Копировать текст"
           {...props}
           ref={buttonRef}
-          aria-describedby={[ariaDescribedBy, targetProps['aria-describedby']].filter(Boolean).join(' ') || undefined}
+          aria-describedby={[ariaDescribedBy, triggerProps['aria-describedby']].filter(Boolean).join(' ') || undefined}
           onClick={handleCopy}
         >
           {children ?? <DocumentsCopyOutline aria-hidden />}

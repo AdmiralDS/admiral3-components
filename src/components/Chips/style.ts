@@ -220,7 +220,7 @@ const colorsBorderAndBackground = css<ChipStyleProps>`
   transition:
     background-color ${hoverPressLeaveTransition},
     border-color ${hoverPressLeaveTransition};
-  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
+  border-radius: 1000px;
   background-color: ${(props) => {
     const { $appearance, $disabled } = props;
     return $appearance === 'flat'

@@ -73,7 +73,7 @@ import { skeletonAnimationMixin } from '@admiral-ds/admiral3-components/skeleton
 React-приложений, где тема управляется через контекст `styled-components`.
 
 Базу скруглений можно выбрать независимо от цветовой темы через `buildTheme`. Компоненты используют семантические
-группы `theme.radius.small`, `theme.radius.medium`, `theme.radius.large` и `theme.radius.round` для круглых элементов:
+группы `theme.radius.small`, `theme.radius.medium` и `theme.radius.large`:
 
 ```tsx
 import { buildTheme } from '@admiral-ds/admiral3-tokens';
