@@ -55,7 +55,7 @@ export const StyledRadioButton = styled.label<StyledRadioButtonProps>`
 export const Control = styled.span<{ $error: boolean }>`
   box-sizing: border-box;
   flex: 0 0 auto;
-  border-radius: 50%;
+  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
   transition:
     background-color ${hoverPressLeaveTransition},
     box-shadow ${hoverPressLeaveTransition};
