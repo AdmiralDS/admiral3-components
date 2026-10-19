@@ -59,7 +59,7 @@ describe('Pulse', () => {
     expect(screen.getByTestId('pulse')).toHaveStyle({
       blockSize: '12px',
       inlineSize: '12px',
-      borderRadius: '50%',
+      borderRadius: 'var(--admiral-radius-round, 1000px)',
       '--admiral-pulse-color': resolveToken(pulseBackgroundColors.info),
       backgroundColor: 'var(--admiral-pulse-color)',
     });

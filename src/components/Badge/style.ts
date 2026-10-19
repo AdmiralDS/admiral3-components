@@ -73,7 +73,7 @@ export const StyledBadge = styled.div.attrs<
   min-width: ${({ $dimension }) => BADGE_DIMENSION_PARAMETERS[$dimension].size}px;
   height: ${({ $dimension }) => BADGE_DIMENSION_PARAMETERS[$dimension].size}px;
   padding: 0 ${({ $dimension }) => BADGE_DIMENSION_PARAMETERS[$dimension].horizontalPadding}px;
-  border-radius: var(--Round, 1000px);
+  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
   background-color: ${(props) =>
     props.$colorConfig?.backgroundColor ?? badgeBackgroundColors[props.$appearance](props)};
   color: ${(props) => props.$colorConfig?.textColor ?? badgeTextColors[props.$appearance](props)};
