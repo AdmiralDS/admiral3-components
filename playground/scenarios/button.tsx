@@ -4,6 +4,7 @@ import type { ButtonProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { ButtonDirtyTemplate } from '../../src/components/Button/stories/ButtonDirty.template';
+import { ButtonIconBadgeTemplate } from '../../src/components/Button/stories/ButtonIconBadge.template';
 
 const defaultArgs: ButtonProps = {
   children: 'Button',
@@ -18,6 +19,11 @@ const customColorConfig: ButtonProps['colorConfig'] = {
 };
 
 export const buttonScenarios: PlaygroundScenario[] = [
+  {
+    id: 'button/tooltip',
+    title: 'Button Tooltip',
+    render: () => <ButtonIconBadgeTemplate />,
+  },
   {
     id: 'button/default',
     title: 'Button Default',

@@ -2,12 +2,14 @@ import type { PillProps } from '@admiral-ds/admiral3-components';
 
 import type { PlaygroundScenario } from './index';
 import { PillsCustomColorsTemplate } from '../../src/components/Pills/stories/PillsCustomColors.template';
-import { PillsDirtyTemplate } from '../../src/components/Pills/stories/PillsDirty.template';
+import {
+  PillsDirtyTemplate,
+  PillsTruncatedTextDirtyTemplate,
+} from '../../src/components/Pills/stories/PillsDirty.template';
 import { PillsDropdownTemplate } from '../../src/components/Pills/stories/PillsDropdown.template';
 import { PillsKeyboardNavigationTemplate } from '../../src/components/Pills/stories/PillsKeyboardNavigation.template';
 import { PillsNestedTemplate } from '../../src/components/Pills/stories/PillsNested.template';
 import { PillsPlaygroundTemplate } from '../../src/components/Pills/stories/PillsPlayground.template';
-import { PillsTruncatedTextTemplate } from '../../src/components/Pills/stories/PillsTruncatedText.template';
 
 const defaultArgs: PillProps = {
   children: 'Pills',
@@ -34,9 +36,9 @@ export const pillsScenarios: PlaygroundScenario[] = [
     id: 'pills/truncated',
     title: 'Pills Truncated',
     render: () => (
-      <PillsTruncatedTextTemplate {...defaultArgs} appearance="success1">
+      <PillsTruncatedTextDirtyTemplate {...defaultArgs} appearance="success1">
         Я три дня гналась за вами, чтобы сказать, как вы мне безразличны
-      </PillsTruncatedTextTemplate>
+      </PillsTruncatedTextDirtyTemplate>
     ),
   },
   {

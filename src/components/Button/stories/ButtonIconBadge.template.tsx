@@ -1,7 +1,7 @@
 import { ServiceCheckOutline, ServiceShareOutline } from '@admiral-ds/admiral3-icons';
 import styled from 'styled-components';
 
-import { Badge, Button, withTooltip, type ButtonProps } from '@admiral-ds/admiral3-components';
+import { Badge, Button, Tooltip, useTooltip, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 import { BUTTON_APPEARANCES } from '../constants';
@@ -12,7 +12,18 @@ const Appearance = styled.div`
   align-self: flex-start;
 `;
 
-const ButtonWithTooltip = withTooltip(Button);
+const ShareButton = (props: ButtonProps) => {
+  const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+
+  return (
+    <>
+      <Button {...props} {...triggerProps} square aria-label="Поделиться">
+        <ServiceShareOutline aria-hidden="true" focusable="false" />
+      </Button>
+      {isVisible && <Tooltip {...tooltipProps}>Открыть варианты отправки</Tooltip>}
+    </>
+  );
+};
 
 export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | 'colorMode'>) => {
   return (
@@ -37,20 +48,12 @@ export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | '
       </Appearance>
       <StoryDemoDescription>
         В некоторых случаях могут использоваться кнопки только с иконками. Как правило, это иконки значениях которых
-        понятны и не вызывают сомнений.
+        понятны и не вызывают сомнений. Tooltip подключается через useTooltip. Доступное имя кнопки задаётся отдельно
+        через aria-label.
       </StoryDemoDescription>
       <Appearance>
         {BUTTON_APPEARANCES.map((appearance) => (
-          <ButtonWithTooltip
-            key={appearance}
-            {...args}
-            appearance={appearance}
-            square
-            aria-label="Share"
-            renderContent={() => 'Open sharing options'}
-          >
-            <ServiceShareOutline />
-          </ButtonWithTooltip>
+          <ShareButton key={appearance} {...args} appearance={appearance} />
         ))}
       </Appearance>
       <StoryDemoDescription>
