@@ -2,6 +2,8 @@ import { textStyles } from '@admiral-ds/admiral3-tokens';
 import type { CSSObject } from 'styled-components';
 
 export const AVATAR_DIMENSIONS = ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl'] as const;
+export const AVATAR_STATUSES = ['neutral', 'attention', 'success', 'error'] as const;
+export const AVATAR_APPEARANCES = ['primary'] as const;
 
 interface AvatarDimensionParameters {
   size: number;
@@ -20,5 +22,3 @@ export const AVATAR_DIMENSION_PARAMETERS = {
   l: { size: 48, paddingBlock: 14, iconSize: 28, statusSize: 14, typography: textStyles.body.body1Short },
   xl: { size: 56, paddingBlock: 16, iconSize: 32, statusSize: 18, typography: textStyles.subtitle.subtitle1 },
 } as const satisfies Record<(typeof AVATAR_DIMENSIONS)[number], AvatarDimensionParameters>;
-
-export const AVATAR_STATUSES = ['neutral', 'attention', 'success', 'error'] as const;

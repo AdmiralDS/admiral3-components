@@ -34,7 +34,7 @@ export const Wrapper = styled.button.attrs<
   }
 `;
 
-const IconWrapper = styled.div<{
+export const IconWrapper = styled.div<{
   $dimension: AvatarDimension;
 }>`
   position: absolute;
@@ -49,7 +49,7 @@ const IconWrapper = styled.div<{
   }
 `;
 
-const Text = styled.span<{
+export const Text = styled.span<{
   $dimension: AvatarDimension;
   $textColor?: string;
 }>`

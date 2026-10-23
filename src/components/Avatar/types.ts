@@ -1,9 +1,10 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import type { AVATAR_DIMENSIONS, AVATAR_STATUSES } from './constants';
+import type { AVATAR_APPEARANCES, AVATAR_DIMENSIONS, AVATAR_STATUSES } from './constants';
 
 export type AvatarDimension = (typeof AVATAR_DIMENSIONS)[number];
 export type AvatarStatus = (typeof AVATAR_STATUSES)[number];
+export type AvatarAppearances = (typeof AVATAR_APPEARANCES)[number];
 
 export interface AvatarStatusColorConfig {
   /** Стили статуса. */
@@ -35,16 +36,30 @@ export interface AvatarBaseProps extends HTMLAttributes<HTMLButtonElement> {
   /** Иконка для отображения. */
   icon?: ReactNode;
   /** Внешний вид компонента (цвет заливки, текста, иконки). **/
-  //TODO пересмотреть
-  appearance?: AvatarAppearanceColorConfig;
+  appearance?: AvatarAppearances | AvatarAppearanceColorConfig;
   /** Размер компонента. */
   dimension?: AvatarDimension;
-  /** Уникальный идентификатор svg маски. */
-  svgMaskId?: string;
   /** Отображение тултипа. */
   showTooltip?: boolean;
   /** Аватар с опцией activity ring. */
   withActivityRing?: boolean;
   /** Отображение activity ring. */
   showActivityRing?: boolean;
+}
+
+export type AvatarSVGProps = {
+  dimension: AvatarDimension;
+  hasImage?: boolean;
+  href?: string;
+  status?: AvatarStatus | AvatarStatusColorConfig;
+  appearance?: AvatarAppearances | AvatarAppearanceColorConfig;
+  withActivityRing?: boolean;
+  showActivityRing?: boolean;
+};
+
+export interface StyledAvatarWrapperProps {
+  $dimension: AvatarDimension;
+  $status: AvatarStatus;
+  $statusColorConfig?: AvatarStatusColorConfig;
+  $clickable: boolean;
 }
