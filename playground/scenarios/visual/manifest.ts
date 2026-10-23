@@ -21,6 +21,7 @@ export const VISUAL_SCENARIO_IDS = {
   selectableChip: 'visual/selectable-chip',
   skeleton: 'visual/skeleton',
   spinner: 'visual/spinner',
+  tag: 'visual/tag',
   textArea: 'visual/text-area',
   toggle: 'visual/toggle',
   tooltip: 'visual/tooltip',
