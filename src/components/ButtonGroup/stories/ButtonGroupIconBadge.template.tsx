@@ -10,10 +10,13 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  Tooltip,
+  useTooltip,
   type BadgeAppearance,
   type ButtonGroupAppearance,
   type ButtonGroupColorMode,
   type ButtonGroupProps,
+  type ButtonProps,
 } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
@@ -49,6 +52,17 @@ const BADGES = [
   { label: 'В работе', value: 3 },
   { label: 'Готовые', value: 8 },
 ] as const;
+
+const IconButton = ({ tooltipText, ...props }: ButtonProps & { tooltipText: string }) => {
+  const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+
+  return (
+    <>
+      <Button {...props} {...triggerProps} square />
+      {isVisible && <Tooltip {...tooltipProps}>{tooltipText}</Tooltip>}
+    </>
+  );
+};
 
 export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
   const appearance = args.appearance ?? 'solid';
@@ -99,17 +113,19 @@ export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
           </ButtonGroup>
         </Example>
         <Example>
-          <StoryDemoDescription>Только иконки</StoryDemoDescription>
+          <StoryDemoDescription>
+            Только иконки. Каждая кнопка использует useTooltip и сохраняет доступное имя через aria-label.
+          </StoryDemoDescription>
           <ButtonGroup {...args} aria-label="Быстрые действия">
-            <Button square aria-label="Подтвердить">
+            <IconButton aria-label="Подтвердить" tooltipText="Подтвердить документ">
               <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Поделиться">
+            </IconButton>
+            <IconButton aria-label="Поделиться" tooltipText="Открыть варианты отправки">
               <ShareIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Завершить">
+            </IconButton>
+            <IconButton aria-label="Завершить" tooltipText="Завершить обработку документа">
               <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
+            </IconButton>
           </ButtonGroup>
         </Example>
       </Examples>

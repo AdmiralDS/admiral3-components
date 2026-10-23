@@ -1,14 +1,21 @@
-import { createRef } from 'react';
+import { createRef, forwardRef } from 'react';
 
 import { themes, textStyles } from '@admiral-ds/admiral3-tokens';
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ExecutionContext } from 'styled-components';
 import { ThemeProvider } from 'styled-components';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PILLS_APPEARANCES, PILLS_CONTENT_GAP, PILLS_HEIGHT, PILLS_HORIZONTAL_PADDING } from './constants';
 import { Pill } from './Pill';
 import { pillBackgroundColors, pillBorderRadius, pillTextColors } from './style';
+import type { TooltipProps } from '../Tooltip/types';
+
+vi.mock('../Tooltip/Tooltip', () => ({
+  Tooltip: forwardRef<HTMLDivElement, TooltipProps>(({ targetElement: _targetElement, ...props }, ref) => (
+    <div role="tooltip" {...props} ref={ref} />
+  )),
+}));
 
 const resolveToken = (token: (context: ExecutionContext) => string, theme = themes.light) => {
   return token({ theme } as ExecutionContext);
@@ -17,6 +24,7 @@ const resolveToken = (token: (context: ExecutionContext) => string, theme = them
 describe('Pill', () => {
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   it('renders text, numeric and composed content', () => {
@@ -121,9 +129,77 @@ describe('Pill', () => {
     render(<Pill data-testid="pill">Status</Pill>);
 
     const pill = screen.getByTestId('pill');
-    pill.focus();
+    act(() => pill.focus());
 
     expect(pill).toHaveFocus();
     expect(pill).toHaveAccessibleName('Status');
+  });
+
+  it('does not open a tooltip when the label fits', () => {
+    render(<Pill>Status</Pill>);
+    fireEvent.mouseEnter(screen.getByRole('button'));
+    expect(screen.queryByRole('tooltip', { hidden: true })).not.toBeInTheDocument();
+  });
+
+  it('opens an overflow tooltip without duplicating the accessible name or description', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(
+      <Pill ref={ref} aria-describedby="consumer-description">
+        Full status
+      </Pill>,
+    );
+    const pill = screen.getByRole('button');
+    Object.defineProperty(pill.querySelector('[data-pill-label]'), 'scrollWidth', { value: 200 });
+
+    fireEvent.mouseEnter(pill);
+    const tooltip = screen.getByRole('tooltip', { hidden: true });
+    expect(tooltip).toHaveTextContent('Full status');
+    expect(tooltip).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(pill).toHaveAccessibleName('Full status');
+    expect(pill).not.toHaveAttribute('aria-hidden');
+    expect(pill).toHaveAttribute('aria-describedby', 'consumer-description');
+    expect(ref.current).toBe(pill);
+
+    fireEvent.mouseLeave(pill, { relatedTarget: tooltip });
+    fireEvent.mouseEnter(tooltip);
+    expect(tooltip).toBeInTheDocument();
+    fireEvent.keyDown(pill, { key: 'Escape' });
+    expect(screen.queryByRole('tooltip', { hidden: true })).not.toBeInTheDocument();
+  });
+
+  it('rechecks overflow on focus and closes on blur', () => {
+    render(<Pill>{0}</Pill>);
+    const pill = screen.getByRole('button');
+    const label = pill.querySelector('[data-pill-label]');
+    Object.defineProperty(label, 'scrollWidth', { configurable: true, value: 200 });
+
+    fireEvent.focus(pill);
+    expect(screen.getByRole('tooltip', { hidden: true })).toHaveTextContent('0');
+    fireEvent.blur(pill, { relatedTarget: document.body });
+    expect(screen.queryByRole('tooltip', { hidden: true })).not.toBeInTheDocument();
+
+    Object.defineProperty(label, 'scrollWidth', { value: 0 });
+    fireEvent.focus(pill);
+    expect(screen.queryByRole('tooltip', { hidden: true })).not.toBeInTheDocument();
+  });
+
+  it('updates the full text while open and excludes decorative icons', () => {
+    vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(200);
+    const renderPill = (text: string) => (
+      <Pill>
+        <svg aria-hidden="true">
+          <title>Decorative icon</title>
+        </svg>
+        {text}
+      </Pill>
+    );
+    const { rerender } = render(renderPill('Full status'));
+    const pill = screen.getByRole('button');
+    fireEvent.mouseEnter(pill);
+    expect(screen.getByRole('tooltip', { hidden: true })).toHaveTextContent('Full status');
+
+    rerender(renderPill('Updated status'));
+    expect(screen.getByRole('tooltip', { hidden: true })).toHaveTextContent('Updated status');
   });
 });

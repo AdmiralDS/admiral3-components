@@ -262,8 +262,6 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
         >
-          {/* TODO: После появления Tooltip добавить интеграцию для подписей icon-only кнопок;
-          доступное имя через aria-label или aria-labelledby остаётся обязательным. */}
           {children}
         </StyledButtonGroup>
       </ButtonGroupContext.Provider>

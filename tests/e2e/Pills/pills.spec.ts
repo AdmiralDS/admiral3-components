@@ -69,10 +69,61 @@ test.describe('Pills playground', () => {
     const label = pills.locator('span').first();
 
     await expect(pills).toHaveText('Я три дня гналась за вами, чтобы сказать, как вы мне безразличны');
-    await expect(pills).toHaveAttribute('title', 'Я три дня гналась за вами, чтобы сказать, как вы мне безразличны');
+    await expect(pills).not.toHaveAttribute('title');
     await expect(label).toHaveCSS('text-overflow', 'ellipsis');
     await expect(label).toHaveCSS('overflow', 'hidden');
     expect(await label.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+
+    await pills.hover();
+    const tooltip = page.getByRole('tooltip', { includeHidden: true });
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toHaveText(await pills.innerText());
+    await expect(tooltip).toHaveAttribute('aria-hidden', 'true');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await expect(pills).not.toHaveAttribute('aria-describedby');
+    await expect(pills).toHaveAccessibleName(await pills.innerText());
+
+    await tooltip.hover();
+    await expect(tooltip).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(tooltip).toHaveCount(0);
+  });
+
+  test('opens overflow tooltips with keyboard focus and preserves group navigation after Escape', async ({
+    page,
+    browserName,
+  }) => {
+    await page.goto(getPlaygroundScenarioPath(truncatedScenarioId));
+    await page.mouse.move(0, 0);
+
+    const tabKey = getTabKey(browserName);
+    const firstPill = page.getByTestId('pills-truncated');
+    const secondPill = page.getByTestId('pills-truncated-second');
+    const tooltip = page.getByRole('tooltip', { includeHidden: true });
+
+    await page.getByTestId('before-truncated-pills').focus();
+    await page.keyboard.press(tabKey);
+    await expect(firstPill).toBeFocused();
+    await expect(tooltip).toHaveText(await firstPill.innerText());
+
+    await page.keyboard.press('Escape');
+    await expect(tooltip).toHaveCount(0);
+    await expect(firstPill).toBeFocused();
+
+    await page.keyboard.press('ArrowRight');
+    await expect(secondPill).toBeFocused();
+    await expect(tooltip).toHaveCount(1);
+    await expect(tooltip).toHaveText(await secondPill.innerText());
+
+    await page.keyboard.press('ArrowLeft');
+    await expect(firstPill).toBeFocused();
+    await expect(tooltip).toHaveCount(1);
+    await expect(tooltip).toHaveText(await firstPill.innerText());
+    await expect(tooltip).toBeVisible();
+
+    await page.keyboard.press(tabKey);
+    await expect(page.getByTestId('after-truncated-pills')).toBeFocused();
+    await expect(tooltip).toHaveCount(0);
   });
 
   test('joins nested Pills without gaps and keeps only outer corner radius', async ({ page }) => {
