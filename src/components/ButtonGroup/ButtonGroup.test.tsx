@@ -13,7 +13,7 @@ describe('ButtonGroup', () => {
     cleanup();
   });
 
-  it('renders a labelled toolbar and forwards native attributes and ref', () => {
+  it('renders a labelled group and forwards native attributes and ref', () => {
     const ref = createRef<HTMLDivElement>();
 
     render(
@@ -31,18 +31,16 @@ describe('ButtonGroup', () => {
     const group = screen.getByTestId('button-group');
 
     expect(group.tagName).toBe('DIV');
-    expect(group).toHaveAttribute('role', 'toolbar');
-    expect(group).toHaveAttribute('aria-orientation', 'horizontal');
+    expect(group).toHaveAttribute('role', 'group');
     expect(group).toHaveAccessibleName('Document actions');
     expect(group).toHaveAttribute('title', 'Actions');
     expect(group).toHaveClass('consumer-class');
     expect(ref.current).toBe(group);
   });
 
-  it('keeps toolbar semantics when unsupported native attributes are passed at runtime', () => {
+  it('keeps group semantics when unsupported native attributes are passed at runtime', () => {
     const nativeOverrides: React.HTMLAttributes<HTMLDivElement> = {
-      role: 'group',
-      'aria-orientation': 'vertical',
+      role: 'toolbar',
     };
 
     render(
@@ -51,8 +49,7 @@ describe('ButtonGroup', () => {
       </ButtonGroup>,
     );
 
-    expect(screen.getByTestId('button-group')).toHaveAttribute('role', 'toolbar');
-    expect(screen.getByTestId('button-group')).toHaveAttribute('aria-orientation', 'horizontal');
+    expect(screen.getByTestId('button-group')).toHaveAttribute('role', 'group');
   });
 
   it('uses default group appearance, color mode and dimension for every Button', () => {
@@ -513,7 +510,7 @@ describe('ButtonGroup', () => {
 
   it('does not register a Button portalled outside its owning group', () => {
     const portalTarget = document.createElement('div');
-    portalTarget.setAttribute('role', 'toolbar');
+    portalTarget.setAttribute('role', 'group');
     document.body.appendChild(portalTarget);
 
     const { unmount } = render(

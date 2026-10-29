@@ -99,8 +99,7 @@ export const Pills = forwardRef<HTMLDivElement, PillsProps>(
     return (
       <StyledPills
         ref={refSetter(groupRef, ref)}
-        role="toolbar"
-        aria-orientation="horizontal"
+        role="group"
         $connected={connected}
         {...props}
         data-connected={connected ? '' : undefined}
