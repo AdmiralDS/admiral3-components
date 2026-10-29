@@ -250,8 +250,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
         <StyledButtonGroup
           ref={mergedRef}
           {...props}
-          role="toolbar"
-          aria-orientation="horizontal"
+          role="group"
           $appearance={appearance}
           $colorMode={colorMode}
           $colorConfig={colorConfig}
