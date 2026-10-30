@@ -1,0 +1,1 @@
+export { SLIDER_DIMENSIONS as SLIDER_RANGE_DIMENSIONS, SLIDER_THUMB_APPEARANCES } from '../_internal/SliderAtoms';

@@ -90,6 +90,14 @@
       "types": "./dist/components/Skeleton/index.d.ts",
       "import": "./dist/components/Skeleton/index.js"
     },
+    "./slider": {
+      "types": "./dist/components/Slider/index.d.ts",
+      "import": "./dist/components/Slider/index.js"
+    },
+    "./slider-range": {
+      "types": "./dist/components/SliderRange/index.d.ts",
+      "import": "./dist/components/SliderRange/index.js"
+    },
     "./spinner": {
       "types": "./dist/components/Spinner/index.d.ts",
       "import": "./dist/components/Spinner/index.js"

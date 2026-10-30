@@ -11,6 +11,8 @@ import {
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
+  Slider,
+  SliderRange,
   Toggle,
   TextArea,
 } from '@admiral-ds/admiral3-components';
@@ -22,6 +24,8 @@ type FormValues = {
   email: string;
   website: string;
   comment: string;
+  age: number;
+  budget: [number, number];
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -34,6 +38,8 @@ const defaultValues: FormValues = {
   email: '',
   website: '',
   comment: '',
+  age: 30,
+  budget: [25, 75],
   delivery: 'courier',
   agreement: false,
   notifications: true,
@@ -307,6 +313,45 @@ export const ReactHookFormTemplate = () => {
                 placeholder="Добавьте комментарий"
               />
             </Field>
+          )}
+        />
+
+        <Controller
+          name="age"
+          control={control}
+          render={({ field }) => (
+            <Slider
+              label="Возраст"
+              min={18}
+              max={80}
+              value={field.value}
+              onChange={field.onChange}
+              nativeSliderRef={field.ref}
+              nativeSliderProps={{ name: field.name, onBlur: field.onBlur }}
+            />
+          )}
+        />
+
+        <Controller
+          name="budget"
+          control={control}
+          render={({ field }) => (
+            <SliderRange
+              label="Бюджет"
+              value={field.value}
+              onChange={field.onChange}
+              lowerNativeSliderRef={field.ref}
+              lowerNativeSliderProps={{
+                name: `${field.name}.0`,
+                onBlur: field.onBlur,
+                'aria-label': 'Минимальный бюджет',
+              }}
+              upperNativeSliderProps={{
+                name: `${field.name}.1`,
+                onBlur: field.onBlur,
+                'aria-label': 'Максимальный бюджет',
+              }}
+            />
           )}
         />
 

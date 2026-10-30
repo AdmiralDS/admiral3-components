@@ -21,6 +21,8 @@ import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
 import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
+import { SliderRangeVisualTemplate } from './SliderRangeVisual.template';
+import { SliderVisualTemplate } from './SliderVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TagVisualTemplate } from './TagVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
@@ -108,6 +110,13 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / Skeleton',
     visual: true,
     render: () => <SkeletonVisualTemplate />,
+  },
+  { id: VISUAL_SCENARIO_IDS.slider, title: 'Visual / Slider', visual: true, render: () => <SliderVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.sliderRange,
+    title: 'Visual / SliderRange',
+    visual: true,
+    render: () => <SliderRangeVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.tag, title: 'Visual / Tag', visual: true, render: () => <TagVisualTemplate /> },

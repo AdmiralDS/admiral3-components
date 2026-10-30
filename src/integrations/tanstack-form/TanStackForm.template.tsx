@@ -11,6 +11,8 @@ import {
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
+  Slider,
+  SliderRange,
   Toggle,
   TextArea,
 } from '@admiral-ds/admiral3-components';
@@ -22,6 +24,8 @@ type FormValues = {
   email: string;
   website: string;
   comment: string;
+  age: number;
+  budget: [number, number];
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -34,6 +38,8 @@ const defaultValues: FormValues = {
   email: '',
   website: '',
   comment: '',
+  age: 30,
+  budget: [25, 75],
   delivery: 'courier',
   agreement: false,
   notifications: true,
@@ -363,6 +369,39 @@ export const TanStackFormTemplate = () => {
                 placeholder="Добавьте комментарий"
               />
             </Field>
+          )}
+        </form.Field>
+
+        <form.Field name="age">
+          {(field) => (
+            <Slider
+              label="Возраст"
+              min={18}
+              max={80}
+              value={field.state.value}
+              onChange={field.handleChange}
+              nativeSliderProps={{ name: field.name, onBlur: field.handleBlur }}
+            />
+          )}
+        </form.Field>
+
+        <form.Field name="budget">
+          {(field) => (
+            <SliderRange
+              label="Бюджет"
+              value={field.state.value}
+              onChange={field.handleChange}
+              lowerNativeSliderProps={{
+                name: `${field.name}.0`,
+                onBlur: field.handleBlur,
+                'aria-label': 'Минимальный бюджет',
+              }}
+              upperNativeSliderProps={{
+                name: `${field.name}.1`,
+                onBlur: field.handleBlur,
+                'aria-label': 'Максимальный бюджет',
+              }}
+            />
           )}
         </form.Field>
 

@@ -19,6 +19,8 @@ import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
+import { sliderScenarios } from './slider';
+import { sliderRangeScenarios } from './slider-range';
 import { spinnerScenarios } from './spinner';
 import { tagScenarios } from './tag';
 import { textAreaScenarios } from './text-area';
@@ -53,6 +55,8 @@ export const playgroundScenarios = [
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
+  ...sliderScenarios,
+  ...sliderRangeScenarios,
   ...spinnerScenarios,
   ...tagScenarios,
   ...textAreaScenarios,
