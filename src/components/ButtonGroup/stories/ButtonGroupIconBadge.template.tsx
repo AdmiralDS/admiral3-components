@@ -10,6 +10,7 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  withTooltip,
   type BadgeAppearance,
   type ButtonGroupAppearance,
   type ButtonGroupColorMode,
@@ -49,6 +50,8 @@ const BADGES = [
   { label: 'В работе', value: 3 },
   { label: 'Готовые', value: 8 },
 ] as const;
+
+const ButtonWithTooltip = withTooltip(Button);
 
 export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
   const appearance = args.appearance ?? 'solid';
@@ -99,17 +102,19 @@ export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
           </ButtonGroup>
         </Example>
         <Example>
-          <StoryDemoDescription>Только иконки</StoryDemoDescription>
+          <StoryDemoDescription>
+            Только иконки. Каждая кнопка использует withTooltip и сохраняет доступное имя через aria-label.
+          </StoryDemoDescription>
           <ButtonGroup {...args} aria-label="Быстрые действия">
-            <Button square aria-label="Подтвердить">
+            <ButtonWithTooltip square aria-label="Подтвердить" renderContent={() => 'Подтвердить документ'}>
               <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Поделиться">
+            </ButtonWithTooltip>
+            <ButtonWithTooltip square aria-label="Поделиться" renderContent={() => 'Открыть варианты отправки'}>
               <ShareIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Завершить">
+            </ButtonWithTooltip>
+            <ButtonWithTooltip square aria-label="Завершить" renderContent={() => 'Завершить обработку документа'}>
               <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
+            </ButtonWithTooltip>
           </ButtonGroup>
         </Example>
       </Examples>

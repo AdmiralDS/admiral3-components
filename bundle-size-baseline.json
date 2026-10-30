@@ -7,22 +7,22 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 24483
+      "rawBytes": 24475
     },
     "button-group": {
-      "rawBytes": 4899
+      "rawBytes": 4894
     },
     "check-box": {
-      "rawBytes": 12111
+      "rawBytes": 12086
     },
     "chips": {
-      "rawBytes": 16024
+      "rawBytes": 16019
     },
     "divider": {
       "rawBytes": 1543
     },
     "field-set": {
-      "rawBytes": 1719
+      "rawBytes": 1702
     },
     "form-item": {
       "rawBytes": 4829
@@ -31,19 +31,19 @@
       "rawBytes": 9796
     },
     "hint": {
-      "rawBytes": 14813
+      "rawBytes": 14352
     },
     "input": {
-      "rawBytes": 13406
+      "rawBytes": 13394
     },
     "link": {
-      "rawBytes": 2676
+      "rawBytes": 2665
     },
     "list": {
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 5671
+      "rawBytes": 19580
     },
     "progress-header": {
       "rawBytes": 2489
@@ -55,25 +55,25 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 9120
+      "rawBytes": 9091
     },
     "skeleton": {
       "rawBytes": 1298
     },
     "spinner": {
-      "rawBytes": 6566
+      "rawBytes": 6562
     },
     "tag": {
-      "rawBytes": 21199
+      "rawBytes": 21196
     },
     "text-area": {
-      "rawBytes": 28009
+      "rawBytes": 27990
     },
     "toggle": {
-      "rawBytes": 7700
+      "rawBytes": 7679
     },
     "tooltip": {
-      "rawBytes": 10939
+      "rawBytes": 10934
     }
   },
   "version": 1

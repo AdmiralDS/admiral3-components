@@ -37,7 +37,8 @@ export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | '
       </Appearance>
       <StoryDemoDescription>
         В некоторых случаях могут использоваться кнопки только с иконками. Как правило, это иконки значениях которых
-        понятны и не вызывают сомнений.
+        понятны и не вызывают сомнений. Tooltip подключается через withTooltip. Доступное имя кнопки задаётся отдельно
+        через aria-label.
       </StoryDemoDescription>
       <Appearance>
         {BUTTON_APPEARANCES.map((appearance) => (
@@ -46,10 +47,10 @@ export const ButtonIconBadgeTemplate = (args: Omit<ButtonProps, 'appearance' | '
             {...args}
             appearance={appearance}
             square
-            aria-label="Share"
-            renderContent={() => 'Open sharing options'}
+            aria-label="Поделиться"
+            renderContent={() => 'Открыть варианты отправки'}
           >
-            <ServiceShareOutline />
+            <ServiceShareOutline aria-hidden="true" focusable="false" />
           </ButtonWithTooltip>
         ))}
       </Appearance>
