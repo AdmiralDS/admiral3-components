@@ -4,7 +4,7 @@ import { getPlaygroundScenarioPath } from '../utils';
 
 test('ButtonGroup moves focus and tooltips between icon buttons without extra wrappers', async ({ page }) => {
   await page.goto(getPlaygroundScenarioPath('button-group/tooltip'));
-  const group = page.getByRole('toolbar', { name: 'Быстрые действия' });
+  const group = page.getByRole('group', { name: 'Быстрые действия' });
   const first = group.getByRole('button', { name: 'Подтвердить', exact: true });
   const second = group.getByRole('button', { name: 'Поделиться', exact: true });
   const tooltip = page.getByRole('tooltip');
