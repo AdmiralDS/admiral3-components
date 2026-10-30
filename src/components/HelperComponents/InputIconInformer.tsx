@@ -1,17 +1,25 @@
+import { forwardRef } from 'react';
+
 import { ServiceHelpOutline } from '@admiral-ds/admiral3-icons';
 
 import type { InputIconButtonProps } from '../_internal/InputAtoms';
 import { InputIconButton } from '../_internal/InputAtoms';
+import { withHint, type WithHintProps } from '../Hint';
 
-export interface InputIconInformerProps extends Omit<InputIconButtonProps, 'children' | 'preventFocus'> {
+export interface InputIconInformerProps extends Omit<InputIconButtonProps, 'children' | 'preventFocus'>, WithHintProps {
   children?: never;
 }
 
-// TODO: Подключить Hint к InputIconInformer после реализации компонента Hint.
-export const InputIconInformer = (props: InputIconInformerProps) => {
+const InputIconButtonWithHint = withHint(InputIconButton);
+
+export const InputIconInformer = forwardRef<HTMLButtonElement, InputIconInformerProps>((props, ref) => {
+  const { triggerMode = 'click', ...buttonProps } = props;
+
   return (
-    <InputIconButton {...props} preventFocus>
+    <InputIconButtonWithHint ref={ref} preventFocus triggerMode={triggerMode} {...buttonProps}>
       <ServiceHelpOutline aria-hidden />
-    </InputIconButton>
+    </InputIconButtonWithHint>
   );
-};
+});
+
+InputIconInformer.displayName = 'InputIconInformer';
