@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button, type ButtonProps } from '@admiral-ds/admiral3-components';
+import { Button, withTooltip, type ButtonProps } from '@admiral-ds/admiral3-components';
 
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 
@@ -11,6 +11,8 @@ const State = styled.div`
   align-self: flex-start;
 `;
 
+const ButtonWithTooltip = withTooltip(Button);
+
 export const ButtonStatesTemplate = (args: ButtonProps) => {
   return (
     <StoryDemoContainer $gap="16px" $direction="column">
@@ -19,13 +21,13 @@ export const ButtonStatesTemplate = (args: ButtonProps) => {
         <StoryDemoDescription>Disable</StoryDemoDescription>
       </State>
       <State>
-        <Button
+        <ButtonWithTooltip
           {...args}
           inactive
-          // TODO: в дальнейшем заменить title на Tooltip/Hint
-          title="Кнопка выглядит задизейбленной, но сохраняет фокус и обработку нажатий. Используйте, когда основное
-          действие кнопки недоступно, но по нажатию нужно объяснить причину (н-р через тултип или
-          нотификацию)."
+          renderContent={() =>
+            'Кнопка выглядит задизейбленной, но сохраняет фокус и обработку нажатий. Используйте, когда основное ' +
+            'действие кнопки недоступно, но по нажатию нужно объяснить причину (н-р через тултип или нотификацию).'
+          }
         />
         <StoryDemoDescription>Inactive</StoryDemoDescription>
       </State>
