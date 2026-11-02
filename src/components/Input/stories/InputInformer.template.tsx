@@ -17,9 +17,9 @@ export const InputInformerTemplate = (args: InputProps) => {
         информация.
       </StoryDemoDescription>
       <StoryDemoDescription>
-        После реализации компонента Hint он будет использоваться для подсказки. В качестве иконки в поле ввода
-        используется иконка Help. Информер рекомендуется всегда оставлять активным, в том числе в состояниях{' '}
-        <code>readOnly</code> и <code>disabled</code>.
+        Подсказка реализована с помощью компонента Hint. В качестве иконки в поле ввода используется иконка Help.
+        Информер рекомендуется всегда оставлять активным, в том числе в состояниях <code>readOnly</code> и{' '}
+        <code>disabled</code>.
       </StoryDemoDescription>
       <StoryDemoItem>
         <Input

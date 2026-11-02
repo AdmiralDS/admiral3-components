@@ -12,14 +12,14 @@ export interface InputIconInformerProps extends Omit<InputIconButtonProps, 'chil
 
 const InputIconButtonWithHint = withHint(InputIconButton);
 
-export const InputIconInformer = forwardRef<HTMLButtonElement, InputIconInformerProps>((props, ref) => {
-  const { triggerMode = 'click', ...buttonProps } = props;
-
-  return (
-    <InputIconButtonWithHint ref={ref} preventFocus triggerMode={triggerMode} {...buttonProps}>
-      <ServiceHelpOutline aria-hidden />
-    </InputIconButtonWithHint>
-  );
-});
+export const InputIconInformer = forwardRef<HTMLButtonElement, InputIconInformerProps>(
+  ({ triggerMode = 'click', ...props }, ref) => {
+    return (
+      <InputIconButtonWithHint ref={ref} preventFocus triggerMode={triggerMode} {...props}>
+        <ServiceHelpOutline aria-hidden />
+      </InputIconButtonWithHint>
+    );
+  },
+);
 
 InputIconInformer.displayName = 'InputIconInformer';
