@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -8,6 +8,7 @@ import {
   Button,
   CheckBox,
   Input,
+  InputSlider,
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
@@ -24,6 +25,7 @@ type FormValues = {
   email: string;
   website: string;
   comment: string;
+  amount: string;
   age: number;
   budget: [number, number];
   delivery: string;
@@ -38,12 +40,17 @@ const defaultValues: FormValues = {
   email: '',
   website: '',
   comment: '',
+  amount: '10000.5',
   age: 30,
   budget: [25, 75],
   delivery: 'courier',
   agreement: false,
   notifications: true,
 };
+
+const amountFormatter = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatAmount = (value: number) => amountFormatter.format(value);
+const parseAmount = (text: string) => Number(text.replace(/\s/g, '').replace(',', '.'));
 
 const Page = styled.div`
   box-sizing: border-box;
@@ -118,6 +125,12 @@ const Result = styled.pre`
 
 export const ReactHookFormTemplate = () => {
   const idPrefix = useId();
+  const amountId = `${idPrefix}-amount`;
+  const amountInputRef = useRef<HTMLInputElement>(null);
+  const validateAmount = (value: string) => {
+    if (!value) return 'Введите сумму';
+    return amountInputRef.current?.validationMessage || undefined;
+  };
   const nameId = `${idPrefix}-rhf-name`;
   const passwordId = `${idPrefix}-rhf-password`;
   const confirmPasswordId = `${idPrefix}-rhf-confirm-password`;
@@ -152,7 +165,8 @@ export const ReactHookFormTemplate = () => {
   };
 
   const handleReset = () => {
-    reset();
+    reset(defaultValues);
+    amountInputRef.current?.form?.reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
     setConfirmPasswordVisible(false);
@@ -164,7 +178,8 @@ export const ReactHookFormTemplate = () => {
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
-          комментария и составные поля — через Controller.
+          комментария и составные поля — через Controller. InputSlider хранит сумму без форматирования. Его нативная
+          валидность связана с валидатором RHF, а сброс библиотеки — со сбросом нативной формы.
         </Description>
 
         <Field>
@@ -295,6 +310,51 @@ export const ReactHookFormTemplate = () => {
           />
           {errors.website && <ErrorText id={`${websiteId}-error`}>{errors.website.message}</ErrorText>}
         </Field>
+
+        <Controller
+          name="amount"
+          control={control}
+          rules={{ validate: validateAmount }}
+          render={({ field, fieldState }) => (
+            <Field>
+              <Label id={`${amountId}-label`} htmlFor={amountId}>
+                Сумма
+              </Label>
+              <InputSlider
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                onBlur={() => {
+                  field.onBlur();
+                  void trigger('amount');
+                }}
+                nativeInputRef={(node) => {
+                  amountInputRef.current = node;
+                  field.ref(node);
+                }}
+                required
+                min={0}
+                max={20_000}
+                step={0.01}
+                formatValue={formatAmount}
+                parseValue={parseAmount}
+                status={fieldState.error ? 'error' : undefined}
+                inputProps={{
+                  id: amountId,
+                  'aria-labelledby': `${amountId}-label`,
+                  inputMode: 'decimal',
+                  suffix: '₽',
+                  showClearIcon: true,
+                  'aria-describedby': fieldState.error ? `${amountId}-error` : undefined,
+                  onInput: () => {
+                    void trigger('amount');
+                  },
+                }}
+              />
+              {fieldState.error && <ErrorText id={`${amountId}-error`}>{fieldState.error.message}</ErrorText>}
+            </Field>
+          )}
+        />
 
         <Controller
           name="comment"

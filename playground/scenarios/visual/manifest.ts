@@ -10,6 +10,7 @@ export const VISUAL_SCENARIO_IDS = {
   formItem: 'visual/form-item',
   hint: 'visual/hint',
   input: 'visual/input',
+  inputSlider: 'visual/input-slider',
   link: 'visual/link',
   list: 'visual/list',
   pills: 'visual/pills',

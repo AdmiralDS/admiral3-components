@@ -10,6 +10,7 @@ export * from './components/FormItem';
 export * from './components/HelperComponents';
 export * from './components/Hint';
 export * from './components/Input';
+export * from './components/InputSlider';
 export * from './components/Link';
 export * from './components/List';
 export * from './components/Pills';

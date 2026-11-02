@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -9,6 +9,7 @@ import {
   CheckBox,
   FormItem,
   Input,
+  InputSlider,
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
@@ -23,6 +24,7 @@ type FormValues = {
   email: string;
   website: string;
   comment: string;
+  amount: string;
   delivery: string;
   agreement: boolean;
   notifications: boolean;
@@ -35,10 +37,15 @@ const defaultValues: FormValues = {
   email: '',
   website: '',
   comment: '',
+  amount: '10000.5',
   delivery: 'courier',
   agreement: false,
   notifications: true,
 };
+
+const amountFormatter = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatAmount = (value: number) => amountFormatter.format(value);
+const parseAmount = (text: string) => Number(text.replace(/\s/g, '').replace(',', '.'));
 
 const Page = styled.div`
   box-sizing: border-box;
@@ -103,6 +110,12 @@ const Result = styled.pre`
 
 export const ReactHookFormWithFormItemTemplate = () => {
   const idPrefix = useId();
+  const amountId = `${idPrefix}-amount`;
+  const amountInputRef = useRef<HTMLInputElement>(null);
+  const validateAmount = (value: string) => {
+    if (!value) return 'Введите сумму';
+    return amountInputRef.current?.validationMessage || undefined;
+  };
   const nameId = `${idPrefix}-rhf-name`;
   const passwordId = `${idPrefix}-rhf-password`;
   const confirmPasswordId = `${idPrefix}-rhf-confirm-password`;
@@ -137,7 +150,8 @@ export const ReactHookFormWithFormItemTemplate = () => {
   };
 
   const handleReset = () => {
-    reset();
+    reset(defaultValues);
+    amountInputRef.current?.form?.reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
     setConfirmPasswordVisible(false);
@@ -149,7 +163,8 @@ export const ReactHookFormWithFormItemTemplate = () => {
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
-          со счётчиком и составные поля — через Controller.
+          со счётчиком и составные поля — через Controller. InputSlider хранит сумму без форматирования. Его нативная
+          валидность связана с валидатором RHF, а сброс библиотеки — со сбросом нативной формы.
         </Description>
 
         <FormItem
@@ -303,6 +318,55 @@ export const ReactHookFormWithFormItemTemplate = () => {
             })}
           />
         </FormItem>
+
+        <Controller
+          name="amount"
+          control={control}
+          rules={{ validate: validateAmount }}
+          render={({ field, fieldState }) => (
+            <FormItem
+              label={<span id={`${amountId}-label`}>Сумма</span>}
+              htmlFor={amountId}
+              required
+              status={fieldState.error ? 'error' : undefined}
+              description={
+                fieldState.error ? <span id={`${amountId}-error`}>{fieldState.error.message}</span> : undefined
+              }
+            >
+              <InputSlider
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                onBlur={() => {
+                  field.onBlur();
+                  void trigger('amount');
+                }}
+                nativeInputRef={(node) => {
+                  amountInputRef.current = node;
+                  field.ref(node);
+                }}
+                required
+                min={0}
+                max={20_000}
+                step={0.01}
+                formatValue={formatAmount}
+                parseValue={parseAmount}
+                status={fieldState.error ? 'error' : undefined}
+                inputProps={{
+                  id: amountId,
+                  'aria-labelledby': `${amountId}-label`,
+                  inputMode: 'decimal',
+                  suffix: '₽',
+                  showClearIcon: true,
+                  'aria-describedby': fieldState.error ? `${amountId}-error` : undefined,
+                  onInput: () => {
+                    void trigger('amount');
+                  },
+                }}
+              />
+            </FormItem>
+          )}
+        />
 
         <Controller
           name="comment"

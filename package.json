@@ -58,6 +58,10 @@
       "types": "./dist/components/Input/index.d.ts",
       "import": "./dist/components/Input/index.js"
     },
+    "./input-slider": {
+      "types": "./dist/components/InputSlider/index.d.ts",
+      "import": "./dist/components/InputSlider/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
