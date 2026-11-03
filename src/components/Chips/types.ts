@@ -21,20 +21,10 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   badge?: number;
   /** Режим только для чтения. Блокирует основные действия компонента, сохраняя события наведения и фокуса. */
   readOnly?: boolean;
-  //TODO поправить описание при добавлении компонента Tooltip
-  /** Функция, которая возвращает реакт-компонент с контентом tooltip, сейчас используется нативный title в качестве tooltip, поэтому функция должна возвращать string. Если этому компоненту нужны props, используйте замыкание */
-  renderContentTooltip?: () => string;
-  //TODO добавить в примитивное children значение number при добавлении компонента Tooltip
-  /**
-   * Отключение Tooltip.
-   * При true:
-   * - не навешиваются hover/focus-слушатели для показа/скрытия Tooltip,
-   * - не выполняются проверки переполнения (overflow) контента для тултипа.
-   * При false:
-   * - если передан renderContentTooltip, будет показан кастомный контент тултипа,
-   * - иначе при примитивном children (string) будет показано его значение,
-   */
-  disabledTooltip?: boolean;
+  /** Функция рендера кастомного содержимого Tooltip. По умолчанию используется children. */
+  renderTooltipContent?: () => ReactNode;
+  /** Показывать Tooltip при переполнении содержимого. При false обработчики не добавляются. По умолчанию true. */
+  showTooltip?: boolean;
 }
 
 export interface SelectableChipProps extends ChipBaseProps {

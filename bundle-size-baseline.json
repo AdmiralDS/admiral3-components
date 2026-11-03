@@ -16,7 +16,7 @@
       "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 16024
+      "rawBytes": 29258
     },
     "divider": {
       "rawBytes": 1543
@@ -31,10 +31,10 @@
       "rawBytes": 9796
     },
     "hint": {
-      "rawBytes": 14813
+      "rawBytes": 14817
     },
     "input": {
-      "rawBytes": 13406
+      "rawBytes": 13402
     },
     "link": {
       "rawBytes": 2676
@@ -64,7 +64,7 @@
       "rawBytes": 6566
     },
     "tag": {
-      "rawBytes": 21199
+      "rawBytes": 21203
     },
     "text-area": {
       "rawBytes": 28009
@@ -73,7 +73,7 @@
       "rawBytes": 7700
     },
     "tooltip": {
-      "rawBytes": 10939
+      "rawBytes": 10943
     }
   },
   "version": 1

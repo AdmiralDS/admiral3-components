@@ -1,5 +1,7 @@
-import { forwardRef, useRef, type KeyboardEvent, type MouseEvent } from 'react';
+import { forwardRef, useMemo, type KeyboardEvent, type MouseEvent } from 'react';
 
+import { Tooltip } from '#src/components/Tooltip';
+import { hasSlotContent } from '#src/utils/hasSlotContent';
 import { refSetter } from '#src/utils/refSetter';
 
 import { ChipContent } from './ChipContent';
@@ -23,8 +25,8 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
       onClick,
       onKeyDown,
       tabIndex,
-      renderContentTooltip,
-      disabledTooltip,
+      renderTooltipContent,
+      showTooltip = true,
       closeButtonProps,
       'aria-disabled': ariaDisabled,
       ...props
@@ -33,9 +35,10 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
   ) => {
     const eventsDisabled = disabled || readOnly;
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
-
-    const tooltip = useChipTooltip(containerRef, children, renderContentTooltip, disabledTooltip);
+    const { triggerRef, contentRef, isTooltipVisible, tooltipProps } = useChipTooltip(showTooltip);
+    const chipRef = useMemo(() => refSetter(ref, triggerRef), [ref, triggerRef]);
+    const tooltipContent = renderTooltipContent ? renderTooltipContent() : children;
+    const shouldShowTooltip = isTooltipVisible && hasSlotContent(tooltipContent);
 
     const handleClickCloseIcon = (e: MouseEvent<SVGSVGElement>) => {
       e.stopPropagation();
@@ -61,35 +64,42 @@ export const RemovableChip = forwardRef<HTMLDivElement, RemovableChipProps>(
     };
 
     return (
-      <RemovableChipStyled
-        {...props}
-        ref={refSetter(containerRef, ref)}
-        role="button"
-        tabIndex={tabIndex ?? (disabled ? -1 : 0)}
-        aria-disabled={ariaDisabled ?? (eventsDisabled || undefined)}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        title={tooltip.title}
-        $dimension={dimension}
-        $appearance={appearance}
-        $colorMode={colorMode}
-        $disabled={disabled}
-        $readOnly={readOnly}
-      >
-        <ChipContent
-          children={children}
-          iconsBefore={iconsBefore}
-          avatar={avatar}
-          badge={badge}
-          dimension={dimension}
-          colorMode={colorMode}
-          disabled={disabled}
-          contentRef={tooltip.contentRef}
-        />
-        {!readOnly && (
-          <CloseIcon {...closeButtonProps} onClick={handleClickCloseIcon} $disabled={disabled} $colorMode={colorMode} />
-        )}
-      </RemovableChipStyled>
+      <>
+        <RemovableChipStyled
+          {...props}
+          ref={chipRef}
+          role="button"
+          tabIndex={tabIndex ?? (disabled ? -1 : 0)}
+          aria-disabled={ariaDisabled ?? (eventsDisabled || undefined)}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          $dimension={dimension}
+          $appearance={appearance}
+          $colorMode={colorMode}
+          $disabled={disabled}
+          $readOnly={readOnly}
+        >
+          <ChipContent
+            children={children}
+            iconsBefore={iconsBefore}
+            avatar={avatar}
+            badge={badge}
+            dimension={dimension}
+            colorMode={colorMode}
+            disabled={disabled}
+            contentRef={contentRef}
+          />
+          {!readOnly && (
+            <CloseIcon
+              {...closeButtonProps}
+              onClick={handleClickCloseIcon}
+              $disabled={disabled}
+              $colorMode={colorMode}
+            />
+          )}
+        </RemovableChipStyled>
+        {shouldShowTooltip && <Tooltip {...tooltipProps}>{tooltipContent}</Tooltip>}
+      </>
     );
   },
 );
