@@ -3,19 +3,19 @@ import { useState } from 'react';
 import { useTooltip } from '#src/components/Tooltip';
 import { useOverflow } from '#src/hooks/useOverflow';
 
-export const useChipTooltip = (enabled = true) => {
+export const useChipTooltip = (tooltipEnabled = true) => {
   const [contentElement, setContentElement] = useState<HTMLSpanElement | null>(null);
   const {
     triggerProps: { ref: tooltipTriggerRef },
     tooltipProps,
     isVisible,
   } = useTooltip<HTMLDivElement>();
-  const textOverflow = useOverflow(enabled ? tooltipProps.targetElement : null, contentElement);
+  const textOverflow = useOverflow(tooltipEnabled ? tooltipProps.targetElement : null, contentElement);
 
   return {
-    triggerRef: enabled ? tooltipTriggerRef : undefined,
+    triggerRef: tooltipEnabled ? tooltipTriggerRef : undefined,
     contentRef: setContentElement,
     tooltipProps,
-    isTooltipVisible: enabled && isVisible && textOverflow,
+    isTooltipVisible: tooltipEnabled && isVisible && textOverflow,
   };
 };

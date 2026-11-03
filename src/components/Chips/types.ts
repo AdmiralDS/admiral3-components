@@ -23,7 +23,8 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   readOnly?: boolean;
   /** Функция рендера кастомного содержимого Tooltip. По умолчанию используется children. */
   renderTooltipContent?: () => ReactNode;
-  /** Показывать Tooltip при переполнении содержимого. При false обработчики не добавляются. По умолчанию true. */
+  /** Показывать Tooltip при переполнении содержимого. По умолчанию true.
+   * При false тултип не появляется и связанные с ним слушатели событий не устанавливаются. */
   showTooltip?: boolean;
 }
 
