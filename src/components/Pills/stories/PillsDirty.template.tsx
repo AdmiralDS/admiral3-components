@@ -1,6 +1,7 @@
-import { Pill, type PillProps } from '@admiral-ds/admiral3-components';
+import { Button, Pill, type PillProps } from '@admiral-ds/admiral3-components';
 
-import { StoryDirtyContainer } from '../../stories/StoryContainers';
+import { PillsTruncatedTextTemplate } from './PillsTruncatedText.template';
+import { StoryDemoContainer, StoryDirtyContainer } from '../../stories/StoryContainers';
 import { PILLS_APPEARANCES } from '../constants';
 
 export const PillsDirtyTemplate = (args: PillProps) => {
@@ -14,3 +15,15 @@ export const PillsDirtyTemplate = (args: PillProps) => {
     </StoryDirtyContainer>
   );
 };
+
+export const PillsTruncatedTextDirtyTemplate = (args: PillProps) => (
+  <StoryDemoContainer $direction="column" $gap="16px" $withBackground={false}>
+    <Button appearance="flat" dimension="s" data-testid="before-truncated-pills">
+      До группы
+    </Button>
+    <PillsTruncatedTextTemplate {...args} />
+    <Button appearance="flat" dimension="s" data-testid="after-truncated-pills">
+      После группы
+    </Button>
+  </StoryDemoContainer>
+);
