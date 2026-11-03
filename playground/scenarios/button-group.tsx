@@ -9,6 +9,7 @@ import {
   ButtonGroupDynamicChildrenDirtyTemplate,
   ButtonGroupStatesDirtyTemplate,
 } from '../../src/components/ButtonGroup/stories/ButtonGroupE2E.template';
+import { ButtonGroupIconBadgeTemplate } from '../../src/components/ButtonGroup/stories/ButtonGroupIconBadge.template';
 import { ButtonGroupKeyboardNavigationTemplate } from '../../src/components/ButtonGroup/stories/ButtonGroupKeyboardNavigation.template';
 
 const defaultArgs: ButtonGroupProps = {
@@ -23,6 +24,11 @@ const customColorConfig: ButtonGroupProps['colorConfig'] = {
 };
 
 export const buttonGroupScenarios: PlaygroundScenario[] = [
+  {
+    id: 'button-group/tooltip',
+    title: 'ButtonGroup Tooltip',
+    render: () => <ButtonGroupIconBadgeTemplate {...defaultArgs} />,
+  },
   {
     id: 'button-group/default',
     title: 'ButtonGroup Default',

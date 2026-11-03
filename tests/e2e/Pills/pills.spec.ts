@@ -69,10 +69,27 @@ test.describe('Pills playground', () => {
     const label = pills.locator('span').first();
 
     await expect(pills).toHaveText('Я три дня гналась за вами, чтобы сказать, как вы мне безразличны');
-    await expect(pills).toHaveAttribute('title', 'Я три дня гналась за вами, чтобы сказать, как вы мне безразличны');
+    await expect(pills).not.toHaveAttribute('title');
     await expect(label).toHaveCSS('text-overflow', 'ellipsis');
     await expect(label).toHaveCSS('overflow', 'hidden');
     expect(await label.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+
+    await pills.hover();
+    const tooltip = page.getByRole('tooltip');
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toHaveText(await pills.innerText());
+    await expect(pills).not.toHaveAttribute('aria-describedby');
+    await expect(pills).toHaveAccessibleName(await pills.innerText());
+  });
+
+  test('does not show a tooltip when the label fits', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath(infoScenarioId));
+
+    const pill = page.getByTestId('pills');
+    await pill.hover();
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await pill.focus();
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
   });
 
   test('joins nested Pills without gaps and keeps only outer corner radius', async ({ page }) => {
