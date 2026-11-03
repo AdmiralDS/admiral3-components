@@ -4,10 +4,10 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
-  type MouseEvent,
   type PointerEvent,
 } from 'react';
 
@@ -18,6 +18,7 @@ import { isOverflowed } from '../../utils/isOverflowed';
 import { refSetter } from '../../utils/refSetter';
 import { FormItemContext } from '../_internal/FormItemContext';
 import { ClearInputIconButton, clearNativeTextInput, StyledAffix, StyledInputDivider } from '../_internal/InputAtoms';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 /** Base text input component. */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -45,9 +46,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       maxLength: maxLengthProp,
       placeholder,
       onChange,
-      onMouseEnter,
-      onMouseLeave,
-      title,
       'aria-invalid': ariaInvalid,
       ...props
     },
@@ -62,7 +60,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const maxLength = formItem?.maxLength ?? maxLengthProp;
     const onCharacterCountChange = formItem?.onCharacterCountChange;
     const inputRef = useRef<HTMLInputElement>(null);
-    const [overflowTitle, setOverflowTitle] = useState<string>();
     const displayClearIcon = showClearIcon && !disabled && !readOnly;
     const hasIconsBefore = hasSlotContent(iconsBefore);
     const hasIconsAfter = hasSlotContent(iconsAfter);
@@ -73,6 +70,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onPointerUp: onContainerPointerUp,
       ...restContainerProps
     } = containerProps ?? {};
+
+    const [overflowValue, setOverflowValue] = useState<string | null>(null);
+    const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null);
+    const mergedContainerRef = useMemo(() => refSetter(containerRef, setContainerElement), [containerRef]);
 
     const handleClear = () => {
       const input = inputRef.current;
@@ -125,20 +126,35 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     // Layout cleanup старого Input выполняется до layout effect нового Input при его замене.
     useLayoutEffect(() => () => onCharacterCountChange?.(0), [onCharacterCountChange]);
 
-    const handleMouseEnter = (event: MouseEvent<HTMLInputElement>) => {
-      // TODO: Replace the native title with Tooltip after the Tooltip component is implemented.
-      if (title === undefined && showTooltip && isOverflowed(event.currentTarget)) {
-        setOverflowTitle(event.currentTarget.value);
-      } else {
-        setOverflowTitle(undefined);
-      }
-      onMouseEnter?.(event);
-    };
+    useLayoutEffect(() => {
+      const input = inputRef.current;
+      if (!input || !containerElement) return;
 
-    const handleMouseLeave = (event: MouseEvent<HTMLInputElement>) => {
-      setOverflowTitle(undefined);
-      onMouseLeave?.(event);
-    };
+      // Используем нативные события вместо React onMouseEnter/onMouseLeave из-за известной проблемы SyntheticEvent:
+      // mouseenter может не сработать при переходе с disabled-элемента на input.
+      // https://github.com/facebook/react/issues/19419
+      const handleContainerMouseEnter = () => {
+        if (!showTooltip || input.matches(':focus') || !isOverflowed(input)) {
+          setOverflowValue(null);
+          return;
+        }
+
+        setOverflowValue(input.value);
+      };
+      const clearOverflowValue = () => setOverflowValue(null);
+
+      // При переводе курсора с контейнера на Tooltip срабатывает mouseleave, поэтому Tooltip закрывается и перейти в
+      // него невозможно. Для Input это ожидаемо: полный текст доступен в самом поле, где его можно выделить и скопировать.
+      containerElement.addEventListener('mouseenter', handleContainerMouseEnter);
+      containerElement.addEventListener('mouseleave', clearOverflowValue);
+      input.addEventListener('focus', clearOverflowValue);
+
+      return () => {
+        containerElement.removeEventListener('mouseenter', handleContainerMouseEnter);
+        containerElement.removeEventListener('mouseleave', clearOverflowValue);
+        input.removeEventListener('focus', clearOverflowValue);
+      };
+    }, [containerElement, showTooltip]);
 
     const handleContainerPointerDown = (event: PointerEvent<HTMLDivElement>) => {
       const iconButton = (event.target as Element).closest('[data-input-icon-button]');
@@ -153,6 +169,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           input.focus({ preventScroll: true });
         }
       }
+
+      setOverflowValue(null);
       onContainerPointerDown?.(event);
     };
 
@@ -168,62 +186,64 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <StyledBaseInputContainer
-        ref={containerRef}
-        $appearance={appearance}
-        $dimension={dimension}
-        $disabled={disabled}
-        $readOnly={readOnly}
-        $status={status}
-        data-appearance={appearance}
-        data-dimension={dimension}
-        data-disabled={disabled ? '' : undefined}
-        data-read-only={readOnly ? '' : undefined}
-        data-status={status}
-        data-clear-icon-only={displayClearIcon && !hasIconsAfter && !hasSuffix ? '' : undefined}
-        onPointerDown={handleContainerPointerDown}
-        onPointerUp={handleContainerPointerUp}
-        {...restContainerProps}
-      >
-        {hasPrefix ? (
-          <>
-            <StyledAffix data-disabled={disabled ? '' : undefined}>{prefix}</StyledAffix>
-            {showAffixDivider && <StyledInputDivider />}
-          </>
-        ) : null}
-        {hasIconsBefore && <StyledIconPanel data-role="icon-panel-before">{iconsBefore}</StyledIconPanel>}
-        <NativeInput
-          ref={refSetter(inputRef, ref)}
-          disabled={disabled}
-          readOnly={readOnly}
-          required={required}
-          value={value}
-          defaultValue={defaultValue}
-          maxLength={maxLength}
-          placeholder={placeholder ?? ' '}
-          onChange={handleChange}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          aria-invalid={status === 'error' || ariaInvalid || undefined}
-          title={title ?? (showTooltip ? overflowTitle : undefined)}
-          {...props}
-        />
-        {(displayClearIcon || hasIconsAfter) && (
-          <StyledIconPanel data-role="icon-panel-after" data-clear-icon-only={!hasIconsAfter || undefined}>
-            {displayClearIcon && (
-              <ClearInputIconButton {...clearButtonProps} data-role="clear-input-button" onClick={handleClear} />
-            )}
-            {iconsAfter}
-          </StyledIconPanel>
+      <>
+        <StyledBaseInputContainer
+          ref={mergedContainerRef}
+          $appearance={appearance}
+          $dimension={dimension}
+          $disabled={disabled}
+          $readOnly={readOnly}
+          $status={status}
+          data-appearance={appearance}
+          data-dimension={dimension}
+          data-disabled={disabled ? '' : undefined}
+          data-read-only={readOnly ? '' : undefined}
+          data-status={status}
+          data-clear-icon-only={displayClearIcon && !hasIconsAfter && !hasSuffix ? '' : undefined}
+          onPointerDown={handleContainerPointerDown}
+          onPointerUp={handleContainerPointerUp}
+          {...restContainerProps}
+        >
+          {hasPrefix ? (
+            <>
+              <StyledAffix data-disabled={disabled ? '' : undefined}>{prefix}</StyledAffix>
+              {showAffixDivider && <StyledInputDivider />}
+            </>
+          ) : null}
+          {hasIconsBefore && <StyledIconPanel data-role="icon-panel-before">{iconsBefore}</StyledIconPanel>}
+          <NativeInput
+            ref={refSetter(inputRef, ref)}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+            value={value}
+            defaultValue={defaultValue}
+            maxLength={maxLength}
+            placeholder={placeholder ?? ' '}
+            onChange={handleChange}
+            aria-invalid={status === 'error' || ariaInvalid || undefined}
+            {...props}
+          />
+          {(displayClearIcon || hasIconsAfter) && (
+            <StyledIconPanel data-role="icon-panel-after" data-clear-icon-only={!hasIconsAfter || undefined}>
+              {displayClearIcon && (
+                <ClearInputIconButton {...clearButtonProps} data-role="clear-input-button" onClick={handleClear} />
+              )}
+              {iconsAfter}
+            </StyledIconPanel>
+          )}
+          {hasSuffix ? (
+            <>
+              {showAffixDivider && <StyledInputDivider />}
+              <StyledAffix data-disabled={disabled ? '' : undefined}>{suffix}</StyledAffix>
+            </>
+          ) : null}
+          <StyledBaseInputBorder />
+        </StyledBaseInputContainer>
+        {showTooltip && hasSlotContent(overflowValue) && (
+          <Tooltip targetElement={containerElement}>{overflowValue}</Tooltip>
         )}
-        {hasSuffix ? (
-          <>
-            {showAffixDivider && <StyledInputDivider />}
-            <StyledAffix data-disabled={disabled ? '' : undefined}>{suffix}</StyledAffix>
-          </>
-        ) : null}
-        <StyledBaseInputBorder />
-      </StyledBaseInputContainer>
+      </>
     );
   },
 );
