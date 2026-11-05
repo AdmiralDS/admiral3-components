@@ -158,37 +158,30 @@ test.describe('RemovableChip presentation', () => {
     }
   });
 
-  test('shows native titles only for overflowing content with enabled tooltips', async ({ page }) => {
+  test('shows Tooltip only for overflowing content when enabled', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('removable-chip/tooltip'));
     const chips = page.locator('[data-dimension][data-appearance][data-color-mode]');
-    const auto = chips.nth(0);
-    const custom = chips.nth(1);
-    const disabled = chips.nth(2);
-    const short = chips.nth(3);
-    const close = auto.getByLabel('Удалить чипс');
+    const chipWithDefaultTooltip = chips.nth(0);
+    const chipWithCustomTooltip = chips.nth(1);
+    const chipWithoutTooltip = chips.nth(2);
+    const chipWithoutOverflow = chips.nth(3);
+    const closeButton = chipWithDefaultTooltip.getByLabel('Удалить чипс');
+    const tooltip = page.getByRole('tooltip');
     await expect(chips).toHaveCount(4);
-    await expect(close).toHaveCSS('width', '16px');
-    await expect(close).toHaveCSS('height', '16px');
-    await expect(close).toHaveCSS('flex-shrink', '0');
+    await expect(closeButton).toHaveCSS('width', '16px');
+    await expect(closeButton).toHaveCSS('height', '16px');
+    await expect(closeButton).toHaveCSS('flex-shrink', '0');
 
-    await expect(auto).not.toHaveAttribute('title');
-    await auto.hover();
-    await expect(auto).toHaveAttribute(
-      'title',
-      'Очень длинное название выбранного фильтра, которое не помещается в чипс',
-    );
-    await custom.hover();
-    await expect(auto).not.toHaveAttribute('title');
-    await expect(custom).toHaveAttribute('title', 'Собственное описание выбранного фильтра');
-    await disabled.hover();
-    await expect(custom).not.toHaveAttribute('title');
-    await expect(disabled).not.toHaveAttribute('title');
-    await short.hover();
-    await expect(short).not.toHaveAttribute('title');
-    await auto.focus();
-    await expect(auto).toHaveAttribute(
-      'title',
-      'Очень длинное название выбранного фильтра, которое не помещается в чипс',
-    );
+    await expect(tooltip).toHaveCount(0);
+    await chipWithDefaultTooltip.hover();
+    await expect(tooltip).toHaveText('Очень длинное название выбранного фильтра, которое не помещается в чипс');
+    await chipWithCustomTooltip.hover();
+    await expect(tooltip).toHaveText('Собственное описание выбранного фильтра');
+    await chipWithoutTooltip.hover();
+    await expect(tooltip).toHaveCount(0);
+    await chipWithoutOverflow.hover();
+    await expect(tooltip).toHaveCount(0);
+    await chipWithDefaultTooltip.focus();
+    await expect(tooltip).toHaveText('Очень длинное название выбранного фильтра, которое не помещается в чипс');
   });
 });

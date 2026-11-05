@@ -3,8 +3,6 @@ import { createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as overflowUtils from '#src/utils/checkOverflow';
-
 import { SelectableChip } from '../SelectableChip';
 import { FilterChips } from './FilterChips';
 
@@ -15,17 +13,23 @@ describe('FilterChips', () => {
   });
 
   it('reuses SelectableChip tooltip behavior', () => {
-    vi.spyOn(overflowUtils, 'checkOverflow').mockReturnValue(true);
     render(
       <FilterChips value={[]}>
-        <FilterChips.Item value="first" data-testid="first" renderContentTooltip={() => 'Filter tooltip'}>
+        <FilterChips.Item value="first" data-testid="first" renderTooltipContent={() => 'Filter tooltip'}>
           First
         </FilterChips.Item>
       </FilterChips>,
     );
 
-    fireEvent.mouseEnter(screen.getByTestId('first'));
-    expect(screen.getByTestId('first')).toHaveAttribute('title', 'Filter tooltip');
+    const item = screen.getByTestId('first');
+    const content = screen.getByText('First');
+    Object.defineProperties(content, {
+      scrollWidth: { configurable: true, value: 200 },
+      clientWidth: { configurable: true, value: 100 },
+    });
+
+    fireEvent.mouseEnter(item);
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Filter tooltip');
   });
 
   it('selects and deselects items in multiple mode without changing the controlled value itself', () => {

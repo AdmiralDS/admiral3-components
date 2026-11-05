@@ -7,25 +7,23 @@ const longText = 'Очень длинное название выбранног�
 export const RemovableChipTooltipTemplate = (args: RemovableChipProps) => (
   <StoryDemoContainer $withBackground={false} $direction="column" $gap="16px">
     <StoryDemoDescription>
-      Для строкового children содержимое определяется автоматически; renderContentTooltip позволяет задать собственный
-      текст.
+      При переполнении Tooltip по умолчанию отображает <code>children</code>; <code>renderTooltipContent</code>{' '}
+      позволяет задать собственное содержимое.
     </StoryDemoDescription>
-    <RemovableChip {...args} disabledTooltip={false} renderContentTooltip={undefined}>
+    <RemovableChip {...args} showTooltip renderTooltipContent={undefined}>
       {longText}
     </RemovableChip>
-    <RemovableChip
-      {...args}
-      disabledTooltip={false}
-      renderContentTooltip={() => 'Собственное описание выбранного фильтра'}
-    >
+    <RemovableChip {...args} showTooltip renderTooltipContent={() => 'Собственное описание выбранного фильтра'}>
       <span>{longText}</span>
     </RemovableChip>
-    <StoryDemoDescription>disabledTooltip отключает подсказку даже для обрезанного текста.</StoryDemoDescription>
-    <RemovableChip {...args} disabledTooltip renderContentTooltip={undefined}>
+    <StoryDemoDescription>
+      <code>{'showTooltip={false}'}</code> отключает Tooltip и связанные с ним обработчики.
+    </StoryDemoDescription>
+    <RemovableChip {...args} showTooltip={false} renderTooltipContent={undefined}>
       {longText}
     </RemovableChip>
     <StoryDemoDescription>Если текст помещается в чипс, подсказка не появляется.</StoryDemoDescription>
-    <RemovableChip {...args} disabledTooltip={false} renderContentTooltip={undefined}>
+    <RemovableChip {...args} showTooltip renderTooltipContent={undefined}>
       Короткий
     </RemovableChip>
   </StoryDemoContainer>

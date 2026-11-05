@@ -77,7 +77,7 @@ export const WithTooltip: StoryObj<typeof meta> = {
   args: defaultArgs,
   render: SelectableChipTooltipTemplate,
   parameters: {
-    controls: { exclude: ['children', 'disabledTooltip', 'renderContentTooltip'] },
+    controls: { exclude: ['children', 'showTooltip', 'renderTooltipContent'] },
     docs: { source: { code: selectableChipTooltipTemplateRaw } },
   },
 };
