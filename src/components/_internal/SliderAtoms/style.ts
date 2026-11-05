@@ -125,13 +125,14 @@ const nativeTrackStyles = css<{ $dimension: SliderAtomDimension }>`
       calc(100% - ${({ $dimension }) => SLIDER_DIMENSION_PARAMETERS[$dimension].thumbSize}px) ${SLIDER_TRACK_HEIGHT}px
       no-repeat;
 `;
-const thumbStyles = css<{ $dimension: SliderAtomDimension; $appearance: SliderThumbAppearance }>`
+const thumbStyles = css<{ $dimension: SliderAtomDimension; $thumbAppearance: SliderThumbAppearance }>`
   box-sizing: border-box;
   width: ${({ $dimension }) => SLIDER_DIMENSION_PARAMETERS[$dimension].thumbSize}px;
   height: ${({ $dimension }) => SLIDER_DIMENSION_PARAMETERS[$dimension].thumbSize}px;
   border-radius: 50%;
-  border: ${({ $appearance }) => ($appearance === 'stroke' ? SLIDER_THUMB_BORDER_WIDTH : 0)}px solid ${primary};
-  background: ${({ $appearance }) => ($appearance === 'stroke' ? base : primary)};
+  border: ${({ $thumbAppearance }) => ($thumbAppearance === 'stroke' ? SLIDER_THUMB_BORDER_WIDTH : 0)}px solid
+    ${primary};
+  background: ${({ $thumbAppearance }) => ($thumbAppearance === 'stroke' ? base : primary)};
   box-shadow: ${shadow};
   cursor: inherit;
   transition:
@@ -139,19 +140,19 @@ const thumbStyles = css<{ $dimension: SliderAtomDimension; $appearance: SliderTh
     border-color ${hoverPressLeaveTransition},
     border-width ${hoverPressLeaveTransition};
 `;
-const hoverThumbStyles = css<{ $appearance: SliderThumbAppearance }>`
+const hoverThumbStyles = css<{ $thumbAppearance: SliderThumbAppearance }>`
   border-color: ${primaryHover};
-  background: ${({ $appearance }) => ($appearance === 'stroke' ? base : primaryHover)};
+  background: ${({ $thumbAppearance }) => ($thumbAppearance === 'stroke' ? base : primaryHover)};
 `;
-const pressedThumbStyles = css<{ $dimension: SliderAtomDimension; $appearance: SliderThumbAppearance }>`
-  border-width: ${({ $dimension, $appearance }) =>
-    $appearance === 'stroke' ? SLIDER_DIMENSION_PARAMETERS[$dimension].thumbBorderWidthPress : 0}px;
+const pressedThumbStyles = css<{ $dimension: SliderAtomDimension; $thumbAppearance: SliderThumbAppearance }>`
+  border-width: ${({ $dimension, $thumbAppearance }) =>
+    $thumbAppearance === 'stroke' ? SLIDER_DIMENSION_PARAMETERS[$dimension].thumbBorderWidthPress : 0}px;
   border-color: ${primaryHover};
-  background: ${({ $appearance }) => ($appearance === 'stroke' ? base : primaryPress)};
+  background: ${({ $thumbAppearance }) => ($thumbAppearance === 'stroke' ? base : primaryPress)};
 `;
-const disabledThumbStyles = css<{ $appearance: SliderThumbAppearance }>`
+const disabledThumbStyles = css<{ $thumbAppearance: SliderThumbAppearance }>`
   border-color: ${subtle};
-  background: ${({ $appearance }) => ($appearance === 'stroke' ? base : subtle)};
+  background: ${({ $thumbAppearance }) => ($thumbAppearance === 'stroke' ? base : subtle)};
   box-shadow: none;
 `;
 const focusThumbStyles = css`
@@ -161,7 +162,7 @@ const focusThumbStyles = css`
 
 export const NativeSliderInput = styled.input<{
   $dimension: SliderAtomDimension;
-  $appearance: SliderThumbAppearance;
+  $thumbAppearance: SliderThumbAppearance;
   $segmentPositions?: readonly number[];
   $trackStyles?: RuleSet<SliderTrackStyleProps>;
   $hideTrack?: boolean;

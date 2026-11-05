@@ -11,7 +11,7 @@ import { refSetter } from '../../../utils/refSetter';
 /** Два нативных ползунка на общей шкале. Подписи и состояние значения принадлежат владельцу. */
 export const SliderRangeBase = ({
   dimension,
-  appearance,
+  thumbAppearance,
   min,
   max,
   step,
@@ -142,7 +142,7 @@ export const SliderRangeBase = ({
   // Собственные дорожки скрыты: рисуем одну общую, pointer-события inputs принимает только Handle.
   const sharedProps = {
     dimension,
-    appearance,
+    thumbAppearance,
     min,
     max,
     step,

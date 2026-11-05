@@ -130,7 +130,7 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
         <SliderRangeBase
           allowSwap={allowSwap}
           dimension={dimension}
-          appearance={thumbAppearance}
+          thumbAppearance={thumbAppearance}
           min={min}
           max={max}
           step={step}

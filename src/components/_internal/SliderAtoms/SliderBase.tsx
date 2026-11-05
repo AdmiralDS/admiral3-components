@@ -14,7 +14,7 @@ export const SliderBase = forwardRef<HTMLInputElement, SliderBaseProps>(
   (
     {
       dimension,
-      appearance,
+      thumbAppearance,
       position,
       disabled,
       showTooltip,
@@ -189,7 +189,7 @@ export const SliderBase = forwardRef<HTMLInputElement, SliderBaseProps>(
               : undefined)
           }
           $dimension={dimension}
-          $appearance={appearance}
+          $thumbAppearance={thumbAppearance}
           $segmentPositions={segmentPositions}
           $trackStyles={trackStyles}
           $hideTrack={hideTrack}

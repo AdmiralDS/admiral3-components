@@ -21,7 +21,7 @@ export interface SliderBaseProps extends Omit<
 > {
   onValueChange: (value: number) => void;
   dimension: SliderAtomDimension;
-  appearance: SliderThumbAppearance;
+  thumbAppearance: SliderThumbAppearance;
   position: number;
   showTooltip: boolean;
   tooltipContent: ReactNode;
@@ -60,7 +60,7 @@ export interface SliderControlLayoutProps {
 export interface SliderRangeBaseProps {
   allowSwap: boolean;
   dimension: SliderAtomDimension;
-  appearance: SliderThumbAppearance;
+  thumbAppearance: SliderThumbAppearance;
   min: number;
   max: number;
   step: number;
