@@ -47,6 +47,18 @@ export const sliderRangeScenarios: PlaygroundScenario[] = [
     ),
   },
   {
+    id: 'slider-range/no-swap',
+    title: 'SliderRange Without Swap',
+    render: () => (
+      <SliderRangePlaygroundTemplate
+        allowSwap={false}
+        defaultValue={[25, 75]}
+        lowerNativeSliderProps={{ 'aria-label': 'Минимальная сумма' }}
+        upperNativeSliderProps={{ 'aria-label': 'Максимальная сумма' }}
+      />
+    ),
+  },
+  {
     id: 'slider-range/renderers',
     title: 'SliderRange Renderers',
     render: () => (

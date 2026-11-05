@@ -58,6 +58,7 @@ export interface SliderControlLayoutProps {
 
 /** Владелец передаёт нормализованные границы, шаг и упорядоченные значения. */
 export interface SliderRangeBaseProps {
+  allowSwap: boolean;
   dimension: SliderAtomDimension;
   appearance: SliderThumbAppearance;
   min: number;

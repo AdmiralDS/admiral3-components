@@ -24,9 +24,11 @@ export interface SliderRangeProps extends Omit<
   value?: SliderRangeValue;
   /** Начальный интервал для uncontrolled-режима. По умолчанию [min, max]. */
   defaultValue?: SliderRangeValue;
-  /** Вызывается только при изменении интервала пользователем. */
+  /** Передаёт упорядоченный интервал при изменении пользователем. При allowSwap ползунки меняют роли при перетаскивании через соседа. Клавиатура ограничивает значение соседней границей. */
   onChange?: (value: [number, number]) => void;
   disabled?: boolean;
+  /** Разрешает обмен ролями при перетаскивании через соседний ползунок. При false границы могут совпадать, но не пересекаются. По умолчанию true. */
+  allowSwap?: boolean;
   /** Показывает Tooltip при hover/press и после клавиатурного изменения. По умолчанию false. */
   showTooltip?: boolean;
   thumbAppearance?: SliderThumbAppearance;
@@ -46,6 +48,8 @@ export interface SliderRangeProps extends Omit<
   lowerNativeSliderProps?: NativeSliderProps;
   /** Атрибуты верхнего ползунка, включая aria-label/aria-labelledby. form берётся у нижнего ползунка. */
   upperNativeSliderProps?: NativeSliderProps;
+  /** Ref текущего нижнего ползунка. При обмене ролей указывает на другой DOM-input. */
   lowerNativeSliderRef?: Ref<HTMLInputElement>;
+  /** Ref текущего верхнего ползунка. При обмене ролей указывает на другой DOM-input. */
   upperNativeSliderRef?: Ref<HTMLInputElement>;
 }

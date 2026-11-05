@@ -20,6 +20,8 @@ import { SliderRangeStoryNativeFormTemplate } from './SliderRangeStoryNativeForm
 import SliderRangeStoryNativeFormTemplateRaw from './SliderRangeStoryNativeForm.template?raw';
 import { SliderRangeStoryPlaygroundTemplate } from './SliderRangeStoryPlayground.template';
 import SliderRangeStoryPlaygroundTemplateRaw from './SliderRangeStoryPlayground.template?raw';
+import { SliderRangeThumbSwapTemplate } from './SliderRangeThumbSwap.template';
+import sliderRangeThumbSwapRaw from './SliderRangeThumbSwap.template?raw';
 import { SliderRangeTooltipTemplate } from './SliderRangeTooltip.template';
 import SliderRangeTooltipTemplateRaw from './SliderRangeTooltip.template?raw';
 import { SLIDER_RANGE_DIMENSIONS, SLIDER_THUMB_APPEARANCES } from '../constants';
@@ -32,6 +34,7 @@ const meta = {
     label: 'Сумма',
     defaultValue: [25, 75],
     dimension: 'm',
+    allowSwap: true,
     lowerNativeSliderProps: { 'aria-label': 'Минимальная сумма' },
     upperNativeSliderProps: { 'aria-label': 'Максимальная сумма' },
   },
@@ -39,6 +42,7 @@ const meta = {
     dimension: { control: { type: 'inline-radio' }, options: SLIDER_RANGE_DIMENSIONS },
     thumbAppearance: { control: { type: 'inline-radio' }, options: SLIDER_THUMB_APPEARANCES },
     showTooltip: { control: 'boolean' },
+    allowSwap: { control: 'boolean' },
     renderValue: { control: 'select', options: ['numbers', 'hidden'], mapping: { numbers: undefined, hidden: null } },
     renderMarks: { control: 'select', options: ['numbers', 'hidden'], mapping: { numbers: undefined, hidden: null } },
   },
@@ -51,6 +55,7 @@ export const Playground: StoryObj<SliderRangeProps> = {
     docs: { source: { code: SliderRangeStoryPlaygroundTemplateRaw } },
     controls: {
       include: [
+        'allowSwap',
         'dimension',
         'thumbAppearance',
         'disabled',
@@ -63,6 +68,14 @@ export const Playground: StoryObj<SliderRangeProps> = {
         'step',
       ],
     },
+  },
+};
+export const ThumbSwap: StoryObj<SliderRangeProps> = {
+  name: 'Обмен ролями ползунков',
+  render: SliderRangeThumbSwapTemplate,
+  parameters: {
+    docs: { source: { code: sliderRangeThumbSwapRaw } },
+    controls: { disable: true },
   },
 };
 export const Sizes: StoryObj<SliderRangeProps> = {

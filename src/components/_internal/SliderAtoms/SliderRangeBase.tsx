@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FocusEvent, PointerEvent } from 'react';
 
 import { normalizeSliderValue } from './normalizeSliderValue';
@@ -17,6 +17,7 @@ export const SliderRangeBase = ({
   step,
   value: [lower, upper],
   onChange,
+  allowSwap,
   disabled,
   showTooltip,
   lowerTooltipContent,
@@ -34,13 +35,30 @@ export const SliderRangeBase = ({
   const upperPosition = max > min ? ((upper - min) / (max - min)) * 100 : 0;
   const lowerRef = useRef<HTMLInputElement>(null);
   const upperRef = useRef<HTMLInputElement>(null);
-  // Сохраняем доступ к inputs для установки фокуса и передаём те же элементы внешним ref.
-  const mergedLowerRef = useMemo(() => refSetter(lowerRef, lowerNativeSliderRef), [lowerNativeSliderRef]);
-  const mergedUpperRef = useMemo(() => refSetter(upperRef, upperNativeSliderRef), [upperNativeSliderRef]);
+  // Внешние refs следуют логическим границам, сами DOM-input при обмене не перемонтируются.
+  const mergedLowerRef = useCallback(
+    (input: HTMLInputElement | null) => refSetter(lowerRef, lowerNativeSliderRef)(input),
+    [lowerNativeSliderRef],
+  );
+  const mergedUpperRef = useCallback(
+    (input: HTMLInputElement | null) => refSetter(upperRef, upperNativeSliderRef)(input),
+    [upperNativeSliderRef],
+  );
   // Активный input располагается выше второго: это определяет получателя событий при наложении Handle.
   const [activeThumb, setActiveThumb] = useState<'lower' | 'upper'>('upper');
-  // Во время нативного перетаскивания не переключаем активный Handle; флаг не участвует в отрисовке.
+  // DOM-ползунки сохраняют порядок и нативный drag; при пересечении меняются только их роли.
+  const [swapped, setSwapped] = useState(false);
+  const pendingSwap = useRef<{ lower: number; upper: number; previous: boolean } | null>(null);
+  // Во время нативного перетаскивания наведение не меняет выбранный DOM-ползунок.
   const dragging = useRef(false);
+
+  useLayoutEffect(() => {
+    const pending = pendingSwap.current;
+    if (!pending) return;
+    pendingSwap.current = null;
+    // Если controlled-владелец отклонил изменение, восстанавливаем и роль ползунка.
+    if (pending.lower !== lower || pending.upper !== upper) setSwapped(pending.previous);
+  }, [lower, upper, swapped]);
 
   // Отпускание или отмена указателя вне контейнера тоже должны завершать перетаскивание.
   useEffect(() => {
@@ -56,14 +74,19 @@ export const SliderRangeBase = ({
     };
   }, []);
 
-  // Ограничиваем изменяемую границу соседней и сообщаем владельцу только о реальном изменении.
+  // Во время drag разрешаем обмен; клавиатура сохраняет роль и ограничение соседней границей.
   const change = (bound: 'lower' | 'upper', next: number) => {
     if (disabled || (bound === 'lower' ? lowerRef : upperRef).current?.matches(':disabled')) return;
     const normalized = normalizeSliderValue(next, min, max, step);
-    const nextLower = bound === 'lower' ? Math.min(upper, normalized) : lower;
-    const nextUpper = bound === 'upper' ? Math.max(lower, normalized) : upper;
+    const crossing = allowSwap && dragging.current && (bound === 'lower' ? normalized > upper : normalized < lower);
+    const nextLower = bound === 'lower' ? Math.min(upper, normalized) : crossing ? normalized : lower;
+    const nextUpper = bound === 'upper' ? Math.max(lower, normalized) : crossing ? normalized : upper;
     if (nextLower !== lower || nextUpper !== upper) {
-      setActiveThumb(bound);
+      if (crossing) {
+        pendingSwap.current = { lower: nextLower, upper: nextUpper, previous: swapped };
+        setSwapped(!swapped);
+      }
+      setActiveThumb(crossing ? (bound === 'lower' ? 'upper' : 'lower') : bound);
       onChange([nextLower, nextUpper]);
     }
   };
@@ -115,7 +138,7 @@ export const SliderRangeBase = ({
     onUpperFocus?.(event);
   };
 
-  // Одинаковые нативные min/max сохраняют общую геометрию inputs; пересечение ограничивает change.
+  // Одинаковые нативные min/max сохраняют общую геометрию inputs; порядок границ поддерживает change.
   // Собственные дорожки скрыты: рисуем одну общую, pointer-события inputs принимает только Handle.
   const sharedProps = {
     dimension,
@@ -127,6 +150,33 @@ export const SliderRangeBase = ({
     showTooltip,
     hideTrack: true,
     thumbOnly: true,
+  };
+
+  const lowerThumbProps = {
+    ref: mergedLowerRef,
+    'data-bound': 'lower',
+    value: lower,
+    position: lowerPosition,
+    tooltipContent: lowerTooltipContent,
+    'aria-valuemin': min,
+    'aria-valuemax': upper,
+    tabIndex: disabled ? -1 : 0,
+    onValueChange: handleLowerChange,
+    onFocus: handleLowerFocus,
+    ...lowerProps,
+  };
+  const upperThumbProps = {
+    ref: mergedUpperRef,
+    'data-bound': 'upper',
+    value: upper,
+    position: upperPosition,
+    tooltipContent: upperTooltipContent,
+    'aria-valuemin': lower,
+    'aria-valuemax': max,
+    tabIndex: disabled ? -1 : 0,
+    onValueChange: handleUpperChange,
+    onFocus: handleUpperFocus,
+    ...upperProps,
   };
 
   return (
@@ -142,34 +192,8 @@ export const SliderRangeBase = ({
     >
       <SliderRangeTrack style={getSliderRangePositionStyle(lowerPosition, upperPosition, dimension)} />
       {/* Aria-границы учитывают соседний Handle, сохраняя общие нативные min/max. */}
-      <SliderBase
-        {...sharedProps}
-        ref={mergedLowerRef}
-        data-bound="lower"
-        value={lower}
-        position={lowerPosition}
-        tooltipContent={lowerTooltipContent}
-        aria-valuemin={min}
-        aria-valuemax={upper}
-        tabIndex={disabled ? -1 : 0}
-        onValueChange={handleLowerChange}
-        onFocus={handleLowerFocus}
-        {...lowerProps}
-      />
-      <SliderBase
-        {...sharedProps}
-        ref={mergedUpperRef}
-        data-bound="upper"
-        value={upper}
-        position={upperPosition}
-        tooltipContent={upperTooltipContent}
-        aria-valuemin={lower}
-        aria-valuemax={max}
-        tabIndex={disabled ? -1 : 0}
-        onValueChange={handleUpperChange}
-        onFocus={handleUpperFocus}
-        {...upperProps}
-      />
+      <SliderBase {...sharedProps} {...(swapped ? upperThumbProps : lowerThumbProps)} />
+      <SliderBase {...sharedProps} {...(swapped ? lowerThumbProps : upperThumbProps)} />
     </SliderRangeContainer>
   );
 };

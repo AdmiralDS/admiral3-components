@@ -13,7 +13,7 @@ import {
   SliderValue,
 } from '../_internal/SliderAtoms';
 
-/** Два нативных ползунка выбора числового интервала без пересечения границ. */
+/** Два нативных ползунка выбора числового интервала с обменом ролей при перетаскивании. */
 export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
   (
     {
@@ -26,6 +26,7 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
       defaultValue,
       onChange,
       disabled = false,
+      allowSwap = true,
       showTooltip = false,
       thumbAppearance = 'stroke',
       renderValue = String,
@@ -127,6 +128,7 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
           </SliderTextRow>
         )}
         <SliderRangeBase
+          allowSwap={allowSwap}
           dimension={dimension}
           appearance={thumbAppearance}
           min={min}

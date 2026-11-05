@@ -4,6 +4,63 @@ import { getSliderThumbBox, readSliderThumbColors } from '../sliderUtils';
 import { getPlaygroundScenarioPath, getTabKey, resolveCssColorToken } from '../utils';
 
 test.describe('SliderRange playground', () => {
+  for (const from of ['lower', 'upper'] as const) {
+    test(`keeps ${from} thumb role and stops at the neighbor when allowSwap=false`, async ({ page }) => {
+      await page.goto(getPlaygroundScenarioPath('slider-range/no-swap'));
+      const lower = page.getByRole('slider', { name: 'Минимальная сумма' });
+      const upper = page.getByRole('slider', { name: 'Максимальная сумма' });
+      const selected = from === 'lower' ? lower : upper;
+      const physicalInput = await selected.elementHandle();
+      if (!physicalInput) throw new Error('Missing native slider');
+      const box = await lower.locator('..').boundingBox();
+      if (!box) throw new Error('Missing range track');
+      const y = box.y + box.height / 2;
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.25 : 0.75), y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.9 : 0.1), y, { steps: 12 });
+      await expect(lower).toHaveValue(from === 'lower' ? '75' : '25');
+      await expect(upper).toHaveValue(from === 'lower' ? '75' : '25');
+      expect(await physicalInput.getAttribute('data-bound')).toBe(from);
+      expect(await physicalInput.evaluate((input) => input === input.ownerDocument.activeElement)).toBe(true);
+      // Обратный ход тем же жестом двигает исходную границу.
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.1 : 0.9), y, { steps: 12 });
+      await expect(lower).toHaveValue(from === 'lower' ? '10' : '25');
+      await expect(upper).toHaveValue(from === 'lower' ? '75' : '90');
+      await page.mouse.up();
+    });
+
+    test(`swaps ${from} thumb roles without interrupting native drag`, async ({ page }) => {
+      await page.goto(getPlaygroundScenarioPath('slider-range/renderers'));
+      const lower = page.getByRole('slider', { name: 'Минимальная сумма' });
+      const upper = page.getByRole('slider', { name: 'Максимальная сумма' });
+      const selected = from === 'lower' ? lower : upper;
+      const physicalInput = await selected.elementHandle();
+      if (!physicalInput) throw new Error('Missing native slider');
+      const box = await lower.locator('..').boundingBox();
+      if (!box) throw new Error('Missing range track');
+      const y = box.y + box.height / 2;
+      const start = from === 'lower' ? 0.25 : 0.75;
+      const end = from === 'lower' ? 0.9 : 0.1;
+      await page.mouse.move(box.x + box.width * start, y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * end, y, { steps: 12 });
+      await expect(lower).toHaveValue(from === 'lower' ? '75' : '10');
+      await expect(upper).toHaveValue(from === 'lower' ? '90' : '25');
+      expect(await physicalInput.getAttribute('data-bound')).toBe(from === 'lower' ? 'upper' : 'lower');
+      expect(await physicalInput.evaluate((input) => input === input.ownerDocument.activeElement)).toBe(true);
+      expect(await physicalInput.getAttribute('data-pressed')).toBe('');
+      await expect(page.getByRole('tooltip')).toHaveText(from === 'lower' ? '90 ₽' : '10 ₽');
+      // Тем же жестом идём обратно через неподвижный ползунок.
+      await page.mouse.move(box.x + box.width * (1 - end), y, { steps: 12 });
+      await expect(lower).toHaveValue(from === 'lower' ? '10' : '25');
+      await expect(upper).toHaveValue(from === 'lower' ? '75' : '90');
+      expect(await physicalInput.getAttribute('data-bound')).toBe(from);
+      expect(await physicalInput.evaluate((input) => input === input.ownerDocument.activeElement)).toBe(true);
+      await page.mouse.up();
+      expect(await physicalInput.getAttribute('data-pressed')).toBeNull();
+    });
+  }
+
   test('fills the range container on narrow viewports and after resizing', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('slider/responsive'));
     let previousWidth = 0;
@@ -105,6 +162,8 @@ test.describe('SliderRange playground', () => {
     test(`shows Tooltip on hover and holds it during Press for ${name}`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('slider-range/renderers'));
       const input = page.getByRole('slider', { name });
+      const physicalInput = await input.elementHandle();
+      if (!physicalInput) throw new Error('Missing native slider');
       const box = await input.locator('..').boundingBox();
       if (!box) throw new Error('Range track is not visible');
       const position = Number(await input.inputValue()) / 100;
@@ -115,7 +174,9 @@ test.describe('SliderRange playground', () => {
       await page.mouse.move(box.x + box.width * position, box.y + box.height / 2);
       await page.mouse.down();
       await page.mouse.move(box.x - 30, box.y - 40);
-      await expect(page.getByRole('tooltip')).toHaveText(`${await input.inputValue()} ₽`);
+      await expect(page.getByRole('tooltip')).toHaveText(
+        `${await physicalInput.evaluate((input) => (input as HTMLInputElement).value)} ₽`,
+      );
       await page.mouse.up();
       await expect(page.getByRole('tooltip')).toHaveCount(0);
     });
@@ -339,10 +400,13 @@ test.describe('SliderRange playground', () => {
       await expect(selected).toHaveAttribute('data-pressed', '');
       await expect(other).not.toHaveAttribute('data-pressed', '');
       await expect(page.getByRole('tooltip')).toHaveText(`${await selected.inputValue()} ₽`);
-      // Обратное движение в том же жесте не выбирает соседнюю границу и не пересекает её.
+      // Обратное движение продолжает тот же DOM-ползунок, меняя его роль после пересечения.
       await page.mouse.move(direction === 'left' ? box.x + box.width + 30 : box.x - 30, y, { steps: 10 });
-      await expect(lower).toHaveValue(String(position * 100));
-      await expect(upper).toHaveValue(String(position * 100));
+      await expect(lower).toHaveValue(direction === 'left' ? '75' : '0');
+      await expect(upper).toHaveValue(direction === 'left' ? '100' : '25');
+      const swapped = direction === 'left' ? upper : lower;
+      await expect(swapped).toBeFocused();
+      await expect(swapped).toHaveAttribute('data-pressed', '');
       await page.mouse.move(endX, y, { steps: 5 });
       await page.mouse.up();
       await expect(selected).not.toHaveAttribute('data-pressed', '');
@@ -459,6 +523,24 @@ test.describe('SliderRange playground', () => {
         await expect(lower).toHaveValue('10');
         await expect(upper).toHaveValue('90');
         if (controlledOutput) await expect(page.getByText(controlledOutput)).toBeVisible();
+        await drag(0.1, 1, null);
+        await expect(lower).toHaveValue('90');
+        await expect(upper).toHaveValue('100');
+        await expect(upper).toHaveAttribute('data-pressed', '');
+        await expect(page.getByRole('tooltip')).toHaveText(formatValue('100'));
+        // Обратно через соседа в том же касании, затем отменяем жест.
+        for (let index = 1; index <= 10; index++) {
+          await session.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: [{ x: box.x + box.width * (1 - index * 0.095), y }],
+          });
+        }
+        await expect(lower).toHaveValue('5');
+        await expect(upper).toHaveValue('90');
+        await expect(lower).toHaveAttribute('data-pressed', '');
+        await session.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
+        await expect(lower).not.toHaveAttribute('data-pressed', '');
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
       } finally {
         await context.close();
       }

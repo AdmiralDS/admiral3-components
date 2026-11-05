@@ -6,10 +6,170 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SliderRange } from './SliderRange';
 import { SliderTextRow, SliderValue } from '../_internal/SliderAtoms';
 
+const startDrag = (input: HTMLElement) => {
+  const event = new MouseEvent('pointerdown', { bubbles: true, button: 0 });
+  Object.defineProperty(event, 'isPrimary', { value: true });
+  fireEvent(input, event);
+};
+
 describe('SliderRange', () => {
+  it.each([0, 1] as const)('clamps dragged bound %s without swapping when allowSwap is false', (bound) => {
+    const lowerRef = createRef<HTMLInputElement>();
+    const upperRef = createRef<HTMLInputElement>();
+    const onChange = vi.fn();
+    render(
+      <SliderRange
+        allowSwap={false}
+        defaultValue={[25, 75]}
+        onChange={onChange}
+        lowerNativeSliderRef={lowerRef}
+        upperNativeSliderRef={upperRef}
+        data-testid="root"
+      />,
+    );
+    const physicalLower = lowerRef.current!;
+    const physicalUpper = upperRef.current!;
+    const physicalInput = bound === 0 ? physicalLower : physicalUpper;
+    startDrag(physicalInput);
+    fireEvent.change(physicalInput, { target: { value: bound === 0 ? '90' : '10' } });
+    expect(onChange).toHaveBeenLastCalledWith(bound === 0 ? [75, 75] : [25, 25]);
+    expect(lowerRef.current).toBe(physicalLower);
+    expect(upperRef.current).toBe(physicalUpper);
+    expect(physicalInput).toHaveAttribute('data-bound', bound === 0 ? 'lower' : 'upper');
+    expect(screen.getByTestId('root')).not.toHaveAttribute('allowSwap');
+  });
+
+  it('preserves assigned roles when allowSwap is disabled after a crossing', () => {
+    const upperRef = createRef<HTMLInputElement>();
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <SliderRange defaultValue={[25, 75]} onChange={onChange} upperNativeSliderRef={upperRef} />,
+    );
+    const physicalInput = screen.getAllByRole('slider')[0];
+    startDrag(physicalInput);
+    fireEvent.change(physicalInput, { target: { value: '90' } });
+    expect(upperRef.current).toBe(physicalInput);
+    rerender(<SliderRange allowSwap={false} onChange={onChange} upperNativeSliderRef={upperRef} />);
+    fireEvent.change(physicalInput, { target: { value: '10' } });
+    expect(onChange).toHaveBeenLastCalledWith([75, 75]);
+    expect(upperRef.current).toBe(physicalInput);
+    expect(physicalInput).toHaveAttribute('data-bound', 'upper');
+  });
+
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
+  });
+  it('swaps logical refs, names and form values while preserving the dragged DOM input and focus', () => {
+    const lowerRef = createRef<HTMLInputElement>();
+    const upperRef = createRef<HTMLInputElement>();
+    const onChange = vi.fn();
+    const { unmount } = render(
+      <form data-testid="form">
+        <SliderRange
+          defaultValue={[25, 75]}
+          onChange={onChange}
+          lowerNativeSliderRef={lowerRef}
+          upperNativeSliderRef={upperRef}
+          lowerNativeSliderProps={{ name: 'lower', 'aria-label': 'From' }}
+          upperNativeSliderProps={{ name: 'upper', 'aria-label': 'To' }}
+        />
+      </form>,
+    );
+    const physicalLower = lowerRef.current!;
+    const physicalUpper = upperRef.current!;
+    act(() => physicalLower.focus());
+    startDrag(physicalLower);
+    fireEvent.change(physicalLower, { target: { value: '90' } });
+    expect(onChange).toHaveBeenLastCalledWith([75, 90]);
+    expect(upperRef.current).toBe(physicalLower);
+    expect(lowerRef.current).toBe(physicalUpper);
+    expect(physicalLower).toHaveFocus();
+    expect(physicalLower).toHaveAccessibleName('To');
+    expect(physicalLower).toHaveAttribute('aria-valuemin', '75');
+    expect(physicalUpper).toHaveAccessibleName('From');
+    expect(Object.fromEntries(new FormData(screen.getByTestId('form') as HTMLFormElement))).toEqual({
+      lower: '75',
+      upper: '90',
+    });
+    fireEvent.change(physicalLower, { target: { value: '95' } });
+    expect(onChange).toHaveBeenLastCalledWith([75, 95]);
+    fireEvent.change(physicalLower, { target: { value: '10' } });
+    expect(onChange).toHaveBeenLastCalledWith([10, 75]);
+    expect(lowerRef.current).toBe(physicalLower);
+    expect(upperRef.current).toBe(physicalUpper);
+    expect(physicalLower).toHaveFocus();
+    unmount();
+    expect(lowerRef.current).toBeNull();
+    expect(upperRef.current).toBeNull();
+  });
+
+  it('restores roles and positions when a controlled owner rejects crossing', () => {
+    const lowerRef = createRef<HTMLInputElement>();
+    const upperRef = createRef<HTMLInputElement>();
+    const onChange = vi.fn();
+    render(
+      <SliderRange
+        value={[25, 75]}
+        onChange={onChange}
+        lowerNativeSliderRef={lowerRef}
+        upperNativeSliderRef={upperRef}
+      />,
+    );
+    const physicalLower = lowerRef.current!;
+    const physicalUpper = upperRef.current!;
+    startDrag(physicalLower);
+    fireEvent.change(physicalLower, { target: { value: '90' } });
+    expect(onChange).toHaveBeenLastCalledWith([75, 90]);
+    expect(lowerRef.current).toBe(physicalLower);
+    expect(upperRef.current).toBe(physicalUpper);
+    expect(physicalLower).toHaveValue('25');
+    expect(physicalUpper).toHaveValue('75');
+  });
+
+  it('ends swapping after pointer cancellation and keeps keyboard bounds', () => {
+    render(
+      <SliderRange
+        defaultValue={[25, 75]}
+        lowerNativeSliderProps={{ 'aria-label': 'From' }}
+        upperNativeSliderProps={{ 'aria-label': 'To' }}
+      />,
+    );
+    const physicalLower = screen.getByRole('slider', { name: 'From' });
+    startDrag(physicalLower);
+    fireEvent.change(physicalLower, { target: { value: '90' } });
+    fireEvent.pointerCancel(document);
+    fireEvent.change(physicalLower, { target: { value: '10' } });
+    expect(screen.getByRole('slider', { name: 'From' })).toHaveValue('75');
+    expect(screen.getByRole('slider', { name: 'To' })).toHaveValue('75');
+  });
+
+  it('resets swapped native bounds while keeping refs and form names associated with their roles', () => {
+    vi.useFakeTimers();
+    const lowerRef = createRef<HTMLInputElement>();
+    const upperRef = createRef<HTMLInputElement>();
+    render(
+      <form data-testid="form">
+        <SliderRange
+          defaultValue={[25, 75]}
+          lowerNativeSliderRef={lowerRef}
+          upperNativeSliderRef={upperRef}
+          lowerNativeSliderProps={{ name: 'lower' }}
+          upperNativeSliderProps={{ name: 'upper' }}
+        />
+      </form>,
+    );
+    const physicalLower = lowerRef.current!;
+    startDrag(physicalLower);
+    fireEvent.change(physicalLower, { target: { value: '90' } });
+    fireEvent.pointerUp(document);
+    expect(upperRef.current).toBe(physicalLower);
+    const form = screen.getByTestId('form') as HTMLFormElement;
+    act(() => form.reset());
+    act(() => vi.runOnlyPendingTimers());
+    expect(lowerRef.current).toHaveValue('25');
+    expect(upperRef.current).toHaveValue('75');
+    expect(Object.fromEntries(new FormData(form))).toEqual({ lower: '25', upper: '75' });
   });
   it('does not grow the stylesheet when changing either bound in a large range', () => {
     const { rerender } = render(<SliderRange max={1_000_000} value={[250_000, 750_000]} />);
@@ -122,7 +282,7 @@ describe('SliderRange', () => {
     expect(upper).toHaveFocus();
     expect(focused).toEqual([lower, upper]);
   });
-  it('updates uncontrolled values and never crosses the other bound', () => {
+  it('updates uncontrolled values and clamps changes outside pointer dragging', () => {
     const onChange = vi.fn();
     render(<SliderRange label="Сумма" defaultValue={[25, 75]} onChange={onChange} />);
     fireEvent.change(screen.getAllByRole('slider')[0], { target: { value: '90' } });
