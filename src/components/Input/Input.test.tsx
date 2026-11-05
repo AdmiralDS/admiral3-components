@@ -565,7 +565,11 @@ describe('Input', () => {
         iconsAfter={
           <>
             <span data-testid="after-icon" />
-            <InputIconInformer data-testid="informer-icon" title="Дополнительная информация" />
+            <InputIconInformer
+              data-testid="informer-icon"
+              aria-label="Справка"
+              renderContent={() => 'Дополнительная информация'}
+            />
           </>
         }
       />,
