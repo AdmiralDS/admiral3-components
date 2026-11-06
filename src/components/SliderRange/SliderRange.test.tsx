@@ -56,6 +56,27 @@ describe('SliderRange', () => {
     expect(onChange).toHaveBeenLastCalledWith(expected);
   });
 
+  it.each([
+    { value: [25, 95] as const, bound: 0, target: '100', expected: [90, 100], role: 'upper' },
+    { value: [5, 75] as const, bound: 1, target: '0', expected: [0, 10], role: 'lower' },
+    { value: [25, 95] as const, bound: 0, target: '98', expected: [90, 100], role: 'upper' },
+    { value: [5, 75] as const, bound: 1, target: '2', expected: [0, 10], role: 'lower' },
+  ])(
+    'shifts the neighbor after swapping toward edge $target when active movement is insufficient',
+    ({ value, bound, target, expected, role }) => {
+      const onChange = vi.fn();
+      render(<SliderRange defaultValue={value} minValueDistance={10} onChange={onChange} />);
+      const input = screen.getAllByRole('slider')[bound];
+      startDrag(input);
+      fireEvent.change(input, { target: { value: target } });
+      expect(input).toHaveAttribute('data-bound', role);
+      fireEvent.pointerUp(document);
+      expect(onChange).toHaveBeenLastCalledWith(expected);
+      expect(onChange).toHaveBeenCalledTimes(2);
+      expect(input).toHaveValue(String(expected[role === 'lower' ? 0 : 1]));
+    },
+  );
+
   it('defaults minValueDistance to zero and leaves coincident thumbs after release', () => {
     const onChange = vi.fn();
     render(<SliderRange defaultValue={[25, 75]} onChange={onChange} />);

@@ -4,6 +4,34 @@ import { getSliderThumbBox, readSliderThumbColors } from '../sliderUtils';
 import { getPlaygroundScenarioPath, getTabKey, resolveCssColorToken } from '../utils';
 
 test.describe('SliderRange playground', () => {
+  for (const edge of ['min', 'max'] as const) {
+    test(`restores the gap by shifting the neighbor after swapping at ${edge}`, async ({ page }) => {
+      await page.goto(getPlaygroundScenarioPath('slider-range/min-distance'));
+      const lower = page.getByRole('slider', { name: 'Минимальная сумма' });
+      const upper = page.getByRole('slider', { name: 'Максимальная сумма' });
+      const box = await lower.locator('..').boundingBox();
+      if (!box) throw new Error('Missing range track');
+      const y = box.y + box.height / 2;
+      // Сначала ставим соседа близко к краю, сохраняя допустимый интервал.
+      await page.mouse.move(box.x + box.width * (edge === 'max' ? 0.75 : 0.25), y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * (edge === 'max' ? 0.95 : 0.05), y, { steps: 10 });
+      await page.mouse.up();
+      const active = await (edge === 'max' ? lower : upper).elementHandle();
+      if (!active) throw new Error('Missing active native input');
+      await page.mouse.move(box.x + box.width * (edge === 'max' ? 0.25 : 0.75), y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * (edge === 'max' ? 1 : 0), y, { steps: 12 });
+      await expect(lower).toHaveValue(edge === 'max' ? '95' : '0');
+      await expect(upper).toHaveValue(edge === 'max' ? '100' : '5');
+      await page.mouse.up();
+      await expect(lower).toHaveValue(edge === 'max' ? '90' : '0');
+      await expect(upper).toHaveValue(edge === 'max' ? '100' : '10');
+      expect(await active.getAttribute('data-bound')).toBe(edge === 'max' ? 'upper' : 'lower');
+      expect(await active.evaluate((input) => input === input.ownerDocument.activeElement)).toBe(true);
+    });
+  }
+
   for (const from of ['lower', 'upper'] as const) {
     test(`restores minValueDistance for the active ${from} role after release outside the track`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('slider-range/min-distance'));

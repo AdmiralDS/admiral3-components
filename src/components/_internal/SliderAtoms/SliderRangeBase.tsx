@@ -97,7 +97,13 @@ export const SliderRangeBase = ({
     // Роль определяем по актуальным refs, поскольку за время жеста ползунки могли обменяться ролями.
     const isLower = input === lowerRef.current;
     const next = normalizeSliderValue(isLower ? upper - minValueDistance : lower + minValueDistance, min, max, step);
-    if (next !== (isLower ? lower : upper)) onChange(isLower ? [next, upper] : [lower, next]);
+    const interval: [number, number] = isLower ? [next, upper] : [lower, next];
+    // Если активный ползунок упёрся в край, недостающий зазор восстанавливаем движением соседа.
+    if (Number((interval[1] - interval[0]).toPrecision(15)) < minValueDistance) {
+      if (isLower) interval[1] = normalizeSliderValue(next + minValueDistance, min, max, step);
+      else interval[0] = normalizeSliderValue(next - minValueDistance, min, max, step);
+    }
+    if (interval[0] !== lower || interval[1] !== upper) onChange(interval);
   }, [disabled, lower, upper, minValueDistance, min, max, step, onChange]);
 
   // Отпускание или отмена указателя вне контейнера также завершают жест и восстанавливают зазор.

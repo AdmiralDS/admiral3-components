@@ -11,7 +11,8 @@ export const SliderRangeStoryPlaygroundTemplate = (args: SliderRangeProps) => (
       onChange всегда получает упорядоченный интервал. AllowSwap=false запрещает обмен: ползунок останавливается на
       соседнем. По умолчанию allowSwap=true, minValueDistance=0 — совпадение границ разрешено. Если minValueDistance
       больше нуля, при отпускании активный ползунок отступает от соседа: нижний влево, верхний вправо. Во время drag
-      зазор не ограничивается. Клавиатура учитывает minValueDistance сразу.
+      зазор не ограничивается. Если у края активному ползунку не хватает места, недостающий зазор восстанавливается
+      сдвигом соседа. Клавиатура учитывает minValueDistance сразу.
     </StoryDemoDescription>
     <StoryDemoItem>
       <SliderRange {...args} />
