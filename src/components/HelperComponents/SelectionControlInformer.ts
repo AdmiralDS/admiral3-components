@@ -14,6 +14,7 @@ export const SelectionControlInformer = styled.span<{ $dimension: keyof typeof S
   width: ${({ $dimension }) => SELECTION_CONTROL_INFORMER_SIZES[$dimension]}px;
 
   color: ${informerColor};
+  cursor: pointer;
   transition: color ${hoverPressLeaveTransition};
 
   &:hover {

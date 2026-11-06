@@ -1,51 +1,21 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import { useState } from 'react';
 
-import { checkOverflow } from '#src/utils/checkOverflow';
+import { useTooltip } from '#src/components/Tooltip';
+import { useOverflow } from '#src/hooks/useOverflow';
 
-export const useChipTooltip = (
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  children: ReactNode,
-  renderContentTooltip?: () => string,
-  disabledTooltip?: boolean,
-) => {
-  const [visible, setVisible] = useState(false);
-  const [overflow, setOverflow] = useState(false);
-
-  const contentRef = useRef<HTMLSpanElement>(null);
-
-  //TODO добавить проверку на number при добавлении компонента Tooltip
-  const content = renderContentTooltip?.() || (typeof children === 'string' ? children : undefined);
-
-  useLayoutEffect(() => {
-    if (disabledTooltip || !contentRef.current) return;
-
-    function show() {
-      setOverflow(checkOverflow(contentRef.current));
-      setVisible(true);
-    }
-    function hide() {
-      setVisible(false);
-    }
-
-    const chipNode = containerRef.current;
-
-    if (chipNode) {
-      chipNode.addEventListener('mouseenter', show);
-      chipNode.addEventListener('mouseleave', hide);
-      chipNode.addEventListener('focus', show);
-      chipNode.addEventListener('blur', hide);
-      return () => {
-        chipNode.removeEventListener('mouseenter', show);
-        chipNode.removeEventListener('mouseleave', hide);
-        chipNode.removeEventListener('focus', show);
-        chipNode.removeEventListener('blur', hide);
-      };
-    }
-  }, [disabledTooltip, containerRef]);
+export const useChipTooltip = (tooltipEnabled = true) => {
+  const [contentElement, setContentElement] = useState<HTMLSpanElement | null>(null);
+  const {
+    triggerProps: { ref: tooltipTriggerRef },
+    tooltipProps,
+    isVisible,
+  } = useTooltip<HTMLDivElement>();
+  const textOverflow = useOverflow(tooltipEnabled ? tooltipProps.targetElement : null, contentElement);
 
   return {
-    contentRef,
-    title: !disabledTooltip && visible && overflow ? content : undefined,
+    triggerRef: tooltipEnabled ? tooltipTriggerRef : undefined,
+    contentRef: setContentElement,
+    tooltipProps,
+    isTooltipVisible: tooltipEnabled && isVisible && textOverflow,
   };
 };

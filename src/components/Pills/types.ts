@@ -14,6 +14,8 @@ export interface PillColorConfig {
 }
 
 export interface PillProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Одна текстовая подпись или число и опциональные иконки. При переполнении подпись появляется в Tooltip. */
+  children?: ButtonHTMLAttributes<HTMLButtonElement>['children'];
   /** Цветовой вариант Pill или пользовательские цвета. Значение по умолчанию 'neutral1'. */
   appearance?: PillAppearance | PillColorConfig;
 }

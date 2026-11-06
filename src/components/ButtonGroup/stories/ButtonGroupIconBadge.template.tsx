@@ -10,6 +10,7 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  withTooltip,
   type BadgeAppearance,
   type ButtonGroupAppearance,
   type ButtonGroupColorMode,
@@ -50,6 +51,8 @@ const BADGES = [
   { label: 'Готовые', value: 8 },
 ] as const;
 
+const ButtonWithTooltip = withTooltip(Button);
+
 export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
   const appearance = args.appearance ?? 'solid';
   const colorMode = args.colorMode ?? 'colored';
@@ -64,13 +67,13 @@ export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
           <StoryDemoDescription>Иконка перед текстом</StoryDemoDescription>
           <ButtonGroup {...args} aria-label="Действия с иконкой перед текстом">
             <Button>
-              <CheckIcon aria-hidden="true" focusable="false" /> Подтвердить
+              <CheckIcon aria-hidden="true" /> Подтвердить
             </Button>
             <Button>
-              <CheckIcon aria-hidden="true" focusable="false" /> Согласовать
+              <CheckIcon aria-hidden="true" /> Согласовать
             </Button>
             <Button>
-              <CheckIcon aria-hidden="true" focusable="false" /> Завершить
+              <CheckIcon aria-hidden="true" /> Завершить
             </Button>
           </ButtonGroup>
         </Example>
@@ -78,13 +81,13 @@ export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
           <StoryDemoDescription>Иконка после текста</StoryDemoDescription>
           <ButtonGroup {...args} aria-label="Действия с иконкой после текста">
             <Button>
-              Поделиться <ShareIcon aria-hidden="true" focusable="false" />
+              Поделиться <ShareIcon aria-hidden="true" />
             </Button>
             <Button>
-              Отправить <ShareIcon aria-hidden="true" focusable="false" />
+              Отправить <ShareIcon aria-hidden="true" />
             </Button>
             <Button>
-              Экспортировать <ShareIcon aria-hidden="true" focusable="false" />
+              Экспортировать <ShareIcon aria-hidden="true" />
             </Button>
           </ButtonGroup>
         </Example>
@@ -99,17 +102,19 @@ export const ButtonGroupIconBadgeTemplate = (args: ButtonGroupProps) => {
           </ButtonGroup>
         </Example>
         <Example>
-          <StoryDemoDescription>Только иконки</StoryDemoDescription>
+          <StoryDemoDescription>
+            Только иконки. Каждая кнопка использует withTooltip и сохраняет доступное имя через aria-label.
+          </StoryDemoDescription>
           <ButtonGroup {...args} aria-label="Быстрые действия">
-            <Button square aria-label="Подтвердить">
-              <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Поделиться">
-              <ShareIcon aria-hidden="true" focusable="false" />
-            </Button>
-            <Button square aria-label="Завершить">
-              <CheckIcon aria-hidden="true" focusable="false" />
-            </Button>
+            <ButtonWithTooltip square aria-label="Подтвердить" renderContent={() => 'Подтвердить документ'}>
+              <CheckIcon aria-hidden="true" />
+            </ButtonWithTooltip>
+            <ButtonWithTooltip square aria-label="Поделиться" renderContent={() => 'Открыть варианты отправки'}>
+              <ShareIcon aria-hidden="true" />
+            </ButtonWithTooltip>
+            <ButtonWithTooltip square aria-label="Завершить" renderContent={() => 'Завершить обработку документа'}>
+              <CheckIcon aria-hidden="true" />
+            </ButtonWithTooltip>
           </ButtonGroup>
         </Example>
       </Examples>

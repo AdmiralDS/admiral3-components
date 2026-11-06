@@ -17,8 +17,8 @@ export const InputKeyboardNavigationPlaygroundTemplate = () => {
           <>
             <InputIconInformer
               data-testid="informer-icon"
-              aria-label="Дополнительная информация о поле ввода"
-              title="Дополнительная информация о поле ввода"
+              aria-label="Справка по заполнению поля"
+              renderContent={() => 'Дополнительная информация о поле ввода'}
             />
             <InputIconButton aria-label="Пользовательское действие">
               <SystemSearchOutline aria-hidden />
@@ -39,8 +39,8 @@ export const InputKeyboardNavigationPlaygroundTemplate = () => {
         iconsAfter={
           <InputIconInformer
             data-testid="disabled-informer-icon"
-            aria-label="Дополнительная информация о недоступном поле"
-            title="Дополнительная информация о недоступном поле"
+            aria-label="Справка по недоступному полю"
+            renderContent={() => 'Дополнительная информация о недоступном поле'}
           />
         }
       />

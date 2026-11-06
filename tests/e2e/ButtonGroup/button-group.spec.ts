@@ -25,15 +25,14 @@ const customFocusColorToken = '--admiral-color-success-stroke-1-rest';
 const dimensions = BUTTON_DIMENSION_PARAMETERS;
 
 test.describe('ButtonGroup playground', () => {
-  test('renders a labelled horizontal toolbar with uniform Button props', async ({ page }) => {
+  test('renders a labelled group with uniform Button props', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(defaultScenarioId));
 
     const group = page.getByTestId('button-group');
     const buttons = group.getByRole('button');
 
-    await expect(group).toHaveRole('toolbar');
+    await expect(group).toHaveRole('group');
     await expect(group).toHaveAccessibleName('Действия');
-    await expect(group).toHaveAttribute('aria-orientation', 'horizontal');
     await expect(group).toHaveAttribute('data-appearance', 'solid');
     await expect(group).toHaveAttribute('data-color-mode', 'colored');
     await expect(group).toHaveAttribute('data-dimension', 'm');

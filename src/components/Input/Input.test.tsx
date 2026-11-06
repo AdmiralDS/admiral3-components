@@ -1,6 +1,6 @@
 import { createRef, useState } from 'react';
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import styled from 'styled-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -156,7 +156,7 @@ describe('Input', () => {
     expect(component).toHaveAttribute('title', 'Input');
   });
 
-  it('shows the full value in a native title when the input text overflows', () => {
+  it('shows the full value in a tooltip when the input text overflows', () => {
     render(<Input data-testid="input" defaultValue="Overflowed input value" />);
 
     const input = screen.getByTestId('input');
@@ -164,14 +164,15 @@ describe('Input', () => {
       clientWidth: { configurable: true, value: 100 },
       scrollWidth: { configurable: true, value: 200 },
     });
+    const container = input.parentElement!;
 
-    fireEvent.mouseEnter(input);
+    fireEvent.mouseEnter(container);
 
-    expect(input).toHaveAttribute('title', 'Overflowed input value');
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Overflowed input value');
 
-    fireEvent.mouseLeave(input);
+    fireEvent.mouseLeave(container);
 
-    expect(input).not.toHaveAttribute('title');
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
   it('renders an overflowed value with an ellipsis', () => {
@@ -183,7 +184,7 @@ describe('Input', () => {
     });
   });
 
-  it('does not add a native title when the text fits or showTooltip is false', () => {
+  it('does not show a tooltip when the text fits or showTooltip is false', () => {
     const { rerender } = render(<Input data-testid="input" defaultValue="Input value" />);
 
     const input = screen.getByTestId('input');
@@ -191,9 +192,10 @@ describe('Input', () => {
       clientWidth: { configurable: true, value: 200 },
       scrollWidth: { configurable: true, value: 100 },
     });
+    const container = input.parentElement!;
 
-    fireEvent.mouseEnter(input);
-    expect(input).not.toHaveAttribute('title');
+    fireEvent.mouseEnter(container);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 
     rerender(<Input data-testid="input" defaultValue="Input value" showTooltip={false} />);
     Object.defineProperties(input, {
@@ -201,8 +203,65 @@ describe('Input', () => {
       scrollWidth: { configurable: true, value: 200 },
     });
 
-    fireEvent.mouseEnter(input);
-    expect(input).not.toHaveAttribute('title');
+    fireEvent.mouseEnter(container);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('closes the tooltip on focus and does not show it for a focused input', () => {
+    render(<Input data-testid="input" defaultValue="Overflowed input value" />);
+
+    const input = screen.getByTestId('input');
+    Object.defineProperties(input, {
+      clientWidth: { configurable: true, value: 100 },
+      scrollWidth: { configurable: true, value: 200 },
+    });
+    const container = input.parentElement!;
+
+    fireEvent.mouseEnter(container);
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    act(() => input.focus());
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+    fireEvent.mouseLeave(container);
+    fireEvent.mouseEnter(container);
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('closes the tooltip on input pointer down', () => {
+    const onClick = vi.fn();
+    render(<Input data-testid="input" defaultValue="Overflowed input value" onClick={onClick} />);
+
+    const input = screen.getByTestId('input');
+    Object.defineProperties(input, {
+      clientWidth: { configurable: true, value: 100 },
+      scrollWidth: { configurable: true, value: 200 },
+    });
+    const container = input.parentElement!;
+
+    fireEvent.mouseEnter(container);
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    fireEvent.pointerDown(input);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('does not keep the tooltip open when the pointer moves into it', () => {
+    render(<Input data-testid="input" defaultValue="Overflowed input value" />);
+
+    const input = screen.getByTestId('input');
+    Object.defineProperties(input, {
+      clientWidth: { configurable: true, value: 100 },
+      scrollWidth: { configurable: true, value: 200 },
+    });
+    const container = input.parentElement!;
+
+    fireEvent.mouseEnter(container);
+    const tooltip = screen.getByRole('tooltip');
+    fireEvent.mouseLeave(container, { relatedTarget: tooltip });
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
   it('forwards ref to the native input', () => {
@@ -506,7 +565,11 @@ describe('Input', () => {
         iconsAfter={
           <>
             <span data-testid="after-icon" />
-            <InputIconInformer data-testid="informer-icon" title="Дополнительная информация" />
+            <InputIconInformer
+              data-testid="informer-icon"
+              aria-label="Справка"
+              renderContent={() => 'Дополнительная информация'}
+            />
           </>
         }
       />,
