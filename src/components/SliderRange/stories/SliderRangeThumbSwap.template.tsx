@@ -18,7 +18,7 @@ export const SliderRangeThumbSwapTemplate = () => {
       </StoryDemoDescription>
       <StoryDemoDescription>
         При allowSwap=false ползунок останавливается на соседнем. Границы могут совпадать: для того же движения
-        получится [75, 75]. Минимальный положительный зазор не задаётся.
+        получится [75, 75]. В этих примерах minValueDistance=0, как и по умолчанию у SliderRange.
       </StoryDemoDescription>
       <StoryDemoDescription>
         LowerNativeSliderProps применяются к DOM-инпуту текущей нижней границы, upperNativeSliderProps — к инпуту

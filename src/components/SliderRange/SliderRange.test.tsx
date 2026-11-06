@@ -13,6 +13,90 @@ const startDrag = (input: HTMLElement) => {
 };
 
 describe('SliderRange', () => {
+  it.each([
+    { bound: 0, target: '75', expected: [65, 75] },
+    { bound: 1, target: '25', expected: [25, 35] },
+  ])('restores minValueDistance on release toward active role $bound', ({ bound, target, expected }) => {
+    const onChange = vi.fn();
+    render(<SliderRange defaultValue={[25, 75]} minValueDistance={10} onChange={onChange} />);
+    const physicalInput = screen.getAllByRole('slider')[bound];
+    startDrag(physicalInput);
+    fireEvent.change(physicalInput, { target: { value: target } });
+    expect(screen.getAllByRole('slider').map((input) => (input as HTMLInputElement).value)).toEqual([target, target]);
+    fireEvent.pointerUp(document);
+    expect(onChange).toHaveBeenLastCalledWith(expected);
+    expect(screen.getAllByRole('slider').map((input) => (input as HTMLInputElement).value)).toEqual(
+      expected.map(String),
+    );
+  });
+
+  it('uses the current role after crossing and corrects even a nonzero distance on release', () => {
+    const onChange = vi.fn();
+    render(<SliderRange defaultValue={[25, 75]} minValueDistance={10} onChange={onChange} />);
+    const physicalInput = screen.getAllByRole('slider')[0];
+    startDrag(physicalInput);
+    fireEvent.change(physicalInput, { target: { value: '90' } });
+    fireEvent.change(physicalInput, { target: { value: '78' } });
+    expect(physicalInput).toHaveAttribute('data-bound', 'upper');
+    expect(onChange).toHaveBeenLastCalledWith([75, 78]);
+    fireEvent.pointerUp(document);
+    expect(onChange).toHaveBeenLastCalledWith([75, 85]);
+    expect(physicalInput).toHaveValue('85');
+  });
+
+  it.each([
+    { value: [80, 100] as const, bound: 0, target: '100', expected: [90, 100] },
+    { value: [0, 20] as const, bound: 1, target: '0', expected: [0, 10] },
+  ])('moves only the approaching thumb at range edge $target', ({ value, bound, target, expected }) => {
+    const onChange = vi.fn();
+    render(<SliderRange defaultValue={value} minValueDistance={10} onChange={onChange} />);
+    startDrag(screen.getAllByRole('slider')[bound]);
+    fireEvent.change(screen.getAllByRole('slider')[bound], { target: { value: target } });
+    fireEvent.pointerUp(document);
+    expect(onChange).toHaveBeenLastCalledWith(expected);
+  });
+
+  it('defaults minValueDistance to zero and leaves coincident thumbs after release', () => {
+    const onChange = vi.fn();
+    render(<SliderRange defaultValue={[25, 75]} onChange={onChange} />);
+    const input = screen.getAllByRole('slider')[0];
+    startDrag(input);
+    fireEvent.change(input, { target: { value: '75' } });
+    fireEvent.pointerUp(document);
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenLastCalledWith([75, 75]);
+  });
+
+  it('rounds minValueDistance up to the slider step and corrects after pointer cancellation', () => {
+    const onChange = vi.fn();
+    render(
+      <SliderRange min={0} max={1} step={0.1} minValueDistance={0.25} defaultValue={[0.2, 0.6]} onChange={onChange} />,
+    );
+    const input = screen.getAllByRole('slider')[0];
+    startDrag(input);
+    fireEvent.change(input, { target: { value: '0.6' } });
+    fireEvent.pointerCancel(document);
+    expect(onChange).toHaveBeenLastCalledWith([0.3, 0.6]);
+  });
+
+  it('enforces minValueDistance for keyboard changes and preserves controlled ownership on release', () => {
+    const onChange = vi.fn();
+    render(<SliderRange value={[25, 75]} minValueDistance={10} onChange={onChange} />);
+    const input = screen.getAllByRole('slider')[0];
+    fireEvent.change(input, { target: { value: '75' } });
+    expect(onChange).toHaveBeenLastCalledWith([65, 75]);
+    expect(input).toHaveValue('25');
+  });
+
+  it('does not overwrite a controlled owner that rejects release correction', () => {
+    const onChange = vi.fn();
+    render(<SliderRange value={[50, 50]} minValueDistance={10} onChange={onChange} />);
+    const input = screen.getAllByRole('slider')[0];
+    startDrag(input);
+    fireEvent.pointerUp(document);
+    expect(onChange).toHaveBeenCalledWith([40, 50]);
+    expect(input).toHaveValue('50');
+  });
   it.each([0, 1] as const)('clamps dragged bound %s without swapping when allowSwap is false', (bound) => {
     const lowerRef = createRef<HTMLInputElement>();
     const upperRef = createRef<HTMLInputElement>();

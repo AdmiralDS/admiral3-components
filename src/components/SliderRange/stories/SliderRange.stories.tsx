@@ -10,6 +10,8 @@ import { SliderRangeFormattingTemplate } from './SliderRangeFormatting.template'
 import sliderRangeFormattingRaw from './SliderRangeFormatting.template?raw';
 import { SliderRangeKeyboardTemplate } from './SliderRangeKeyboard.template';
 import SliderRangeKeyboardTemplateRaw from './SliderRangeKeyboard.template?raw';
+import { SliderRangeMinValueDistanceTemplate } from './SliderRangeMinValueDistance.template';
+import sliderRangeMinValueDistanceRaw from './SliderRangeMinValueDistance.template?raw';
 import { SliderRangeSizesTemplate } from './SliderRangeSizes.template';
 import SliderRangeSizesTemplateRaw from './SliderRangeSizes.template?raw';
 import { SliderRangeStatesTemplate } from './SliderRangeStates.template';
@@ -43,6 +45,7 @@ const meta = {
     thumbAppearance: { control: { type: 'inline-radio' }, options: SLIDER_THUMB_APPEARANCES },
     showTooltip: { control: 'boolean' },
     allowSwap: { control: 'boolean' },
+    minValueDistance: { control: { type: 'number', min: 0 } },
     renderValue: { control: 'select', options: ['numbers', 'hidden'], mapping: { numbers: undefined, hidden: null } },
     renderMarks: { control: 'select', options: ['numbers', 'hidden'], mapping: { numbers: undefined, hidden: null } },
   },
@@ -56,6 +59,7 @@ export const Playground: StoryObj<SliderRangeProps> = {
     controls: {
       include: [
         'allowSwap',
+        'minValueDistance',
         'dimension',
         'thumbAppearance',
         'disabled',
@@ -178,5 +182,13 @@ export const Formatting: StoryObj<SliderRangeProps> = {
   parameters: {
     docs: { source: { code: sliderRangeFormattingRaw } },
     controls: { include: ['dimension', 'thumbAppearance', 'disabled', 'label', 'min', 'max', 'step'] },
+  },
+};
+export const MinValueDistance: StoryObj<SliderRangeProps> = {
+  name: 'Минимальный зазор',
+  render: SliderRangeMinValueDistanceTemplate,
+  parameters: {
+    docs: { source: { code: sliderRangeMinValueDistanceRaw } },
+    controls: { disable: true },
   },
 };

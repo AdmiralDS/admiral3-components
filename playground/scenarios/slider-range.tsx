@@ -1,10 +1,16 @@
 import type { PlaygroundScenario } from './index';
 import { SliderRangeKeyboardTemplate } from '../../src/components/SliderRange/stories/SliderRangeKeyboard.template';
+import { SliderRangeMinValueDistanceTemplate } from '../../src/components/SliderRange/stories/SliderRangeMinValueDistance.template';
 import { SliderRangeStoryControlledTemplate as SliderRangeControlledTemplate } from '../../src/components/SliderRange/stories/SliderRangeStoryControlled.template';
 import { SliderRangeStoryNativeFormTemplate as SliderRangeNativeFormTemplate } from '../../src/components/SliderRange/stories/SliderRangeStoryNativeForm.template';
 import { SliderRangeStoryPlaygroundTemplate as SliderRangePlaygroundTemplate } from '../../src/components/SliderRange/stories/SliderRangeStoryPlayground.template';
 
 export const sliderRangeScenarios: PlaygroundScenario[] = [
+  {
+    id: 'slider-range/min-distance',
+    title: 'SliderRange Minimum Distance',
+    render: () => <SliderRangeMinValueDistanceTemplate />,
+  },
   {
     id: 'slider-range/controlled-touch',
     title: 'SliderRange Controlled Touch',

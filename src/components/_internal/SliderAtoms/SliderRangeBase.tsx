@@ -18,6 +18,7 @@ export const SliderRangeBase = ({
   value: [lower, upper],
   onChange,
   allowSwap,
+  minValueDistance,
   disabled,
   showTooltip,
   lowerTooltipContent,
@@ -50,7 +51,7 @@ export const SliderRangeBase = ({
   const [swapped, setSwapped] = useState(false);
   const pendingSwap = useRef<{ lower: number; upper: number; previous: boolean } | null>(null);
   // Во время нативного перетаскивания наведение не меняет выбранный DOM-ползунок.
-  const dragging = useRef(false);
+  const dragging = useRef<HTMLInputElement | null>(null);
 
   useLayoutEffect(() => {
     const pending = pendingSwap.current;
@@ -60,27 +61,24 @@ export const SliderRangeBase = ({
     if (pending.lower !== lower || pending.upper !== upper) setSwapped(pending.previous);
   }, [lower, upper, swapped]);
 
-  // Отпускание или отмена указателя вне контейнера тоже должны завершать перетаскивание.
-  useEffect(() => {
-    const ownerDocument = lowerRef.current?.ownerDocument;
-    const finish = () => {
-      dragging.current = false;
-    };
-    ownerDocument?.addEventListener('pointerup', finish);
-    ownerDocument?.addEventListener('pointercancel', finish);
-    return () => {
-      ownerDocument?.removeEventListener('pointerup', finish);
-      ownerDocument?.removeEventListener('pointercancel', finish);
-    };
-  }, []);
-
   // Во время drag разрешаем обмен; клавиатура сохраняет роль и ограничение соседней границей.
   const change = (bound: 'lower' | 'upper', next: number) => {
     if (disabled || (bound === 'lower' ? lowerRef : upperRef).current?.matches(':disabled')) return;
     const normalized = normalizeSliderValue(next, min, max, step);
+    const distance = dragging.current ? 0 : minValueDistance;
     const crossing = allowSwap && dragging.current && (bound === 'lower' ? normalized > upper : normalized < lower);
-    const nextLower = bound === 'lower' ? Math.min(upper, normalized) : crossing ? normalized : lower;
-    const nextUpper = bound === 'upper' ? Math.max(lower, normalized) : crossing ? normalized : upper;
+    const nextLower =
+      bound === 'lower'
+        ? normalizeSliderValue(Math.min(upper - distance, normalized), min, max, step)
+        : crossing
+          ? normalized
+          : lower;
+    const nextUpper =
+      bound === 'upper'
+        ? normalizeSliderValue(Math.max(lower + distance, normalized), min, max, step)
+        : crossing
+          ? normalized
+          : upper;
     if (nextLower !== lower || nextUpper !== upper) {
       if (crossing) {
         pendingSwap.current = { lower: nextLower, upper: nextUpper, previous: swapped };
@@ -90,6 +88,28 @@ export const SliderRangeBase = ({
       onChange([nextLower, nextUpper]);
     }
   };
+
+  const finishDrag = useCallback(() => {
+    const input = dragging.current;
+    dragging.current = null;
+    if (!input || disabled || input.matches(':disabled')) return;
+    if (Number((upper - lower).toPrecision(15)) >= minValueDistance) return;
+    // Роль определяем по актуальным refs, поскольку за время жеста ползунки могли обменяться ролями.
+    const isLower = input === lowerRef.current;
+    const next = normalizeSliderValue(isLower ? upper - minValueDistance : lower + minValueDistance, min, max, step);
+    if (next !== (isLower ? lower : upper)) onChange(isLower ? [next, upper] : [lower, next]);
+  }, [disabled, lower, upper, minValueDistance, min, max, step, onChange]);
+
+  // Отпускание или отмена указателя вне контейнера также завершают жест и восстанавливают зазор.
+  useEffect(() => {
+    const ownerDocument = lowerRef.current?.ownerDocument;
+    ownerDocument?.addEventListener('pointerup', finishDrag);
+    ownerDocument?.addEventListener('pointercancel', finishDrag);
+    return () => {
+      ownerDocument?.removeEventListener('pointerup', finishDrag);
+      ownerDocument?.removeEventListener('pointercancel', finishDrag);
+    };
+  }, [finishDrag]);
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     // При движении указателя поднимаем ближайший Handle через z-index, чтобы он мог принять нажатие.
@@ -108,7 +128,7 @@ export const SliderRangeBase = ({
     // Сравниваем сами inputs: их конструктор может принадлежать другому окну при рендеринге в iframe.
     // Нажатие на ползунок оставляем нативному механизму перетаскивания.
     if (event.target === lowerRef.current || event.target === upperRef.current) {
-      dragging.current = true;
+      dragging.current = event.target as HTMLInputElement;
       setActiveThumb(event.target === lowerRef.current ? 'lower' : 'upper');
       return;
     }
@@ -118,9 +138,6 @@ export const SliderRangeBase = ({
     const bound = position * 100 < (lowerPosition + upperPosition) / 2 ? 'lower' : 'upper';
     setActiveThumb(bound);
     change(bound, min + position * (max - min));
-  };
-  const handlePointerEnd = () => {
-    dragging.current = false;
   };
   const handleLowerChange = (next: number) => {
     change('lower', next);
@@ -159,7 +176,7 @@ export const SliderRangeBase = ({
     position: lowerPosition,
     tooltipContent: lowerTooltipContent,
     'aria-valuemin': min,
-    'aria-valuemax': upper,
+    'aria-valuemax': Math.max(lower, upper - minValueDistance),
     tabIndex: disabled ? -1 : 0,
     onValueChange: handleLowerChange,
     onFocus: handleLowerFocus,
@@ -171,7 +188,7 @@ export const SliderRangeBase = ({
     value: upper,
     position: upperPosition,
     tooltipContent: upperTooltipContent,
-    'aria-valuemin': lower,
+    'aria-valuemin': Math.min(upper, lower + minValueDistance),
     'aria-valuemax': max,
     tabIndex: disabled ? -1 : 0,
     onValueChange: handleUpperChange,
@@ -187,8 +204,8 @@ export const SliderRangeBase = ({
       data-disabled={disabled ? '' : undefined}
       onPointerMove={handlePointerMove}
       onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerEnd}
-      onPointerCancel={handlePointerEnd}
+      onPointerUp={finishDrag}
+      onPointerCancel={finishDrag}
     >
       <SliderRangeTrack style={getSliderRangePositionStyle(lowerPosition, upperPosition, dimension)} />
       {/* Aria-границы учитывают соседний Handle, сохраняя общие нативные min/max. */}

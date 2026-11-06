@@ -5,6 +5,50 @@ import { getPlaygroundScenarioPath, getTabKey, resolveCssColorToken } from '../u
 
 test.describe('SliderRange playground', () => {
   for (const from of ['lower', 'upper'] as const) {
+    test(`restores minValueDistance for the active ${from} role after release outside the track`, async ({ page }) => {
+      await page.goto(getPlaygroundScenarioPath('slider-range/min-distance'));
+      const lower = page.getByRole('slider', { name: 'Минимальная сумма' });
+      const upper = page.getByRole('slider', { name: 'Максимальная сумма' });
+      const box = await lower.locator('..').boundingBox();
+      if (!box) throw new Error('Missing range track');
+      const y = box.y + box.height / 2;
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.25 : 0.75), y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.75 : 0.25), y, { steps: 12 });
+      await expect(lower).toHaveValue(from === 'lower' ? '75' : '25');
+      await expect(upper).toHaveValue(from === 'lower' ? '75' : '25');
+      await page.mouse.move(box.x + box.width * (from === 'lower' ? 0.75 : 0.25), y + 100);
+      await page.mouse.up();
+      await expect(lower).toHaveValue(from === 'lower' ? '65' : '25');
+      await expect(upper).toHaveValue(from === 'lower' ? '75' : '35');
+      // Клавиатура учитывает зазор сразу, без временного совпадения.
+      await lower.press('End');
+      expect(Number(await upper.inputValue()) - Number(await lower.inputValue())).toBe(10);
+    });
+  }
+
+  test('restores minValueDistance in the new role after swapping during native drag', async ({ page }) => {
+    await page.goto(getPlaygroundScenarioPath('slider-range/min-distance'));
+    const lower = page.getByRole('slider', { name: 'Минимальная сумма' });
+    const upper = page.getByRole('slider', { name: 'Максимальная сумма' });
+    const input = await lower.elementHandle();
+    const box = await lower.locator('..').boundingBox();
+    if (!box || !input) throw new Error('Missing range track or input');
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + box.width * 0.25, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.9, y, { steps: 12 });
+    await page.mouse.move(box.x + box.width * 0.78, y, { steps: 5 });
+    await expect(lower).toHaveValue('75');
+    await expect(upper).toHaveValue('78');
+    await page.mouse.up();
+    await expect(lower).toHaveValue('75');
+    await expect(upper).toHaveValue('85');
+    expect(await input.getAttribute('data-bound')).toBe('upper');
+    expect(await input.evaluate((element) => element === element.ownerDocument.activeElement)).toBe(true);
+  });
+
+  for (const from of ['lower', 'upper'] as const) {
     test(`keeps ${from} thumb role and stops at the neighbor when allowSwap=false`, async ({ page }) => {
       await page.goto(getPlaygroundScenarioPath('slider-range/no-swap'));
       const lower = page.getByRole('slider', { name: 'Минимальная сумма' });

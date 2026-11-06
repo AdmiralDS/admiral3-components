@@ -22,6 +22,7 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
       min: minProp = 0,
       max: maxProp = 100,
       step: stepProp = 1,
+      minValueDistance: minValueDistanceProp = 0,
       value,
       defaultValue,
       onChange,
@@ -54,6 +55,12 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
     const max = Number.isFinite(maxProp) ? Math.max(min, maxProp) : min;
 
     const step = Number.isFinite(stepProp) && stepProp > 0 ? stepProp : 1;
+    const requestedDistance = Number.isFinite(minValueDistanceProp) ? Math.max(0, minValueDistanceProp) : 0;
+    const distanceSteps = Math.ceil(Number((requestedDistance / step).toPrecision(15)));
+    const minValueDistance = Math.min(
+      normalizeSliderValue(max, min, max, step) - min,
+      Number((distanceSteps * step).toPrecision(15)),
+    );
 
     const [internalValue, setInternalValue] = useState(defaultValue ?? [min, max]);
     const source = value ?? internalValue;
@@ -75,7 +82,9 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
       if (isDisabled) return;
       const next = normalizeSliderValue(selected, min, max, step);
       const selectLower = selected < (lower + upper) / 2;
-      const interval: [number, number] = selectLower ? [Math.min(next, upper), upper] : [lower, Math.max(next, lower)];
+      const interval: [number, number] = selectLower
+        ? [normalizeSliderValue(Math.min(next, upper - minValueDistance), min, max, step), upper]
+        : [lower, normalizeSliderValue(Math.max(next, lower + minValueDistance), min, max, step)];
       if (interval[0] !== lower || interval[1] !== upper) {
         if (value === undefined) setInternalValue(interval);
         onChange?.(interval);
@@ -129,6 +138,7 @@ export const SliderRange = forwardRef<HTMLDivElement, SliderRangeProps>(
         )}
         <SliderRangeBase
           allowSwap={allowSwap}
+          minValueDistance={minValueDistance}
           dimension={dimension}
           thumbAppearance={thumbAppearance}
           min={min}
