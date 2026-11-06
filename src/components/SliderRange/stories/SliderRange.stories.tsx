@@ -70,14 +70,6 @@ export const Playground: StoryObj<SliderRangeProps> = {
     },
   },
 };
-export const ThumbSwap: StoryObj<SliderRangeProps> = {
-  name: 'Обмен ролями ползунков',
-  render: SliderRangeThumbSwapTemplate,
-  parameters: {
-    docs: { source: { code: sliderRangeThumbSwapRaw } },
-    controls: { disable: true },
-  },
-};
 export const Sizes: StoryObj<SliderRangeProps> = {
   render: SliderRangeSizesTemplate,
   parameters: {
@@ -111,6 +103,14 @@ export const WithTooltip: StoryObj<SliderRangeProps> = {
   parameters: {
     docs: { source: { code: SliderRangeTooltipTemplateRaw } },
     controls: { include: ['dimension', 'thumbAppearance', 'disabled', 'label', 'renderValue', 'renderMarks'] },
+  },
+};
+export const ThumbSwap: StoryObj<SliderRangeProps> = {
+  name: 'Обмен ролями ползунков',
+  render: SliderRangeThumbSwapTemplate,
+  parameters: {
+    docs: { source: { code: sliderRangeThumbSwapRaw } },
+    controls: { disable: true },
   },
 };
 export const Controlled: StoryObj<SliderRangeProps> = {
@@ -173,7 +173,6 @@ export const KeyboardNavigation: StoryObj<SliderRangeProps> = {
     },
   },
 };
-
 export const Formatting: StoryObj<SliderRangeProps> = {
   render: SliderRangeFormattingTemplate,
   parameters: {
