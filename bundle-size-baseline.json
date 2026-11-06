@@ -16,7 +16,7 @@
       "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 29259
+      "rawBytes": 29751
     },
     "divider": {
       "rawBytes": 1543
@@ -34,7 +34,7 @@
       "rawBytes": 14817
     },
     "input": {
-      "rawBytes": 24068
+      "rawBytes": 24074
     },
     "link": {
       "rawBytes": 2676
@@ -43,7 +43,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 19394
+      "rawBytes": 19862
     },
     "progress-header": {
       "rawBytes": 2489
@@ -63,8 +63,11 @@
     "spinner": {
       "rawBytes": 6566
     },
+    "stepper": {
+      "rawBytes": 31492
+    },
     "tag": {
-      "rawBytes": 21203
+      "rawBytes": 21694
     },
     "text-area": {
       "rawBytes": 28009

@@ -33,4 +33,10 @@ describe('isOverflowed', () => {
   it('detects vertical overflow', () => {
     expect(isOverflowed(createElementWithDimensions({ scrollHeight: 101 }))).toBe(true);
   });
+
+  it('allows an explicit vertical tolerance without relaxing horizontal measurements', () => {
+    expect(isOverflowed(createElementWithDimensions({ scrollHeight: 101 }), 1)).toBe(false);
+    expect(isOverflowed(createElementWithDimensions({ scrollHeight: 120 }), 1)).toBe(true);
+    expect(isOverflowed(createElementWithDimensions({ scrollWidth: 101 }), 1)).toBe(true);
+  });
 });
