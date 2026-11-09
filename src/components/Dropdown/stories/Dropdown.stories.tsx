@@ -18,7 +18,9 @@ Dropdown отвечает только за отображение и позиц
 const meta = {
   title: 'Components/Dropdown',
   component: Dropdown,
-  tags: ['autodocs'],
+  // TODO: Не публиковать Dropdown в Storybook, пока не реализованы управление фокусом,
+  // клавиатурная навигация и закрытие при клике за пределами компонента.
+  tags: ['!dev', '!test', '!autodocs'],
   parameters: {
     layout: 'fullscreen',
     docs: { description: { component: componentDescription } },

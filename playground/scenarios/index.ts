@@ -7,6 +7,7 @@ import { buttonGroupScenarios } from './button-group';
 import { checkBoxScenarios } from './check-box';
 import { chipsScenarios } from './chips';
 import { dividerScenarios } from './divider';
+import { dropdownScenarios } from './dropdown';
 import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
 import { hintScenarios } from './hint';
@@ -41,6 +42,7 @@ export const playgroundScenarios = [
   ...checkBoxScenarios,
   ...chipsScenarios,
   ...dividerScenarios,
+  ...dropdownScenarios,
   ...fieldSetScenarios,
   ...formItemScenarios,
   ...hintScenarios,

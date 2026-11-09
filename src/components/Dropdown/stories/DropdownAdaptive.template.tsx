@@ -75,11 +75,12 @@ const Target = styled.button<{ $horizontal: HorizontalPosition; $vertical: Verti
   padding: 8px 16px;
 `;
 
-const DropdownContent = styled.div<{ $width: number; $tall: boolean }>`
+const DropdownContent = styled.div<{ $width: number; $tall: boolean; $fitTarget: boolean }>`
   box-sizing: border-box;
-  width: ${({ $width }) => $width}px;
+  width: ${({ $fitTarget, $width }) => ($fitTarget ? '100%' : `${$width}px`)};
   min-height: ${({ $tall }) => ($tall ? 240 : 80)}px;
   padding: 16px;
+  overflow-wrap: anywhere;
 `;
 
 const Hint = styled.p`
@@ -166,7 +167,7 @@ export const DropdownAdaptiveTemplate = (props: DropdownProps) => {
             Target
           </Target>
           <Dropdown {...props} targetElement={targetElement}>
-            <DropdownContent $width={contentWidth} $tall={tallContent}>
+            <DropdownContent $width={contentWidth} $tall={tallContent} $fitTarget={props.widthMode === 'target'}>
               <strong>Dropdown</strong>
               <p>Снизу — приоритетная позиция. Если места недостаточно, компонент откроется сверху.</p>
             </DropdownContent>

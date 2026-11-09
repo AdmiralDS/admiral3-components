@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { createRef, forwardRef } from 'react';
 
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -170,5 +170,30 @@ describe('Dropdown', () => {
 
     expect(dropdown).toHaveStyle({ width: 'var(--admiral-floating-target-width)' });
     expect(dropdown).not.toHaveAttribute('widthMode');
+  });
+
+  it('forwards the ref and native div attributes to the dropdown element', () => {
+    const targetElement = document.createElement('button');
+    vi.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue(rect(100, 100, 120, 40));
+    const ref = createRef<HTMLDivElement>();
+
+    render(
+      <Dropdown
+        ref={ref}
+        targetElement={targetElement}
+        className="custom-dropdown"
+        style={{ color: 'rgb(255, 0, 0)' }}
+        data-component="dropdown"
+        data-testid="dropdown"
+      >
+        Content
+      </Dropdown>,
+    );
+
+    const dropdown = screen.getByTestId('dropdown');
+    expect(ref.current).toBe(dropdown);
+    expect(dropdown).toHaveClass('custom-dropdown');
+    expect(dropdown).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+    expect(dropdown).toHaveAttribute('data-component', 'dropdown');
   });
 });
