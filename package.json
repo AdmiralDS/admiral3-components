@@ -38,6 +38,10 @@
       "types": "./dist/components/Divider/index.d.ts",
       "import": "./dist/components/Divider/index.js"
     },
+    "./dropdown": {
+      "types": "./dist/components/Dropdown/index.d.ts",
+      "import": "./dist/components/Dropdown/index.js"
+    },
     "./field-set": {
       "types": "./dist/components/FieldSet/index.d.ts",
       "import": "./dist/components/FieldSet/index.js"

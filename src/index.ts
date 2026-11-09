@@ -5,6 +5,7 @@ export * from './components/ButtonGroup';
 export * from './components/CheckBox';
 export * from './components/Chips';
 export * from './components/Divider';
+export * from './components/Dropdown';
 export * from './components/FieldSet';
 export * from './components/FormItem';
 export * from './components/HelperComponents';
