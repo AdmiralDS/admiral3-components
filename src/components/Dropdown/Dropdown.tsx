@@ -16,7 +16,7 @@ const INITIAL_LAYOUT: DropdownLayout = {
 };
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
-  ({ align = 'auto', children, onTargetDetached, targetElement, ...props }, ref) => {
+  ({ align = 'auto', children, onTargetDetached, targetElement, widthMode = 'content', ...props }, ref) => {
     const [floatingPortal, setFloatingPortal] = useState<HTMLDivElement | null>(null);
     const [dropdownElement, setDropdownElement] = useState<HTMLDivElement | null>(null);
     const [layout, setLayout] = useState(INITIAL_LAYOUT);
@@ -68,7 +68,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     return (
       <StyledPortal targetElement={targetElement} ref={setFloatingPortal} $position={layout.position}>
         <FakeTarget />
-        <DropdownContainer ref={mergedRef} $layout={layout} {...props}>
+        <DropdownContainer ref={mergedRef} $layout={layout} $widthMode={widthMode} {...props}>
           {children}
         </DropdownContainer>
       </StyledPortal>

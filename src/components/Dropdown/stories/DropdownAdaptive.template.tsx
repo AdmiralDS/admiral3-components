@@ -63,7 +63,7 @@ const Surface = styled.div`
     linear-gradient(to bottom, transparent calc(50% - 1px), #dbe2ea 50%, transparent calc(50% + 1px));
 `;
 
-const Target = styled.button<{ $horizontal: HorizontalPosition; $vertical: VerticalPosition }>`
+const Target = styled.button<{ $horizontal: HorizontalPosition; $vertical: VerticalPosition; $width: number }>`
   position: absolute;
   ${({ $horizontal }) =>
     $horizontal === 'left' ? 'left: 24px;' : $horizontal === 'right' ? 'right: 24px;' : 'left: 50%;'}
@@ -71,6 +71,7 @@ const Target = styled.button<{ $horizontal: HorizontalPosition; $vertical: Verti
   transform: ${({ $horizontal, $vertical }) =>
     `${$horizontal === 'center' ? 'translateX(-50%)' : ''} ${$vertical === 'center' ? 'translateY(-50%)' : ''}`};
   min-height: 40px;
+  width: ${({ $width }) => $width}px;
   padding: 8px 16px;
 `;
 
@@ -95,6 +96,7 @@ export const DropdownAdaptiveTemplate = (props: DropdownProps) => {
   const [horizontal, setHorizontal] = useState<HorizontalPosition>('center');
   const [vertical, setVertical] = useState<VerticalPosition>('center');
   const [contentWidth, setContentWidth] = useState(320);
+  const [targetWidth, setTargetWidth] = useState(160);
   const [tallContent, setTallContent] = useState(false);
 
   return (
@@ -127,6 +129,18 @@ export const DropdownAdaptiveTemplate = (props: DropdownProps) => {
           ))}
         </ControlGroup>
         <ControlGroup>
+          <label htmlFor="target-width">Ширина target: {targetWidth}px</label>
+          <input
+            id="target-width"
+            type="range"
+            min="120"
+            max="480"
+            step="40"
+            value={targetWidth}
+            onChange={(event) => setTargetWidth(Number(event.currentTarget.value))}
+          />
+        </ControlGroup>
+        <ControlGroup>
           <label htmlFor="dropdown-width">Ширина: {contentWidth}px</label>
           <input
             id="dropdown-width"
@@ -148,7 +162,7 @@ export const DropdownAdaptiveTemplate = (props: DropdownProps) => {
       </Controls>
       <Stage>
         <Surface>
-          <Target ref={setTargetElement} $horizontal={horizontal} $vertical={vertical}>
+          <Target ref={setTargetElement} $horizontal={horizontal} $vertical={vertical} $width={targetWidth}>
             Target
           </Target>
           <Dropdown {...props} targetElement={targetElement}>

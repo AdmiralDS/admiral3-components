@@ -27,6 +27,7 @@ const meta = {
     targetElement: { control: false },
     children: { control: false },
     align: { control: { type: 'inline-radio' }, options: DROPDOWN_ALIGNMENTS },
+    widthMode: { control: 'radio', options: ['content', 'target'] },
   },
 } satisfies Meta<typeof Dropdown>;
 
@@ -36,6 +37,7 @@ export const AdaptivePosition: StoryObj<DropdownProps> = {
   args: {
     targetElement: null,
     align: 'auto',
+    widthMode: 'content',
   },
   render: DropdownAdaptiveTemplate,
   parameters: {

@@ -135,4 +135,40 @@ describe('Dropdown', () => {
 
     expect(dropdown).toHaveStyle({ alignSelf: 'flex-start', transform: 'translate(-166px, 0px)' });
   });
+
+  it('uses content width by default and keeps widthMode out of the DOM', () => {
+    const targetElement = document.createElement('button');
+    vi.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue(rect(100, 100, 120, 40));
+
+    render(
+      <Dropdown targetElement={targetElement} data-testid="dropdown">
+        Content
+      </Dropdown>,
+    );
+
+    expect(screen.getByTestId('dropdown')).toHaveStyle({ width: 'max-content' });
+    expect(screen.getByTestId('dropdown')).not.toHaveAttribute('widthMode');
+  });
+
+  it('updates the width policy when widthMode changes', () => {
+    const targetElement = document.createElement('button');
+    vi.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue(rect(100, 100, 120, 40));
+    const { rerender } = render(
+      <Dropdown targetElement={targetElement} widthMode="content" data-testid="dropdown">
+        Content
+      </Dropdown>,
+    );
+
+    const dropdown = screen.getByTestId('dropdown');
+    expect(dropdown).toHaveStyle({ width: 'max-content' });
+
+    rerender(
+      <Dropdown targetElement={targetElement} widthMode="target" data-testid="dropdown">
+        Content
+      </Dropdown>,
+    );
+
+    expect(dropdown).toHaveStyle({ width: 'var(--admiral-floating-target-width)' });
+    expect(dropdown).not.toHaveAttribute('widthMode');
+  });
 });
