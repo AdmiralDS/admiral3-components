@@ -116,15 +116,26 @@ test.describe('Hint playground', () => {
     await expect(portal).toHaveCSS('width', '375px');
   });
 
-  test('resolves theme token styles', async ({ page }) => {
+  test('resolves theme token styles after switching themes', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath(defaultScenarioId));
-    await page.getByRole('button', { name: 'Наведи курсор или установи фокус' }).focus();
 
     const hint = page.getByRole('tooltip');
-    const expectedBackground = await resolveCssColorToken(page, '--admiral-color-neutral-base-elevated-rest');
-    const expectedText = await resolveCssColorToken(page, '--admiral-color-neutral-text-1-rest');
+    const backgrounds: string[] = [];
 
-    await expect(hint).toHaveCSS('background-color', expectedBackground);
-    await expect(hint).toHaveCSS('color', expectedText);
+    for (const theme of ['light', 'dark', 'lightNeutral', 'darkNeutral']) {
+      await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+      await page.getByRole('button', { name: 'Наведи курсор или установи фокус' }).focus();
+      await expect(hint).toBeVisible();
+
+      const expectedBackground = await resolveCssColorToken(page, '--admiral-color-neutral-base-elevated-rest');
+      const expectedText = await resolveCssColorToken(page, '--admiral-color-neutral-text-1-rest');
+
+      await expect(hint).toHaveCSS('background-color', expectedBackground);
+      await expect(hint).toHaveCSS('color', expectedText);
+      backgrounds.push(await hint.evaluate((element) => getComputedStyle(element).backgroundColor));
+    }
+
+    expect(backgrounds[0]).not.toBe(backgrounds[1]);
+    expect(backgrounds[2]).not.toBe(backgrounds[3]);
   });
 });
