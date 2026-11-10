@@ -16,10 +16,13 @@
       "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 29259
+      "rawBytes": 29332
     },
     "divider": {
       "rawBytes": 1543
+    },
+    "dropdown": {
+      "rawBytes": 6137
     },
     "field-set": {
       "rawBytes": 1719
@@ -31,10 +34,10 @@
       "rawBytes": 9796
     },
     "hint": {
-      "rawBytes": 14817
+      "rawBytes": 14892
     },
     "input": {
-      "rawBytes": 24068
+      "rawBytes": 24142
     },
     "link": {
       "rawBytes": 2676
@@ -43,7 +46,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 19394
+      "rawBytes": 19469
     },
     "progress-header": {
       "rawBytes": 2489
@@ -64,16 +67,16 @@
       "rawBytes": 6566
     },
     "tag": {
-      "rawBytes": 21203
+      "rawBytes": 21278
     },
     "text-area": {
-      "rawBytes": 28009
+      "rawBytes": 28085
     },
     "toggle": {
       "rawBytes": 7700
     },
     "tooltip": {
-      "rawBytes": 10943
+      "rawBytes": 11016
     }
   },
   "version": 1
