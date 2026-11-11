@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
 import { useForm } from '@tanstack/react-form';
@@ -8,6 +8,8 @@ import {
   Button,
   CheckBox,
   Input,
+  InputSlider,
+  InputSliderRange,
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
@@ -24,6 +26,9 @@ type FormValues = {
   email: string;
   website: string;
   comment: string;
+  amount: string;
+  amountFrom: string;
+  amountTo: string;
   age: number;
   budget: [number, number];
   delivery: string;
@@ -38,12 +43,19 @@ const defaultValues: FormValues = {
   email: '',
   website: '',
   comment: '',
+  amount: '10000.5',
+  amountFrom: '10000.5',
+  amountTo: '15000',
   age: 30,
   budget: [25, 75],
   delivery: 'courier',
   agreement: false,
   notifications: true,
 };
+
+const amountFormatter = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatAmount = (value: number) => amountFormatter.format(value);
+const parseAmount = (text: string) => Number(text.replace(/\s/g, '').replace(',', '.'));
 
 const Page = styled.div`
   box-sizing: border-box;
@@ -118,6 +130,15 @@ const Result = styled.pre`
 
 export const TanStackFormTemplate = () => {
   const idPrefix = useId();
+  const amountId = `${idPrefix}-amount`;
+  const amountInputRef = useRef<HTMLInputElement>(null);
+  const rangeId = `${idPrefix}-amount-range`;
+  const amountFromRef = useRef<HTMLInputElement>(null);
+  const amountToRef = useRef<HTMLInputElement>(null);
+  const validateAmount = (value: string) => {
+    if (!value) return 'Введите сумму';
+    return amountInputRef.current?.validationMessage || undefined;
+  };
   const nameId = `${idPrefix}-tanstack-name`;
   const passwordId = `${idPrefix}-tanstack-password`;
   const confirmPasswordId = `${idPrefix}-tanstack-confirm-password`;
@@ -131,10 +152,16 @@ export const TanStackFormTemplate = () => {
   const form = useForm({
     defaultValues,
     onSubmit: ({ value }) => setSubmittedValues(value),
+    onSubmitInvalid: ({ formApi }) => {
+      if (formApi.getFieldMeta('amount')?.errors.length) amountInputRef.current?.focus();
+      else if (formApi.getFieldMeta('amountFrom')?.errors.length) amountFromRef.current?.focus();
+      else if (formApi.getFieldMeta('amountTo')?.errors.length) amountToRef.current?.focus();
+    },
   });
 
   const handleReset = () => {
     form.reset();
+    amountInputRef.current?.form?.reset();
     setSubmittedValues(null);
     setPasswordVisible(false);
     setConfirmPasswordVisible(false);
@@ -152,7 +179,8 @@ export const TanStackFormTemplate = () => {
         <Title>Регистрационная форма</Title>
         <Description>
           Пример интеграции компонентов Admiral 3 с TanStack Form. Поля подключены через form.Field, значения и
-          обработчики передаются явно.
+          обработчики передаются явно. InputSlider хранит сумму без форматирования. Его нативная валидность связана с
+          валидатором TanStack, а сброс библиотеки — со сбросом нативной формы.
         </Description>
 
         <form.Field name="name" validators={{ onChange: ({ value }) => (value.trim() ? undefined : 'Введите имя') }}>
@@ -349,6 +377,159 @@ export const TanStackFormTemplate = () => {
               </Field>
             );
           }}
+        </form.Field>
+
+        <form.Field
+          name="amount"
+          validators={{
+            onChange: ({ value }) => validateAmount(value),
+          }}
+        >
+          {(field) => {
+            const error = field.state.meta.errors.join(', ') || undefined;
+            return (
+              <Field>
+                <Label id={`${amountId}-label`} htmlFor={amountId}>
+                  Сумма
+                </Label>
+                <InputSlider
+                  name={field.name}
+                  value={field.state.value}
+                  onValueChange={field.handleChange}
+                  onBlur={() => {
+                    field.handleBlur();
+                    void field.validate('change');
+                  }}
+                  nativeInputRef={amountInputRef}
+                  required
+                  min={0}
+                  max={20_000}
+                  step={0.01}
+                  formatValue={formatAmount}
+                  parseValue={parseAmount}
+                  status={error ? 'error' : undefined}
+                  inputProps={{
+                    id: amountId,
+                    'aria-labelledby': `${amountId}-label`,
+                    inputMode: 'decimal',
+                    suffix: '₽',
+                    showClearIcon: true,
+                    'aria-describedby': error ? `${amountId}-error` : undefined,
+                    onInput: () => {
+                      field.setMeta((meta) => ({ ...meta, isTouched: true }));
+                      void field.validate('change');
+                    },
+                  }}
+                />
+                {error && <ErrorText id={`${amountId}-error`}>{error}</ErrorText>}
+              </Field>
+            );
+          }}
+        </form.Field>
+
+        <form.Field
+          name="amountFrom"
+          validators={{
+            onChange: ({ value }) =>
+              !value ? 'Введите нижнюю сумму' : amountFromRef.current?.validationMessage || undefined,
+          }}
+        >
+          {(fromField) => (
+            <form.Field
+              name="amountTo"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? 'Введите верхнюю сумму' : amountToRef.current?.validationMessage || undefined,
+              }}
+            >
+              {(toField) => {
+                const rangeError =
+                  [...fromField.state.meta.errors, ...toField.state.meta.errors].join(', ') || undefined;
+                const validateRange = () => {
+                  void fromField.validate('change');
+                  void toField.validate('change');
+                };
+                const handleRangeChange = ([from, to]: [string, string]) => {
+                  if (from !== fromField.state.value) fromField.handleChange(from);
+                  if (to !== toField.state.value) toField.handleChange(to);
+                  validateRange();
+                };
+                return (
+                  <Field>
+                    <Label id={`${rangeId}-label`} htmlFor={`${rangeId}-from`}>
+                      Диапазон суммы
+                    </Label>
+                    <InputSliderRange
+                      role="group"
+                      aria-labelledby={`${rangeId}-label`}
+                      lowerName={fromField.name}
+                      upperName={toField.name}
+                      value={[fromField.state.value, toField.state.value]}
+                      onValueChange={handleRangeChange}
+                      lowerNativeInputRef={amountFromRef}
+                      upperNativeInputRef={amountToRef}
+                      required
+                      min={0}
+                      max={20_000}
+                      step={0.01}
+                      formatValue={formatAmount}
+                      parseValue={parseAmount}
+                      status={rangeError ? 'error' : undefined}
+                      lowerInputProps={{
+                        id: `${rangeId}-from`,
+                        'aria-label': 'Сумма от',
+                        'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+                        prefix: 'От',
+                        suffix: '₽',
+                        inputMode: 'decimal',
+                        showClearIcon: true,
+                        onInput: () => {
+                          fromField.setMeta((meta) => ({ ...meta, isTouched: true }));
+                          validateRange();
+                        },
+                        onBlur: () => {
+                          fromField.handleBlur();
+                          validateRange();
+                        },
+                      }}
+                      upperInputProps={{
+                        id: `${rangeId}-to`,
+                        'aria-label': 'Сумма до',
+                        'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+                        prefix: 'До',
+                        suffix: '₽',
+                        inputMode: 'decimal',
+                        showClearIcon: true,
+                        onInput: () => {
+                          toField.setMeta((meta) => ({ ...meta, isTouched: true }));
+                          validateRange();
+                        },
+                        onBlur: () => {
+                          toField.handleBlur();
+                          validateRange();
+                        },
+                      }}
+                      sliderProps={{
+                        lowerNativeSliderProps: {
+                          onBlur: () => {
+                            fromField.handleBlur();
+                            validateRange();
+                          },
+                        },
+                        upperNativeSliderProps: {
+                          onBlur: () => {
+                            toField.handleBlur();
+                            validateRange();
+                          },
+                        },
+                      }}
+                    />
+                    {rangeError && <ErrorText id={`${rangeId}-error`}>{rangeError}</ErrorText>}
+                  </Field>
+                );
+              }}
+            </form.Field>
+          )}
         </form.Field>
 
         <form.Field name="comment">
