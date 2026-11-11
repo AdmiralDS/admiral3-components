@@ -30,26 +30,23 @@ export const StepperDirtyTemplate = (args: StepperProps) => {
               }
             : undefined
         }
-        onKeyDown={(event) => {
-          if (cancel) event.preventDefault();
-          const key = (event.target as HTMLElement).closest('li')?.getAttribute('data-key');
-          if (!key) return;
-          if (event.key === 'Delete') setKeys((items) => items.filter((item) => item !== key));
-          if (event.key.toLowerCase() === 'd') setDisabled((items) => [...items, key]);
-          if (event.key.toLowerCase() === 'h') setHidden((items) => [...items, key]);
-          if (event.key.toLowerCase() === 'r') setKeys((items) => [...items].reverse());
-        }}
       >
         {keys.map((key) => (
           <Step
             key={key}
-            data-key={key}
             label={key}
             description={`Описание ${key}`}
             completed
             disabled={disabled.includes(key)}
             hidden={hidden.includes(key)}
             buttonProps={{
+              onKeyDown: (event) => {
+                if (cancel) event.preventDefault();
+                if (event.key === 'Delete') setKeys((items) => items.filter((item) => item !== key));
+                if (event.key.toLowerCase() === 'd') setDisabled((items) => [...items, key]);
+                if (event.key.toLowerCase() === 'h') setHidden((items) => [...items, key]);
+                if (event.key.toLowerCase() === 'r') setKeys((items) => [...items].reverse());
+              },
               onClick: (event) => {
                 if (cancel) event.preventDefault();
                 if (stopPropagation) event.stopPropagation();

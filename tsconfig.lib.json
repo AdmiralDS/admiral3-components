@@ -46,7 +46,7 @@
       }
     ]
   },
-  "include": ["src/index.ts", "src/components/**/*", "src/vite-env.d.ts"],
+  "include": ["src/index.ts", "src/components/**/*", "src/hooks/**/*", "src/vite-env.d.ts"],
   "exclude": [
     "src/**/stories/**",
     "src/**/*.stories.*",

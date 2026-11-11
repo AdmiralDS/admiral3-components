@@ -2,6 +2,7 @@
   Children,
   forwardRef,
   isValidElement,
+  useCallback,
   useId,
   useLayoutEffect,
   useRef,
@@ -9,37 +10,29 @@
   type KeyboardEvent,
 } from 'react';
 
+import { useRovingFocus, type RovingFocusItem } from '#src/hooks/useRovingFocus';
+
 import { STEPPER_MOBILE_PADDING, STEPPER_MOBILE_STEP_WIDTH, STEPPER_STATUS_LABELS } from './constants';
 import { Step } from './Step';
-import { StepperContext } from './StepperContext';
+import { StepperContext, type StepRegistration } from './StepperContext';
 import { HiddenText, StepList, StyledStepper } from './style';
 import type { StepperProps, StepProps } from './types';
 import { refSetter } from '../../utils/refSetter';
 
-const getActions = (list: HTMLOListElement | null) =>
-  list ? Array.from(list.querySelectorAll<HTMLButtonElement>(':scope > li > button[data-step-action]')) : [];
-
 const isAvailable = (button: HTMLButtonElement) => {
-  if (!button.isConnected || button.disabled || button.closest('[hidden], [inert]')) return false;
+  if (button.tagName !== 'BUTTON' || !button.isConnected || button.disabled) return false;
   const ownerWindow = button.ownerDocument.defaultView;
   if (!ownerWindow) return false;
   if (ownerWindow.getComputedStyle(button).visibility !== 'visible') return false;
   for (let element: HTMLElement | null = button; element; element = element.parentElement) {
+    if (element.hidden || element.inert) return false;
     if (ownerWindow.getComputedStyle(element).display === 'none') return false;
   }
   return true;
 };
 
-const getAvailableActions = (list: HTMLOListElement | null) => getActions(list).filter(isAvailable);
-
-const setTabStop = (buttons: HTMLButtonElement[], target: HTMLButtonElement | undefined) => {
-  buttons.forEach((button) => {
-    button.tabIndex = button === target ? 0 : -1;
-  });
-};
-
-const getEntryButton = (buttons: HTMLButtonElement[]) =>
-  buttons.find((button) => button.getAttribute('aria-current') === 'step') ?? buttons[0];
+const isActionAvailable = (item: RovingFocusItem<HTMLButtonElement, string>) =>
+  !item.disabled && item.ref.current !== null && isAvailable(item.ref.current);
 
 /** Stepper показывает последовательность шагов и управляет фокусом внутри неё. */
 export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
@@ -65,8 +58,7 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
     ref,
   ) => {
     const rootRef = useRef<HTMLDivElement>(null);
-    const listRef = useRef<HTMLOListElement>(null);
-    const focusedRef = useRef<HTMLButtonElement | null>(null);
+    const registrations = useRef(new Map<string, StepRegistration>());
     const navigationId = useId();
     const orientation = mobile ? 'horizontal' : orientationProp;
     const statusLabels = { ...STEPPER_STATUS_LABELS, ...labels };
@@ -74,6 +66,52 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
     if (steps.some((step) => step.type !== Step)) {
       throw new Error('Stepper only accepts direct Step children.');
     }
+    const stepIds = steps.map((step, index) => String(step.key ?? index));
+    const revealFocusedItem = useCallback(
+      (item: RovingFocusItem<HTMLButtonElement, string>) => {
+        const root = rootRef.current;
+        const button = item.ref.current;
+        if (!mobile || !root || !button) return;
+        const bounds = button.getBoundingClientRect();
+        const viewport = root.getBoundingClientRect();
+        if (bounds.left < viewport.left + STEPPER_MOBILE_PADDING) {
+          root.scrollLeft += bounds.left - viewport.left - STEPPER_MOBILE_PADDING;
+        } else if (bounds.right > viewport.right - STEPPER_MOBILE_PADDING) {
+          root.scrollLeft += bounds.right - viewport.right + STEPPER_MOBILE_PADDING;
+        }
+      },
+      [mobile],
+    );
+    const {
+      focusableItemId,
+      registerItem,
+      onBlur: handleRovingBlur,
+      onFocus: handleRovingFocus,
+      onKeyDown: handleRovingKeyDown,
+    } = useRovingFocus<HTMLButtonElement, string>({
+      containerRef: rootRef,
+      orientation,
+      entryItemId: stepIds[activeStep] ?? null,
+      preventScroll: mobile,
+      fallbackRef: rootRef,
+      isItemAvailable: isActionAvailable,
+      onMoveFocus: revealFocusedItem,
+    });
+    const registerStep = useCallback(
+      (step: StepRegistration) => {
+        registrations.current.set(step.id, step);
+        const unregisterAction = registerItem({
+          id: step.id,
+          ref: step.buttonRef,
+          disabled: !step.interactive || !step.available,
+        });
+        return () => {
+          unregisterAction();
+          if (registrations.current.get(step.id) === step) registrations.current.delete(step.id);
+        };
+      },
+      [registerItem],
+    );
     const interactive = Boolean(onStepChange);
     const resolvedStepWidth =
       stepWidth !== undefined && Number.isFinite(stepWidth) && stepWidth > 0
@@ -82,36 +120,13 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
           ? STEPPER_MOBILE_STEP_WIDTH
           : undefined;
 
-    // После удаления или блокировки шага возвращаем фокус только из самого степпера.
     useLayoutEffect(() => {
       const root = rootRef.current;
-      if (!root) return;
-      const actions = getActions(listRef.current);
-      const buttons = actions.filter(isAvailable);
-      const previous = focusedRef.current;
-      const activeElement = root.ownerDocument.activeElement;
-      const entry = getEntryButton(buttons);
-      const stillFocused = previous && buttons.includes(previous) && activeElement === previous;
-      setTabStop(actions, stillFocused ? previous : entry);
-      if (!previous || stillFocused) return;
-      const outside = activeElement && activeElement !== root.ownerDocument.body && !root.contains(activeElement);
-      focusedRef.current = null;
-      if (outside) return;
-      if (entry) {
-        entry.focus({ preventScroll: true });
-        focusedRef.current = entry;
-      } else {
-        root.focus({ preventScroll: true });
-      }
-    });
-
-    useLayoutEffect(() => {
-      const root = rootRef.current;
-      const list = listRef.current;
-      if (!mobile || !root || !list) return;
+      if (!mobile || !root) return;
       const alignCurrent = () => {
-        const item = list.querySelector('[aria-current="step"]')?.closest('li');
-        if (!item || item.parentElement !== list) return;
+        const item = Array.from(registrations.current.values()).find(({ index }) => index === activeStep)?.itemRef
+          .current;
+        if (!item) return;
         const left =
           root.scrollLeft +
           item.getBoundingClientRect().left -
@@ -134,72 +149,19 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
       return () => observer?.disconnect();
     }, [activeStep, mobile, resolvedStepWidth, steps.length]);
 
-    const getEventButton = (target: EventTarget | null) =>
-      getAvailableActions(listRef.current).find((button) => button === target || button.contains(target as Node));
-
     const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
       onFocus?.(event);
-      if (event.defaultPrevented) return;
-      const button = getEventButton(event.target);
-      if (!button) return;
-      focusedRef.current = button;
-      setTabStop(getActions(listRef.current), button);
+      if (!event.defaultPrevented) handleRovingFocus(event);
     };
 
     const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
       onBlur?.(event);
-      const next = event.relatedTarget as Node | null;
-      // blur() и клик по нефокусируемой области тоже означают выход из группы.
-      // При удалении или скрытии кнопки оставляем восстановление фокуса layout-эффекту.
-      const intentionalBlur = !next && focusedRef.current && isAvailable(focusedRef.current);
-      if ((next && !rootRef.current?.contains(next)) || intentionalBlur) {
-        focusedRef.current = null;
-        const buttons = getActions(listRef.current);
-        setTabStop(buttons, getEntryButton(buttons.filter(isAvailable)));
-      }
+      handleRovingBlur(event);
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(event);
-      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      const buttons = getAvailableActions(listRef.current);
-      const current = getEventButton(event.target);
-      if (!current) return;
-      const index = buttons.indexOf(current);
-      const previousKey = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp';
-      const nextKey = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown';
-      let next: HTMLButtonElement | undefined;
-      switch (event.key) {
-        case 'Home':
-          next = buttons[0];
-          break;
-        case 'End':
-          next = buttons.at(-1);
-          break;
-        case previousKey:
-          next = buttons[(index - 1 + buttons.length) % buttons.length];
-          break;
-        case nextKey:
-          next = buttons[(index + 1) % buttons.length];
-          break;
-        default:
-          return;
-      }
-      if (!next) return;
-      event.preventDefault();
-      focusedRef.current = next;
-      setTabStop(buttons, next);
-      next.focus({ preventScroll: mobile });
-      const root = rootRef.current;
-      if (mobile && root) {
-        const bounds = next.getBoundingClientRect();
-        const viewport = root.getBoundingClientRect();
-        if (bounds.left < viewport.left + STEPPER_MOBILE_PADDING) {
-          root.scrollLeft += bounds.left - viewport.left - STEPPER_MOBILE_PADDING;
-        } else if (bounds.right > viewport.right - STEPPER_MOBILE_PADDING) {
-          root.scrollLeft += bounds.right - viewport.right + STEPPER_MOBILE_PADDING;
-        }
-      }
+      handleRovingKeyDown(event);
     };
 
     return (
@@ -225,11 +187,12 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
             {orientation === 'horizontal' ? statusLabels.horizontalNavigation : statusLabels.verticalNavigation}
           </HiddenText>
         )}
-        <StepList ref={listRef} role="list" $orientation={orientation} $mobile={mobile} $stepWidth={resolvedStepWidth}>
+        <StepList role="list" $orientation={orientation} $mobile={mobile} $stepWidth={resolvedStepWidth}>
           {steps.map((step, index) => (
             <StepperContext.Provider
               key={step.key ?? index}
               value={{
+                stepId: stepIds[index],
                 index,
                 active: activeStep === index,
                 dimension,
@@ -237,8 +200,10 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
                 colorMode,
                 lineClamp,
                 hideLine: index === steps.length - 1 && !showLastStepLine,
+                focusableStepId: focusableItemId,
                 onStepChange,
                 statusLabels,
+                registerStep,
               }}
             >
               {step}

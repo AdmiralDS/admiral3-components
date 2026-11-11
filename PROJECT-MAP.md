@@ -37,6 +37,7 @@ Template-файлы для Storybook и playground в этом документ�
 ├── src/                      # Исходный код публичного API, компонентов и тестовых настроек
 │   ├── components/           # Компоненты библиотеки
 │   │   └── _internal/        # Общие внутренние styled-примитивы компонентов
+│   ├── hooks/                # Публичные переиспользуемые React-хуки
 │   ├── integrations/         # Сквозные Storybook-примеры интеграции с внешними библиотеками
 │   ├── test/                 # Vitest setup
 │   ├── theme/                # Helpers для CSS token fallback и системных transition
@@ -55,7 +56,8 @@ Template-файлы для Storybook и playground в этом документ�
 
 ### TypeScript API
 
-`src/index.ts` является root entrypoint пакета. Сейчас он реэкспортирует компонентные barrels из `src/components`.
+`src/index.ts` является root entrypoint пакета. Он реэкспортирует компонентные barrels из `src/components` и
+поддерживаемые публичные хуки из `src/hooks`.
 
 Основной поток:
 
@@ -181,7 +183,8 @@ Storybook и playground импортируют пакет через alias `@adm
 
 ## Source root
 
-- `src/index.ts` - root public API. Реэкспортирует публичные component barrels; наружу попадают компоненты, props и публичные типы, но не внутренние constants, style helpers и styled props.
+- `src/index.ts` - root public API. Реэкспортирует публичные component barrels и `src/hooks`; наружу попадают компоненты,
+  props, поддерживаемые хуки и публичные типы, но не внутренние constants, style helpers и styled props.
 - `src/theme/cssToken.ts` - helper для CSS custom property с fallback на значение из `styled-components` theme.
 - `src/theme/animation.ts` - CSS-variable wrappers всех animation-токенов и внутренняя база transition для Hover, Press и Leave.
 - `src/utils/refSetter.ts` - внутренняя утилита для синхронизации нескольких object/callback refs с одним DOM-элементом.

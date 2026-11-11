@@ -318,6 +318,27 @@ describe('Stepper', () => {
     expect(screen.getByRole('button', { name: 'one' })).toHaveFocus();
   });
 
+  it('recovers focus after keyed reorder, removal and disabling in sequence', () => {
+    const view = (keys: string[], disabled = false) => (
+      <Stepper activeStep={keys.indexOf('two')} onStepChange={vi.fn()}>
+        {keys.map((key) => (
+          <Step key={key} label={key} description={`Описание ${key}`} completed disabled={disabled && key === 'two'} />
+        ))}
+      </Stepper>
+    );
+    const { rerender } = render(view(['one', 'two', 'three']));
+    const third = screen.getByRole('button', { name: 'three' });
+    act(() => third.focus());
+
+    rerender(view(['three', 'two', 'one']));
+    expect(third).toHaveFocus();
+    rerender(view(['two', 'one']));
+    expect(screen.getByRole('button', { name: 'two' })).toHaveFocus();
+    rerender(view(['two', 'one'], true));
+    expect(screen.getByRole('button', { name: 'one' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'one' })).toHaveAttribute('tabindex', '0');
+  });
+
   it('returns focus to the group when interaction is removed', () => {
     const { rerender } = render(
       <Stepper activeStep={0} onStepChange={vi.fn()}>
