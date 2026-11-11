@@ -10,13 +10,13 @@
       "rawBytes": 24483
     },
     "button-group": {
-      "rawBytes": 6045
+      "rawBytes": 6166
     },
     "check-box": {
       "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 32663
+      "rawBytes": 32779
     },
     "divider": {
       "rawBytes": 1543
@@ -43,7 +43,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 23153
+      "rawBytes": 23262
     },
     "progress-header": {
       "rawBytes": 2489
@@ -64,7 +64,7 @@
       "rawBytes": 6566
     },
     "stepper": {
-      "rawBytes": 34408
+      "rawBytes": 34518
     },
     "tag": {
       "rawBytes": 21694

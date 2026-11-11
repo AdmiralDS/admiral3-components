@@ -3,19 +3,25 @@ import { createContext, useContext, useLayoutEffect, useRef, type PropsWithChild
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { useRovingFocus, type UseRovingFocusResult } from './useRovingFocus';
+import { useRovingFocus, type UseRovingFocusOptions, type UseRovingFocusResult } from './useRovingFocus';
 
 interface TestGroupProps extends PropsWithChildren {
   entryItemId?: string;
   orientation?: 'horizontal' | 'vertical';
   preventNavigation?: boolean;
+  isItemAvailable?: UseRovingFocusOptions<HTMLButtonElement, string>['isItemAvailable'];
 }
 
 const TestGroupContext = createContext<UseRovingFocusResult<HTMLButtonElement, string> | null>(null);
 
-const TestGroup = ({ children, entryItemId, orientation, preventNavigation }: TestGroupProps) => {
+const TestGroup = ({ children, entryItemId, orientation, preventNavigation, isItemAvailable }: TestGroupProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rovingFocus = useRovingFocus<HTMLButtonElement, string>({ containerRef, entryItemId, orientation });
+  const rovingFocus = useRovingFocus<HTMLButtonElement, string>({
+    containerRef,
+    entryItemId,
+    orientation,
+    isItemAvailable: isItemAvailable ? (item) => isItemAvailable(item) : undefined,
+  });
 
   return (
     <TestGroupContext.Provider value={rovingFocus}>
@@ -41,7 +47,7 @@ const TestItem = ({ id, disabled = false }: { id: string; disabled?: boolean }) 
   const { getItemTabIndex, registerItem, updateItem } = group;
   const itemRef = useRef<HTMLButtonElement>(null);
 
-  useLayoutEffect(() => registerItem({ id, ref: itemRef, disabled }), [disabled, id, registerItem]);
+  useLayoutEffect(() => registerItem({ id, ref: itemRef }), [id, registerItem]);
   useLayoutEffect(() => updateItem(id, { disabled }), [disabled, id, updateItem]);
 
   return (
@@ -143,6 +149,50 @@ describe('useRovingFocus', () => {
       expect(screen.getByRole('button', { name: 'first' })).toHaveAttribute('tabindex', '0');
       expect(screen.getByRole('button', { name: 'second' })).toHaveAttribute('tabindex', '-1');
     });
+  });
+
+  it('removes an updated registration without losing the remaining Tab stop', () => {
+    const view = (disabled: boolean, showSecond = true) => (
+      <>
+        <TestGroup>
+          <TestItem key="first" id="first" />
+          {showSecond && <TestItem key="second" id="second" disabled={disabled} />}
+        </TestGroup>
+        <button>Outside</button>
+      </>
+    );
+    const { rerender } = render(view(false));
+    rerender(view(true));
+    rerender(view(false));
+    act(() => screen.getByRole('button', { name: 'second' }).focus());
+    const outside = screen.getByRole('button', { name: 'Outside' });
+    act(() => outside.focus());
+
+    rerender(view(false, false));
+
+    expect(outside).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'first' })).toHaveAttribute('tabindex', '0');
+  });
+
+  it('accepts an inline availability predicate and uses its latest value', () => {
+    const InlineAvailabilityGroup = ({ excludedId }: { excludedId?: string }) => (
+      <TestGroup isItemAvailable={(item) => !item.disabled && item.id !== excludedId && Boolean(item.ref.current)}>
+        <TestItem id="first" />
+        <TestItem id="second" />
+        <TestItem id="third" />
+      </TestGroup>
+    );
+    const { rerender } = render(<InlineAvailabilityGroup />);
+    const first = screen.getByRole('button', { name: 'first' });
+    const second = screen.getByRole('button', { name: 'second' });
+    act(() => first.focus());
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    expect(second).toHaveFocus();
+
+    rerender(<InlineAvailabilityGroup excludedId="second" />);
+    act(() => first.focus());
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    expect(screen.getByRole('button', { name: 'third' })).toHaveFocus();
   });
 
   it.each(['removed', 'disabled'] as const)(

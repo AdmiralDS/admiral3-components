@@ -41,8 +41,12 @@ export interface UseRovingFocusResult<T extends HTMLElement, Id extends RovingFo
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
 }
 
+interface RegisteredItem<T extends HTMLElement, Id extends RovingFocusItemId> extends RovingFocusItem<T, Id> {
+  registration: symbol;
+}
+
 interface RegistryState<T extends HTMLElement, Id extends RovingFocusItemId> {
-  items: Map<Id, RovingFocusItem<T, Id>>;
+  items: Map<Id, RegisteredItem<T, Id>>;
   focusableItemId: Id | null;
 }
 
@@ -72,6 +76,14 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
 }: UseRovingFocusOptions<T, Id>): UseRovingFocusResult<T, Id> => {
   const focusedItemIdRef = useRef<Id | null>(null);
   const focusTransferFromIdRef = useRef<Id | null>(null);
+  const availabilityRef = useRef(isItemAvailable);
+
+  // Новая функция проверки не должна запускать перерегистрацию всех элементов.
+  useLayoutEffect(() => {
+    availabilityRef.current = isItemAvailable;
+  }, [isItemAvailable]);
+
+  const checkItemAvailable = useCallback((item: RovingFocusItem<T, Id>) => availabilityRef.current(item), []);
   const [registry, setRegistry] = useState<RegistryState<T, Id>>(() => ({
     items: new Map(),
     focusableItemId: null,
@@ -80,13 +92,13 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
   const sortItems = useCallback(
     (items: Iterable<RovingFocusItem<T, Id>>, availableOnly = false) =>
       Array.from(items)
-        .filter((item) => !availableOnly || isItemAvailable(item))
+        .filter((item) => !availableOnly || checkItemAvailable(item))
         .sort((first, second) => compareElements(first.ref.current, second.ref.current)),
-    [isItemAvailable],
+    [checkItemAvailable],
   );
 
   const normalizeRegistry = useCallback(
-    (items: Map<Id, RovingFocusItem<T, Id>>, preferredId: Id | null): RegistryState<T, Id> => {
+    (items: Map<Id, RegisteredItem<T, Id>>, preferredId: Id | null): RegistryState<T, Id> => {
       const availableItems = sortItems(items.values(), true);
       const focusableItemId = availableItems.some((item) => item.id === preferredId)
         ? preferredId
@@ -98,16 +110,17 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
 
   const registerItem = useCallback(
     (item: RovingFocusItem<T, Id>) => {
+      const registration = Symbol('roving-focus-registration');
       const element = item.ref.current;
       const alreadyFocused = element?.ownerDocument.activeElement === element;
-      if (alreadyFocused && isItemAvailable(item)) {
+      if (alreadyFocused && checkItemAvailable(item)) {
         focusedItemIdRef.current = item.id;
         if (focusTransferFromIdRef.current === item.id) focusTransferFromIdRef.current = null;
       }
 
       setRegistry((current) => {
         const items = new Map(current.items);
-        items.set(item.id, item);
+        items.set(item.id, { ...item, registration });
         return normalizeRegistry(items, focusedItemIdRef.current ?? entryItemId ?? current.focusableItemId);
       });
 
@@ -117,14 +130,14 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
           focusedItemIdRef.current = null;
         }
         setRegistry((current) => {
-          if (current.items.get(item.id) !== item) return current;
+          if (current.items.get(item.id)?.registration !== registration) return current;
           const items = new Map(current.items);
           items.delete(item.id);
           return normalizeRegistry(items, focusedItemIdRef.current ?? current.focusableItemId);
         });
       };
     },
-    [entryItemId, isItemAvailable, normalizeRegistry],
+    [checkItemAvailable, entryItemId, normalizeRegistry],
   );
 
   const updateItem = useCallback(
