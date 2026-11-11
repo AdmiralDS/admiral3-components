@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from 'react';
 
 import { textStyles } from '@admiral-ds/admiral3-tokens';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useController, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 
 import {
@@ -9,6 +9,7 @@ import {
   CheckBox,
   Input,
   InputSlider,
+  InputSliderRange,
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
@@ -26,6 +27,8 @@ type FormValues = {
   website: string;
   comment: string;
   amount: string;
+  amountFrom: string;
+  amountTo: string;
   age: number;
   budget: [number, number];
   delivery: string;
@@ -41,6 +44,8 @@ const defaultValues: FormValues = {
   website: '',
   comment: '',
   amount: '10000.5',
+  amountFrom: '10000.5',
+  amountTo: '15000',
   age: 30,
   budget: [25, 75],
   delivery: 'courier',
@@ -127,6 +132,9 @@ export const ReactHookFormTemplate = () => {
   const idPrefix = useId();
   const amountId = `${idPrefix}-amount`;
   const amountInputRef = useRef<HTMLInputElement>(null);
+  const rangeId = `${idPrefix}-amount-range`;
+  const amountFromRef = useRef<HTMLInputElement>(null);
+  const amountToRef = useRef<HTMLInputElement>(null);
   const validateAmount = (value: string) => {
     if (!value) return 'Введите сумму';
     return amountInputRef.current?.validationMessage || undefined;
@@ -151,6 +159,30 @@ export const ReactHookFormTemplate = () => {
     register,
     reset,
   } = useForm<FormValues>({ defaultValues });
+
+  const { field: amountFromField, fieldState: amountFromState } = useController({
+    control,
+    name: 'amountFrom',
+    rules: {
+      validate: (value) => (!value ? 'Введите нижнюю сумму' : amountFromRef.current?.validationMessage || undefined),
+    },
+  });
+  const { field: amountToField, fieldState: amountToState } = useController({
+    control,
+    name: 'amountTo',
+    rules: {
+      validate: (value) => (!value ? 'Введите верхнюю сумму' : amountToRef.current?.validationMessage || undefined),
+    },
+  });
+  const rangeError = amountFromState.error?.message || amountToState.error?.message;
+  const validateRange = () => {
+    void trigger(['amountFrom', 'amountTo']);
+  };
+  const handleRangeChange = ([from, to]: [string, string]) => {
+    if (from !== amountFromField.value) amountFromField.onChange(from);
+    if (to !== amountToField.value) amountToField.onChange(to);
+    validateRange();
+  };
 
   const password = useWatch({ control, name: 'password' });
   const confirmPassword = useWatch({ control, name: 'confirmPassword' });
@@ -179,7 +211,9 @@ export const ReactHookFormTemplate = () => {
         <Description>
           Пример интеграции компонентов Admiral 3 с React Hook Form. Большинство Input подключены через register, поле
           комментария и составные поля — через Controller. InputSlider хранит сумму без форматирования. Его нативная
-          валидность связана с валидатором RHF, а сброс библиотеки — со сбросом нативной формы.
+          валидность связана с валидатором RHF, а сброс библиотеки — со сбросом нативной формы. InputSliderRange
+          подключён через два useController: amountFrom и amountTo — отдельные строки и в RHF, и в FormData. Обе границы
+          проверяются после ввода и blur, в том числе при неизменном исходном значении.
         </Description>
 
         <Field>
@@ -355,6 +389,78 @@ export const ReactHookFormTemplate = () => {
             </Field>
           )}
         />
+
+        <Field>
+          <Label id={`${rangeId}-label`} htmlFor={`${rangeId}-from`}>
+            Диапазон суммы
+          </Label>
+          <InputSliderRange
+            role="group"
+            aria-labelledby={`${rangeId}-label`}
+            lowerName={amountFromField.name}
+            upperName={amountToField.name}
+            value={[amountFromField.value, amountToField.value]}
+            onValueChange={handleRangeChange}
+            lowerNativeInputRef={(node) => {
+              amountFromRef.current = node;
+              amountFromField.ref(node);
+            }}
+            upperNativeInputRef={(node) => {
+              amountToRef.current = node;
+              amountToField.ref(node);
+            }}
+            required
+            min={0}
+            max={20_000}
+            step={0.01}
+            formatValue={formatAmount}
+            parseValue={parseAmount}
+            status={rangeError ? 'error' : undefined}
+            lowerInputProps={{
+              id: `${rangeId}-from`,
+              'aria-label': 'Сумма от',
+              'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+              prefix: 'От',
+              suffix: '₽',
+              inputMode: 'decimal',
+              showClearIcon: true,
+              onInput: validateRange,
+              onBlur: () => {
+                amountFromField.onBlur();
+                validateRange();
+              },
+            }}
+            upperInputProps={{
+              id: `${rangeId}-to`,
+              'aria-label': 'Сумма до',
+              'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+              prefix: 'До',
+              suffix: '₽',
+              inputMode: 'decimal',
+              showClearIcon: true,
+              onInput: validateRange,
+              onBlur: () => {
+                amountToField.onBlur();
+                validateRange();
+              },
+            }}
+            sliderProps={{
+              lowerNativeSliderProps: {
+                onBlur: () => {
+                  amountFromField.onBlur();
+                  validateRange();
+                },
+              },
+              upperNativeSliderProps: {
+                onBlur: () => {
+                  amountToField.onBlur();
+                  validateRange();
+                },
+              },
+            }}
+          />
+          {rangeError && <ErrorText id={`${rangeId}-error`}>{rangeError}</ErrorText>}
+        </Field>
 
         <Controller
           name="comment"

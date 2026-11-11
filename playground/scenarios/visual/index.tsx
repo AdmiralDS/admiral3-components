@@ -9,6 +9,7 @@ import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { HintVisualTemplate } from './HintVisual.template';
+import { InputSliderRangeVisualTemplate } from './InputSliderRangeVisual.template';
 import { InputSliderVisualTemplate } from './InputSliderVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
@@ -77,6 +78,12 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / InputSlider',
     visual: true,
     render: () => <InputSliderVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.inputSliderRange,
+    title: 'Visual / InputSliderRange',
+    visual: true,
+    render: () => <InputSliderRangeVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },

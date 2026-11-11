@@ -11,6 +11,7 @@ export const VISUAL_SCENARIO_IDS = {
   hint: 'visual/hint',
   input: 'visual/input',
   inputSlider: 'visual/input-slider',
+  inputSliderRange: 'visual/input-slider-range',
   link: 'visual/link',
   list: 'visual/list',
   pills: 'visual/pills',

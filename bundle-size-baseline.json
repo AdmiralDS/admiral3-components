@@ -37,7 +37,10 @@
       "rawBytes": 24068
     },
     "input-slider": {
-      "rawBytes": 43581
+      "rawBytes": 43630
+    },
+    "input-slider-range": {
+      "rawBytes": 48066
     },
     "link": {
       "rawBytes": 2676

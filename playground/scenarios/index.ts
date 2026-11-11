@@ -12,6 +12,7 @@ import { formItemScenarios } from './form-item';
 import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
 import { inputSliderScenarios } from './input-slider';
+import { inputSliderRangeScenarios } from './input-slider-range';
 import { integrationScenarios } from './integration';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
@@ -50,6 +51,7 @@ export const playgroundScenarios = [
   ...hintScenarios,
   ...inputScenarios,
   ...inputSliderScenarios,
+  ...inputSliderRangeScenarios,
   ...integrationScenarios,
   ...linkScenarios,
   ...listScenarios,

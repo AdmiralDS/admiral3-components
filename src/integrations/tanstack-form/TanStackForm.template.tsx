@@ -9,6 +9,7 @@ import {
   CheckBox,
   Input,
   InputSlider,
+  InputSliderRange,
   InputIconPasswordButton,
   RadioButton,
   RadioGroup,
@@ -26,6 +27,8 @@ type FormValues = {
   website: string;
   comment: string;
   amount: string;
+  amountFrom: string;
+  amountTo: string;
   age: number;
   budget: [number, number];
   delivery: string;
@@ -41,6 +44,8 @@ const defaultValues: FormValues = {
   website: '',
   comment: '',
   amount: '10000.5',
+  amountFrom: '10000.5',
+  amountTo: '15000',
   age: 30,
   budget: [25, 75],
   delivery: 'courier',
@@ -127,6 +132,9 @@ export const TanStackFormTemplate = () => {
   const idPrefix = useId();
   const amountId = `${idPrefix}-amount`;
   const amountInputRef = useRef<HTMLInputElement>(null);
+  const rangeId = `${idPrefix}-amount-range`;
+  const amountFromRef = useRef<HTMLInputElement>(null);
+  const amountToRef = useRef<HTMLInputElement>(null);
   const validateAmount = (value: string) => {
     if (!value) return 'Введите сумму';
     return amountInputRef.current?.validationMessage || undefined;
@@ -146,6 +154,8 @@ export const TanStackFormTemplate = () => {
     onSubmit: ({ value }) => setSubmittedValues(value),
     onSubmitInvalid: ({ formApi }) => {
       if (formApi.getFieldMeta('amount')?.errors.length) amountInputRef.current?.focus();
+      else if (formApi.getFieldMeta('amountFrom')?.errors.length) amountFromRef.current?.focus();
+      else if (formApi.getFieldMeta('amountTo')?.errors.length) amountToRef.current?.focus();
     },
   });
 
@@ -415,6 +425,111 @@ export const TanStackFormTemplate = () => {
               </Field>
             );
           }}
+        </form.Field>
+
+        <form.Field
+          name="amountFrom"
+          validators={{
+            onChange: ({ value }) =>
+              !value ? 'Введите нижнюю сумму' : amountFromRef.current?.validationMessage || undefined,
+          }}
+        >
+          {(fromField) => (
+            <form.Field
+              name="amountTo"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? 'Введите верхнюю сумму' : amountToRef.current?.validationMessage || undefined,
+              }}
+            >
+              {(toField) => {
+                const rangeError =
+                  [...fromField.state.meta.errors, ...toField.state.meta.errors].join(', ') || undefined;
+                const validateRange = () => {
+                  void fromField.validate('change');
+                  void toField.validate('change');
+                };
+                const handleRangeChange = ([from, to]: [string, string]) => {
+                  if (from !== fromField.state.value) fromField.handleChange(from);
+                  if (to !== toField.state.value) toField.handleChange(to);
+                  validateRange();
+                };
+                return (
+                  <Field>
+                    <Label id={`${rangeId}-label`} htmlFor={`${rangeId}-from`}>
+                      Диапазон суммы
+                    </Label>
+                    <InputSliderRange
+                      role="group"
+                      aria-labelledby={`${rangeId}-label`}
+                      lowerName={fromField.name}
+                      upperName={toField.name}
+                      value={[fromField.state.value, toField.state.value]}
+                      onValueChange={handleRangeChange}
+                      lowerNativeInputRef={amountFromRef}
+                      upperNativeInputRef={amountToRef}
+                      required
+                      min={0}
+                      max={20_000}
+                      step={0.01}
+                      formatValue={formatAmount}
+                      parseValue={parseAmount}
+                      status={rangeError ? 'error' : undefined}
+                      lowerInputProps={{
+                        id: `${rangeId}-from`,
+                        'aria-label': 'Сумма от',
+                        'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+                        prefix: 'От',
+                        suffix: '₽',
+                        inputMode: 'decimal',
+                        showClearIcon: true,
+                        onInput: () => {
+                          fromField.setMeta((meta) => ({ ...meta, isTouched: true }));
+                          validateRange();
+                        },
+                        onBlur: () => {
+                          fromField.handleBlur();
+                          validateRange();
+                        },
+                      }}
+                      upperInputProps={{
+                        id: `${rangeId}-to`,
+                        'aria-label': 'Сумма до',
+                        'aria-describedby': rangeError ? `${rangeId}-error` : undefined,
+                        prefix: 'До',
+                        suffix: '₽',
+                        inputMode: 'decimal',
+                        showClearIcon: true,
+                        onInput: () => {
+                          toField.setMeta((meta) => ({ ...meta, isTouched: true }));
+                          validateRange();
+                        },
+                        onBlur: () => {
+                          toField.handleBlur();
+                          validateRange();
+                        },
+                      }}
+                      sliderProps={{
+                        lowerNativeSliderProps: {
+                          onBlur: () => {
+                            fromField.handleBlur();
+                            validateRange();
+                          },
+                        },
+                        upperNativeSliderProps: {
+                          onBlur: () => {
+                            toField.handleBlur();
+                            validateRange();
+                          },
+                        },
+                      }}
+                    />
+                    {rangeError && <ErrorText id={`${rangeId}-error`}>{rangeError}</ErrorText>}
+                  </Field>
+                );
+              }}
+            </form.Field>
+          )}
         </form.Field>
 
         <form.Field name="comment">

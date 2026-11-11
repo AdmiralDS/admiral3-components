@@ -5,8 +5,8 @@ import { StoryDemoContainer, StoryDemoDescription, StoryDemoItem } from '../../s
 export const InputSliderStatesTemplate = (args: InputSliderProps) => (
   <StoryDemoContainer $direction="column" $gap="24px">
     <StoryDemoDescription>
-      Disabled отключает поле и слайдер. В readOnly остаётся поле, в котором можно выделить и скопировать число. Статус
-      ошибки относится к полю ввода.
+      Disabled отключает поле и слайдер. В readOnly остаётся поле, в котором можно выделить и скопировать число. Статусы
+      error и success относятся к полю ввода и не заменяют нативную валидацию.
     </StoryDemoDescription>
     <StoryDemoItem>
       <StoryDemoDescription>Обычное состояние</StoryDemoDescription>
@@ -23,6 +23,10 @@ export const InputSliderStatesTemplate = (args: InputSliderProps) => (
     <StoryDemoItem>
       <StoryDemoDescription>Error — ошибка</StoryDemoDescription>
       <InputSlider {...args} status="error" inputProps={{ ...args.inputProps, 'aria-label': 'Поле с ошибкой' }} />
+    </StoryDemoItem>
+    <StoryDemoItem>
+      <StoryDemoDescription>Success — успешно</StoryDemoDescription>
+      <InputSlider {...args} status="success" inputProps={{ ...args.inputProps, 'aria-label': 'Поле с успехом' }} />
     </StoryDemoItem>
   </StoryDemoContainer>
 );

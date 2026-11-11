@@ -6,6 +6,8 @@ import { InputSliderControlledTemplate } from './InputSliderControlled.template'
 import controlledSource from './InputSliderControlled.template?raw';
 import { InputSliderCurrencyTemplate } from './InputSliderCurrency.template';
 import currencySource from './InputSliderCurrency.template?raw';
+import { InputSliderFormTemplate } from './InputSliderForm.template';
+import nativeFormSource from './InputSliderForm.template?raw';
 import { InputSliderFormItemTemplate } from './InputSliderFormItem.template';
 import formItemSource from './InputSliderFormItem.template?raw';
 import { InputSliderMarksTemplate } from './InputSliderMarks.template';
@@ -65,4 +67,10 @@ export const Currency: Story = {
   name: 'Денежная сумма с маской',
   render: InputSliderCurrencyTemplate,
   parameters: { docs: { source: { code: currencySource } } },
+};
+
+export const NativeForm: Story = {
+  name: 'Нативная форма',
+  render: InputSliderFormTemplate,
+  parameters: { docs: { source: { code: nativeFormSource } }, controls: { disable: true } },
 };
