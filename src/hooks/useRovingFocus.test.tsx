@@ -144,4 +144,30 @@ describe('useRovingFocus', () => {
       expect(screen.getByRole('button', { name: 'second' })).toHaveAttribute('tabindex', '-1');
     });
   });
+
+  it.each(['removed', 'disabled'] as const)(
+    'does not recover focus after re-registration, intentional blur and an item becoming %s',
+    (action) => {
+      const view = (entryItemId: string, unavailable = false) => (
+        <TestGroup entryItemId={entryItemId}>
+          {!(unavailable && action === 'removed') && (
+            <TestItem key="first" id="first" disabled={unavailable && action === 'disabled'} />
+          )}
+          <TestItem key="second" id="second" />
+        </TestGroup>
+      );
+      const { rerender } = render(view('first'));
+      const first = screen.getByRole('button', { name: 'first' });
+      act(() => first.focus());
+
+      rerender(view('second'));
+      expect(first).toHaveFocus();
+      act(() => first.blur());
+      expect(document.body).toHaveFocus();
+
+      rerender(view('second', true));
+      expect(document.body).toHaveFocus();
+      expect(screen.getByRole('button', { name: 'second' })).toHaveAttribute('tabindex', '0');
+    },
+  );
 });

@@ -100,7 +100,10 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
     (item: RovingFocusItem<T, Id>) => {
       const element = item.ref.current;
       const alreadyFocused = element?.ownerDocument.activeElement === element;
-      if (alreadyFocused && isItemAvailable(item)) focusedItemIdRef.current = item.id;
+      if (alreadyFocused && isItemAvailable(item)) {
+        focusedItemIdRef.current = item.id;
+        if (focusTransferFromIdRef.current === item.id) focusTransferFromIdRef.current = null;
+      }
 
       setRegistry((current) => {
         const items = new Map(current.items);
@@ -201,6 +204,7 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
       const item = getItemByTarget(event.target);
       if (!item) return;
       focusedItemIdRef.current = item.id;
+      focusTransferFromIdRef.current = null;
       setTabStop(item.id);
       setRegistry((current) =>
         current.focusableItemId === item.id ? current : { ...current, focusableItemId: item.id },
@@ -216,7 +220,10 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
       // Сохраняем владельца фокуса до очистки регистрации и восстановления в layout-эффекте.
       const intentionalBlur =
         event.relatedTarget !== null || (event.target.isConnected && item !== undefined && isItemAvailable(item));
-      if (intentionalBlur && item?.id === focusedItemIdRef.current) focusedItemIdRef.current = null;
+      if (intentionalBlur) {
+        if (item?.id === focusedItemIdRef.current) focusedItemIdRef.current = null;
+        focusTransferFromIdRef.current = null;
+      }
       if (!event.currentTarget.contains(event.relatedTarget as Node | null) && entryItemId !== null) {
         const availableItems = getItems(true);
         const entryItem = availableItems.find((candidate) => candidate.id === entryItemId) ?? availableItems[0];
