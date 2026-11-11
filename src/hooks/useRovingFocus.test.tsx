@@ -189,10 +189,46 @@ describe('useRovingFocus', () => {
     fireEvent.keyDown(first, { key: 'ArrowRight' });
     expect(second).toHaveFocus();
 
+    rerender(<InlineAvailabilityGroup />);
+    expect(second).toHaveFocus();
+    expect(second).toHaveAttribute('tabindex', '0');
+
     rerender(<InlineAvailabilityGroup excludedId="second" />);
-    act(() => first.focus());
+    expect(first).toHaveFocus();
+    expect(first).toHaveAttribute('tabindex', '0');
+    expect(second).toHaveAttribute('tabindex', '-1');
     fireEvent.keyDown(first, { key: 'ArrowRight' });
     expect(screen.getByRole('button', { name: 'third' })).toHaveFocus();
+  });
+
+  it('updates availability outside the group without moving external focus', () => {
+    const view = (excludedId?: string) => (
+      <>
+        <TestGroup
+          entryItemId="second"
+          isItemAvailable={(item) => !item.disabled && item.id !== excludedId && Boolean(item.ref.current)}
+        >
+          <TestItem id="first" />
+          <TestItem id="second" />
+        </TestGroup>
+        <button>Outside</button>
+      </>
+    );
+    const { rerender } = render(view());
+    const first = screen.getByRole('button', { name: 'first' });
+    const second = screen.getByRole('button', { name: 'second' });
+    const outside = screen.getByRole('button', { name: 'Outside' });
+    act(() => outside.focus());
+
+    rerender(view('second'));
+    expect(outside).toHaveFocus();
+    expect(first).toHaveAttribute('tabindex', '0');
+    expect(second).toHaveAttribute('tabindex', '-1');
+
+    rerender(view());
+    expect(outside).toHaveFocus();
+    expect(second).toHaveAttribute('tabindex', '0');
+    expect(first).toHaveAttribute('tabindex', '-1');
   });
 
   it.each(['removed', 'disabled'] as const)(

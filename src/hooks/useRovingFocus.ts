@@ -158,6 +158,28 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
   );
 
   useLayoutEffect(() => {
+    const availableItems = sortItems(registry.items.values(), true);
+    const focusedItemId = focusedItemIdRef.current;
+    const registeredFocusedItem = focusedItemId === null ? undefined : registry.items.get(focusedItemId);
+    const focusedItem = availableItems.find((item) => item.id === focusedItemId);
+    if (registeredFocusedItem && !focusedItem) {
+      focusTransferFromIdRef.current = focusedItemId;
+      focusedItemIdRef.current = null;
+    }
+
+    const preferredId = focusedItem?.id ?? entryItemId ?? registry.focusableItemId;
+    const focusableItemId = availableItems.find((item) => item.id === preferredId)?.id ?? availableItems[0]?.id ?? null;
+    if (focusableItemId !== registry.focusableItemId) {
+      // Доступность зависит от DOM и проверяется после commit; без изменений ререндер не нужен.
+      setRegistry((current) => {
+        const next = normalizeRegistry(
+          current.items,
+          focusedItemIdRef.current ?? entryItemId ?? current.focusableItemId,
+        );
+        return next.focusableItemId === current.focusableItemId ? current : next;
+      });
+    }
+
     const previousItemId = focusTransferFromIdRef.current;
     if (previousItemId === null) return;
     const previousItem = registry.items.get(previousItemId);
@@ -166,7 +188,6 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
     focusTransferFromIdRef.current = null;
 
     const container = containerRef.current;
-    const availableItems = sortItems(registry.items.values(), true);
     const nextItem = availableItems.find((item) => item.id === entryItemId) ?? availableItems[0];
     const nextElement = nextItem?.ref.current;
     if (!container) return;
@@ -185,7 +206,17 @@ export const useRovingFocus = <T extends HTMLElement, Id extends RovingFocusItem
     } else {
       fallbackRef?.current?.focus({ preventScroll });
     }
-  }, [containerRef, entryItemId, fallbackRef, isItemAvailable, onMoveFocus, preventScroll, registry, sortItems]);
+  }, [
+    containerRef,
+    entryItemId,
+    fallbackRef,
+    isItemAvailable,
+    normalizeRegistry,
+    onMoveFocus,
+    preventScroll,
+    registry,
+    sortItems,
+  ]);
 
   const getItems = useCallback(
     (availableOnly = false) => sortItems(registry.items.values(), availableOnly),
