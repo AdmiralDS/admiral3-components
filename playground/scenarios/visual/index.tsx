@@ -24,6 +24,7 @@ import { SkeletonVisualTemplate } from './SkeletonVisual.template';
 import { SliderRangeVisualTemplate } from './SliderRangeVisual.template';
 import { SliderVisualTemplate } from './SliderVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
+import { StepperVisualTemplate } from './StepperVisual.template';
 import { TagVisualTemplate } from './TagVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
@@ -119,6 +120,7 @@ export const visualScenarios: PlaygroundScenario[] = [
     render: () => <SliderRangeVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
+  { id: VISUAL_SCENARIO_IDS.stepper, title: 'Visual / Stepper', visual: true, render: () => <StepperVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.tag, title: 'Visual / Tag', visual: true, render: () => <TagVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.textArea,

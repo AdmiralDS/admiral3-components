@@ -102,6 +102,10 @@
       "types": "./dist/components/Spinner/index.d.ts",
       "import": "./dist/components/Spinner/index.js"
     },
+    "./stepper": {
+      "types": "./dist/components/Stepper/index.d.ts",
+      "import": "./dist/components/Stepper/index.js"
+    },
     "./tag": {
       "types": "./dist/components/Tag/index.d.ts",
       "import": "./dist/components/Tag/index.js"
