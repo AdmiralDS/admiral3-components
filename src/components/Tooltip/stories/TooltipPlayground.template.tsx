@@ -3,11 +3,11 @@ import { Button, Tooltip, type TooltipProps, useTooltip } from '@admiral-ds/admi
 import { StoryDemoContainer } from '../../stories/StoryContainers';
 
 export const TooltipPlaygroundTemplate = (props: TooltipProps) => {
-  const { targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+  const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
     <StoryDemoContainer>
-      <Button {...targetProps}>Наведи на меня</Button>
+      <Button {...triggerProps}>Наведи на меня</Button>
       {isVisible && <Tooltip {...props} {...tooltipProps} />}
     </StoryDemoContainer>
   );

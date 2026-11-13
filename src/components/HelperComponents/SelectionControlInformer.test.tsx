@@ -19,6 +19,7 @@ describe('SelectionControlInformer', () => {
     const informer = screen.getByTitle('Hint text');
 
     expect(informer).toHaveStyle({
+      cursor: 'pointer',
       width: `${SELECTION_CONTROL_INFORMER_SIZES[dimension]}px`,
     });
   });

@@ -1,6 +1,6 @@
 import { createRef, forwardRef, type ComponentRef } from 'react';
 
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { css } from 'styled-components';
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
@@ -43,6 +43,35 @@ describe('withTooltip', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent('Tooltip content');
     fireEvent.mouseLeave(target, { relatedTarget: document.body });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('positions the tooltip relative to tooltipTargetElement while opening from the wrapped component', async () => {
+    const tooltipTargetElement = document.createElement('div');
+    document.body.append(tooltipTargetElement);
+    vi.spyOn(tooltipTargetElement, 'getBoundingClientRect').mockReturnValue({
+      x: 40,
+      y: 80,
+      top: 80,
+      right: 240,
+      bottom: 120,
+      left: 40,
+      width: 200,
+      height: 40,
+      toJSON: () => ({}),
+    });
+
+    render(
+      <TargetWithTooltip renderContent={() => 'Tooltip content'} tooltipTargetElement={tooltipTargetElement}>
+        Target
+      </TargetWithTooltip>,
+    );
+    fireEvent.mouseEnter(screen.getByRole('button'));
+
+    const floatingPortal = screen.getByRole('tooltip').parentElement?.parentElement;
+    await waitFor(() => {
+      expect(floatingPortal).toHaveStyle({ top: '80px', left: '40px', width: '200px', height: '40px' });
+    });
+    expect(screen.getByRole('button')).not.toHaveAttribute('tooltipTargetElement');
   });
 
   it('opens immediately on focus even when hover delay is enabled', () => {

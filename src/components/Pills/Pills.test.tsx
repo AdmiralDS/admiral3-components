@@ -12,7 +12,7 @@ describe('Pills', () => {
     cleanup();
   });
 
-  it('renders a toolbar and forwards native attributes and ref', () => {
+  it('renders a group and forwards native attributes and ref', () => {
     const ref = createRef<HTMLDivElement>();
 
     render(
@@ -24,8 +24,7 @@ describe('Pills', () => {
     const pills = screen.getByTestId('pills');
 
     expect(pills.tagName).toBe('DIV');
-    expect(pills).toHaveAttribute('role', 'toolbar');
-    expect(pills).toHaveAttribute('aria-orientation', 'horizontal');
+    expect(pills).toHaveAttribute('role', 'group');
     expect(pills).toHaveAccessibleName('Statuses');
     expect(pills).toHaveClass('consumer-class');
     expect(ref.current).toBe(pills);

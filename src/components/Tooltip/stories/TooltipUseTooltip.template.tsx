@@ -5,7 +5,7 @@ import { Button, Tooltip, type TooltipProps, useTooltip } from '@admiral-ds/admi
 import { StoryDemoContainer, StoryDemoDescription } from '../../stories/StoryContainers';
 
 export const TooltipUseTooltipTemplate = (props: TooltipProps) => {
-  const { targetProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
+  const { triggerProps, tooltipProps, isVisible } = useTooltip<HTMLButtonElement>();
 
   return (
     <StoryDemoContainer $direction="column" $gap="20px">
@@ -15,13 +15,13 @@ export const TooltipUseTooltipTemplate = (props: TooltipProps) => {
         целевого элемента на подсказку.
       </StoryDemoDescription>
       <StoryDemoDescription>
-        Вызов <code>useTooltip</code> возвращает <code>targetProps</code>, <code>tooltipProps</code> и{' '}
-        <code>isVisible</code>. Передайте <code>targetProps</code> целевому элементу, <code>tooltipProps</code> —
+        Вызов <code>useTooltip</code> возвращает <code>triggerProps</code>, <code>tooltipProps</code> и{' '}
+        <code>isVisible</code>. Передайте <code>triggerProps</code> элементу-триггеру, <code>tooltipProps</code> —
         компоненту Tooltip и добавляйте Tooltip в DOM по <code>isVisible</code>. Если стандартное поведение не подходит,
         использовать хук необязательно: вы можете самостоятельно управлять отображением Tooltip и передать ему элемент
         для позиционирования через <code>targetElement</code>.
       </StoryDemoDescription>
-      <Button {...targetProps} dimension="m" square aria-label="Удалить">
+      <Button {...triggerProps} dimension="m" square aria-label="Удалить">
         <SystemDeleteOutline aria-hidden />
       </Button>
       {isVisible && (

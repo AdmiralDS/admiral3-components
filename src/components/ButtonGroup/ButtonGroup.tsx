@@ -250,8 +250,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
         <StyledButtonGroup
           ref={mergedRef}
           {...props}
-          role="toolbar"
-          aria-orientation="horizontal"
+          role="group"
           $appearance={appearance}
           $colorMode={colorMode}
           $colorConfig={colorConfig}
@@ -262,8 +261,6 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
         >
-          {/* TODO: После появления Tooltip добавить интеграцию для подписей icon-only кнопок;
-          доступное имя через aria-label или aria-labelledby остаётся обязательным. */}
           {children}
         </StyledButtonGroup>
       </ButtonGroupContext.Provider>

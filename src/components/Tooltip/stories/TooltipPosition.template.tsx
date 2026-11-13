@@ -30,8 +30,8 @@ export const TooltipPositionTemplate = (props: TooltipProps) => {
         месту, не переходя на другую сторону целевого элемента.
       </StoryDemoDescription>
       <Examples>
-        <Button {...automatic.targetProps}>Автоматическая позиция</Button>
-        <Button {...positioned.targetProps}>Позиция: {tooltipPosition}</Button>
+        <Button {...automatic.triggerProps}>Автоматическая позиция</Button>
+        <Button {...positioned.triggerProps}>Позиция: {tooltipPosition}</Button>
       </Examples>
       {automatic.isVisible && (
         <Tooltip {...props} {...automatic.tooltipProps} tooltipPosition={undefined}>

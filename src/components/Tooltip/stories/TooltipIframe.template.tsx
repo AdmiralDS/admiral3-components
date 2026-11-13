@@ -72,7 +72,7 @@ const frameSource = `<!doctype html>
 
 const IframeTooltip = ({ redirectStyles }: IframeTooltipProps) => {
   const [iframeDocument, setIframeDocument] = useState<Document | null>(null);
-  const { isVisible, targetProps, tooltipProps } = useTooltip<HTMLButtonElement>();
+  const { isVisible, triggerProps, tooltipProps } = useTooltip<HTMLButtonElement>();
 
   const handleLoad = useCallback((event: React.SyntheticEvent<HTMLIFrameElement>) => {
     setIframeDocument(event.currentTarget.contentDocument);
@@ -87,7 +87,7 @@ const IframeTooltip = ({ redirectStyles }: IframeTooltipProps) => {
           ? 'В iframe перенесены стили компонентов, CSS-токены и шрифт.'
           : 'Классы появятся в iframe, но их CSS останется в документе Storybook.'}
       </StoryDemoDescription>
-      <Button {...targetProps}>Наведите указатель</Button>
+      <Button {...triggerProps}>Наведите указатель</Button>
       {tooltip}
     </>
   );

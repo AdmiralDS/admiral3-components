@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Tooltip, type TooltipProps } from '@admiral-ds/admiral3-components';
 
+import { TooltipAccessibilityTemplate } from './TooltipAccessibility.template';
+import tooltipAccessibilityTemplateRaw from './TooltipAccessibility.template?raw';
 import { TooltipCustomTemplate } from './TooltipCustom.template';
 import tooltipCustomTemplateRaw from './TooltipCustom.template?raw';
 import { TooltipDelayTemplate } from './TooltipDelay.template';
@@ -131,6 +133,17 @@ export const CustomContent: StoryObj<TooltipProps> = {
     },
   },
   name: 'Пример с кастомным наполнением тултипа',
+};
+
+export const Accessibility: StoryObj<TooltipProps> = {
+  args: defaultArgs,
+  render: TooltipAccessibilityTemplate,
+  parameters: {
+    docs: {
+      source: { code: tooltipAccessibilityTemplateRaw },
+    },
+  },
+  name: 'Tooltip и aria-describedby',
 };
 
 export const IFrame: StoryObj = {

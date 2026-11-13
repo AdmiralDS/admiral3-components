@@ -10,6 +10,7 @@ import { chipsScenarios } from './chips';
 import { dividerScenarios } from './divider';
 import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
+import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
@@ -19,7 +20,10 @@ import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
+import { sliderScenarios } from './slider';
+import { sliderRangeScenarios } from './slider-range';
 import { spinnerScenarios } from './spinner';
+import { tagScenarios } from './tag';
 import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
@@ -43,6 +47,7 @@ export const playgroundScenarios = [
   ...dividerScenarios,
   ...fieldSetScenarios,
   ...formItemScenarios,
+  ...hintScenarios,
   ...inputScenarios,
   ...linkScenarios,
   ...listScenarios,
@@ -52,7 +57,10 @@ export const playgroundScenarios = [
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
+  ...sliderScenarios,
+  ...sliderRangeScenarios,
   ...spinnerScenarios,
+  ...tagScenarios,
   ...textAreaScenarios,
   ...toggleScenarios,
   ...tooltipScenarios,
