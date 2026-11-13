@@ -17,7 +17,7 @@ import { AVATAR_DIMENSIONS } from '../../../src/components/Avatar/constants';
 
 type VisualVariant = {
   label: string;
-  props: ComponentProps<typeof Avatar>;
+  props: Omit<ComponentProps<typeof Avatar>, 'userName'>;
 };
 
 // Add every supported appearance alongside the generated dimension matrix.
@@ -37,7 +37,7 @@ const renderMatrix = (items: VisualVariant[]) => (
         <VisualSamples>
           <VisualSample>
             <VisualLabel>{label}</VisualLabel>
-            <Avatar {...props}>Avatar</Avatar>
+            <Avatar userName="Иван Иванов" {...props} />
           </VisualSample>
         </VisualSamples>
       </VisualGroup>

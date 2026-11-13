@@ -1,4 +1,5 @@
 import type { PlaygroundScenario } from '../index';
+import { AvatarVisualTemplate } from './AvatarVisual.template';
 import { BadgeDotVisualTemplate } from './BadgeDotVisual.template';
 import { BadgeVisualTemplate } from './BadgeVisual.template';
 import { ButtonGroupVisualTemplate } from './ButtonGroupVisual.template';
@@ -24,7 +25,6 @@ import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { TextAreaVisualTemplate } from './TextAreaVisual.template';
 import { ToggleVisualTemplate } from './ToggleVisual.template';
 import { TooltipVisualTemplate } from './TooltipVisual.template';
-import { AvatarVisualTemplate } from './AvatarVisual.template';
 
 export const visualScenarios: PlaygroundScenario[] = [
   { id: VISUAL_SCENARIO_IDS.avatar, title: 'Visual / Avatar', visual: true, render: () => <AvatarVisualTemplate /> },

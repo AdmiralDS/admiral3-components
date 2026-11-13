@@ -2,6 +2,7 @@ import { textStyles } from '@admiral-ds/admiral3-tokens';
 import type { CSSObject } from 'styled-components';
 
 export const AVATAR_DIMENSIONS = ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl'] as const;
+export const ACTIVITY_AVATAR_DIMENSIONS = ['xs', 's', 'm', 'l', 'xl'] as const;
 export const AVATAR_STATUSES = ['neutral', 'attention', 'success', 'error'] as const;
 export const AVATAR_APPEARANCES = ['primary'] as const;
 

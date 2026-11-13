@@ -31,6 +31,21 @@ export const StoryDemoItem = styled.div`
   gap: 8px;
 `;
 
+export const StoryDemoSamples = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 32px;
+`;
+
+export const StoryDemoSample = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
+
 export const StoryDirtyContainer = styled.div`
   display: flex;
   flex-wrap: wrap;

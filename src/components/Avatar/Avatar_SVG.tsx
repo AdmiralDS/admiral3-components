@@ -1,33 +1,21 @@
 import { useId } from 'react';
 
-import styled from 'styled-components';
-
-import { cssToken, type CssToken } from '#src/theme/cssToken';
-
 import { AVATAR_DIMENSION_PARAMETERS } from './constants';
-import type { AvatarStatus, AvatarSVGProps } from './types';
-
-const RoundedImage = styled.image`
-  clip-path: circle();
-`;
+import { RoundedImage, StyledAvatarSVG } from './style';
+import type { AvatarSVGProps } from './types';
 
 export const AvatarSVG: React.FC<AvatarSVGProps> = ({
   dimension = 'xl',
   hasImage,
   href,
-  status: statusProp,
-  // size,
+  status,
   appearance,
   withActivityRing = false,
   showActivityRing = false,
 }) => {
   const presetId = useId();
   const id = `url(#${presetId})`;
-
-  const backgroundColor =
-    typeof appearance === 'object'
-      ? appearance.backgroundColor
-      : `${cssToken('--admiral-color-neutral-base-3-rest', (theme) => theme.color.neutral.base._3.rest)}`;
+  const hasStatus = typeof status === 'object' ? Boolean(status.backgroundColor) : Boolean(status);
 
   const { size, statusSize } = AVATAR_DIMENSION_PARAMETERS[dimension];
 
@@ -41,32 +29,24 @@ export const AvatarSVG: React.FC<AvatarSVGProps> = ({
   const statusCenter = inset + size - statusRadius;
   const viewBox = `0 0 ${totalSize} ${totalSize}`;
 
-  const statusColors: Record<AvatarStatus, CssToken> = {
-    neutral: cssToken('--admiral-color-neutral-base-4-rest', (theme) => theme.color.neutral.base._4.rest),
-    success: cssToken('--admiral-color-success-base-1-rest', (theme) => theme.color.success.base._1.rest),
-    error: cssToken('--admiral-color-error-base-1-rest', (theme) => theme.color.error.base._1.rest),
-    attention: cssToken('--admiral-color-attention-base-1-rest', (theme) => theme.color.attention.base._1.rest),
-  };
-
-  const customStatus = typeof statusProp === `object`;
-  const status = statusProp ? (customStatus ? statusProp.backgroundColor : statusColors[statusProp]) : '';
-
   return (
-    <svg
+    <StyledAvatarSVG
       viewBox={viewBox}
       width={totalSize}
       height={totalSize}
-      style={{ transform: 'rotate(.00001deg)' }} /* hack to force anti-aliasing in IE */
+      aria-hidden="true"
+      focusable="false"
+      $appearance={appearance}
+      $status={status}
     >
       <defs>
         <mask id={presetId}>
           {withActivityRing && showActivityRing && (
-            <circle id="ring" cx={radius} cy={radius} r={ringRadius} strokeWidth="2" stroke="white" fill="white" />
+            <circle cx={center} cy={center} r={ringRadius} strokeWidth="2" stroke="white" fill="white" />
           )}
-          <circle id="outer" cx={radius} cy={radius} r={center} strokeWidth="0" stroke="white" fill="white" />
-          {status && (
+          <circle cx={center} cy={center} r={radius} strokeWidth="0" stroke="white" fill="white" />
+          {hasStatus && (
             <ellipse
-              id="inner"
               vectorEffect="non-scaling-stroke"
               cx={statusCenter}
               cy={statusCenter}
@@ -90,31 +70,29 @@ export const AvatarSVG: React.FC<AvatarSVGProps> = ({
       )}
       {!hasImage && (
         <circle
-          id="outer"
-          cx={radius}
-          cy={radius}
-          r={center}
+          cx={center}
+          cy={center}
+          r={radius}
           strokeWidth="0"
-          stroke={backgroundColor}
-          fill={backgroundColor}
+          stroke="var(--admiral-avatar-background-color)"
+          fill="var(--admiral-avatar-background-color)"
           mask={id}
         />
       )}
       {withActivityRing && showActivityRing && (
         <circle
-          id="ring"
-          cx={radius}
-          cy={radius}
+          cx={center}
+          cy={center}
           r={ringRadius}
           strokeWidth="2"
-          stroke={`${cssToken('--admiral-color-primary-stroke-1-rest', (theme) => theme.color.primary.stroke._1.rest)}`}
+          stroke="var(--admiral-avatar-ring-color)"
           fill="none"
           mask={id}
         />
       )}
-      {status && (
+      {hasStatus && (
         <ellipse
-          style={{ fill: status, strokeWidth: 0, strokeOpacity: 0 }}
+          fill="var(--admiral-avatar-status-color)"
           vectorEffect="non-scaling-stroke"
           cx={statusCenter}
           cy={statusCenter}
@@ -122,6 +100,6 @@ export const AvatarSVG: React.FC<AvatarSVGProps> = ({
           ry={statusRadius}
         />
       )}
-    </svg>
+    </StyledAvatarSVG>
   );
 };

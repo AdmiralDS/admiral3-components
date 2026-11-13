@@ -11,6 +11,7 @@ test.describe('Avatar playground', () => {
     const component = page.getByTestId('avatar');
 
     await expect(component).toBeVisible();
-    await expect(component).toHaveText('Avatar');
+    await expect(component).toHaveAccessibleName('Иван Иванов');
+    await expect(component).toHaveText('ИИ');
   });
 });

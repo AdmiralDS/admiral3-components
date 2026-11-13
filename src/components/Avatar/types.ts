@@ -1,8 +1,9 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import type { AVATAR_APPEARANCES, AVATAR_DIMENSIONS, AVATAR_STATUSES } from './constants';
+import type { AVATAR_APPEARANCES, AVATAR_DIMENSIONS, AVATAR_STATUSES, ACTIVITY_AVATAR_DIMENSIONS } from './constants';
 
 export type AvatarDimension = (typeof AVATAR_DIMENSIONS)[number];
+export type ActivityAvatarDimension = (typeof ACTIVITY_AVATAR_DIMENSIONS)[number];
 export type AvatarStatus = (typeof AVATAR_STATUSES)[number];
 export type AvatarAppearances = (typeof AVATAR_APPEARANCES)[number];
 
@@ -39,12 +40,17 @@ export interface AvatarBaseProps extends HTMLAttributes<HTMLButtonElement> {
   appearance?: AvatarAppearances | AvatarAppearanceColorConfig;
   /** Размер компонента. */
   dimension?: AvatarDimension;
-  /** Отображение тултипа. */
+  /** Показывать userName в Tooltip при наведении или фокусе. По умолчанию true. */
   showTooltip?: boolean;
   /** Аватар с опцией activity ring. */
   withActivityRing?: boolean;
   /** Отображение activity ring. */
   showActivityRing?: boolean;
+}
+
+export type AvatarProps = Omit<AvatarBaseProps, 'withActivityRing' | 'showActivityRing'>;
+export interface ActivityAvatarProps extends Omit<AvatarBaseProps, 'withActivityRing' | 'dimension'> {
+  dimension?: ActivityAvatarDimension;
 }
 
 export type AvatarSVGProps = {
@@ -57,9 +63,15 @@ export type AvatarSVGProps = {
   showActivityRing?: boolean;
 };
 
+export interface StyledAvatarSVGProps {
+  $appearance?: AvatarProps['appearance'];
+  $status?: AvatarProps['status'];
+}
+
 export interface StyledAvatarWrapperProps {
   $dimension: AvatarDimension;
-  $status: AvatarStatus;
+  $status?: AvatarStatus;
   $statusColorConfig?: AvatarStatusColorConfig;
   $clickable: boolean;
+  $withActivityRing: boolean;
 }

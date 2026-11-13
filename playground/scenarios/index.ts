@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 
+import { avatarScenarios } from './avatar';
 import { badgeScenarios } from './badge';
 import { badgeDotScenarios } from './badge-dot';
 import { buttonScenarios } from './button';
@@ -23,7 +24,6 @@ import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
 import { tooltipScenarios } from './tooltip';
 import { visualScenarios } from './visual';
-import { avatarScenarios } from './avatar';
 
 export type PlaygroundScenario = {
   id: string;

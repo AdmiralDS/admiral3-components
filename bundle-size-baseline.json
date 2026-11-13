@@ -1,5 +1,8 @@
 {
   "components": {
+    "avatar": {
+      "rawBytes": 5049
+    },
     "badge": {
       "rawBytes": 3394
     },
@@ -25,13 +28,13 @@
       "rawBytes": 1719
     },
     "form-item": {
-      "rawBytes": 4829
+      "rawBytes": 4825
     },
     "helper-components": {
       "rawBytes": 9796
     },
     "input": {
-      "rawBytes": 13406
+      "rawBytes": 13402
     },
     "link": {
       "rawBytes": 2676

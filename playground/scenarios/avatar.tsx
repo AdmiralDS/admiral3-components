@@ -3,7 +3,7 @@ import type { AvatarProps } from '../../src/components/Avatar';
 import { AvatarPlaygroundTemplate } from '../../src/components/Avatar/stories/AvatarPlayground.template';
 
 const defaultArgs: AvatarProps = {
-  children: 'Avatar',
+  userName: 'Иван Иванов',
 };
 
 export const avatarScenarios: PlaygroundScenario[] = [
