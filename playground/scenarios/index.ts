@@ -11,6 +11,9 @@ import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
 import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
+import { inputSliderScenarios } from './input-slider';
+import { inputSliderRangeScenarios } from './input-slider-range';
+import { integrationScenarios } from './integration';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
 import { pillsScenarios } from './pills';
@@ -47,6 +50,9 @@ export const playgroundScenarios = [
   ...formItemScenarios,
   ...hintScenarios,
   ...inputScenarios,
+  ...inputSliderScenarios,
+  ...inputSliderRangeScenarios,
+  ...integrationScenarios,
   ...linkScenarios,
   ...listScenarios,
   ...pillsScenarios,

@@ -58,6 +58,14 @@
       "types": "./dist/components/Input/index.d.ts",
       "import": "./dist/components/Input/index.js"
     },
+    "./input-slider": {
+      "types": "./dist/components/InputSlider/index.d.ts",
+      "import": "./dist/components/InputSlider/index.js"
+    },
+    "./input-slider-range": {
+      "types": "./dist/components/InputSliderRange/index.d.ts",
+      "import": "./dist/components/InputSliderRange/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
