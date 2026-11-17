@@ -11,6 +11,9 @@ import { fieldSetScenarios } from './field-set';
 import { formItemScenarios } from './form-item';
 import { hintScenarios } from './hint';
 import { inputScenarios } from './input';
+import { inputSliderScenarios } from './input-slider';
+import { inputSliderRangeScenarios } from './input-slider-range';
+import { integrationScenarios } from './integration';
 import { linkScenarios } from './link';
 import { listScenarios } from './list';
 import { pillsScenarios } from './pills';
@@ -19,6 +22,8 @@ import { progressPageScenarios } from './progress-page';
 import { pulseScenarios } from './pulse';
 import { radioButtonScenarios } from './radio-button';
 import { skeletonScenarios } from './skeleton';
+import { sliderScenarios } from './slider';
+import { sliderRangeScenarios } from './slider-range';
 import { spinnerScenarios } from './spinner';
 import { stepperScenarios } from './stepper';
 import { tagScenarios } from './tag';
@@ -46,6 +51,9 @@ export const playgroundScenarios = [
   ...formItemScenarios,
   ...hintScenarios,
   ...inputScenarios,
+  ...inputSliderScenarios,
+  ...inputSliderRangeScenarios,
+  ...integrationScenarios,
   ...linkScenarios,
   ...listScenarios,
   ...pillsScenarios,
@@ -54,6 +62,8 @@ export const playgroundScenarios = [
   ...pulseScenarios,
   ...radioButtonScenarios,
   ...skeletonScenarios,
+  ...sliderScenarios,
+  ...sliderRangeScenarios,
   ...spinnerScenarios,
   ...stepperScenarios,
   ...tagScenarios,

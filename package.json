@@ -58,6 +58,14 @@
       "types": "./dist/components/Input/index.d.ts",
       "import": "./dist/components/Input/index.js"
     },
+    "./input-slider": {
+      "types": "./dist/components/InputSlider/index.d.ts",
+      "import": "./dist/components/InputSlider/index.js"
+    },
+    "./input-slider-range": {
+      "types": "./dist/components/InputSliderRange/index.d.ts",
+      "import": "./dist/components/InputSliderRange/index.js"
+    },
     "./link": {
       "types": "./dist/components/Link/index.d.ts",
       "import": "./dist/components/Link/index.js"
@@ -89,6 +97,14 @@
     "./skeleton": {
       "types": "./dist/components/Skeleton/index.d.ts",
       "import": "./dist/components/Skeleton/index.js"
+    },
+    "./slider": {
+      "types": "./dist/components/Slider/index.d.ts",
+      "import": "./dist/components/Slider/index.js"
+    },
+    "./slider-range": {
+      "types": "./dist/components/SliderRange/index.d.ts",
+      "import": "./dist/components/SliderRange/index.js"
     },
     "./spinner": {
       "types": "./dist/components/Spinner/index.d.ts",
@@ -132,8 +148,8 @@
   "scripts": {
     "check:fix": "npm run format && npm run lint:fix",
     "check:full": "node scripts/check-full.mjs",
-    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all\"",
-    "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.60.0-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run\"",
+    "test:visual:update": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.64.1-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run -- --update-snapshots=all\"",
+    "test:visual": "docker run --rm --platform=linux/amd64 --ipc=host --mount type=bind,source=.,target=/app -v /app/node_modules --workdir /app mcr.microsoft.com/playwright:v1.64.1-noble sh -lc \"npm ci && npm run playground:build && npm run test:visual:run\"",
     "test:visual:report": "playwright show-report playwright-visual-report",
     "storybook": "storybook dev -p 6006",
     "playground": "vite --config vite.playground.config.ts",
@@ -175,7 +191,7 @@
     "@maskito/core": "^5.4.0",
     "@maskito/kit": "^5.4.0",
     "@maskito/react": "^5.4.0",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.64.1",
     "@storybook/addon-a11y": "^10.6.0",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/addon-themes": "^10.6.0",

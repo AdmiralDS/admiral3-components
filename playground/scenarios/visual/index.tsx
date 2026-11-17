@@ -9,6 +9,8 @@ import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
 import { FormItemVisualTemplate } from './FormItemVisual.template';
 import { HintVisualTemplate } from './HintVisual.template';
+import { InputSliderRangeVisualTemplate } from './InputSliderRangeVisual.template';
+import { InputSliderVisualTemplate } from './InputSliderVisual.template';
 import { InputVisualTemplate } from './InputVisual.template';
 import { LinkVisualTemplate } from './LinkVisual.template';
 import { ListVisualTemplate } from './ListVisual.template';
@@ -21,6 +23,8 @@ import { RadioButtonVisualTemplate } from './RadioButtonVisual.template';
 import { RemovableChipVisualTemplate } from './RemovableChipVisual.template';
 import { SelectableChipVisualTemplate } from './SelectableChipVisual.template';
 import { SkeletonVisualTemplate } from './SkeletonVisual.template';
+import { SliderRangeVisualTemplate } from './SliderRangeVisual.template';
+import { SliderVisualTemplate } from './SliderVisual.template';
 import { SpinnerVisualTemplate } from './SpinnerVisual.template';
 import { StepperVisualTemplate } from './StepperVisual.template';
 import { TagVisualTemplate } from './TagVisual.template';
@@ -70,6 +74,18 @@ export const visualScenarios: PlaygroundScenario[] = [
   },
   { id: VISUAL_SCENARIO_IDS.hint, title: 'Visual / Hint', visual: true, render: () => <HintVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.input, title: 'Visual / Input', visual: true, render: () => <InputVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.inputSlider,
+    title: 'Visual / InputSlider',
+    visual: true,
+    render: () => <InputSliderVisualTemplate />,
+  },
+  {
+    id: VISUAL_SCENARIO_IDS.inputSliderRange,
+    title: 'Visual / InputSliderRange',
+    visual: true,
+    render: () => <InputSliderRangeVisualTemplate />,
+  },
   { id: VISUAL_SCENARIO_IDS.link, title: 'Visual / Link', visual: true, render: () => <LinkVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.list, title: 'Visual / List', visual: true, render: () => <ListVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.pills, title: 'Visual / Pills', visual: true, render: () => <PillsVisualTemplate /> },
@@ -109,6 +125,13 @@ export const visualScenarios: PlaygroundScenario[] = [
     title: 'Visual / Skeleton',
     visual: true,
     render: () => <SkeletonVisualTemplate />,
+  },
+  { id: VISUAL_SCENARIO_IDS.slider, title: 'Visual / Slider', visual: true, render: () => <SliderVisualTemplate /> },
+  {
+    id: VISUAL_SCENARIO_IDS.sliderRange,
+    title: 'Visual / SliderRange',
+    visual: true,
+    render: () => <SliderRangeVisualTemplate />,
   },
   { id: VISUAL_SCENARIO_IDS.spinner, title: 'Visual / Spinner', visual: true, render: () => <SpinnerVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.stepper, title: 'Visual / Stepper', visual: true, render: () => <StepperVisualTemplate /> },

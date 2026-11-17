@@ -36,6 +36,12 @@
     "input": {
       "rawBytes": 24074
     },
+    "input-slider": {
+      "rawBytes": 43636
+    },
+    "input-slider-range": {
+      "rawBytes": 48118
+    },
     "link": {
       "rawBytes": 2676
     },
@@ -59,6 +65,12 @@
     },
     "skeleton": {
       "rawBytes": 1298
+    },
+    "slider": {
+      "rawBytes": 28178
+    },
+    "slider-range": {
+      "rawBytes": 28785
     },
     "spinner": {
       "rawBytes": 6566
