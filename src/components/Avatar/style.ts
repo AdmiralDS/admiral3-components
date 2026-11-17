@@ -51,7 +51,7 @@ export const Wrapper = styled.button.attrs<
   background: transparent;
   -webkit-tap-highlight-color: transparent;
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
-  border-radius: 50%;
+  border-radius: ${cssToken('--admiral-radius-round', (theme) => theme.radius.round)};
   isolation: isolate;
 
   &:focus-visible {

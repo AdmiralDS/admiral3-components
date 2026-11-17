@@ -1,7 +1,8 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 
-import { withTooltip } from '#src/components/Tooltip';
+import { Tooltip, useTooltip } from '#src/components/Tooltip';
 import { hasSlotContent } from '#src/utils/hasSlotContent';
+import { refSetter } from '#src/utils/refSetter';
 
 import { AvatarSVG } from './Avatar_SVG';
 import { Wrapper, Text, IconWrapper } from './style';
@@ -9,7 +10,6 @@ import type { AvatarBaseProps } from './types';
 import { useLoaded } from './useLoaded';
 
 const DEFAULT_APPEARANCE = 'primary';
-const WrapperWithTooltip = withTooltip(Wrapper);
 
 export const AvatarBase = forwardRef<HTMLButtonElement, AvatarBaseProps>(
   (
@@ -30,6 +30,14 @@ export const AvatarBase = forwardRef<HTMLButtonElement, AvatarBaseProps>(
     }: AvatarBaseProps,
     ref,
   ) => {
+    const {
+      triggerProps: { ref: triggerRef },
+      tooltipProps,
+      isVisible,
+    } = useTooltip<HTMLButtonElement>();
+
+    const wrapperRef = useMemo(() => refSetter(ref, triggerRef), [ref, triggerRef]);
+
     const avatarDimension =
       (dimension === 'xxs' || dimension === 'xxxs') && (status || withActivityRing) ? 'xs' : dimension;
 
@@ -48,14 +56,13 @@ export const AvatarBase = forwardRef<HTMLButtonElement, AvatarBaseProps>(
     const statusColorConfig = customStatus ? status : undefined;
 
     const customAppearance = typeof appearance === `object`;
-    // const presetAppearance = customAppearance ? 'neutral' : appearance;
     const colorAppearanceConfig = customAppearance ? appearance : undefined;
     const resolvedTabIndex = tabIndex ?? (active ? 0 : -1);
 
     const textColor = colorAppearanceConfig?.textColor;
     const loaded = useLoaded(href);
     const hasImage = Boolean(href && loaded === 'loaded');
-    const hasIcon = hasSlotContent(icon) && !hasImage;
+    const hasIcon = hasSlotContent(icon) && !hasImage && avatarDimension !== 'xxs' && avatarDimension !== 'xxxs';
     const hasAbbr = !hasImage && !hasIcon;
 
     const renderAvatarContent = () => (
@@ -79,22 +86,24 @@ export const AvatarBase = forwardRef<HTMLButtonElement, AvatarBaseProps>(
     );
 
     return (
-      <WrapperWithTooltip
-        type="button"
-        aria-label={userName}
-        ref={ref}
-        $dimension={avatarDimension}
-        $status={presetStatus}
-        $statusColorConfig={statusColorConfig}
-        $clickable={active}
-        $withActivityRing={withActivityRing}
-        tabIndex={resolvedTabIndex}
-        onClick={onClick}
-        {...props}
-        renderContent={() => (showTooltip ? userName : null)}
-      >
-        {renderAvatarContent()}
-      </WrapperWithTooltip>
+      <>
+        <Wrapper
+          type="button"
+          aria-label={userName}
+          ref={wrapperRef}
+          $dimension={avatarDimension}
+          $status={presetStatus}
+          $statusColorConfig={statusColorConfig}
+          $clickable={active}
+          $withActivityRing={withActivityRing}
+          tabIndex={resolvedTabIndex}
+          onClick={onClick}
+          {...props}
+        >
+          {renderAvatarContent()}
+        </Wrapper>
+        {showTooltip && isVisible && <Tooltip {...tooltipProps}>{userName}</Tooltip>}
+      </>
     );
   },
 );

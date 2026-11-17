@@ -17,8 +17,6 @@ export interface AvatarAppearanceColorConfig {
   backgroundColor?: string;
   /** Стили текста. */
   textColor?: string;
-  /** Стили иконки. */
-  iconColor?: string;
 }
 
 export interface AvatarBaseProps extends HTMLAttributes<HTMLButtonElement> {

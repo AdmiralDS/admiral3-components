@@ -24,7 +24,7 @@ export const AvatarWithIconTemplate = (args: AvatarProps) => (
             {...args}
             dimension={dimension}
             href={undefined}
-            icon={<SystemPersonOutline width="100%" height="100%" aria-hidden="true" focusable="false" />}
+            icon={<SystemPersonOutline width="100%" height="100%" aria-hidden="true" />}
           />
           <StoryDemoDescription>{dimension.toUpperCase()}</StoryDemoDescription>
         </StoryDemoSample>

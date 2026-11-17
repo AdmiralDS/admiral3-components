@@ -21,11 +21,11 @@ export const ActivityAvatarActiveAndPassiveTemplate = (args: ActivityAvatarProps
       </StoryDemoDescription>
       <StoryDemoSamples>
         <StoryDemoSample>
-          <ActivityAvatar {...args} onClick={handleClick} />
+          <ActivityAvatar {...args} onClick={handleClick} showTooltip={false} />
           <StoryDemoDescription>Активный</StoryDemoDescription>
         </StoryDemoSample>
         <StoryDemoSample>
-          <ActivityAvatar {...args} onClick={undefined} />
+          <ActivityAvatar {...args} showTooltip={false} />
           <StoryDemoDescription>Пассивный</StoryDemoDescription>
         </StoryDemoSample>
       </StoryDemoSamples>
