@@ -3,6 +3,8 @@ import { useCallback, useEffect } from 'react';
 import type { AutoUpdatePositionOptions } from '#src/utils/autoUpdatePosition';
 import { autoUpdatePosition } from '#src/utils/autoUpdatePosition';
 
+import { FLOATING_TARGET_WIDTH_PROPERTY } from './constants';
+
 const synchronizeFloatingPortal = (floatingPortal: HTMLElement, targetRect: DOMRect) => {
   const { x, y, width, height } = targetRect;
   const { style } = floatingPortal;
@@ -10,6 +12,7 @@ const synchronizeFloatingPortal = (floatingPortal: HTMLElement, targetRect: DOMR
   style.left = `${x}px`;
   style.height = `${height}px`;
   style.width = `${width}px`;
+  style.setProperty(FLOATING_TARGET_WIDTH_PROPERTY, `${width}px`);
 };
 
 export interface FloatingUpdateContext {
