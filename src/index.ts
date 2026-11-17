@@ -24,3 +24,4 @@ export * from './components/Tag';
 export * from './components/TextArea';
 export * from './components/Toggle';
 export * from './components/Tooltip';
+export * from './hooks';

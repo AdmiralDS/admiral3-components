@@ -1,4 +1,4 @@
-import { memo, StrictMode, useMemo, useState } from 'react';
+import { memo, StrictMode, useLayoutEffect, useMemo, useState } from 'react';
 
 import {
   buildTheme,
@@ -97,6 +97,11 @@ export const PlaygroundApp = () => {
   const [cornerRadius, setCornerRadius] = useState<CornerRadiusBase>(getStoredCornerRadius);
   const fallbackTheme = useMemo(() => buildTheme(themeMode, { cornerRadius }), [cornerRadius, themeMode]);
 
+  useLayoutEffect(() => {
+    document.body.dataset.admiralTheme = cssThemeMode(themeMode);
+    document.body.dataset.admiralCornerRadius = cornerRadius;
+  }, [cornerRadius, themeMode]);
+
   const handleThemeModeChange = (mode: ThemeMode) => {
     setThemeMode(mode);
     storeThemeMode(mode);
@@ -118,11 +123,7 @@ export const PlaygroundApp = () => {
 
   return (
     <ThemeProvider theme={fallbackTheme}>
-      <main
-        className="playground-shell"
-        data-admiral-corner-radius={cornerRadius}
-        data-admiral-theme={cssThemeMode(themeMode)}
-      >
+      <main className="playground-shell">
         <header className="playground-header">
           <h1 className="playground-page-title">Internal E2E Playground</h1>
           <div className="playground-header-controls">

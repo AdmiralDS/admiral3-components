@@ -12,9 +12,9 @@ export interface ButtonGroupContextValue {
   colorMode: ButtonGroupColorMode;
   dimension: ButtonGroupDimension;
   colorConfig?: ButtonGroupColorConfig;
-  focusableButtonId: symbol | null;
+  focusableButtonId: string | null;
   registerButton: (button: ButtonGroupButtonRegistration) => (() => void) | undefined;
-  updateButton: (id: symbol, state: ButtonGroupButtonState) => void;
+  updateButton: (id: string, state: ButtonGroupButtonState) => void;
 }
 
 export interface ButtonGroupButtonState {
@@ -23,7 +23,7 @@ export interface ButtonGroupButtonState {
 }
 
 export interface ButtonGroupButtonRegistration extends ButtonGroupButtonState {
-  id: symbol;
+  id: string;
   ref: RefObject<HTMLButtonElement | null>;
 }
 

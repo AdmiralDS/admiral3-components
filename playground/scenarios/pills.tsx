@@ -3,6 +3,7 @@ import type { PillProps } from '@admiral-ds/admiral3-components';
 import type { PlaygroundScenario } from './index';
 import { PillsCustomColorsTemplate } from '../../src/components/Pills/stories/PillsCustomColors.template';
 import {
+  PillsChildDisabledDirtyTemplate,
   PillsDirtyTemplate,
   PillsTruncatedTextDirtyTemplate,
 } from '../../src/components/Pills/stories/PillsDirty.template';
@@ -60,5 +61,10 @@ export const pillsScenarios: PlaygroundScenario[] = [
     id: 'pills/keyboard-navigation',
     title: 'Pills Keyboard Navigation',
     render: () => <PillsKeyboardNavigationTemplate />,
+  },
+  {
+    id: 'pills/child-disabled-tab-stop',
+    title: 'Pills Child Disabled Tab Stop',
+    render: () => <PillsChildDisabledDirtyTemplate />,
   },
 ];

@@ -1,4 +1,4 @@
-import { forwardRef, useContext, useId, useState, type MouseEvent } from 'react';
+import { forwardRef, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 
 import { ServiceCheckSolid, ServiceCloseCircleSolid, ServiceErrorSolid } from '@admiral-ds/admiral3-icons';
 
@@ -16,6 +16,7 @@ import {
 } from './style';
 import type { StepProps, StepVisualState } from './types';
 import { useOverflow } from '../../hooks/useOverflow';
+import { refSetter } from '../../utils/refSetter';
 import { Tooltip, TOOLTIP_DELAY, useTooltip } from '../Tooltip';
 
 const STATUS_ICONS = {
@@ -44,8 +45,23 @@ export const Step = forwardRef<HTMLLIElement, StepProps>(
   ) => {
     const context = useContext(StepperContext);
     if (!context) throw new Error('Step must be rendered as a direct child of Stepper.');
-    const { index, active, dimension, orientation, colorMode, lineClamp, hideLine, onStepChange, statusLabels } =
-      context;
+    const {
+      stepId: id,
+      index,
+      active,
+      dimension,
+      orientation,
+      colorMode,
+      lineClamp,
+      hideLine,
+      focusableStepId,
+      onStepChange,
+      statusLabels,
+      registerStep,
+    } = context;
+    const itemRef = useRef<HTMLLIElement | null>(null);
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const mergedItemRef = useMemo(() => refSetter(itemRef, ref), [ref]);
     const labelId = useId();
     const descriptionId = useId();
     const statusId = useId();
@@ -64,6 +80,17 @@ export const Step = forwardRef<HTMLLIElement, StepProps>(
       verticalTolerance: STEPPER_DESCRIPTION_OVERFLOW_TOLERANCE,
     });
     const interactive = Boolean(onStepChange) && !disabled && (active || completed || visited);
+    const available = !(
+      props.hidden ||
+      buttonProps?.hidden ||
+      buttonProps?.style?.display === 'none' ||
+      buttonProps?.style?.visibility === 'hidden'
+    );
+    const mergedButtonRef = useMemo(() => refSetter(buttonRef, triggerProps.ref), [triggerProps.ref]);
+    useLayoutEffect(
+      () => registerStep({ id, index, interactive, available, itemRef, buttonRef }),
+      [available, id, index, interactive, registerStep],
+    );
     let state: StepVisualState = 'next';
     if (completed) state = 'completed';
     if (active) state = 'active';
@@ -108,7 +135,7 @@ export const Step = forwardRef<HTMLLIElement, StepProps>(
 
     return (
       <li
-        ref={ref}
+        ref={mergedItemRef}
         {...props}
         aria-current={active && !interactive ? 'step' : undefined}
         data-step-index={index}
@@ -116,13 +143,14 @@ export const Step = forwardRef<HTMLLIElement, StepProps>(
       >
         <StepSegment
           {...triggerProps}
+          ref={mergedButtonRef}
           role={interactive ? undefined : 'group'}
           aria-labelledby={interactive && buttonProps?.['aria-label'] !== undefined ? undefined : nameId}
           {...(interactive ? buttonProps : undefined)}
           onClick={interactive ? handleButtonClick : undefined}
           as={interactive ? 'button' : 'div'}
           type={interactive ? 'button' : undefined}
-          tabIndex={interactive ? -1 : undefined}
+          tabIndex={interactive ? (focusableStepId === id ? 0 : -1) : undefined}
           aria-describedby={describedBy}
           aria-disabled={disabled || undefined}
           aria-current={active && interactive ? 'step' : undefined}

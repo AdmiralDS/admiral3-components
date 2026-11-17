@@ -54,4 +54,9 @@ export const stepperScenarios: PlaygroundScenario[] = [
   },
   { id: 'stepper/form', title: 'Stepper / Form focus', render: () => <StepperFormTemplate activeStep={0} /> },
   { id: 'stepper/runtime', title: 'Stepper / Runtime changes', render: () => <StepperDirtyTemplate activeStep={1} /> },
+  {
+    id: 'stepper/runtime-hidden',
+    title: 'Stepper / Initially hidden container',
+    render: () => <StepperDirtyTemplate activeStep={1} initiallyHidden />,
+  },
 ];

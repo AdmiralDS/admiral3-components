@@ -173,6 +173,33 @@ test.describe('Stepper', () => {
     await expect(root.getByRole('button', { name: 'one', exact: true })).toBeFocused();
   });
 
+  test('restores Tab entry after an initially hidden container appears without taking external focus', async ({
+    page,
+    browserName,
+  }) => {
+    await page.goto(getPlaygroundScenarioPath('stepper/runtime-hidden'));
+    const root = page.getByTestId('dirty-stepper');
+    await expect(root).toBeHidden();
+    await expect(root.locator('[tabindex="0"]')).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Показать Stepper', exact: true }).click();
+    const toggle = page.getByRole('button', { name: 'Скрыть Stepper', exact: true });
+    await expect(toggle).toBeFocused();
+    await expect(root).toBeVisible();
+    await expect(root.locator('[tabindex="0"]')).toHaveCount(1);
+    const current = root.getByRole('button', { name: 'two', exact: true });
+    await expect(current).toHaveAttribute('tabindex', '0');
+    await page.getByTestId('before-stepper').focus();
+    await page.keyboard.press(getTabKey(browserName));
+    await expect(current).toBeFocused();
+
+    await toggle.click();
+    await expect(root).toBeHidden();
+    await page.getByRole('button', { name: 'Показать Stepper', exact: true }).click();
+    await expect(toggle).toBeFocused();
+    await expect(current).toHaveAttribute('tabindex', '0');
+  });
+
   test('external changes do not take focus from external controls', async ({ page }) => {
     await page.goto(getPlaygroundScenarioPath('stepper/runtime'));
     const external = page.getByRole('button', { name: 'Выбрать three извне' });

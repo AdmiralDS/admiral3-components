@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 
 import { themes } from '@admiral-ds/admiral3-tokens';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Pill } from './Pill';
@@ -123,7 +123,7 @@ describe('Pills', () => {
     const first = screen.getByRole('button', { name: 'First' });
     const second = screen.getByRole('button', { name: 'Second' });
 
-    second.focus();
+    act(() => second.focus());
 
     expect(first).toHaveAttribute('tabindex', '-1');
     expect(second).toHaveAttribute('tabindex', '0');

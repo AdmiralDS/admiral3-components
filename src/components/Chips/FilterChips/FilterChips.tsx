@@ -1,6 +1,7 @@
 import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState } from 'react';
 import type { FocusEvent, ForwardRefExoticComponent, KeyboardEvent, PropsWithoutRef, RefAttributes } from 'react';
 
+import { useRovingFocus } from '#src/hooks/useRovingFocus';
 import { refSetter } from '#src/utils/refSetter';
 
 import { FilterChipsContext, type FilterChipsContextValue } from './context';
@@ -33,9 +34,6 @@ export const FilterChips = forwardRef<HTMLDivElement, FilterChipsProps>(
     },
     ref,
   ) => {
-    // Текущий фокус сохраняет Tab-остановку, пока он находится внутри группы.
-    const [focusWithin, setFocusWithin] = useState(false);
-    const [focusedValue, setFocusedValue] = useState<string | null>(null);
     const [uncontrolledValue, setUncontrolledValue] = useState<string | string[] | null>(
       defaultValue ?? (exclusive ? null : []),
     );
@@ -44,8 +42,6 @@ export const FilterChips = forwardRef<HTMLDivElement, FilterChipsProps>(
     const selectedValue = uncontrolledMode ? uncontrolledValue : value;
 
     const containerRef = useRef<HTMLDivElement>(null);
-    // Хранит фокусируемые узлы Item по значению выбора для навигации с клавиатуры.
-    const itemsRef = useRef(new Map<string, HTMLDivElement>());
 
     // Только доступные для навигации Item; уникальность проверяется и для отключённых элементов.
     const navigableItemValues = useMemo(() => {
@@ -75,14 +71,26 @@ export const FilterChips = forwardRef<HTMLDivElement, FilterChipsProps>(
     );
     // При входе в группу Tab попадает на выбранный Item или на первый доступный.
     const entryValue = navigableItemValues.find(isSelected) ?? navigableItemValues[0] ?? null;
-    // Пока фокус внутри группы, Tab-остановкой остаётся текущий Item.
-    const tabbableValue =
-      focusWithin && focusedValue !== null && navigableItemValues.includes(focusedValue) ? focusedValue : entryValue;
+    const {
+      focusableItemId,
+      registerItem: registerRovingItem,
+      updateItem: updateRovingItem,
+      onBlur: handleRovingBlur,
+      onFocus: handleRovingFocus,
+      onKeyDown: handleRovingKeyDown,
+    } = useRovingFocus<HTMLDivElement, string>({
+      containerRef,
+      entryItemId: entryValue,
+    });
 
-    const registerItem = useCallback((itemValue: string, node: HTMLDivElement | null) => {
-      if (node) itemsRef.current.set(itemValue, node);
-      else itemsRef.current.delete(itemValue);
-    }, []);
+    const registerItem = useCallback<FilterChipsContextValue['registerItem']>(
+      (itemValue, itemRef, itemDisabled) => registerRovingItem({ id: itemValue, ref: itemRef, disabled: itemDisabled }),
+      [registerRovingItem],
+    );
+    const updateItem = useCallback<FilterChipsContextValue['updateItem']>(
+      (itemValue, itemDisabled) => updateRovingItem(itemValue, { disabled: itemDisabled }),
+      [updateRovingItem],
+    );
 
     // Переключает выбор и уведомляет пользователя в обоих режимах управления.
     const select = useCallback<FilterChipsContextValue['select']>(
@@ -111,67 +119,28 @@ export const FilterChips = forwardRef<HTMLDivElement, FilterChipsProps>(
       () => ({
         dimension,
         disabled,
-        tabbableValue,
+        focusableItemValue: focusableItemId,
         registerItem,
+        updateItem,
         isSelected,
         select,
       }),
-      [dimension, disabled, tabbableValue, registerItem, isSelected, select],
+      [dimension, disabled, focusableItemId, registerItem, updateItem, isSelected, select],
     );
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(event);
-      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      if (navigableItemValues.length === 0) return;
-
-      const currentValue = Array.from(itemsRef.current).find(([, node]) => node === event.target)?.[0];
-      if (currentValue === undefined) return;
-
-      const currentIndex = navigableItemValues.indexOf(currentValue);
-      if (currentIndex < 0) return;
-
-      let nextIndex: number;
-
-      switch (event.key) {
-        case 'ArrowRight':
-          nextIndex = (currentIndex + 1) % navigableItemValues.length;
-          break;
-        case 'ArrowLeft':
-          nextIndex = (currentIndex - 1 + navigableItemValues.length) % navigableItemValues.length;
-          break;
-        case 'Home':
-          nextIndex = 0;
-          break;
-        case 'End':
-          nextIndex = navigableItemValues.length - 1;
-          break;
-        default:
-          return;
-      }
-
-      const nextValue = navigableItemValues[nextIndex];
-      const nextNode = itemsRef.current.get(nextValue);
-
-      if (!nextNode) return;
-
-      event.preventDefault();
-      setFocusedValue(nextValue);
-      nextNode.focus();
+      handleRovingKeyDown(event);
     };
 
     const handleFocusCapture = (event: FocusEvent<HTMLDivElement>) => {
       onFocusCapture?.(event);
-      const itemValue = Array.from(itemsRef.current).find(([, node]) => node === event.target)?.[0];
-      setFocusWithin(itemValue !== undefined);
-      setFocusedValue(itemValue ?? null);
+      if (!event.defaultPrevented) handleRovingFocus(event);
     };
 
     const handleBlurCapture = (event: FocusEvent<HTMLDivElement>) => {
       onBlurCapture?.(event);
-      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-        setFocusWithin(false);
-        setFocusedValue(null);
-      }
+      handleRovingBlur(event);
     };
 
     return (

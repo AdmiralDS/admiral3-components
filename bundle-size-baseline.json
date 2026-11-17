@@ -7,16 +7,16 @@
       "rawBytes": 1422
     },
     "button": {
-      "rawBytes": 24483
+      "rawBytes": 24459
     },
     "button-group": {
-      "rawBytes": 4865
+      "rawBytes": 6735
     },
     "check-box": {
       "rawBytes": 12111
     },
     "chips": {
-      "rawBytes": 29751
+      "rawBytes": 33353
     },
     "divider": {
       "rawBytes": 1543
@@ -43,7 +43,7 @@
       "rawBytes": 4030
     },
     "pills": {
-      "rawBytes": 19862
+      "rawBytes": 23821
     },
     "progress-header": {
       "rawBytes": 2489
@@ -64,7 +64,7 @@
       "rawBytes": 6566
     },
     "stepper": {
-      "rawBytes": 31492
+      "rawBytes": 35101
     },
     "tag": {
       "rawBytes": 21694
