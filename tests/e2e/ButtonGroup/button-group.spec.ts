@@ -83,7 +83,7 @@ test.describe('ButtonGroup playground', () => {
     await expect(last).toBeFocused();
   });
 
-  test('moves the Tab stop when a child Button disables itself', async ({ page, browserName }) => {
+  test('recovers focus when a child Button disables itself', async ({ page, browserName }) => {
     const tabKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
     await page.goto(getPlaygroundScenarioPath(childDisabledScenarioId));
 
@@ -97,7 +97,12 @@ test.describe('ButtonGroup playground', () => {
     await expect(selfDisabling).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(selfDisabling).toBeDisabled();
+    await expect(selfDisabling).toHaveAttribute('tabindex', '-1');
     await expect(remaining).toHaveAttribute('tabindex', '0');
+    await expect(remaining).toBeFocused();
+
+    await page.keyboard.press(tabKey);
+    await expect(page.getByTestId('after-button-group')).toBeFocused();
 
     await before.focus();
     await page.keyboard.press(tabKey);

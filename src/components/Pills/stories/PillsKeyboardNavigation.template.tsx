@@ -107,12 +107,12 @@ const MenuItem = styled.button`
 export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const triggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const toolbarWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (openMenuIndex !== null) {
-      menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+      menuItemRefs.current[0]?.focus();
     }
   }, [openMenuIndex]);
 
@@ -139,7 +139,7 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
   };
 
   const handleMenuKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+    const items = menuItemRefs.current.filter((item): item is HTMLButtonElement => item !== null);
     const currentIndex = items.indexOf(event.currentTarget);
 
     switch (event.key) {
@@ -211,10 +211,13 @@ export const PillsKeyboardNavigationTemplate = (args: PillsProps) => {
           </Pills>
           {/* TODO: Заменить Menu на Admiral3 Menu после появления компонента. */}
           {openMenuIndex !== null && (
-            <Menu ref={menuRef} id={`pills-menu-${openMenuIndex}`} role="menu" aria-label="Выбор статуса">
+            <Menu id={`pills-menu-${openMenuIndex}`} role="menu" aria-label="Выбор статуса">
               {MENU_OPTIONS.map((option) => (
                 <MenuItem
                   key={option}
+                  ref={(element) => {
+                    menuItemRefs.current[MENU_OPTIONS.indexOf(option)] = element;
+                  }}
                   type="button"
                   role="menuitem"
                   tabIndex={-1}

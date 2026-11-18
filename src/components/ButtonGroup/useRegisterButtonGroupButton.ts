@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 import type { ButtonGroupContextValue } from './ButtonGroupContext';
 
@@ -7,13 +7,12 @@ export const useRegisterButtonGroupButton = (
   disabled: boolean,
   skeleton: boolean,
 ) => {
-  const id = useRef(Symbol('button-group-button')).current;
+  const id = useId();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const stateRef = useRef({ disabled, skeleton });
   const [unmanaged, setUnmanaged] = useState(false);
   const registerButton = buttonGroup?.registerButton;
   const updateButton = buttonGroup?.updateButton;
-  stateRef.current = { disabled, skeleton };
 
   useEffect(() => {
     if (!registerButton) return;
@@ -25,6 +24,7 @@ export const useRegisterButtonGroupButton = (
   }, [registerButton, id]);
 
   useLayoutEffect(() => {
+    stateRef.current = { disabled, skeleton };
     updateButton?.(id, { disabled, skeleton });
   }, [disabled, id, skeleton, updateButton]);
 

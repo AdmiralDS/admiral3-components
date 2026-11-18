@@ -8,6 +8,7 @@ const truncatedScenarioId = 'pills/truncated';
 const nestedScenarioId = 'pills/nested';
 const dropdownScenarioId = 'pills/dropdown';
 const keyboardNavigationScenarioId = 'pills/keyboard-navigation';
+const childDisabledScenarioId = 'pills/child-disabled-tab-stop';
 const infoBackgroundColorToken = '--admiral-color-primary-base-1-rest';
 const customBackgroundColorToken = '--admiral-color-purple-base-1-rest';
 const staticWhiteTextColorToken = '--admiral-color-neutral-text-static-white-1';
@@ -164,6 +165,34 @@ test.describe('Pills playground', () => {
 
     await page.keyboard.press('Home');
     await expect(firstSegment).toBeFocused();
+  });
+
+  test('recovers focus when a child Pill disables itself', async ({ page, browserName }) => {
+    const tabKey = getTabKey(browserName);
+    await page.goto(getPlaygroundScenarioPath(childDisabledScenarioId));
+
+    const before = page.getByTestId('before-pills-group');
+    const selfDisabling = page.getByTestId('pills-self-disabling');
+    const remaining = page.getByTestId('pills-remaining');
+
+    await expect(selfDisabling).toHaveAttribute('tabindex', '0');
+    await before.focus();
+    await page.keyboard.press(tabKey);
+    await expect(selfDisabling).toBeFocused();
+
+    await page.keyboard.press('Enter');
+
+    await expect(selfDisabling).toBeDisabled();
+    await expect(selfDisabling).toHaveAttribute('tabindex', '-1');
+    await expect(remaining).toHaveAttribute('tabindex', '0');
+    await expect(remaining).toBeFocused();
+
+    await page.keyboard.press(tabKey);
+    await expect(page.getByTestId('after-pills-group')).toBeFocused();
+
+    await before.focus();
+    await page.keyboard.press(tabKey);
+    await expect(remaining).toBeFocused();
   });
 
   test('opens a segment menu with Enter, Space, or ArrowDown only when a menu exists', async ({ page }) => {

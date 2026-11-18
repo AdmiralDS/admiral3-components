@@ -18,6 +18,7 @@ const packageImport = '@admiral-ds/admiral3-components';
 const internalExportSources = new Set(['./constants', './style']);
 const closedStringPropNames = new Set(['appearance', 'colorMode', 'dimension', 'orientation', 'status', 'styleType']);
 const publicComponentExportPattern = /^\.\/components\/[A-Z][A-Za-z0-9]*$/;
+const publicRootExportSources = new Set(['./hooks']);
 const styledPropsPattern = /^Styled[A-Za-z0-9]*Props$/;
 const componentExportPattern = /^\.\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -338,9 +339,9 @@ for (const exportKey of packageExportKeys) {
 }
 
 for (const exportSource of rootExportSources) {
-  if (!publicComponentExportPattern.test(exportSource)) {
+  if (!publicComponentExportPattern.test(exportSource) && !publicRootExportSources.has(exportSource)) {
     errors.push(
-      `${formatPath(rootIndexPath)} exports "${exportSource}". Root API must re-export only component barrels from src/components/ComponentName.`,
+      `${formatPath(rootIndexPath)} exports "${exportSource}". Root API must re-export a component barrel or an explicitly supported public module.`,
     );
   }
 }

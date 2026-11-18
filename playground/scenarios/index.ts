@@ -25,6 +25,7 @@ import { skeletonScenarios } from './skeleton';
 import { sliderScenarios } from './slider';
 import { sliderRangeScenarios } from './slider-range';
 import { spinnerScenarios } from './spinner';
+import { stepperScenarios } from './stepper';
 import { tagScenarios } from './tag';
 import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
@@ -64,6 +65,7 @@ export const playgroundScenarios = [
   ...sliderScenarios,
   ...sliderRangeScenarios,
   ...spinnerScenarios,
+  ...stepperScenarios,
   ...tagScenarios,
   ...textAreaScenarios,
   ...toggleScenarios,

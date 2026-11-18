@@ -1,4 +1,6 @@
-import { Button, Pill, type PillProps } from '@admiral-ds/admiral3-components';
+import { useState } from 'react';
+
+import { Button, Pill, Pills, type PillProps } from '@admiral-ds/admiral3-components';
 
 import { PillsTruncatedTextTemplate } from './PillsTruncatedText.template';
 import { StoryDemoContainer, StoryDirtyContainer } from '../../stories/StoryContainers';
@@ -25,5 +27,26 @@ export const PillsTruncatedTextDirtyTemplate = (args: PillProps) => (
     <Button appearance="flat" dimension="s" data-testid="after-truncated-pills">
       После группы
     </Button>
+  </StoryDemoContainer>
+);
+
+const SelfDisablingPill = () => {
+  const [disabled, setDisabled] = useState(false);
+
+  return (
+    <Pill data-testid="pills-self-disabling" disabled={disabled} onClick={() => setDisabled(true)}>
+      Отключить себя
+    </Pill>
+  );
+};
+
+export const PillsChildDisabledDirtyTemplate = () => (
+  <StoryDemoContainer $direction="column" $gap="16px" $withBackground={false}>
+    <Button data-testid="before-pills-group">До группы</Button>
+    <Pills aria-label="Статусы">
+      <SelfDisablingPill />
+      <Pill data-testid="pills-remaining">Доступная</Pill>
+    </Pills>
+    <Button data-testid="after-pills-group">После группы</Button>
   </StoryDemoContainer>
 );
