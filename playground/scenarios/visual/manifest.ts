@@ -1,4 +1,5 @@
 export const VISUAL_SCENARIO_IDS = {
+  avatar: 'visual/avatar',
   badge: 'visual/badge',
   badgeDot: 'visual/badge-dot',
   button: 'visual/button',

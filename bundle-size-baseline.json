@@ -1,5 +1,8 @@
 {
   "components": {
+    "avatar": {
+      "rawBytes": 19118
+    },
     "badge": {
       "rawBytes": 3394
     },
@@ -13,7 +16,7 @@
       "rawBytes": 6735
     },
     "check-box": {
-      "rawBytes": 12111
+      "rawBytes": 12115
     },
     "chips": {
       "rawBytes": 33353
@@ -31,7 +34,7 @@
       "rawBytes": 9796
     },
     "hint": {
-      "rawBytes": 14817
+      "rawBytes": 14813
     },
     "input": {
       "rawBytes": 24074
@@ -61,16 +64,16 @@
       "rawBytes": 2252
     },
     "radio-button": {
-      "rawBytes": 9120
+      "rawBytes": 9124
     },
     "skeleton": {
       "rawBytes": 1298
     },
     "slider": {
-      "rawBytes": 28178
+      "rawBytes": 28181
     },
     "slider-range": {
-      "rawBytes": 28785
+      "rawBytes": 28786
     },
     "spinner": {
       "rawBytes": 6566
@@ -88,7 +91,7 @@
       "rawBytes": 7700
     },
     "tooltip": {
-      "rawBytes": 10943
+      "rawBytes": 10939
     }
   },
   "version": 1
