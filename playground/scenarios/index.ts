@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 
+import { avatarScenarios } from './avatar';
 import { badgeScenarios } from './badge';
 import { badgeDotScenarios } from './badge-dot';
 import { buttonScenarios } from './button';
@@ -41,6 +42,7 @@ export type PlaygroundScenario = {
 };
 
 export const playgroundScenarios = [
+  ...avatarScenarios,
   ...badgeScenarios,
   ...badgeDotScenarios,
   ...buttonScenarios,
