@@ -78,6 +78,9 @@
     "stepper": {
       "rawBytes": 35101
     },
+    "stepper-progress": {
+      "rawBytes": 5959
+    },
     "tag": {
       "rawBytes": 21694
     },

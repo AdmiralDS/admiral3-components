@@ -26,6 +26,7 @@ import { sliderScenarios } from './slider';
 import { sliderRangeScenarios } from './slider-range';
 import { spinnerScenarios } from './spinner';
 import { stepperScenarios } from './stepper';
+import { stepperProgressScenarios } from './stepper-progress';
 import { tagScenarios } from './tag';
 import { textAreaScenarios } from './text-area';
 import { toggleScenarios } from './toggle';
@@ -66,6 +67,7 @@ export const playgroundScenarios = [
   ...sliderRangeScenarios,
   ...spinnerScenarios,
   ...stepperScenarios,
+  ...stepperProgressScenarios,
   ...tagScenarios,
   ...textAreaScenarios,
   ...toggleScenarios,

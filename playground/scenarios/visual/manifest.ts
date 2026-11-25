@@ -26,6 +26,7 @@ export const VISUAL_SCENARIO_IDS = {
   sliderRange: 'visual/slider-range',
   spinner: 'visual/spinner',
   stepper: 'visual/stepper',
+  stepperProgress: 'visual/stepper-progress',
   tag: 'visual/tag',
   textArea: 'visual/text-area',
   toggle: 'visual/toggle',
