@@ -1,6 +1,7 @@
 import type { HTMLAttributes, SyntheticEvent } from 'react';
 
-import type { ChipDimension, SelectableChipProps } from '../types';
+import type { SelectableChipProps } from '../SelectableChip';
+import type { ChipDimension } from '../types';
 
 interface FilterChipsBaseProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> {
   /** Размер FilterChips.Item по умолчанию 'm'. Самостоятельным SelectableChip размер задаётся отдельно. */

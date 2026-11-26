@@ -3,7 +3,7 @@ import { createRef, type KeyboardEvent } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SelectableChip } from './SelectableChip';
+import { SelectableChip } from '../SelectableChip';
 
 describe('SelectableChip', () => {
   afterEach(cleanup);
@@ -213,6 +213,41 @@ describe('SelectableChip', () => {
     expect(chip).toHaveAttribute('tabindex', '0');
     fireEvent.click(chip);
     expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it('passes selected badge appearances and updates an explicit override', () => {
+    const { rerender } = render(
+      <SelectableChip badge={5} selected>
+        Марс
+      </SelectableChip>,
+    );
+    const badge = screen.getByText('5');
+    expect(badge).toHaveAttribute('data-appearance', 'whiteStatic');
+
+    rerender(
+      <SelectableChip badge={5} selected colorMode="neutral">
+        Марс
+      </SelectableChip>,
+    );
+    expect(badge).toHaveAttribute('data-appearance', 'neutral1');
+    rerender(
+      <SelectableChip badge={5} selected disabled colorMode="neutral">
+        Марс
+      </SelectableChip>,
+    );
+    expect(badge).toHaveAttribute('data-appearance', 'neutral1Disable');
+    rerender(
+      <SelectableChip badge={5} selected disabled colorMode="neutral" badgeAppearance="info">
+        Марс
+      </SelectableChip>,
+    );
+    expect(badge).toHaveAttribute('data-appearance', 'info');
+    rerender(
+      <SelectableChip badge={5} colorMode="neutral">
+        Марс
+      </SelectableChip>,
+    );
+    expect(badge).toHaveAttribute('data-appearance', 'neutral3');
   });
 
   it('forwards user-controlled DOM attributes and non-action handlers', () => {

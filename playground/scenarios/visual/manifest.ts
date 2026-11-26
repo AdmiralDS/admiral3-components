@@ -5,6 +5,7 @@ export const VISUAL_SCENARIO_IDS = {
   button: 'visual/button',
   buttonGroup: 'visual/button-group',
   checkBox: 'visual/check-box',
+  chip: 'visual/chip',
   divider: 'visual/divider',
   fieldSet: 'visual/field-set',
   filterChips: 'visual/filter-chips',

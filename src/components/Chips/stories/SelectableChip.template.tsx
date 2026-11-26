@@ -11,10 +11,15 @@ export const SelectableChipTemplate = (args: SelectableChipProps) => {
   return (
     <StoryDemoContainer $withBackground={false} $direction="column" $gap="16px">
       <StoryDemoDescription>
-        SelectableChip используется для выбора параметра, например включения фильтра. Нажатие на Enter или Space
-        активирует чипс и вызывает onSelectedChange и onClick. Для скринридера выбор обозначается атрибутом
-        aria-pressed. При disabled или readOnly блокируются события onClick и onKeyDown; readOnly сохраняет чипс в
-        порядке Tab. Иконка, аватар и Badge дополняют текст чипса.
+        SelectableChip не является контрактным компонентом дизайн-системы. Он доступен для самостоятельного
+        использования, создания пользовательских групп выбора и композиции более сложных компонентов, включая
+        FilterChips.
+      </StoryDemoDescription>
+      <StoryDemoDescription>
+        Компонент используется для выбора параметра, например включения фильтра. Нажатие на Enter или Space активирует
+        чипс и вызывает onSelectedChange и onClick. Для скринридера выбор обозначается атрибутом aria-pressed. При
+        disabled или readOnly блокируются события onClick и onKeyDown; readOnly сохраняет чипс в порядке Tab. Иконка,
+        аватар и Badge дополняют текст чипса.
       </StoryDemoDescription>
       <SelectableChip
         {...args}
