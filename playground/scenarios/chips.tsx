@@ -1,6 +1,7 @@
 import { FilterChipsScenario } from './FilterChipsScenario';
 import type { PlaygroundScenario } from './index';
 import { CHIPS_DIMENSIONS } from '../../src/components/Chips/constants';
+import { ChipTooltipTemplate } from '../../src/components/Chips/stories/ChipTooltip.template';
 import { FilterChipsWithSelectableChipTemplate } from '../../src/components/Chips/stories/FilterChipsWithSelectableChip.template';
 import { RemovableChipTemplate } from '../../src/components/Chips/stories/RemovableChip.template';
 import { RemovableChipAppearancesTemplate } from '../../src/components/Chips/stories/RemovableChipAppearances.template';
@@ -16,6 +17,11 @@ const onClose = () => undefined;
 const closeButtonProps = { 'aria-label': 'Удалить чипс' };
 
 export const chipsScenarios: PlaygroundScenario[] = [
+  {
+    id: 'chip/tooltip',
+    title: 'Chip Tooltip',
+    render: () => <ChipTooltipTemplate data-testid="chip" />,
+  },
   ...[
     { id: 'filter', props: {} },
     { id: 'filter-disabled', props: { disabled: true } },

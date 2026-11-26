@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import type { CHIPS_APPEARANCES, CHIPS_COLOR_MODES, CHIPS_DIMENSIONS } from './constants';
+import type { BadgeAppearance } from '../Badge';
 
 export type ChipDimension = (typeof CHIPS_DIMENSIONS)[number];
 export type ChipAppearance = (typeof CHIPS_APPEARANCES)[number];
@@ -19,6 +20,8 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   avatar?: ReactNode;
   /** Число, которое будет отображено в компоненте Badge справа от контента. */
   badge?: number;
+  /** Цветовой вариант Badge. */
+  badgeAppearance?: BadgeAppearance;
   /** Режим только для чтения. Блокирует основные действия компонента, сохраняя события наведения и фокуса. */
   readOnly?: boolean;
   /** Функция рендера кастомного содержимого Tooltip. По умолчанию используется children. */
@@ -26,28 +29,8 @@ export interface ChipBaseProps extends HTMLAttributes<HTMLDivElement> {
   /** Показывать Tooltip при переполнении содержимого. По умолчанию true.
    * При false тултип не появляется и связанные с ним слушатели событий не устанавливаются. */
   showTooltip?: boolean;
-}
-
-export interface SelectableChipProps extends ChipBaseProps {
-  /** Выбранное состояние чипса. */
-  selected?: boolean;
-  /** Отключённое состояние. Блокирует onClick, onKeyDown и onSelectedChange. */
-  disabled?: boolean;
-  /** Режим только для чтения. Блокирует onClick, onKeyDown и onSelectedChange. */
-  readOnly?: boolean;
   /** Иконки или другие декоративные элементы после контента чипса. */
   iconsAfter?: ReactNode;
-  /** Обработчик изменения выбранного состояния при клике или нажатии Enter/Space. */
-  onSelectedChange?: (selected: boolean) => void;
-}
-
-export interface RemovableChipProps extends ChipBaseProps {
-  /** Обработчик удаления. */
-  onClose: () => void;
-  /** Отключённое состояние. Блокирует onClick, onKeyDown и onClose. */
+  /** Отключённое состояние. Блокирует onClick. */
   disabled?: boolean;
-  /** Props кнопки закрытия. */
-  closeButtonProps?: HTMLAttributes<SVGSVGElement>;
-  /** Режим только для чтения. Блокирует onClick, onKeyDown и onClose, а также скрывает иконку удаления. */
-  readOnly?: boolean;
 }

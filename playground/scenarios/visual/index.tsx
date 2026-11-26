@@ -5,6 +5,7 @@ import { BadgeVisualTemplate } from './BadgeVisual.template';
 import { ButtonGroupVisualTemplate } from './ButtonGroupVisual.template';
 import { ButtonVisualTemplate } from './ButtonVisual.template';
 import { CheckBoxVisualTemplate } from './CheckBoxVisual.template';
+import { ChipVisualTemplate } from './ChipVisual.template';
 import { DividerVisualTemplate } from './DividerVisual.template';
 import { FieldSetVisualTemplate } from './FieldSetVisual.template';
 import { FilterChipsVisualTemplate } from './FilterChipsVisual.template';
@@ -55,6 +56,7 @@ export const visualScenarios: PlaygroundScenario[] = [
     visual: true,
     render: () => <CheckBoxVisualTemplate />,
   },
+  { id: VISUAL_SCENARIO_IDS.chip, title: 'Visual / Chip', visual: true, render: () => <ChipVisualTemplate /> },
   { id: VISUAL_SCENARIO_IDS.divider, title: 'Visual / Divider', visual: true, render: () => <DividerVisualTemplate /> },
   {
     id: VISUAL_SCENARIO_IDS.fieldSet,

@@ -23,6 +23,7 @@ describe('RemovableChip', () => {
     expect(chip).toHaveAttribute('tabindex', '0');
     expect(chip).not.toHaveAttribute('aria-pressed');
     expect(close).not.toHaveAttribute('tabindex');
+    expect(close.closest('[aria-hidden="true"]')).toBeNull();
     expect(chip.querySelector('button')).toBeNull();
     expect(chip).toHaveAttribute('data-dimension', 'm');
     expect(chip).toHaveAttribute('data-appearance', 'outlined');
@@ -142,6 +143,23 @@ describe('RemovableChip', () => {
     expect(chip).not.toHaveAttribute('aria-disabled');
     fireEvent.click(chip.querySelector('svg')!);
     expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('keeps the overflow Tooltip available on focus in readOnly mode', () => {
+    render(
+      <RemovableChip readOnly onClose={vi.fn()} renderTooltipContent={() => 'Описание'}>
+        Марс
+      </RemovableChip>,
+    );
+    const chip = screen.getByRole('button', { name: 'Марс' });
+    Object.defineProperties(screen.getByText('Марс'), {
+      scrollWidth: { configurable: true, value: 200 },
+      clientWidth: { configurable: true, value: 100 },
+    });
+
+    expect(chip).toHaveAttribute('tabindex', '0');
+    fireEvent.focus(chip);
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Описание');
   });
 
   it('forwards variant markers and close icon DOM attributes', () => {

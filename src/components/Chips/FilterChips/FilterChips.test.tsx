@@ -702,6 +702,34 @@ describe('FilterChips', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
+  it('skips an Item when it becomes disabled and restores it when enabled', () => {
+    const renderGroup = (disabled: boolean) => (
+      <FilterChips>
+        <FilterChips.Item value="first">First</FilterChips.Item>
+        <FilterChips.Item value="second" disabled={disabled}>
+          Second
+        </FilterChips.Item>
+        <FilterChips.Item value="third">Third</FilterChips.Item>
+      </FilterChips>
+    );
+    const { rerender } = render(renderGroup(false));
+    const first = screen.getByRole('button', { name: 'First' });
+    const second = screen.getByRole('button', { name: 'Second' });
+    const third = screen.getByRole('button', { name: 'Third' });
+
+    rerender(renderGroup(true));
+    expect(second).toHaveAttribute('aria-disabled', 'true');
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    expect(third).toHaveFocus();
+    expect(second).toHaveAttribute('tabindex', '-1');
+
+    rerender(renderGroup(false));
+    expect(second).not.toHaveAttribute('aria-disabled');
+    fireEvent.keyDown(third, { key: 'ArrowLeft' });
+    expect(second).toHaveFocus();
+    expect(second).toHaveAttribute('tabindex', '0');
+  });
+
   it('disables FilterChips.Item through the group', () => {
     const onChange = vi.fn();
     render(
