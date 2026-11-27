@@ -25,6 +25,7 @@ export * from './components/Slider';
 export * from './components/SliderRange';
 export * from './components/Spinner';
 export * from './components/Stepper';
+export * from './components/StepperProgress';
 export * from './components/Tag';
 export * from './components/TextArea';
 export * from './components/Toggle';

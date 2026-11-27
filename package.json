@@ -118,6 +118,10 @@
       "types": "./dist/components/Stepper/index.d.ts",
       "import": "./dist/components/Stepper/index.js"
     },
+    "./stepper-progress": {
+      "types": "./dist/components/StepperProgress/index.d.ts",
+      "import": "./dist/components/StepperProgress/index.js"
+    },
     "./tag": {
       "types": "./dist/components/Tag/index.d.ts",
       "import": "./dist/components/Tag/index.js"
